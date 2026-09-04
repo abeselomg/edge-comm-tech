@@ -2,25 +2,43 @@
   "name": "edge-comm-tech",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "lint": "eslint src",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts"
   },
   "dependencies": {
-    "next": "^15.4.6",
+    "@payloadcms/db-postgres": "3.88.0",
+    "@payloadcms/next": "3.88.0",
+    "@payloadcms/plugin-form-builder": "3.88.0",
+    "@payloadcms/plugin-seo": "3.88.0",
+    "@payloadcms/richtext-lexical": "3.88.0",
+    "@payloadcms/ui": "3.88.0",
+    "graphql": "^16.8.1",
+    "next": "15.4.11",
+    "payload": "3.88.0",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "sharp": "^0.34.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.12",
     "@types/node": "^22.17.2",
     "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.8",
+    "cross-env": "^7.0.3",
     "eslint": "^9.34.0",
     "eslint-config-next": "^15.4.6",
     "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0"
   }
 }

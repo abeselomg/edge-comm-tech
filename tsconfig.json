@@ -13,7 +13,10 @@
     "jsx": "preserve",
     "incremental": true,
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] },
+    "paths": {
+      "@/*": ["./src/*"],
+      "@payload-config": ["./src/payload.config.ts"]
+    },
     "target": "ES2022"
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

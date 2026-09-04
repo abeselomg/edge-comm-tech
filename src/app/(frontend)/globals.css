@@ -1,0 +1,135 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500&family=Zilla+Slab:ital,wght@0,400;0,600;1,400&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #12151a;
+  --color-ink-2: #1c2128;
+  --color-paper: #e8eaed;
+  --color-paper-2: #ffffff;
+  --color-gold: #2b5ea7;
+  --color-gold-2: #4a7ec4;
+  --color-lamp: #8b93a0;
+  --color-steel: #6b7380;
+  --color-rule: #12151a22;
+  --font-display: "Outfit", "Segoe UI", sans-serif;
+  --font-sans: "Outfit", "Segoe UI", sans-serif;
+  --font-mono: "Spline Sans Mono", ui-monospace, monospace;
+  --font-caption: "Zilla Slab", "Georgia", serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+
+.font-caption {
+  font-family: var(--font-caption);
+  font-style: italic;
+}
+
+.frame {
+  display: flex;
+  min-height: 85vh;
+  flex-direction: column;
+}
+
+.caption-bar {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid currentColor;
+  padding: 0.7rem 0 0;
+  font-family: var(--font-caption);
+  font-size: 0.8rem;
+  font-style: italic;
+  opacity: 0.75;
+}
+
+.still {
+  border: 1px solid rgb(18 21 26 / 0.18);
+  background: var(--color-paper-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+/* Rich text coming from the CMS. Matches the rhythm of hand-written page copy. */
+.prose-edge {
+  color: rgb(18 21 26 / 0.8);
+  line-height: 1.7;
+}
+
+.prose-edge > * + * {
+  margin-top: 1.1em;
+}
+
+.prose-edge h2 {
+  margin-top: 2.2em;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+}
+
+.prose-edge h3 {
+  margin-top: 1.8em;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+.prose-edge ul,
+.prose-edge ol {
+  padding-left: 1.25rem;
+}
+
+.prose-edge ul { list-style: disc; }
+.prose-edge ol { list-style: decimal; }
+.prose-edge li + li { margin-top: 0.4em; }
+
+.prose-edge a {
+  color: var(--color-gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-edge strong { font-weight: 600; color: var(--color-ink); }
+
+.prose-edge blockquote {
+  border-left: 3px solid var(--color-gold);
+  padding-left: 1rem;
+  font-family: var(--font-caption);
+  font-style: italic;
+}
+
+.prose-edge code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: rgb(18 21 26 / 0.06);
+  padding: 0.1em 0.35em;
+}
+
+.dark-surface .prose-edge { color: rgb(232 234 237 / 0.8); }
+.dark-surface .prose-edge :is(h2, h3, strong) { color: var(--color-paper); }
