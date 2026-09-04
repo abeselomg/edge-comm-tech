@@ -23,6 +23,13 @@ const DIRECTIONS = [
     note: "The opposite move: the headline stops being the event and the information carries the page. Every acronym is on the first screen.",
   },
   {
+    href: "/design/d",
+    label: "D — Left rail",
+    face: "Instrument Sans, one family",
+    idea: "Fixed left rail instead of a top bar. The catalogue opens the page; the pitch comes second. Offset grid, one paper ground, no alternating bands.",
+    note: "The only one that changes the page frame and the section order rather than the typeface. A, B and C are one structure wearing three fonts; this is a different structure.",
+  },
+  {
     href: "/design/c",
     label: "C — Industrial",
     face: "Archivo Narrow, condensed",

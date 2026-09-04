@@ -16,6 +16,7 @@ export const VARIANTS = [
   { id: "a", href: "/design/a", label: "A", face: "Newsreader, serif" },
   { id: "b", href: "/design/b", label: "B", face: "Instrument Sans" },
   { id: "c", href: "/design/c", label: "C", face: "Archivo Narrow" },
+  { id: "d", href: "/design/d", label: "D", face: "Left rail, index-first" },
 ];
 
 /** Sticky switcher so the three can be flipped between while scrolling. */

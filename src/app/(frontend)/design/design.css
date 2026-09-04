@@ -157,3 +157,121 @@
   background: var(--color-deep-3);
   border-bottom: 1px solid var(--color-rule-dark);
 }
+
+/* --- D — Left rail. ----------------------------------------------------
+ *
+ * Breaks the things the other three hold in common: the page frame is a
+ * fixed rail rather than a top bar, the catalogue comes before the pitch,
+ * content sits in an offset grid instead of one centred column, and there
+ * are no alternating full-width bands.
+ */
+
+.dir-d {
+  --font-display: var(--font-instrument), system-ui, sans-serif;
+  background: var(--color-paper);
+}
+
+.dir-d .display {
+  font-weight: 600;
+  font-stretch: normal;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+}
+
+.dir-d .display-lg { font-size: clamp(2.2rem, 3.8vw, 3.4rem); }
+.dir-d .display-md { font-size: clamp(1.6rem, 2.3vw, 2.1rem); }
+.dir-d .display-sm {
+  font-size: clamp(1.1rem, 1.45vw, 1.3rem);
+  font-stretch: normal;
+  letter-spacing: -0.02em;
+}
+
+/* The global top bar and footer are replaced by the rail on this route. */
+body:has(.dir-d) > header,
+body:has(.dir-d) > footer {
+  display: none;
+}
+
+.dir-d .variant-bar {
+  top: 0;
+}
+
+.rail {
+  background: var(--color-deep);
+  color: var(--color-paper);
+  padding: 1.75rem 1.5rem;
+}
+
+.rail-content {
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .rail {
+    position: fixed;
+    inset-block: 0;
+    left: 0;
+    width: 17rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.75rem;
+    border-right: 1px solid var(--color-rule-dark);
+  }
+
+  .rail-content {
+    margin-left: 17rem;
+  }
+}
+
+/* Section label in a narrow gutter, content in the wide column. */
+.offset {
+  display: grid;
+  gap: 1rem;
+  padding-block: clamp(3rem, 5vw, 4.5rem);
+  border-top: 1px solid var(--color-rule);
+}
+
+@media (min-width: 900px) {
+  .offset {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 3rem;
+  }
+
+  .offset > .offset-label {
+    position: sticky;
+    top: 3.5rem;
+    align-self: start;
+  }
+}
+
+.offset-label {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+  padding-top: 0.35rem;
+}
+
+/* The index: the catalogue as the first thing on the page. */
+.index-row {
+  display: grid;
+  gap: 0.5rem 2rem;
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--color-rule);
+  align-items: start;
+}
+
+.index-row:last-child {
+  border-bottom: 1px solid var(--color-rule);
+}
+
+@media (min-width: 900px) {
+  .index-row {
+    grid-template-columns: 3rem minmax(0, 21rem) minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+a.index-row:hover {
+  background: #08201c07;
+}
