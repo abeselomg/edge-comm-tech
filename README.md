@@ -84,7 +84,8 @@ resolve past the ceiling and break the admin.
 | `npm run generate:importmap` | Regenerate the admin import map after adding custom components |
 | `npm run build` | Production build |
 
-> Stop `npm run dev` before running `npm run build`. Both write to `.next`, and a
-> dev server running during a build overwrites the route manifest — the built
-> site then serves 404s for `/admin` and `/api/*` until you `rm -rf .next` and
-> rebuild.
+> `dev` and `build` share `.next` and will corrupt each other's output in both
+> directions. A dev server running during a build leaves the built site serving
+> 404s for `/admin` and `/api/*`; starting dev on top of a production build
+> leaves pages rendering unstyled, because the compiled CSS chunk 404s.
+> Whenever you switch between the two, `rm -rf .next` first.

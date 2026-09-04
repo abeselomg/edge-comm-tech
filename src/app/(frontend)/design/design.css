@@ -1,0 +1,159 @@
+/*
+ * Scoped type systems for the three comparison directions.
+ * Palette is identical across all three so the comparison isolates
+ * typography and structure. Delete with the /design routes.
+ */
+
+/* --- A — Newsreader. Institutional, editorial, warm. ------------------- */
+
+.dir-a {
+  --font-display: var(--font-newsreader), Georgia, serif;
+}
+
+.dir-a .display {
+  font-weight: 500;
+  font-stretch: normal;
+  letter-spacing: -0.015em;
+  line-height: 1.06;
+}
+
+.dir-a .display-lg {
+  font-size: clamp(2.75rem, 6vw, 4.75rem);
+  line-height: 1.02;
+}
+
+.dir-a .display-md {
+  font-size: clamp(1.9rem, 3.4vw, 2.75rem);
+  line-height: 1.1;
+}
+
+.dir-a .display-sm {
+  font-size: clamp(1.35rem, 1.9vw, 1.6rem);
+  font-stretch: normal;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+/* A serif at display size wants a touch more air around it. */
+.dir-a .lede {
+  font-size: clamp(1.1rem, 1.5vw, 1.25rem);
+  line-height: 1.6;
+}
+
+/* --- B — Instrument Sans. Quiet, normal width, information-forward. ---- */
+
+.dir-b {
+  --font-display: var(--font-instrument), system-ui, sans-serif;
+}
+
+.dir-b .display {
+  font-weight: 600;
+  font-stretch: normal;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+/* Deliberately smaller than the other directions: the headline stops
+   being the event, and the information does the work instead. */
+.dir-b .display-lg {
+  font-size: clamp(2.1rem, 3.6vw, 3.1rem);
+  line-height: 1.08;
+}
+
+.dir-b .display-md {
+  font-size: clamp(1.5rem, 2.1vw, 1.9rem);
+}
+
+.dir-b .display-sm {
+  font-size: clamp(1.05rem, 1.3vw, 1.15rem);
+  font-stretch: normal;
+  letter-spacing: -0.015em;
+}
+
+.dir-b .lede {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  max-width: 38em;
+}
+
+/* --- C — Archivo Narrow. Condensed industrial: rack labels, signage. --- */
+
+.dir-c {
+  --font-display: var(--font-archivo-narrow), "Archivo Narrow", sans-serif;
+}
+
+.dir-c .display {
+  font-weight: 700;
+  font-stretch: normal;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+}
+
+.dir-c .display-lg {
+  font-size: clamp(3.25rem, 8.5vw, 7rem);
+}
+
+.dir-c .display-md {
+  font-size: clamp(2.1rem, 4.2vw, 3.4rem);
+}
+
+.dir-c .display-sm {
+  font-size: clamp(1.4rem, 2vw, 1.75rem);
+  font-stretch: normal;
+}
+
+/* --- Rack elevation, direction C only --------------------------------- */
+
+.rack {
+  border: 1px solid var(--color-rule-dark);
+  border-radius: 4px;
+  padding: 0.5rem;
+  background: #041b18;
+}
+
+.rack-unit {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--color-rule-dark);
+  border-radius: 2px;
+  padding: 0.85rem 1rem;
+  background: var(--color-deep-2);
+  transition: border-color 0.16s ease, background-color 0.16s ease;
+}
+
+.rack-unit + .rack-unit {
+  margin-top: 0.375rem;
+}
+
+.rack-unit:hover {
+  border-color: var(--color-brass);
+  background: var(--color-deep-3);
+}
+
+/* Mounting holes, the way a real rack rail reads. */
+.rack-rail {
+  display: grid;
+  gap: 0.375rem;
+  align-content: space-between;
+  padding-block: 0.25rem;
+}
+
+.rack-rail span {
+  display: block;
+  width: 3px;
+  height: 3px;
+  border-radius: 1px;
+  background: var(--color-rule-dark);
+}
+
+/* --- Comparison chrome ------------------------------------------------ */
+
+.variant-bar {
+  position: sticky;
+  top: 3.75rem;
+  z-index: 30;
+  background: var(--color-deep-3);
+  border-bottom: 1px solid var(--color-rule-dark);
+}
