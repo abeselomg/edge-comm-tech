@@ -35,56 +35,82 @@ export default async function JobPage({ params }: Props) {
   );
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
-      <Link href="/careers" className="font-mono text-xs uppercase tracking-widest text-gold">
-        ← All roles
-      </Link>
-      <p className="mt-6 font-mono text-xs uppercase tracking-widest text-steel">
-        {[job.team, job.location, TYPE_LABEL[job.type] ?? job.type].join(" · ")}
-      </p>
-      <h1 className="mt-3 font-display text-4xl md:text-5xl">{job.title}</h1>
-      <p className="mt-4 text-lg text-ink/80">{job.summary}</p>
+    <main>
+      <section className="dark-surface bg-deep text-paper">
+        <div className="wrap pb-16 pt-14 md:pb-20 md:pt-20">
+          <Link href="/careers" className="link-quiet text-[0.9375rem] text-paper/60">
+            All roles
+          </Link>
+          <h1 className="display display-lg mt-8 max-w-[16ch]">{job.title}</h1>
+          <p className="lede mt-6 text-paper/70">{job.summary}</p>
+        </div>
+      </section>
 
-      <RichText data={job.description} className="mt-10" />
+      <section className="band bg-paper">
+        <div className="wrap grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:gap-20">
+          <div>
+            <RichText data={job.description} />
 
-      {requirements.length > 0 ? (
-        <section className="mt-12">
-          <h2 className="font-display text-2xl">What we expect</h2>
-          <ul className="mt-5 space-y-2">
-            {requirements.map((r, i) => (
-              <li key={r.id ?? i} className="flex gap-3 text-ink/80">
-                <span className="text-gold">—</span>
-                <span>{r.item}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+            {requirements.length > 0 ? (
+              <section className="mt-14">
+                <h2 className="display display-md">What we expect</h2>
+                <ul className="mt-7 space-y-3">
+                  {requirements.map((r, i) => (
+                    <li key={r.id ?? i} className="relative measure pl-6 leading-relaxed text-ink-soft">
+                      <span className="absolute left-0 top-[0.72em] h-px w-3 bg-brass" aria-hidden />
+                      {r.item}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+          </div>
 
-      {courses.length > 0 ? (
-        <section className="mt-12 border border-rule bg-paper-2 p-6">
-          <h2 className="font-display text-xl">Watch these before you apply</h2>
-          <p className="mt-2 text-sm text-ink/70">
-            Free, no account needed. We reference this material in the interview.
-          </p>
-          <ul className="mt-4 space-y-2 text-sm">
-            {courses.map((c) => (
-              <li key={c.id}>
-                <Link href={`/academy/${c.slug}`} className="text-gold hover:underline">
-                  {c.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+          <aside className="h-fit lg:sticky lg:top-24">
+            <div className="card p-6">
+              <h2 className="display display-xs">The role</h2>
+              <dl className="mt-4">
+                <div className="spec">
+                  <dt>Team</dt>
+                  <dd>{job.team}</dd>
+                </div>
+                <div className="spec">
+                  <dt>Type</dt>
+                  <dd>{TYPE_LABEL[job.type] ?? job.type}</dd>
+                </div>
+                <div className="spec">
+                  <dt>Location</dt>
+                  <dd>{job.location}</dd>
+                </div>
+              </dl>
+              <Link href={`/contact?role=${job.slug}`} className="btn btn-brass mt-6 w-full">
+                Apply for this role
+              </Link>
+            </div>
 
-      <Link
-        href={`/contact?role=${job.slug}`}
-        className="mt-12 inline-block bg-gold px-5 py-3 font-mono text-xs uppercase tracking-widest text-white hover:bg-gold-2"
-      >
-        Apply for this role
-      </Link>
+            {courses.length > 0 ? (
+              <div className="card mt-5 p-6">
+                <h2 className="display display-xs">Watch before you apply</h2>
+                <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-soft">
+                  Free, no account needed. We reference this material in the interview.
+                </p>
+                <ul className="mt-4 space-y-2.5">
+                  {courses.map((c) => (
+                    <li key={c.id}>
+                      <Link
+                        href={`/academy/${c.slug}`}
+                        className="block border-l-2 border-brass pl-3 text-[0.9375rem] text-ink-soft transition-colors hover:text-teal"
+                      >
+                        {c.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </aside>
+        </div>
+      </section>
     </main>
   );
 }

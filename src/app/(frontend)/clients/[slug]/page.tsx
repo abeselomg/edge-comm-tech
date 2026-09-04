@@ -29,53 +29,62 @@ export default async function SectorPage({ params }: Props) {
   );
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
-      <Link href="/clients" className="font-mono text-xs uppercase tracking-widest text-gold">
-        ← All sectors
-      </Link>
-      <h1 className="mt-6 font-display text-4xl md:text-5xl">{sector.title}</h1>
-      <p className="mt-4 text-lg text-ink/80">{sector.line}</p>
+    <main>
+      <section className="dark-surface bg-deep text-paper">
+        <div className="wrap pb-16 pt-14 md:pb-20 md:pt-20">
+          <Link href="/clients" className="link-quiet text-[0.9375rem] text-paper/60">
+            All sectors
+          </Link>
+          <h1 className="display display-lg mt-8 max-w-[15ch]">{sector.title}</h1>
+          <p className="lede mt-6 text-paper/70">{sector.line}</p>
+        </div>
+      </section>
 
-      <RichText data={sector.body} className="mt-10" />
+      <section className="band bg-paper">
+        <div className="wrap grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:gap-20">
+          <div>
+            <RichText data={sector.body} />
 
-      {pressures.length > 0 ? (
-        <section className="mt-14">
-          <h2 className="font-display text-3xl">What makes this sector different</h2>
-          <dl className="mt-6 divide-y divide-ink/10 border-y border-ink/10">
-            {pressures.map((p) => (
-              <div key={p.id ?? p.title} className="py-5">
-                <dt className="font-display text-lg">{p.title}</dt>
-                <dd className="mt-2 text-ink/75">{p.detail}</dd>
+            {pressures.length > 0 ? (
+              <section className="mt-16">
+                <h2 className="display display-md">What makes this sector different</h2>
+                <dl className="mt-9">
+                  {pressures.map((p) => (
+                    <div key={p.id ?? p.title} className="border-t border-rule py-5">
+                      <dt className="display display-sm">{p.title}</dt>
+                      <dd className="measure mt-2 leading-relaxed text-ink-soft">{p.detail}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            ) : null}
+          </div>
+
+          <aside className="h-fit lg:sticky lg:top-24">
+            {solutions.length > 0 ? (
+              <div className="card p-6">
+                <h2 className="display display-xs">Domains most often engaged</h2>
+                <ul className="mt-4 space-y-2.5">
+                  {solutions.map((s) => (
+                    <li key={s.id}>
+                      <Link
+                        href={`/solutions/${s.slug}`}
+                        className="block border-l-2 border-brass pl-3 text-[0.9375rem] leading-relaxed text-ink-soft transition-colors hover:text-teal"
+                      >
+                        {s.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ))}
-          </dl>
-        </section>
-      ) : null}
+            ) : null}
 
-      {solutions.length > 0 ? (
-        <section className="mt-14">
-          <h2 className="font-display text-2xl">Domains most often engaged</h2>
-          <ul className="mt-5 flex flex-wrap gap-3">
-            {solutions.map((s) => (
-              <li key={s.id}>
-                <Link
-                  href={`/solutions/${s.slug}`}
-                  className="inline-block border border-rule bg-paper-2 px-4 py-2 text-sm hover:border-gold hover:text-gold"
-                >
-                  {s.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      <Link
-        href="/contact"
-        className="mt-12 inline-block bg-gold px-5 py-3 font-mono text-xs uppercase tracking-widest text-white hover:bg-gold-2"
-      >
-        Talk to an expert
-      </Link>
+            <Link href="/contact" className="btn btn-brass mt-5 w-full">
+              Talk to an expert
+            </Link>
+          </aside>
+        </div>
+      </section>
     </main>
   );
 }

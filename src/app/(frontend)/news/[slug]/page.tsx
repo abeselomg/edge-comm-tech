@@ -24,20 +24,29 @@ export default async function ArticlePage({ params }: Props) {
   if (!article) notFound();
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
-      <Link href="/news" className="font-mono text-xs uppercase tracking-widest text-gold">
-        ← Newsroom
-      </Link>
-      <p className="mt-6 font-mono text-xs uppercase tracking-widest text-steel">
-        {new Date(article.date).toLocaleDateString("en-GB", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })}
-      </p>
-      <h1 className="mt-3 font-display text-4xl md:text-5xl">{article.title}</h1>
-      <p className="mt-4 text-lg text-ink/80">{article.excerpt}</p>
-      <RichText data={article.body} className="mt-10" />
+    <main>
+      <section className="dark-surface bg-deep text-paper">
+        <div className="wrap pb-16 pt-14 md:pb-20 md:pt-20">
+          <Link href="/news" className="link-quiet text-[0.9375rem] text-paper/60">
+            Newsroom
+          </Link>
+          <time dateTime={article.date} className="data mt-8 block text-paper/55">
+            {new Date(article.date).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </time>
+          <h1 className="display display-lg mt-3 max-w-[18ch]">{article.title}</h1>
+          <p className="lede mt-6 text-paper/70">{article.excerpt}</p>
+        </div>
+      </section>
+
+      <section className="band bg-paper">
+        <div className="wrap-narrow">
+          <RichText data={article.body} />
+        </div>
+      </section>
     </main>
   );
 }

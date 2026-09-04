@@ -11,33 +11,45 @@ export default async function NewsPage() {
   const articles = await getNews();
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
-      <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">Newsroom</p>
-      <h1 className="mt-3 font-display text-5xl">News &amp; insight</h1>
+    <main>
+      <section className="dark-surface bg-deep text-paper">
+        <div className="wrap pb-20 pt-20 md:pb-24 md:pt-28">
+          <h1 className="display display-lg max-w-[14ch]">News &amp; insight</h1>
+        </div>
+      </section>
 
-      {articles.length === 0 ? (
-        <p className="mt-8 text-lg text-ink/70">Nothing published yet.</p>
-      ) : (
-        <ul className="mt-12 divide-y divide-ink/10 border-y border-ink/10">
-          {articles.map((a) => (
-            <li key={a.id} className="py-6">
-              <p className="font-mono text-xs uppercase tracking-widest text-steel">
-                {new Date(a.date).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-              <h2 className="mt-2 font-display text-2xl">
-                <Link href={`/news/${a.slug}`} className="hover:text-gold">
-                  {a.title}
-                </Link>
-              </h2>
-              <p className="mt-2 text-ink/75">{a.excerpt}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+      <section className="band bg-paper">
+        <div className="wrap">
+          {articles.length === 0 ? (
+            <p className="text-lg text-ink-soft">Nothing published yet.</p>
+          ) : (
+            <ul>
+              {articles.map((a) => (
+                <li key={a.id} className="border-t border-rule last:border-b">
+                  <Link
+                    href={`/news/${a.slug}`}
+                    className="group grid gap-3 py-9 md:grid-cols-[minmax(0,10rem)_minmax(0,1fr)] md:gap-10"
+                  >
+                    <time dateTime={a.date} className="data text-ink-soft md:pt-1.5">
+                      {new Date(a.date).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </time>
+                    <div>
+                      <h2 className="display display-sm transition-colors group-hover:text-teal">
+                        {a.title}
+                      </h2>
+                      <p className="measure mt-2.5 leading-relaxed text-ink-soft">{a.excerpt}</p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
     </main>
   );
 }

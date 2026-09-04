@@ -6,7 +6,9 @@ import type { Form } from "@/payload-types";
 type Field = NonNullable<Form["fields"]>[number];
 
 const INPUT =
-  "mt-1 w-full border border-rule bg-paper-2 px-3 py-2 focus:border-gold focus:outline-none";
+  "mt-1.5 w-full rounded border border-rule bg-paper-2 px-3.5 py-2.5 text-[0.9375rem] transition-colors focus:border-teal focus:outline-none";
+
+const LABEL = "block text-[0.9375rem] font-medium";
 
 /** Fields the form builder can produce that we render as a plain input. */
 const TEXTLIKE = new Set(["text", "email", "number"]);
@@ -48,17 +50,17 @@ export function ContactForm({
 
   if (state === "sent") {
     return (
-      <div className="mt-10 border border-gold bg-paper-2 p-6">
-        <p className="font-display text-2xl">{form.confirmationMessage ? "Thank you." : "Thank you."}</p>
-        <p className="mt-2 text-ink/75">
-          Your message has reached us. We reply to enquiries within one business day.
+      <div className="card border-l-2 border-l-brass p-7">
+        <h2 className="display display-sm">Thank you</h2>
+        <p className="mt-2.5 leading-relaxed text-ink-soft">
+          Your message has reached us. An engineer replies within one business day.
         </p>
       </div>
     );
   }
 
   return (
-    <form className="mt-10 space-y-5" onSubmit={onSubmit}>
+    <form className="space-y-5" onSubmit={onSubmit}>
       {(form.fields ?? []).map((field: Field) => {
         if (field.blockType === "message") return null;
         const label = ("label" in field && field.label) || field.name;
@@ -67,7 +69,7 @@ export function ContactForm({
 
         if (field.blockType === "textarea") {
           return (
-            <label key={field.id ?? field.name} className="block text-sm">
+            <label key={field.id ?? field.name} className={LABEL}>
               {label}
               <textarea
                 name={field.name}
@@ -82,7 +84,7 @@ export function ContactForm({
 
         if (field.blockType === "select") {
           return (
-            <label key={field.id ?? field.name} className="block text-sm">
+            <label key={field.id ?? field.name} className={LABEL}>
               {label}
               <select name={field.name} required={required} defaultValue={preset} className={INPUT}>
                 <option value="">Select…</option>
@@ -98,7 +100,7 @@ export function ContactForm({
 
         if (field.blockType === "checkbox") {
           return (
-            <label key={field.id ?? field.name} className="flex items-center gap-2 text-sm">
+            <label key={field.id ?? field.name} className="flex items-center gap-2.5 text-[0.9375rem]">
               <input type="checkbox" name={field.name} required={required} />
               {label}
             </label>
@@ -107,7 +109,7 @@ export function ContactForm({
 
         if (TEXTLIKE.has(field.blockType)) {
           return (
-            <label key={field.id ?? field.name} className="block text-sm">
+            <label key={field.id ?? field.name} className={LABEL}>
               {label}
               <input
                 type={field.blockType === "email" ? "email" : field.blockType === "number" ? "number" : "text"}
@@ -124,7 +126,7 @@ export function ContactForm({
       })}
 
       {state === "error" ? (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="rounded border border-red-300 bg-red-50 px-3.5 py-2.5 text-[0.9375rem] text-red-800">
           {error} Please try again, or email us directly.
         </p>
       ) : null}
@@ -132,7 +134,7 @@ export function ContactForm({
       <button
         type="submit"
         disabled={state === "sending"}
-        className="bg-gold px-5 py-3 font-mono text-xs uppercase tracking-widest text-white hover:bg-gold-2 disabled:opacity-60"
+        className="btn btn-brass disabled:opacity-60"
       >
         {state === "sending" ? "Sending…" : form.submitButtonLabel || "Send enquiry"}
       </button>

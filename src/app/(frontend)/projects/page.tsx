@@ -11,42 +11,71 @@ export default async function ProjectsPage() {
   const projects = await getProjects();
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-16">
-      <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">Delivered work</p>
-      <h1 className="mt-3 font-display text-5xl">Projects</h1>
+    <main>
+      <section className="dark-surface bg-deep text-paper">
+        <div className="wrap pb-20 pt-20 md:pb-24 md:pt-28">
+          <h1 className="display display-lg max-w-[12ch]">Delivered work</h1>
+          <p className="lede mt-7 text-paper/70">
+            Write-ups appear here once the client has agreed to be named. Everything else stays
+            between us and them.
+          </p>
+        </div>
+      </section>
 
-      {projects.length === 0 ? (
-        <p className="mt-8 max-w-2xl text-lg text-ink/70">
-          Project write-ups are published here once the client has agreed to be named. Ask us for
-          references relevant to your sector in the meantime.
-        </p>
-      ) : (
-        <ul className="mt-12 grid gap-px bg-ink/15 md:grid-cols-2">
-          {projects.map((p) => {
-            const sector = typeof p.sector === "object" && p.sector !== null ? p.sector : null;
-            return (
-              <li key={p.id} className="still p-7">
-                <p className="font-mono text-xs uppercase tracking-widest text-steel">
-                  {[p.client, p.year, sector?.title].filter(Boolean).join(" · ")}
-                </p>
-                <h2 className="mt-3 font-display text-2xl">
-                  <Link href={`/projects/${p.slug}`} className="hover:text-gold">
-                    {p.title}
-                  </Link>
-                </h2>
-                <p className="mt-3 text-sm text-ink/75">{p.scope}</p>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-
-      <Link
-        href="/contact"
-        className="mt-12 inline-block bg-gold px-5 py-3 font-mono text-xs uppercase tracking-widest text-white hover:bg-gold-2"
-      >
-        Ask for references
-      </Link>
+      <section className="band bg-paper">
+        <div className="wrap">
+          {projects.length === 0 ? (
+            <div className="card max-w-2xl p-8 md:p-10">
+              <h2 className="display display-sm">Nothing published yet</h2>
+              <p className="mt-3 leading-relaxed text-ink-soft">
+                We will not name a client before they have agreed to it. In the meantime we can put
+                you in touch with references relevant to your sector.
+              </p>
+              <Link href="/contact" className="btn btn-brass mt-7">
+                Ask for references
+              </Link>
+            </div>
+          ) : (
+            <ul>
+              {projects.map((p) => {
+                const sector = typeof p.sector === "object" && p.sector !== null ? p.sector : null;
+                return (
+                  <li key={p.id} className="border-t border-rule last:border-b">
+                    <Link
+                      href={`/projects/${p.slug}`}
+                      className="group grid gap-4 py-9 md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] md:gap-10"
+                    >
+                      <div>
+                        <p className="display display-sm">{p.client}</p>
+                        <dl className="mt-2 space-y-0.5">
+                          {p.year ? (
+                            <div className="flex gap-2">
+                              <dt className="sr-only">Year</dt>
+                              <dd className="data text-ink-soft">{p.year}</dd>
+                            </div>
+                          ) : null}
+                          {sector ? (
+                            <div className="flex gap-2">
+                              <dt className="sr-only">Sector</dt>
+                              <dd className="data text-ink-soft">{sector.title}</dd>
+                            </div>
+                          ) : null}
+                        </dl>
+                      </div>
+                      <div>
+                        <h2 className="text-[1.15rem] font-semibold transition-colors group-hover:text-teal">
+                          {p.title}
+                        </h2>
+                        <p className="measure mt-2 leading-relaxed text-ink-soft">{p.scope}</p>
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </section>
     </main>
   );
 }

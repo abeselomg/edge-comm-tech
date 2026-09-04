@@ -9,9 +9,9 @@ const CY = 550;
 const RINGS = [305, 465] as const;
 
 const FILTERS: { id: "all" | NonNullable<Partner["category"]>; label: string }[] = [
-  { id: "all", label: "All partners" },
-  { id: "data-center", label: "Data Center" },
-  { id: "cloud", label: "Cloud & Data" },
+  { id: "all", label: "All" },
+  { id: "data-center", label: "Data center" },
+  { id: "cloud", label: "Cloud & data" },
   { id: "network", label: "Network" },
   { id: "cyber", label: "Cybersecurity" },
   { id: "applications", label: "Applications" },
@@ -24,11 +24,7 @@ function polar(ring: 0 | 1, index: number, count: number) {
   return { x: CX + r * Math.cos(theta), y: CY + r * Math.sin(theta) };
 }
 
-export function PartnerNetwork({ partners, heading, intro }: {
-  partners: Partner[];
-  heading: string;
-  intro: string;
-}) {
+export function PartnerNetwork({ partners }: { partners: Partner[] }) {
   const [filter, setFilter] = useState<"all" | NonNullable<Partner["category"]>>("all");
 
   const nodes = useMemo(() => {
@@ -47,13 +43,20 @@ export function PartnerNetwork({ partners, heading, intro }: {
   }, [partners, filter]);
 
   const available = new Set(partners.map((p) => p.category));
+  const shown = nodes.filter((n) => n.active).length;
 
   return (
-    <div className="dark-surface bg-ink text-paper">
-      <div className="mx-auto max-w-6xl px-6 pt-16">
-        <h1 className="max-w-2xl font-display text-4xl leading-tight md:text-5xl">{heading}</h1>
-        <p className="font-caption mt-4 max-w-xl text-lg text-paper/65">{intro}</p>
-        <div className="mt-8 flex flex-wrap gap-x-4 gap-y-2 border-b border-white/15 pb-4">
+    <div className="dark-surface bg-deep text-paper">
+      <div className="wrap pb-16 pt-20 md:pb-0 md:pt-28">
+        <h1 className="display display-lg max-w-[15ch]">
+          The platforms we build on
+        </h1>
+        <p className="lede mt-7 text-paper/70">
+          We are certified across the vendors that run critical systems, and independent enough to
+          tell you when one of them is the wrong answer.
+        </p>
+
+        <div className="mt-10 hidden flex-wrap items-center gap-x-2 gap-y-2 border-t border-rule-dark pt-6 md:flex">
           {FILTERS.filter((f) => f.id === "all" || available.has(f.id)).map((item) => {
             const on = filter === item.id;
             return (
@@ -62,19 +65,33 @@ export function PartnerNetwork({ partners, heading, intro }: {
                 type="button"
                 onClick={() => setFilter(item.id)}
                 aria-pressed={on}
-                className={`font-caption text-sm ${on ? "text-paper underline decoration-gold underline-offset-4" : "text-paper/45 hover:text-paper"}`}
+                className={`rounded px-3 py-1.5 text-[0.9375rem] transition-colors ${
+                  on ? "bg-brass text-deep" : "text-paper/55 hover:text-paper"
+                }`}
               >
                 {item.label}
               </button>
             );
           })}
+          <p className="data ml-auto text-paper/45" aria-live="polite">
+            {shown} of {partners.length}
+          </p>
         </div>
       </div>
 
-      <div className="relative mx-auto aspect-square w-full max-w-[900px]">
+      <div className="relative mx-auto hidden aspect-square w-full max-w-[980px] px-4 md:block">
         <svg viewBox={`0 0 ${VB.w} ${VB.h}`} className="absolute inset-0 h-full w-full" aria-hidden>
           {RINGS.map((r) => (
-            <circle key={r} cx={CX} cy={CY} r={r} fill="none" stroke="white" strokeWidth="1" opacity="0.2" />
+            <circle
+              key={r}
+              cx={CX}
+              cy={CY}
+              r={r}
+              fill="none"
+              stroke="#c8963e"
+              strokeWidth="1"
+              opacity="0.22"
+            />
           ))}
           {nodes.map((n) => (
             <line
@@ -83,39 +100,35 @@ export function PartnerNetwork({ partners, heading, intro }: {
               y1={CY}
               x2={n.x}
               y2={n.y}
-              stroke="white"
+              stroke="#c8963e"
               strokeWidth="1"
-              opacity={n.active ? 0.35 : 0.06}
+              opacity={n.active ? 0.34 : 0.06}
             />
           ))}
-          <circle cx={CX} cy={CY} r="70" fill="#12151a" stroke="white" strokeWidth="1" />
+          <circle cx={CX} cy={CY} r="74" fill="#06231f" stroke="#c8963e" strokeWidth="1" />
         </svg>
-        <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 w-32 -translate-x-1/2 -translate-y-1/2 text-center">
-          <p className="font-caption text-sm italic">Edge</p>
-        </div>
+
+        <p
+          className="display pointer-events-none absolute left-1/2 top-1/2 w-36 -translate-x-1/2 -translate-y-1/2 text-center text-[0.9375rem] leading-tight"
+          aria-hidden
+        >
+          Edge
+        </p>
+
         {nodes.map((n) => (
           <article
             key={n.id}
-            className="absolute w-28 -translate-x-1/2 -translate-y-1/2 border border-white/20 bg-ink px-2 py-2 text-center transition-opacity md:w-32"
+            className="absolute w-[104px] -translate-x-1/2 -translate-y-1/2 rounded border border-rule-dark bg-deep-2 px-2 py-1.5 text-center transition-opacity lg:w-28"
             style={{
               left: `${(n.x / VB.w) * 100}%`,
               top: `${(n.y / VB.h) * 100}%`,
-              opacity: n.active ? 1 : 0.15,
+              opacity: n.active ? 1 : 0.14,
             }}
           >
-            <p className="text-[11px] font-medium md:text-xs">{n.name}</p>
-            <p className="font-caption mt-0.5 text-[10px] text-paper/50">{n.label}</p>
+            <p className="text-[0.75rem] font-medium md:text-[0.8125rem]">{n.name}</p>
+            <p className="data mt-0.5 text-[0.6875rem] text-paper/45">{n.label}</p>
           </article>
         ))}
-      </div>
-
-      <div className="mx-auto max-w-6xl px-6 pb-10">
-        <p className="caption-bar text-paper">
-          <span>Fig. 07 — Partner network</span>
-          <span>
-            {partners.length} vendors · two orbits, one hub
-          </span>
-        </p>
       </div>
     </div>
   );

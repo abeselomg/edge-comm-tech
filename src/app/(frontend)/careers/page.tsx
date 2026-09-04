@@ -4,8 +4,7 @@ import { getJobs } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Careers",
-  description:
-    "Engineering, operations, and internship roles at Edge COMM-TECH in Addis Ababa.",
+  description: "Engineering, operations, and internship roles at Edge COMM-TECH in Addis Ababa.",
 };
 
 const TYPE_LABEL: Record<string, string> = {
@@ -18,45 +17,65 @@ export default async function CareersPage() {
   const jobs = await getJobs();
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-16">
-      <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">Join us</p>
-      <h1 className="mt-3 font-display text-5xl">Careers</h1>
-      <p className="mt-4 max-w-2xl text-lg text-ink/80">
-        We hire engineers who want to be in the room when it is commissioned. Every open role links to the
-        E-Academy material we expect candidates to have watched before an interview.
-      </p>
-
-      {jobs.length === 0 ? (
-        <div className="mt-12 border border-rule bg-paper-2 p-8">
-          <h2 className="font-display text-2xl">No open roles right now</h2>
-          <p className="mt-3 max-w-xl text-ink/75">
-            We still read speculative applications, particularly from network, systems, and security
-            engineers. Send a CV through the contact form and tell us which domain interests you.
+    <main>
+      <section className="dark-surface bg-deep text-paper">
+        <div className="wrap pb-20 pt-20 md:pb-24 md:pt-28">
+          <h1 className="display display-lg max-w-[16ch]">Engineers who want to be in the room</h1>
+          <p className="lede mt-7 text-paper/70">
+            Every open role links to the E-Academy material we expect candidates to have watched
+            before an interview. It is free, and we reference it.
           </p>
-          <Link
-            href="/contact"
-            className="mt-6 inline-block bg-gold px-5 py-3 font-mono text-xs uppercase tracking-widest text-white hover:bg-gold-2"
-          >
-            Send a speculative application
-          </Link>
         </div>
-      ) : (
-        <ul className="mt-12 divide-y divide-ink/10 border-y border-ink/10">
-          {jobs.map((job) => (
-            <li key={job.id} className="py-6">
-              <p className="font-mono text-xs uppercase tracking-widest text-steel">
-                {[job.team, job.location, TYPE_LABEL[job.type] ?? job.type].join(" · ")}
+      </section>
+
+      <section className="band bg-paper">
+        <div className="wrap">
+          {jobs.length === 0 ? (
+            <div className="card max-w-2xl p-8 md:p-10">
+              <h2 className="display display-sm">No open roles right now</h2>
+              <p className="mt-3 leading-relaxed text-ink-soft">
+                We still read speculative applications, particularly from network, systems, and
+                security engineers. Send a CV and tell us which domain interests you.
               </p>
-              <h2 className="mt-2 font-display text-2xl">
-                <Link href={`/careers/jobs/${job.slug}`} className="hover:text-gold">
-                  {job.title}
-                </Link>
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm text-ink/75">{job.summary}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+              <Link href="/contact" className="btn btn-brass mt-7">
+                Send a speculative application
+              </Link>
+            </div>
+          ) : (
+            <ul>
+              {jobs.map((job) => (
+                <li key={job.id} className="border-t border-rule last:border-b">
+                  <Link
+                    href={`/careers/jobs/${job.slug}`}
+                    className="group grid gap-4 py-9 md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] md:gap-10"
+                  >
+                    <dl className="space-y-0.5">
+                      <div>
+                        <dt className="sr-only">Team</dt>
+                        <dd className="data text-brass">{job.team}</dd>
+                      </div>
+                      <div>
+                        <dt className="sr-only">Type</dt>
+                        <dd className="data text-ink-soft">{TYPE_LABEL[job.type] ?? job.type}</dd>
+                      </div>
+                      <div>
+                        <dt className="sr-only">Location</dt>
+                        <dd className="data text-ink-soft">{job.location}</dd>
+                      </div>
+                    </dl>
+                    <div>
+                      <h2 className="display display-sm transition-colors group-hover:text-teal">
+                        {job.title}
+                      </h2>
+                      <p className="measure mt-2.5 leading-relaxed text-ink-soft">{job.summary}</p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
     </main>
   );
 }

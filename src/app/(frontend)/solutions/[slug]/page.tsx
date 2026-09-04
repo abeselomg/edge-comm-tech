@@ -32,37 +32,36 @@ export default async function SolutionPage({ params }: Props) {
 
   return (
     <main>
-      <section className="dark-surface bg-ink px-6 py-20 text-paper">
-        <div className="mx-auto max-w-6xl">
-          <Link href="/solutions" className="font-mono text-xs uppercase tracking-widest text-gold-2">
-            ← All domains
+      <section className="dark-surface bg-deep text-paper">
+        <div className="wrap pb-16 pt-14 md:pb-20 md:pt-20">
+          <Link href="/solutions" className="link-quiet text-[0.9375rem] text-paper/60">
+            All domains
           </Link>
-          <h1 className="mt-6 max-w-3xl font-display text-4xl md:text-6xl">{domain.title}</h1>
-          <p className="mt-5 max-w-2xl font-display text-xl text-gold-2">{domain.headline}</p>
-          <p className="mt-4 max-w-2xl text-lg text-paper/75">{domain.summary}</p>
+          <h1 className="display display-lg mt-8 max-w-[16ch]">{domain.title}</h1>
+          <p className="display display-sm mt-6 max-w-[24ch] text-brass">{domain.headline}</p>
+          <p className="lede mt-6 text-paper/70">{domain.summary}</p>
         </div>
       </section>
 
-      <section className="bg-paper-2 px-6 py-16">
-        <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <section className="band bg-paper">
+        <div className="wrap grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:gap-20">
           <div>
             <RichText data={domain.overview} />
 
             {capabilities.length > 0 ? (
               <section className="mt-16">
-                <h2 className="font-display text-3xl">What this domain covers</h2>
-                <dl className="mt-8 divide-y divide-ink/10 border-y border-ink/10">
+                <h2 className="display display-md">What this domain covers</h2>
+                <p className="mt-3 max-w-[52ch] text-[0.9375rem] text-ink-soft">
+                  The industry terms, and what each one actually does for you.
+                </p>
+                <dl className="mt-9">
                   {capabilities.map((c) => (
-                    <div key={c.id ?? c.name} className="py-5">
+                    <div key={c.id ?? c.name} className="border-t border-rule py-5">
                       <dt className="flex flex-wrap items-baseline gap-x-3">
-                        <span className="font-display text-lg">{c.name}</span>
-                        {c.acronym ? (
-                          <span className="font-mono text-xs uppercase tracking-widest text-gold">
-                            {c.acronym}
-                          </span>
-                        ) : null}
+                        <span className="display display-sm">{c.name}</span>
+                        {c.acronym ? <span className="data text-brass">{c.acronym}</span> : null}
                       </dt>
-                      <dd className="mt-2 text-ink/75">{c.valueLine}</dd>
+                      <dd className="measure mt-2 leading-relaxed text-ink-soft">{c.valueLine}</dd>
                     </div>
                   ))}
                 </dl>
@@ -71,12 +70,11 @@ export default async function SolutionPage({ params }: Props) {
 
             {scope.length > 0 ? (
               <section className="mt-16">
-                <h2 className="font-display text-3xl">A typical engagement</h2>
-                <ol className="mt-6 space-y-3">
+                <h2 className="display display-md">A typical engagement</h2>
+                <ol className="thread-v mt-10">
                   {scope.map((s, i) => (
-                    <li key={s.id ?? i} className="flex gap-4">
-                      <span className="font-mono text-xs text-gold">{String(i + 1).padStart(2, "0")}</span>
-                      <span className="text-ink/80">{s.item}</span>
+                    <li key={s.id ?? i} className="measure leading-relaxed text-ink-soft">
+                      {s.item}
                     </li>
                   ))}
                 </ol>
@@ -86,13 +84,14 @@ export default async function SolutionPage({ params }: Props) {
 
           <aside className="h-fit lg:sticky lg:top-24">
             {deliverables.length > 0 ? (
-              <div className="still p-6">
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-steel">
-                  What you are handed
-                </p>
-                <ul className="mt-4 space-y-2 text-sm text-ink/80">
+              <div className="card p-6">
+                <h2 className="display display-xs">What you are handed</h2>
+                <ul className="mt-4 space-y-2.5">
                   {deliverables.map((d, i) => (
-                    <li key={d.id ?? i} className="border-l-2 border-gold pl-3">
+                    <li
+                      key={d.id ?? i}
+                      className="border-l-2 border-brass pl-3 text-[0.9375rem] leading-relaxed text-ink-soft"
+                    >
                       {d.item}
                     </li>
                   ))}
@@ -101,13 +100,11 @@ export default async function SolutionPage({ params }: Props) {
             ) : null}
 
             {partners.length > 0 ? (
-              <div className="still mt-6 p-6">
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-steel">
-                  Technologies we build on
-                </p>
-                <ul className="mt-4 flex flex-wrap gap-x-3 gap-y-1.5 text-sm text-ink/80">
+              <div className="card mt-5 p-6">
+                <h2 className="display display-xs">Built on</h2>
+                <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
                   {partners.map((p) => (
-                    <li key={p.id} className="font-caption">
+                    <li key={p.id} className="data text-ink-soft">
                       {p.name}
                     </li>
                   ))}
@@ -115,10 +112,7 @@ export default async function SolutionPage({ params }: Props) {
               </div>
             ) : null}
 
-            <Link
-              href={`/contact?domain=${domain.slug}`}
-              className="mt-6 block bg-gold px-5 py-3 text-center font-mono text-xs uppercase tracking-widest text-white hover:bg-gold-2"
-            >
+            <Link href={`/contact?domain=${domain.slug}`} className="btn btn-brass mt-5 w-full">
               Talk to an expert
             </Link>
           </aside>

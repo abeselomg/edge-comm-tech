@@ -17,78 +17,91 @@ export default async function CompanyPage() {
   const founded = company.founded;
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
-      <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">Company</p>
-      <h1 className="mt-3 font-display text-5xl">{company.heading}</h1>
-      <p className="mt-6 text-lg text-ink/80">{company.intro}</p>
-      <p className="mt-6 text-ink/80">{company.commitment}</p>
+    <main>
+      <section className="dark-surface bg-deep text-paper">
+        <div className="wrap pb-20 pt-20 md:pb-24 md:pt-28">
+          <h1 className="display display-lg max-w-[14ch]">{company.heading}</h1>
+          <p className="lede mt-7 text-paper/75">{company.intro}</p>
 
-      {founded?.verified && founded.year ? (
-        <p className="mt-6 font-caption text-steel">
-          Operating from Addis Ababa since {founded.year}.{founded.detail ? ` ${founded.detail}` : ""}
-        </p>
-      ) : null}
+          {founded?.verified && founded.year ? (
+            <p className="mt-5 text-[0.9375rem] text-paper/55">
+              Operating from Addis Ababa since {founded.year}.
+              {founded.detail ? ` ${founded.detail}` : ""}
+            </p>
+          ) : null}
 
-      {stats.length > 0 ? (
-        <div
-          className="mt-10 grid border border-rule"
-          style={{ gridTemplateColumns: `repeat(${Math.min(stats.length, 3)}, minmax(0, 1fr))` }}
-        >
-          {stats.map((item) => (
-            <div key={item.id ?? item.label} className="border-r border-rule px-4 py-6 last:border-r-0">
-              <p className="font-display text-2xl text-gold">{item.value}</p>
-              <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">
-                {item.label}
-              </p>
-            </div>
-          ))}
+          {stats.length > 0 ? (
+            <dl className="mt-14 flex flex-wrap gap-x-14 gap-y-6 border-t border-rule-dark pt-8">
+              {stats.map((item) => (
+                <div key={item.id ?? item.label}>
+                  <dt className="sr-only">{item.label}</dt>
+                  <dd>
+                    <span className="display display-md block">{item.value}</span>
+                    <span className="mt-1 block text-[0.9375rem] text-paper/55">{item.label}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
         </div>
-      ) : null}
+      </section>
 
-      <RichText data={company.body} className="mt-12" />
+      <section className="band bg-paper">
+        <div className="wrap-narrow">
+          <p className="lede max-w-none text-ink">{company.commitment}</p>
+          <RichText data={company.body} className="mt-10" />
+        </div>
+      </section>
 
       {values.length > 0 ? (
-        <section className="mt-14">
-          <h2 className="font-display text-3xl">What we hold ourselves to</h2>
-          <dl className="mt-8 divide-y divide-ink/10 border-y border-ink/10">
-            {values.map((v) => (
-              <div key={v.id ?? v.title} className="py-5">
-                <dt className="font-display text-lg">{v.title}</dt>
-                <dd className="mt-2 text-ink/75">{v.body}</dd>
-              </div>
-            ))}
-          </dl>
+        <section className="band bg-paper-2">
+          <div className="wrap">
+            <div className="grid gap-10 md:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] md:gap-16">
+              <h2 className="display display-md">What we hold ourselves to</h2>
+              <dl>
+                {values.map((v) => (
+                  <div key={v.id ?? v.title} className="border-t border-rule py-6 last:border-b">
+                    <dt className="display display-sm">{v.title}</dt>
+                    <dd className="measure mt-2.5 leading-relaxed text-ink-soft">{v.body}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
         </section>
       ) : null}
 
       {outcomes.length > 0 ? (
-        <section className="mt-14">
-          <h2 className="font-display text-3xl">What clients get</h2>
-          <ul className="mt-6 space-y-3 text-ink/80">
-            {outcomes.map((o, i) => (
-              <li key={o.id ?? i} className="flex gap-3">
-                <span className="text-gold">—</span>
-                <span>{o.item}</span>
-              </li>
-            ))}
-          </ul>
+        <section className="band bg-paper">
+          <div className="wrap">
+            <div className="grid gap-10 md:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] md:gap-16">
+              <h2 className="display display-md">What clients get</h2>
+              <ul className="space-y-3.5">
+                {outcomes.map((o, i) => (
+                  <li key={o.id ?? i} className="relative measure pl-6 leading-relaxed text-ink-soft">
+                    <span className="absolute left-0 top-[0.72em] h-px w-3 bg-brass" aria-hidden />
+                    {o.item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </section>
       ) : null}
 
-      <div className="mt-14 flex flex-wrap gap-4">
-        <Link
-          href="/solutions"
-          className="inline-block bg-gold px-5 py-3 font-mono text-xs uppercase tracking-widest text-white hover:bg-gold-2"
-        >
-          Explore solutions
-        </Link>
-        <Link
-          href="/careers"
-          className="inline-block border border-rule px-5 py-3 font-mono text-xs uppercase tracking-widest hover:border-gold hover:text-gold"
-        >
-          Work with us
-        </Link>
-      </div>
+      <section className="dark-surface band bg-deep text-paper">
+        <div className="wrap flex flex-wrap items-center justify-between gap-8">
+          <h2 className="display display-md max-w-[16ch]">Work with us, or come and work here</h2>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/contact" className="btn btn-brass">
+              Talk to an expert
+            </Link>
+            <Link href="/careers" className="btn btn-outline">
+              See open roles
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

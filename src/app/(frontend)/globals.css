@@ -1,20 +1,33 @@
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500&family=Zilla+Slab:ital,wght@0,400;0,600;1,400&display=swap");
 @import "tailwindcss";
 
+/*
+  Edge COMM-TECH design system.
+
+  Ground: deep teal, the colour of a server room at night.
+  Accent: brass — warm metal against cold teal, used for emphasis and never
+  for decoration. Aqua appears only as a live-status indicator, borrowed from
+  OM4 fibre, because it means something.
+  Paper: cool mineral, deliberately not cream.
+*/
+
 @theme {
-  --color-ink: #12151a;
-  --color-ink-2: #1c2128;
-  --color-paper: #e8eaed;
-  --color-paper-2: #ffffff;
-  --color-gold: #2b5ea7;
-  --color-gold-2: #4a7ec4;
-  --color-lamp: #8b93a0;
-  --color-steel: #6b7380;
-  --color-rule: #12151a22;
-  --font-display: "Outfit", "Segoe UI", sans-serif;
-  --font-sans: "Outfit", "Segoe UI", sans-serif;
-  --font-mono: "Spline Sans Mono", ui-monospace, monospace;
-  --font-caption: "Zilla Slab", "Georgia", serif;
+  --color-deep: #06231f;
+  --color-deep-2: #0a322c;
+  --color-deep-3: #10443c;
+  --color-teal: #14675c;
+  --color-brass: #c8963e;
+  --color-brass-soft: #e0b665;
+  --color-signal: #4fd1b9;
+  --color-paper: #ebf0ed;
+  --color-paper-2: #f7faf8;
+  --color-ink: #08201c;
+  --color-ink-soft: #3f5551;
+  --color-rule: #08201c1f;
+  --color-rule-dark: #ebf0ed26;
+
+  --font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --font-sans: var(--font-plex-sans), "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
 }
 
 html {
@@ -25,111 +38,478 @@ body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
 }
 
-.font-display {
-  letter-spacing: -0.04em;
-  font-weight: 600;
+/* ---------------------------------------------------------------- type */
+
+/*
+  Archivo carries a width axis. Headlines run expanded and heavy with tight
+  tracking; that width is the voice of the page, so it is set here once
+  rather than guessed per component.
+*/
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-stretch: 115%;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  text-wrap: balance;
 }
 
-.font-caption {
-  font-family: var(--font-caption);
-  font-style: italic;
+.display-lg {
+  font-size: clamp(2.6rem, 6.4vw, 5.25rem);
 }
 
-.frame {
-  display: flex;
-  min-height: 85vh;
-  flex-direction: column;
+.display-md {
+  font-size: clamp(2rem, 3.8vw, 3.1rem);
 }
 
-.caption-bar {
-  margin-top: auto;
+.display-sm {
+  font-size: clamp(1.45rem, 2.1vw, 1.85rem);
+  font-stretch: 108%;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+}
+
+.display-xs {
+  font-size: 1.125rem;
+  font-stretch: 105%;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+/* Measured values, codes, and specification strings. Never a decorative label. */
+.data {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.lede {
+  font-size: clamp(1.125rem, 1.6vw, 1.3rem);
+  line-height: 1.55;
+  max-width: 34em;
+}
+
+.measure {
+  max-width: 68ch;
+}
+
+/* --------------------------------------------------------------- layout */
+
+.wrap {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.wrap-narrow {
+  width: 100%;
+  max-width: 52rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.band {
+  padding-block: clamp(4rem, 9vw, 7.5rem);
+}
+
+.band-tight {
+  padding-block: clamp(2.75rem, 5vw, 4rem);
+}
+
+/* --------------------------------------------------------------- register
+
+  The domain register. An ordered index of capability, in the shape of a
+  drawing register from a commissioning pack — sheet number, title, scope.
+  It is a genuine ordered list, which is what earns the numerals.
+*/
+
+.register-row {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.5rem 1rem;
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--color-rule-dark);
+  align-items: start;
+  transition: background-color 0.18s ease;
+}
+
+/* Stacked on small screens: the description sits under the title, not beside it. */
+.register-row > :nth-child(3) {
+  grid-column: 2;
+}
+
+.register-row:last-child {
+  border-bottom: 1px solid var(--color-rule-dark);
+}
+
+.register-num {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--color-brass);
+  padding-top: 0.35rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 900px) {
+  .register-row {
+    grid-template-columns: 3.25rem minmax(0, 19rem) minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-block: 1.75rem;
+    align-items: baseline;
+  }
+
+  .register-row > :nth-child(3) {
+    grid-column: auto;
+  }
+}
+
+a.register-row:hover {
+  background-color: #ebf0ed0a;
+}
+
+/* ---------------------------------------------------------------- thread
+
+  The delivery sequence. A single line threading four stages, because the
+  stages genuinely run in order.
+*/
+
+.thread {
+  position: relative;
+  display: grid;
+  gap: 2.5rem;
+}
+
+.thread::before {
+  content: "";
+  position: absolute;
+  background: linear-gradient(to bottom, transparent, var(--color-brass) 12%, var(--color-brass) 88%, transparent);
+  left: 0.3125rem;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+.thread-step {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.thread-step::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  width: 0.6875rem;
+  height: 0.6875rem;
+  border-radius: 50%;
+  background: var(--dot-bg, var(--color-paper));
+  border: 1px solid var(--color-brass);
+}
+
+@media (min-width: 860px) {
+  .thread {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .thread::before {
+    left: 0;
+    right: 0;
+    top: 0.5rem;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-brass) 8%, var(--color-brass) 92%, transparent);
+  }
+
+  .thread-step {
+    padding-left: 0;
+    padding-top: 2.25rem;
+  }
+
+  .thread-step::before {
+    top: 0.14rem;
+  }
+}
+
+/* Always-vertical variant, for sequences longer than four steps. */
+.thread-v {
+  position: relative;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.thread-v::before {
+  content: "";
+  position: absolute;
+  left: 0.3125rem;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--color-brass) 10%, var(--color-brass) 90%, transparent);
+}
+
+.thread-v > li {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.thread-v > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  width: 0.6875rem;
+  height: 0.6875rem;
+  border-radius: 50%;
+  background: var(--dot-bg, var(--color-paper));
+  border: 1px solid var(--color-brass);
+}
+
+/* The dot masks the thread line, so it has to match whatever it sits on. */
+.bg-paper-2 .thread-v,
+.bg-paper-2 .thread,
+.card .thread-v,
+.card .thread {
+  --dot-bg: var(--color-paper-2);
+}
+
+.dark-surface .thread-v,
+.dark-surface .thread {
+  --dot-bg: var(--color-deep);
+}
+
+/* ---------------------------------------------------------------- pieces */
+
+.card {
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-rule);
+  border-radius: 6px;
+}
+
+.card-dark {
+  background: var(--color-deep-2);
+  border: 1px solid var(--color-rule-dark);
+  border-radius: 6px;
+}
+
+/* Label and value, the way a spec sheet pairs them. */
+.spec {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  border-top: 1px solid currentColor;
-  padding: 0.7rem 0 0;
-  font-family: var(--font-caption);
-  font-size: 0.8rem;
-  font-style: italic;
-  opacity: 0.75;
+  gap: 1.5rem;
+  padding-block: 0.6rem;
+  border-bottom: 1px solid var(--color-rule);
 }
 
-.still {
-  border: 1px solid rgb(18 21 26 / 0.18);
-  background: var(--color-paper-2);
+.spec:last-child {
+  border-bottom: 0;
+}
+
+.spec dt {
+  color: var(--color-ink-soft);
+  font-size: 0.9375rem;
+}
+
+.spec dd {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  text-align: right;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 0.8125rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.btn-brass {
+  background: var(--color-brass);
+  color: var(--color-deep);
+}
+
+.btn-brass:hover {
+  background: var(--color-brass-soft);
+}
+
+.btn-outline {
+  border: 1px solid var(--color-rule-dark);
+  color: inherit;
+}
+
+.btn-outline:hover {
+  border-color: var(--color-brass);
+  color: var(--color-brass);
+}
+
+.btn-outline-ink {
+  border: 1px solid var(--color-rule);
+  color: inherit;
+}
+
+.btn-outline-ink:hover {
+  border-color: var(--color-teal);
+  color: var(--color-teal);
+}
+
+/* A live indicator. Aqua earns its place only here. */
+.status-dot {
+  display: inline-block;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 50%;
+  background: var(--color-signal);
+  vertical-align: 0.08em;
+}
+
+.link-quiet {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  transition: text-decoration-color 0.16s ease;
+}
+
+.link-quiet:hover {
+  text-decoration-color: currentColor;
+}
+
+/* ------------------------------------------------------------- rich text */
+
+.prose-edge {
+  color: var(--color-ink-soft);
+  max-width: 68ch;
+}
+
+.prose-edge > * + * {
+  margin-top: 1.5em;
+}
+
+.prose-edge h2 {
+  margin-top: 2.4em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-stretch: 108%;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-ink);
+}
+
+.prose-edge h3 {
+  margin-top: 1.9em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-stretch: 105%;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+.prose-edge ul,
+.prose-edge ol {
+  padding-left: 1.15rem;
+}
+
+.prose-edge ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.prose-edge ul li {
+  position: relative;
+  padding-left: 1.35rem;
+}
+
+.prose-edge ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--color-brass);
+}
+
+.prose-edge ol {
+  list-style: decimal;
+}
+
+.prose-edge li + li {
+  margin-top: 0.5em;
+}
+
+.prose-edge a {
+  color: var(--color-teal);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.prose-edge strong {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.prose-edge blockquote {
+  border-left: 2px solid var(--color-brass);
+  padding-left: 1.15rem;
+  color: var(--color-ink);
+}
+
+.prose-edge code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: #08201c0f;
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+.dark-surface .prose-edge {
+  color: #ebf0edcc;
+}
+
+.dark-surface .prose-edge :is(h2, h3, strong, blockquote) {
+  color: var(--color-paper);
+}
+
+.dark-surface .prose-edge a {
+  color: var(--color-brass-soft);
+}
+
+.dark-surface .prose-edge code {
+  background: #ebf0ed14;
+}
+
+/* ------------------------------------------------------------ a11y/motion */
+
+:focus-visible {
+  outline: 2px solid var(--color-brass);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
-
-:focus-visible {
-  outline: 2px solid var(--color-gold);
-  outline-offset: 3px;
-}
-
-/* Rich text coming from the CMS. Matches the rhythm of hand-written page copy. */
-.prose-edge {
-  color: rgb(18 21 26 / 0.8);
-  line-height: 1.7;
-}
-
-.prose-edge > * + * {
-  margin-top: 1.1em;
-}
-
-.prose-edge h2 {
-  margin-top: 2.2em;
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  color: var(--color-ink);
-}
-
-.prose-edge h3 {
-  margin-top: 1.8em;
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--color-ink);
-}
-
-.prose-edge ul,
-.prose-edge ol {
-  padding-left: 1.25rem;
-}
-
-.prose-edge ul { list-style: disc; }
-.prose-edge ol { list-style: decimal; }
-.prose-edge li + li { margin-top: 0.4em; }
-
-.prose-edge a {
-  color: var(--color-gold);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.prose-edge strong { font-weight: 600; color: var(--color-ink); }
-
-.prose-edge blockquote {
-  border-left: 3px solid var(--color-gold);
-  padding-left: 1rem;
-  font-family: var(--font-caption);
-  font-style: italic;
-}
-
-.prose-edge code {
-  font-family: var(--font-mono);
-  font-size: 0.9em;
-  background: rgb(18 21 26 / 0.06);
-  padding: 0.1em 0.35em;
-}
-
-.dark-surface .prose-edge { color: rgb(232 234 237 / 0.8); }
-.dark-surface .prose-edge :is(h2, h3, strong) { color: var(--color-paper); }

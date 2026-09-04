@@ -26,73 +26,95 @@ export default async function ContactPage({ searchParams }: Props) {
   if (role) defaults.message = `I would like to apply for the ${role.replace(/-/g, " ")} role.`;
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-16">
-      <div className="grid gap-14 md:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="max-w-xl">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">Contact</p>
-          <h1 className="mt-3 font-display text-5xl">Talk to an expert</h1>
-          <p className="mt-4 text-ink/80">
-            Tell us what you are trying to stand up, replace, or secure. An engineer replies — not a
+    <main>
+      <section className="dark-surface bg-deep text-paper">
+        <div className="wrap pb-16 pt-20 md:pb-20 md:pt-28">
+          <h1 className="display display-lg max-w-[14ch]">Talk to an expert</h1>
+          <p className="lede mt-7 text-paper/70">
+            Tell us what you are trying to stand up, replace, or secure. An engineer replies, not a
             sales queue.
           </p>
           {selected ? (
-            <p className="mt-4 border-l-2 border-gold pl-3 font-caption text-ink/75">
-              About {selected.title}.
+            <p className="mt-5 border-l-2 border-brass pl-4 text-paper/60">
+              Your enquiry will be tagged to {selected.title}.
             </p>
           ) : null}
-
-          {form ? (
-            <ContactForm form={form} defaults={defaults} />
-          ) : (
-            <p className="mt-10 border border-rule bg-paper-2 p-6 text-ink/75">
-              The contact form has not been set up yet. An administrator can create a form titled
-              &ldquo;Contact&rdquo; in the CMS under Site → Forms.
-            </p>
-          )}
         </div>
+      </section>
 
-        <aside className="h-fit md:sticky md:top-24">
-          <div className="still p-6">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-steel">Reach us</p>
-            {showContact ? (
-              <ul className="mt-4 space-y-3 text-sm text-ink/80">
-                {contact?.phone ? (
-                  <li>
-                    <a href={`tel:${contact.phone.replace(/\s+/g, "")}`} className="hover:text-gold">
-                      {contact.phone}
-                    </a>
-                  </li>
-                ) : null}
-                {contact?.secondaryPhone ? (
-                  <li>
-                    <a
-                      href={`tel:${contact.secondaryPhone.replace(/\s+/g, "")}`}
-                      className="hover:text-gold"
-                    >
-                      {contact.secondaryPhone}
-                    </a>
-                  </li>
-                ) : null}
-                {contact?.email ? (
-                  <li>
-                    <a href={`mailto:${contact.email}`} className="hover:text-gold">
-                      {contact.email}
-                    </a>
-                  </li>
-                ) : null}
-                {contact?.address ? (
-                  <li className="whitespace-pre-line text-ink/70">{contact.address}</li>
-                ) : null}
-              </ul>
+      <section className="band bg-paper">
+        <div className="wrap grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:gap-20">
+          <div className="max-w-xl">
+            {form ? (
+              <ContactForm form={form} defaults={defaults} />
             ) : (
-              <p className="mt-4 text-sm text-ink/70">
-                Use the form and we will reply by email. Direct phone and office details are published
-                here once confirmed.
-              </p>
+              <div className="card p-8">
+                <h2 className="display display-xs">The form is not set up yet</h2>
+                <p className="mt-3 leading-relaxed text-ink-soft">
+                  An administrator can create a form titled &ldquo;Contact&rdquo; in the CMS under
+                  Site → Forms.
+                </p>
+              </div>
             )}
           </div>
-        </aside>
-      </div>
+
+          <aside className="h-fit lg:sticky lg:top-24">
+            <div className="card p-6">
+              <h2 className="display display-xs">Reach us</h2>
+              {showContact ? (
+                <ul className="mt-4 space-y-3">
+                  {contact?.phone ? (
+                    <li>
+                      <a
+                        href={`tel:${contact.phone.replace(/\s+/g, "")}`}
+                        className="link-quiet text-teal"
+                      >
+                        {contact.phone}
+                      </a>
+                    </li>
+                  ) : null}
+                  {contact?.secondaryPhone ? (
+                    <li>
+                      <a
+                        href={`tel:${contact.secondaryPhone.replace(/\s+/g, "")}`}
+                        className="link-quiet text-teal"
+                      >
+                        {contact.secondaryPhone}
+                      </a>
+                    </li>
+                  ) : null}
+                  {contact?.email ? (
+                    <li>
+                      <a href={`mailto:${contact.email}`} className="link-quiet text-teal">
+                        {contact.email}
+                      </a>
+                    </li>
+                  ) : null}
+                  {contact?.address ? (
+                    <li className="whitespace-pre-line text-[0.9375rem] leading-relaxed text-ink-soft">
+                      {contact.address}
+                    </li>
+                  ) : null}
+                </ul>
+              ) : (
+                <p className="mt-3 text-[0.9375rem] leading-relaxed text-ink-soft">
+                  Use the form and we will reply by email. Direct phone and office details are
+                  published here once confirmed.
+                </p>
+              )}
+            </div>
+
+            <div className="card mt-5 p-6">
+              <h2 className="display display-xs">What happens next</h2>
+              <ol className="thread-v mt-5 text-[0.9375rem] leading-relaxed text-ink-soft">
+                <li>An engineer reads it, not a sales queue.</li>
+                <li>We reply within one business day.</li>
+                <li>If it is a fit, we book a scoping call.</li>
+              </ol>
+            </div>
+          </aside>
+        </div>
+      </section>
     </main>
   );
 }
