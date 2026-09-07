@@ -207,7 +207,7 @@ color:#bfe4fb;box-shadow:0 10px 28px rgba(0,6,16,.6)}
 background .16s,transform .16s}
 
 /* ---- category filter ---- */
-.fx{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.catin{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .filter-bar{margin-top:30px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .filter-bar label{cursor:pointer;display:inline-flex;align-items:center;gap:9px;
 padding:8px 15px;border-radius:9px;background:rgba(255,255,255,.045);
@@ -256,6 +256,40 @@ outline:2px solid var(--blue-glow);outline-offset:2px}
 #f-rck:checked~.logos figure:not(.c-rck){opacity:.16;filter:grayscale(1)}
 #f-rck:checked~.tally .t-rck{display:block}
 #f-all:checked~.tally .t-all{display:block}
+
+/* ---- animated network mesh (partners hero) ---- */
+.netfield{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+/* The mesh is the structure on this hero, so the ambient arcs step back. */
+.hero-net .arcs{opacity:.22}
+.netviz{position:absolute;inset:0;width:100%;height:100%;
+/* Fade the mesh out behind the headline so the type never fights it. */
+-webkit-mask-image:radial-gradient(62% 64% at 33% 48%,
+  transparent 8%,rgba(0,0,0,.5) 40%,#000 74%);
+mask-image:radial-gradient(62% 64% at 33% 48%,
+  transparent 8%,rgba(0,0,0,.5) 40%,#000 74%)}
+
+.wire{stroke:rgba(120,190,240,.17);stroke-width:1}
+.pulse{stroke:var(--blue-glow);stroke-width:1.9;stroke-linecap:round;
+stroke-dasharray:14 200;animation:flow var(--d,5s) linear var(--dl,0s) infinite}
+.pulses{filter:drop-shadow(0 0 5px rgba(122,212,255,.85))}
+.dot{fill:#7fc6f0;opacity:.5}
+.dot.lit{fill:#d6f1ff;opacity:.9;animation:breathe 4.6s ease-in-out var(--dl,0s) infinite}
+.dots{filter:drop-shadow(0 0 6px rgba(63,184,245,.7))}
+.ping{fill:none;stroke:var(--blue-lift);stroke-width:1.2;transform-origin:center;
+animation:ping 7.2s ease-out var(--dl,0s) infinite}
+
+@keyframes flow{from{stroke-dashoffset:14}to{stroke-dashoffset:-100}}
+@keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes ping{
+  0%{r:3;opacity:.75}
+  55%{r:52;opacity:0}
+  100%{r:52;opacity:0}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .pulse,.dot.lit,.ping{animation:none}
+  .ping{opacity:.25}
+}
 
 /* ---- section anatomy (Span's) ---- */
 section{position:relative}
@@ -385,7 +419,7 @@ border:1px solid var(--line);color:var(--muted);transition:border-color .15s,col
 
 
 <main>
-  <section class="hero hero-about">
+  <section class="hero hero-about hero-net">
     <svg class="arcs" viewBox="0 0 1700 700" fill="none" aria-hidden="true">
 <ellipse cx="850" cy="330" rx="520" ry="300"
 stroke="rgba(255,255,255,0.07)" stroke-width="1"/><ellipse cx="850" cy="336" rx="640" ry="366"
@@ -394,227 +428,89 @@ stroke="rgba(255,255,255,0.04800000000000001)" stroke-width="1"/><ellipse cx="85
 stroke="rgba(255,255,255,0.037000000000000005)" stroke-width="1"/><ellipse cx="850" cy="354" rx="1000" ry="564"
 stroke="rgba(255,255,255,0.02600000000000001)" stroke-width="1"/>
 </svg>
-    <div class="heroviz" aria-hidden="true"><span class="fx" style="left:5%;top:4%;width:132px;height:132px;opacity:0.42;--r:-6deg;--dur:15s;--del:0s"><svg viewBox="0 0 100 100" aria-hidden="true"><defs>
-<linearGradient id="t0" x1="0" y1="0" x2="0.55" y2="1">
-<stop offset="0" stop-color="#d8f2ff"/><stop offset="1" stop-color="#74c9f6"/></linearGradient>
-<linearGradient id="l0" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#2a97d6"/><stop offset="1" stop-color="#10559a"/></linearGradient>
-<linearGradient id="r0" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#11619f"/><stop offset="1" stop-color="#07305f"/></linearGradient>
-<radialGradient id="s0" cx="0.34" cy="0.28" r="0.84">
-<stop offset="0" stop-color="#f0fbff"/><stop offset="0.44" stop-color="#56c2f2"/>
-<stop offset="1" stop-color="#0a3c74"/></radialGradient>
-<linearGradient id="g0" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-<radialGradient id="sh0" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0" stop-color="#01070f" stop-opacity=".6"/>
-<stop offset="1" stop-color="#01070f" stop-opacity="0"/></radialGradient>
-</defs><ellipse cx="50" cy="90" rx="30" ry="8" fill="url(#sh0)"/>
-
-<path d="M50,48.5 L77,62 L50,75.5 L23,62 Z" fill="url(#t0)"/>
-<path d="M23,62 L50,75.5 L50,86.5 L23,73 Z" fill="url(#l0)"/>
-<path d="M77,62 L50,75.5 L50,86.5 L77,73 Z" fill="url(#r0)"/>
-
-<path d="M50,32.5 L77,46 L50,59.5 L23,46 Z" fill="url(#t0)"/>
-<path d="M23,46 L50,59.5 L50,70.5 L23,57 Z" fill="url(#l0)"/>
-<path d="M77,46 L50,59.5 L50,70.5 L77,57 Z" fill="url(#r0)"/>
-
-<path d="M50,16.5 L77,30 L50,43.5 L23,30 Z" fill="url(#t0)"/>
-<path d="M23,30 L50,43.5 L50,54.5 L23,41 Z" fill="url(#l0)"/>
-<path d="M77,30 L50,43.5 L50,54.5 L77,41 Z" fill="url(#r0)"/>
-<path d="M50,20 L68,29 L50,38 L32,29 Z" fill="url(#g0)" opacity=".55"/>
-<path d="M30,56 h8 M30,40 h8" stroke="#bfe8ff" stroke-width="1.6" stroke-linecap="round" opacity=".5"/></svg></span><span class="fx" style="left:80%;top:5%;width:132px;height:132px;opacity:0.42;--r:5deg;--dur:12s;--del:1.7s"><svg viewBox="0 0 100 100" aria-hidden="true"><defs>
-<linearGradient id="t1" x1="0" y1="0" x2="0.55" y2="1">
-<stop offset="0" stop-color="#d8f2ff"/><stop offset="1" stop-color="#74c9f6"/></linearGradient>
-<linearGradient id="l1" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#2a97d6"/><stop offset="1" stop-color="#10559a"/></linearGradient>
-<linearGradient id="r1" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#11619f"/><stop offset="1" stop-color="#07305f"/></linearGradient>
-<radialGradient id="s1" cx="0.34" cy="0.28" r="0.84">
-<stop offset="0" stop-color="#f0fbff"/><stop offset="0.44" stop-color="#56c2f2"/>
-<stop offset="1" stop-color="#0a3c74"/></radialGradient>
-<linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-<radialGradient id="sh1" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0" stop-color="#01070f" stop-opacity=".6"/>
-<stop offset="1" stop-color="#01070f" stop-opacity="0"/></radialGradient>
-</defs><ellipse cx="50" cy="88" rx="30" ry="8" fill="url(#sh1)"/>
-<path d="M50,34 L28,60 M50,34 L72,60 M34,70 L66,70" stroke="#7fd2ff" stroke-width="1.8"
-stroke-linecap="round" opacity=".55" fill="none"/>
-
-<path d="M50,17 L64,24 L50,31 L36,24 Z" fill="url(#t1)"/>
-<path d="M36,24 L50,31 L50,41 L36,34 Z" fill="url(#l1)"/>
-<path d="M64,24 L50,31 L50,41 L64,34 Z" fill="url(#r1)"/>
-
-<path d="M27,51 L41,58 L27,65 L13,58 Z" fill="url(#t1)"/>
-<path d="M13,58 L27,65 L27,75 L13,68 Z" fill="url(#l1)"/>
-<path d="M41,58 L27,65 L27,75 L41,68 Z" fill="url(#r1)"/>
-
-<path d="M73,51 L87,58 L73,65 L59,58 Z" fill="url(#t1)"/>
-<path d="M59,58 L73,65 L73,75 L59,68 Z" fill="url(#l1)"/>
-<path d="M87,58 L73,65 L73,75 L87,68 Z" fill="url(#r1)"/></svg></span><span class="fx" style="left:22%;top:20%;width:138px;height:138px;opacity:0.24;--r:-8deg;--dur:16s;--del:0.4s"><svg viewBox="0 0 100 100" aria-hidden="true"><defs>
-<linearGradient id="t2" x1="0" y1="0" x2="0.55" y2="1">
-<stop offset="0" stop-color="#d8f2ff"/><stop offset="1" stop-color="#74c9f6"/></linearGradient>
-<linearGradient id="l2" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#2a97d6"/><stop offset="1" stop-color="#10559a"/></linearGradient>
-<linearGradient id="r2" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#11619f"/><stop offset="1" stop-color="#07305f"/></linearGradient>
-<radialGradient id="s2" cx="0.34" cy="0.28" r="0.84">
-<stop offset="0" stop-color="#f0fbff"/><stop offset="0.44" stop-color="#56c2f2"/>
-<stop offset="1" stop-color="#0a3c74"/></radialGradient>
-<linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-<radialGradient id="sh2" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0" stop-color="#01070f" stop-opacity=".6"/>
-<stop offset="1" stop-color="#01070f" stop-opacity="0"/></radialGradient>
-</defs><ellipse cx="50" cy="90" rx="24" ry="7" fill="url(#sh2)"/>
-<path d="M50,15 L75,25 v23 c0,16 -12,27 -25,34 -13,-7 -25,-18 -25,-34 V25 Z"
-transform="translate(4,4)" fill="url(#r2)"/>
-<path d="M50,15 L75,25 v23 c0,16 -12,27 -25,34 -13,-7 -25,-18 -25,-34 V25 Z" fill="url(#s2)"/>
-<path d="M50,15 L75,25 v6 c0,4 -12,8 -25,8 -13,0 -25,-4 -25,-8 v-6 Z" fill="url(#g2)" opacity=".75"/>
-<path d="M39,47 l8,8 15,-17" stroke="#f0fbff" stroke-width="4" fill="none"
-stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="fx" style="left:65%;top:21%;width:138px;height:138px;opacity:0.24;--r:6deg;--dur:13s;--del:2.6s"><svg viewBox="0 0 100 100" aria-hidden="true"><defs>
-<linearGradient id="t3" x1="0" y1="0" x2="0.55" y2="1">
-<stop offset="0" stop-color="#d8f2ff"/><stop offset="1" stop-color="#74c9f6"/></linearGradient>
-<linearGradient id="l3" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#2a97d6"/><stop offset="1" stop-color="#10559a"/></linearGradient>
-<linearGradient id="r3" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#11619f"/><stop offset="1" stop-color="#07305f"/></linearGradient>
-<radialGradient id="s3" cx="0.34" cy="0.28" r="0.84">
-<stop offset="0" stop-color="#f0fbff"/><stop offset="0.44" stop-color="#56c2f2"/>
-<stop offset="1" stop-color="#0a3c74"/></radialGradient>
-<linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-<radialGradient id="sh3" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0" stop-color="#01070f" stop-opacity=".6"/>
-<stop offset="1" stop-color="#01070f" stop-opacity="0"/></radialGradient>
-</defs><ellipse cx="50" cy="84" rx="32" ry="8" fill="url(#sh3)"/>
-<ellipse cx="50" cy="62" rx="36" ry="18" fill="none" stroke="url(#r3)" stroke-width="8"/>
-<ellipse cx="50" cy="58" rx="36" ry="18" fill="none" stroke="url(#l3)" stroke-width="7"/>
-<ellipse cx="50" cy="54" rx="36" ry="18" fill="none" stroke="url(#t3)" stroke-width="3.4"/>
-<ellipse cx="50" cy="54" rx="20" ry="10" fill="none" stroke="#a7e2ff" stroke-width="2.6" opacity=".8"/>
-<ellipse cx="50" cy="54" rx="7" ry="3.5" fill="url(#t3)"/></svg></span><span class="fx" style="left:0%;top:44%;width:170px;height:170px;opacity:0.62;--r:-3deg;--dur:17s;--del:1.1s"><svg viewBox="0 0 100 100" aria-hidden="true"><defs>
-<linearGradient id="t4" x1="0" y1="0" x2="0.55" y2="1">
-<stop offset="0" stop-color="#d8f2ff"/><stop offset="1" stop-color="#74c9f6"/></linearGradient>
-<linearGradient id="l4" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#2a97d6"/><stop offset="1" stop-color="#10559a"/></linearGradient>
-<linearGradient id="r4" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#11619f"/><stop offset="1" stop-color="#07305f"/></linearGradient>
-<radialGradient id="s4" cx="0.34" cy="0.28" r="0.84">
-<stop offset="0" stop-color="#f0fbff"/><stop offset="0.44" stop-color="#56c2f2"/>
-<stop offset="1" stop-color="#0a3c74"/></radialGradient>
-<linearGradient id="g4" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-<radialGradient id="sh4" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0" stop-color="#01070f" stop-opacity=".6"/>
-<stop offset="1" stop-color="#01070f" stop-opacity="0"/></radialGradient>
-</defs><ellipse cx="50" cy="90" rx="26" ry="7" fill="url(#sh4)"/>
-<circle cx="50" cy="48" r="33" fill="url(#s4)"/>
-<ellipse cx="50" cy="48" rx="33" ry="12" fill="none" stroke="#d7f2ff" stroke-width="1.4" opacity=".55"/>
-<ellipse cx="50" cy="48" rx="14" ry="33" fill="none" stroke="#d7f2ff" stroke-width="1.4" opacity=".45"/>
-<ellipse cx="50" cy="48" rx="27" ry="33" fill="none" stroke="#d7f2ff" stroke-width="1.1" opacity=".28"/>
-<ellipse cx="39" cy="33" rx="13" ry="7.5" transform="rotate(-30 39 33)" fill="url(#g4)" opacity=".8"/></svg></span><span class="fx" style="left:83%;top:45%;width:170px;height:170px;opacity:0.62;--r:4deg;--dur:14s;--del:3.2s"><svg viewBox="0 0 100 100" aria-hidden="true"><defs>
-<linearGradient id="t5" x1="0" y1="0" x2="0.55" y2="1">
-<stop offset="0" stop-color="#d8f2ff"/><stop offset="1" stop-color="#74c9f6"/></linearGradient>
-<linearGradient id="l5" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#2a97d6"/><stop offset="1" stop-color="#10559a"/></linearGradient>
-<linearGradient id="r5" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#11619f"/><stop offset="1" stop-color="#07305f"/></linearGradient>
-<radialGradient id="s5" cx="0.34" cy="0.28" r="0.84">
-<stop offset="0" stop-color="#f0fbff"/><stop offset="0.44" stop-color="#56c2f2"/>
-<stop offset="1" stop-color="#0a3c74"/></radialGradient>
-<linearGradient id="g5" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-<radialGradient id="sh5" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0" stop-color="#01070f" stop-opacity=".6"/>
-<stop offset="1" stop-color="#01070f" stop-opacity="0"/></radialGradient>
-</defs><ellipse cx="50" cy="90" rx="25" ry="7" fill="url(#sh5)"/>
-<path d="M23,34 v30 c0,7 12,12 27,12 s27,-5 27,-12 V34 Z" fill="url(#l5)"/>
-<path d="M50,34 v42 c15,0 27,-5 27,-12 V34 Z" fill="url(#r5)"/>
-<ellipse cx="50" cy="34" rx="27" ry="12" fill="url(#t5)"/>
-<ellipse cx="50" cy="33" rx="18" ry="7.5" fill="url(#g5)" opacity=".55"/>
-<path d="M23,50 c0,7 12,12 27,12 s27,-5 27,-12" fill="none" stroke="#a7e2ff"
-stroke-width="1.3" opacity=".45"/></svg></span><span class="fx" style="left:13%;top:71%;width:134px;height:134px;opacity:0.46;--r:-5deg;--dur:15s;--del:0.8s"><svg viewBox="0 0 100 100" aria-hidden="true"><defs>
-<linearGradient id="t6" x1="0" y1="0" x2="0.55" y2="1">
-<stop offset="0" stop-color="#d8f2ff"/><stop offset="1" stop-color="#74c9f6"/></linearGradient>
-<linearGradient id="l6" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#2a97d6"/><stop offset="1" stop-color="#10559a"/></linearGradient>
-<linearGradient id="r6" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#11619f"/><stop offset="1" stop-color="#07305f"/></linearGradient>
-<radialGradient id="s6" cx="0.34" cy="0.28" r="0.84">
-<stop offset="0" stop-color="#f0fbff"/><stop offset="0.44" stop-color="#56c2f2"/>
-<stop offset="1" stop-color="#0a3c74"/></radialGradient>
-<linearGradient id="g6" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-<radialGradient id="sh6" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0" stop-color="#01070f" stop-opacity=".6"/>
-<stop offset="1" stop-color="#01070f" stop-opacity="0"/></radialGradient>
-</defs><ellipse cx="50" cy="88" rx="26" ry="8" fill="url(#sh6)"/>
-<path d="M46,58 h8 v13 h-8 Z" fill="url(#r6)"/>
-<path d="M35,71 h30 v4 a15,7 0 0 1 -30,0 Z" fill="url(#r6)"/>
-<ellipse cx="50" cy="71" rx="15" ry="7" fill="url(#t6)"/>
-<rect x="28" y="32" width="42" height="26" rx="13" fill="url(#l6)"/>
-<rect x="32" y="35" width="34" height="8" rx="4" fill="url(#g6)" opacity=".45"/>
-<ellipse cx="70" cy="45" rx="8" ry="13" fill="url(#r6)"/>
-<ellipse cx="71.5" cy="45" rx="5.4" ry="9" fill="url(#s6)"/>
-<ellipse cx="69.5" cy="40.5" rx="2" ry="3" fill="url(#g6)" opacity=".85"/></svg></span><span class="fx" style="left:72%;top:72%;width:134px;height:134px;opacity:0.46;--r:7deg;--dur:13s;--del:2.2s"><svg viewBox="0 0 100 100" aria-hidden="true"><defs>
-<linearGradient id="t7" x1="0" y1="0" x2="0.55" y2="1">
-<stop offset="0" stop-color="#d8f2ff"/><stop offset="1" stop-color="#74c9f6"/></linearGradient>
-<linearGradient id="l7" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#2a97d6"/><stop offset="1" stop-color="#10559a"/></linearGradient>
-<linearGradient id="r7" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#11619f"/><stop offset="1" stop-color="#07305f"/></linearGradient>
-<radialGradient id="s7" cx="0.34" cy="0.28" r="0.84">
-<stop offset="0" stop-color="#f0fbff"/><stop offset="0.44" stop-color="#56c2f2"/>
-<stop offset="1" stop-color="#0a3c74"/></radialGradient>
-<linearGradient id="g7" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-<radialGradient id="sh7" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0" stop-color="#01070f" stop-opacity=".6"/>
-<stop offset="1" stop-color="#01070f" stop-opacity="0"/></radialGradient>
-</defs><ellipse cx="50" cy="90" rx="28" ry="8" fill="url(#sh7)"/>
-<path d="M46,66 h8 v10 h-8 Z" fill="url(#r7)"/>
-<path d="M33,78 h34 l-5,4 h-24 Z" fill="url(#l7)"/>
-<path d="M17,22 h66 v42 h-66 Z" transform="translate(4,4)" fill="url(#r7)"/>
-<path d="M17,22 h66 v42 h-66 Z" fill="url(#l7)"/>
-<path d="M21,26 h58 v34 h-58 Z" fill="url(#s7)" opacity=".92"/>
-<path d="M21,26 h58 v15 h-58 Z" fill="url(#g7)" opacity=".38"/></svg></span><span class="fx" style="left:45%;top:88%;width:120px;height:120px;opacity:0.22;--r:-4deg;--dur:16s;--del:3.9s"><svg viewBox="0 0 100 100" aria-hidden="true"><defs>
-<linearGradient id="t8" x1="0" y1="0" x2="0.55" y2="1">
-<stop offset="0" stop-color="#d8f2ff"/><stop offset="1" stop-color="#74c9f6"/></linearGradient>
-<linearGradient id="l8" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#2a97d6"/><stop offset="1" stop-color="#10559a"/></linearGradient>
-<linearGradient id="r8" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#11619f"/><stop offset="1" stop-color="#07305f"/></linearGradient>
-<radialGradient id="s8" cx="0.34" cy="0.28" r="0.84">
-<stop offset="0" stop-color="#f0fbff"/><stop offset="0.44" stop-color="#56c2f2"/>
-<stop offset="1" stop-color="#0a3c74"/></radialGradient>
-<linearGradient id="g8" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
-<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-<radialGradient id="sh8" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0" stop-color="#01070f" stop-opacity=".6"/>
-<stop offset="1" stop-color="#01070f" stop-opacity="0"/></radialGradient>
-</defs><ellipse cx="50" cy="86" rx="32" ry="8" fill="url(#sh8)"/>
-
-<path d="M28,53 L38,58 L28,63 L18,58 Z" fill="url(#t8)"/>
-<path d="M18,58 L28,63 L28,79 L18,74 Z" fill="url(#l8)"/>
-<path d="M38,58 L28,63 L28,79 L38,74 Z" fill="url(#r8)"/>
-
-<path d="M50,41 L60,46 L50,51 L40,46 Z" fill="url(#t8)"/>
-<path d="M40,46 L50,51 L50,79 L40,74 Z" fill="url(#l8)"/>
-<path d="M60,46 L50,51 L50,79 L60,74 Z" fill="url(#r8)"/>
-
-<path d="M72,29 L82,34 L72,39 L62,34 Z" fill="url(#t8)"/>
-<path d="M62,34 L72,39 L72,79 L62,74 Z" fill="url(#l8)"/>
-<path d="M82,34 L72,39 L72,79 L82,74 Z" fill="url(#r8)"/></svg></span></div>
+    <div class="netfield"><svg class="netviz" viewBox="0 0 1600 700"
+preserveAspectRatio="xMidYMid slice" aria-hidden="true" fill="none">
+<g class="wires"><line class="wire" x1="99.6" y1="124.4"
+x2="80.5" y2="278.4" pathLength="100"/><line class="wire" x1="99.6" y1="124.4"
+x2="316.9" y2="274.5" pathLength="100"/><line class="wire" x1="388.9" y1="59.7"
+x2="581.4" y2="98.3" pathLength="100"/><line class="wire" x1="388.9" y1="59.7"
+x2="316.9" y2="274.5" pathLength="100"/><line class="wire" x1="581.4" y1="98.3"
+x2="563.5" y2="252.3" pathLength="100"/><line class="wire" x1="581.4" y1="98.3"
+x2="751.3" y2="139.2" pathLength="100"/><line class="wire" x1="751.3" y1="139.2"
+x2="808.3" y2="287.3" pathLength="100"/><line class="wire" x1="1000.0" y1="56.0"
+x2="1023.7" y2="232.1" pathLength="100"/><line class="wire" x1="1000.0" y1="56.0"
+x2="751.3" y2="139.2" pathLength="100"/><line class="wire" x1="1258.1" y1="139.0"
+x2="1268.2" y2="241.5" pathLength="100"/><line class="wire" x1="1258.1" y1="139.0"
+x2="1463.9" y2="87.7" pathLength="100"/><line class="wire" x1="1463.9" y1="87.7"
+x2="1448.1" y2="310.5" pathLength="100"/><line class="wire" x1="80.5" y1="278.4"
+x2="61.3" y2="444.6" pathLength="100"/><line class="wire" x1="316.9" y1="274.5"
+x2="339.0" y2="486.0" pathLength="100"/><line class="wire" x1="563.5" y1="252.3"
+x2="525.7" y2="463.2" pathLength="100"/><line class="wire" x1="808.3" y1="287.3"
+x2="865.2" y2="447.5" pathLength="100"/><line class="wire" x1="1023.7" y1="232.1"
+x2="1024.3" y2="423.5" pathLength="100"/><line class="wire" x1="1268.2" y1="241.5"
+x2="1322.8" y2="399.3" pathLength="100"/><line class="wire" x1="1448.1" y1="310.5"
+x2="1322.8" y2="399.3" pathLength="100"/><line class="wire" x1="1448.1" y1="310.5"
+x2="1547.2" y2="430.0" pathLength="100"/><line class="wire" x1="61.3" y1="444.6"
+x2="339.0" y2="486.0" pathLength="100"/><line class="wire" x1="339.0" y1="486.0"
+x2="351.9" y2="608.8" pathLength="100"/><line class="wire" x1="339.0" y1="486.0"
+x2="525.7" y2="463.2" pathLength="100"/><line class="wire" x1="865.2" y1="447.5"
+x2="1024.3" y2="423.5" pathLength="100"/><line class="wire" x1="1547.2" y1="430.0"
+x2="1525.2" y2="616.4" pathLength="100"/><line class="wire" x1="351.9" y1="608.8"
+x2="525.7" y2="463.2" pathLength="100"/><line class="wire" x1="811.4" y1="613.3"
+x2="865.2" y2="447.5" pathLength="100"/><line class="wire" x1="811.4" y1="613.3"
+x2="991.3" y2="620.5" pathLength="100"/><line class="wire" x1="991.3" y1="620.5"
+x2="1024.3" y2="423.5" pathLength="100"/><line class="wire" x1="1208.1" y1="651.6"
+x2="991.3" y2="620.5" pathLength="100"/><line class="wire" x1="1208.1" y1="651.6"
+x2="1322.8" y2="399.3" pathLength="100"/><line class="wire" x1="1525.2" y1="616.4"
+x2="1322.8" y2="399.3" pathLength="100"/><line class="wire" x1="1268.2" y1="241.5"
+x2="1023.7" y2="232.1" pathLength="100"/><line class="wire" x1="811.4" y1="613.3"
+x2="525.7" y2="463.2" pathLength="100"/><line class="wire" x1="1023.7" y1="232.1"
+x2="751.3" y2="139.2" pathLength="100"/></g>
+<g class="pulses"><line class="pulse" x1="99.6" y1="124.4"
+x2="80.5" y2="278.4" pathLength="100" style="--d:6.77s;--dl:0.00s"/><line class="pulse" x1="388.9" y1="59.7"
+x2="316.9" y2="274.5" pathLength="100" style="--d:5.40s;--dl:0.62s"/><line class="pulse" x1="751.3" y1="139.2"
+x2="808.3" y2="287.3" pathLength="100" style="--d:3.58s;--dl:1.24s"/><line class="pulse" x1="1258.1" y1="139.0"
+x2="1268.2" y2="241.5" pathLength="100" style="--d:5.34s;--dl:1.86s"/><line class="pulse" x1="80.5" y1="278.4"
+x2="61.3" y2="444.6" pathLength="100" style="--d:5.88s;--dl:2.48s"/><line class="pulse" x1="808.3" y1="287.3"
+x2="865.2" y2="447.5" pathLength="100" style="--d:5.21s;--dl:3.10s"/><line class="pulse" x1="1448.1" y1="310.5"
+x2="1322.8" y2="399.3" pathLength="100" style="--d:3.48s;--dl:3.72s"/><line class="pulse" x1="339.0" y1="486.0"
+x2="351.9" y2="608.8" pathLength="100" style="--d:5.89s;--dl:4.34s"/><line class="pulse" x1="1547.2" y1="430.0"
+x2="1525.2" y2="616.4" pathLength="100" style="--d:6.07s;--dl:4.96s"/><line class="pulse" x1="811.4" y1="613.3"
+x2="991.3" y2="620.5" pathLength="100" style="--d:4.10s;--dl:5.58s"/><line class="pulse" x1="1208.1" y1="651.6"
+x2="1322.8" y2="399.3" pathLength="100" style="--d:4.21s;--dl:6.20s"/><line class="pulse" x1="811.4" y1="613.3"
+x2="525.7" y2="463.2" pathLength="100" style="--d:4.93s;--dl:6.82s"/></g>
+<g class="pings"><circle class="ping" cx="751.3" cy="139.2"
+r="3" style="--dl:0.0s"/><circle class="ping" cx="1023.7" cy="232.1"
+r="3" style="--dl:2.4s"/><circle class="ping" cx="1322.8" cy="399.3"
+r="3" style="--dl:4.8s"/></g>
+<g class="dots"><circle class="dot lit" cx="99.6"
+cy="124.4" r="2.6" style="--dl:0.00s"/><circle class="dot" cx="388.9"
+cy="59.7" r="3.3" style="--dl:0.31s"/><circle class="dot" cx="581.4"
+cy="98.3" r="2.7" style="--dl:0.62s"/><circle class="dot" cx="751.3"
+cy="139.2" r="2.6" style="--dl:0.93s"/><circle class="dot lit" cx="1000.0"
+cy="56.0" r="2.9" style="--dl:1.24s"/><circle class="dot" cx="1258.1"
+cy="139.0" r="2.6" style="--dl:1.55s"/><circle class="dot" cx="1463.9"
+cy="87.7" r="2.9" style="--dl:1.86s"/><circle class="dot" cx="80.5"
+cy="278.4" r="2.1" style="--dl:2.17s"/><circle class="dot lit" cx="316.9"
+cy="274.5" r="2.7" style="--dl:2.48s"/><circle class="dot" cx="563.5"
+cy="252.3" r="2.3" style="--dl:2.79s"/><circle class="dot" cx="808.3"
+cy="287.3" r="3.0" style="--dl:3.10s"/><circle class="dot" cx="1023.7"
+cy="232.1" r="2.3" style="--dl:3.41s"/><circle class="dot lit" cx="1268.2"
+cy="241.5" r="3.2" style="--dl:3.72s"/><circle class="dot" cx="1448.1"
+cy="310.5" r="2.7" style="--dl:4.03s"/><circle class="dot" cx="61.3"
+cy="444.6" r="2.3" style="--dl:4.34s"/><circle class="dot" cx="339.0"
+cy="486.0" r="2.3" style="--dl:4.65s"/><circle class="dot lit" cx="525.7"
+cy="463.2" r="3.1" style="--dl:4.96s"/><circle class="dot" cx="865.2"
+cy="447.5" r="2.9" style="--dl:5.27s"/><circle class="dot" cx="1024.3"
+cy="423.5" r="2.0" style="--dl:5.58s"/><circle class="dot" cx="1322.8"
+cy="399.3" r="3.4" style="--dl:5.89s"/><circle class="dot lit" cx="1547.2"
+cy="430.0" r="2.7" style="--dl:6.20s"/><circle class="dot" cx="351.9"
+cy="608.8" r="2.9" style="--dl:6.51s"/><circle class="dot" cx="811.4"
+cy="613.3" r="2.7" style="--dl:6.82s"/><circle class="dot" cx="991.3"
+cy="620.5" r="2.7" style="--dl:7.13s"/><circle class="dot lit" cx="1208.1"
+cy="651.6" r="2.2" style="--dl:7.44s"/><circle class="dot" cx="1525.2"
+cy="616.4" r="2.8" style="--dl:7.75s"/></g>
+</svg></div>
     <div class="wrap">
       <div class="hero-grid">
         <div class="hero-copy" style="text-align:left">
@@ -636,7 +532,7 @@ stroke-width="1.3" opacity=".45"/></svg></span><span class="fx" style="left:13%;
       <p class="lede">Edge holds the partner relationship, so escalation, firmware and lifecycle
       support run through one team rather than eight.</p>
 
-      <input class="fx" type="radio" name="pcat" id="f-all" checked><input class="fx" type="radio" name="pcat" id="f-net"><input class="fx" type="radio" name="pcat" id="f-sec"><input class="fx" type="radio" name="pcat" id="f-cmp"><input class="fx" type="radio" name="pcat" id="f-pwr"><input class="fx" type="radio" name="pcat" id="f-rck">
+      <input class="catin" type="radio" name="pcat" id="f-all" checked><input class="catin" type="radio" name="pcat" id="f-net"><input class="catin" type="radio" name="pcat" id="f-sec"><input class="catin" type="radio" name="pcat" id="f-cmp"><input class="catin" type="radio" name="pcat" id="f-pwr"><input class="catin" type="radio" name="pcat" id="f-rck">
       <div class="filter-bar" role="group" aria-label="Filter partners by category">
         <label for="f-all">All partners <b>8</b></label><label for="f-net">Networking <b>3</b></label><label for="f-sec">Security <b>2</b></label><label for="f-cmp">Compute and storage <b>2</b></label><label for="f-pwr">Power and cooling <b>2</b></label><label for="f-rck">Racks and cabling <b>2</b></label>
       </div>
