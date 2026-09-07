@@ -71,22 +71,37 @@ background:#fff;color:#04101c;font-size:13px;font-weight:600;white-space:nowrap}
 .navcta:hover{background:var(--blue-pale)}
 
 /* ---- hero ---- */
-.hero{position:relative;padding:150px 0 96px;overflow:hidden}
-.hero::before{content:"";position:absolute;left:50%;top:-380px;transform:translateX(-50%);
-width:1500px;height:900px;pointer-events:none;
-background:radial-gradient(50% 50% at 50% 50%,rgba(8,136,197,.19),transparent 70%)}
+.hero{position:relative;padding:140px 0 104px;overflow:hidden}
+/* ambient wash falling from the top of the page */
+.hero::before{content:"";position:absolute;left:50%;top:-500px;transform:translateX(-50%);
+width:1800px;height:1180px;pointer-events:none;
+background:radial-gradient(50% 50% at 50% 50%,rgba(8,136,197,.30),rgba(8,136,197,.08) 46%,transparent 72%)}
+/* horizon glow across the base of the hero */
+.hero::after{content:"";position:absolute;left:50%;bottom:-300px;transform:translateX(-50%);
+width:1600px;height:600px;border-radius:50%;pointer-events:none;filter:blur(70px);
+background:radial-gradient(50% 50% at 50% 50%,rgba(43,167,228,.40),rgba(11,74,143,.20) 54%,transparent 72%)}
 .arcs{position:absolute;left:50%;top:-260px;transform:translateX(-50%);
 width:1700px;pointer-events:none;opacity:.5}
+
+.hero-grid{position:relative;display:grid;gap:56px}
+@media (min-width:1000px){.hero-grid{grid-template-columns:1.04fr .96fr;gap:64px;align-items:center}}
+.hero-copy{text-align:center}
+@media (min-width:1000px){.hero-copy{text-align:left}}
+
 .badge{display:inline-flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;
 border-radius:99px;background:rgba(255,255,255,.05);border:1px solid var(--line);
 font-size:12.5px;color:#cfe0f2}
 .badge b{background:var(--blue);color:#fff;font-weight:600;font-size:11px;
 padding:3px 9px;border-radius:99px}
-h1{margin-top:26px;font-size:clamp(38px,6.2vw,67px);line-height:1.06;font-weight:500;
+h1{margin-top:24px;font-size:clamp(38px,4.6vw,58px);line-height:1.06;font-weight:500;
 letter-spacing:-.04em;text-wrap:balance}
-.hero .sub{margin:20px auto 0;max-width:52ch;color:var(--muted);
+.hero .sub{margin:20px auto 0;max-width:48ch;color:var(--muted);
 font-size:15px;line-height:1.6;font-weight:500}
-.acts{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.acts{margin-top:28px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+@media (min-width:1000px){
+  .hero .sub{margin-left:0}
+  .hero .acts{justify-content:flex-start}
+}
 .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:99px;
 font-size:14px;font-weight:600;transition:background .16s,border-color .16s,color .16s}
 .btn-w{background:#fff;color:#04101c}
@@ -95,43 +110,32 @@ font-size:14px;font-weight:600;transition:background .16s,border-color .16s,colo
 .btn-g:hover{border-color:var(--blue-lift);color:var(--blue-lift)}
 .btn svg{width:15px;height:15px}
 
-.statcard{margin:44px auto 0;max-width:660px;border-radius:18px;
+.statcard{margin:36px auto 0;max-width:600px;border-radius:18px;
 background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
-border:1px solid var(--line);padding:20px 12px;
+border:1px solid var(--line);padding:18px 10px;
 display:grid;grid-template-columns:repeat(3,1fr)}
+@media (min-width:1000px){.statcard{margin-left:0}}
 .statcard div{padding:4px 14px}
 .statcard div + div{border-left:1px solid var(--line)}
 .statcard dt{font-size:12.5px;color:var(--muted)}
 .statcard dd{margin-top:8px;font-size:24px;font-weight:600;letter-spacing:-.04em}
 
-/* console panel replaces Span's product screenshot */
-.panel{position:relative;margin:64px auto 0;max-width:1120px;border-radius:16px 16px 0 0;
-background:linear-gradient(180deg,#07101f,#040a14);
-border:1px solid var(--line);border-bottom:0;overflow:hidden}
-.panel::before{content:"";position:absolute;left:50%;top:-120px;transform:translateX(-50%);
-width:900px;height:260px;border-radius:50%;pointer-events:none;
-background:radial-gradient(50% 50% at 50% 50%,rgba(43,167,228,.55),transparent 70%);filter:blur(30px)}
-.panel-bar{position:relative;display:flex;align-items:center;gap:14px;
-padding:12px 16px;border-bottom:1px solid var(--line)}
-.dots{display:flex;gap:6px}
-.dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
-.crumb{display:none;font-size:12px;color:var(--muted-2);background:rgba(255,255,255,.04);
-border:1px solid var(--line);border-radius:99px;padding:4px 12px;white-space:nowrap}
-@media (min-width:560px){.crumb{display:inline-block}}
-.live{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:12px;
-color:#cfe0f2;background:rgba(8,136,197,.16);border:1px solid rgba(8,136,197,.4);
-border-radius:99px;padding:4px 11px}
-.live i{width:6px;height:6px;border-radius:50%;background:#37d67a}
-.panel-body{position:relative;display:grid;gap:1px;background:var(--line);
-grid-template-columns:1fr}
-@media (min-width:720px){.panel-body{grid-template-columns:repeat(3,1fr)}}
-.cell{background:#050c17;padding:18px 20px;min-height:112px}
-.cell .k{font-size:11.5px;color:var(--muted-2)}
-.cell .n{margin-top:9px;font-size:15px;font-weight:600;letter-spacing:-.025em}
-.cell .m{margin-top:6px;font-size:12px;color:var(--muted-2)}
-.cell .bar{margin-top:12px;height:3px;border-radius:99px;background:rgba(255,255,255,.07);
-overflow:hidden}
-.cell .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-lift))}
+/* capability grid — the nine services as icons, opposite the statement */
+.heroviz{position:relative;display:grid;gap:10px;grid-template-columns:repeat(2,1fr)}
+@media (min-width:520px){.heroviz{grid-template-columns:repeat(3,1fr)}}
+.heroviz::before{content:"";position:absolute;inset:-14% -10%;pointer-events:none;
+border-radius:50%;filter:blur(60px);
+background:radial-gradient(50% 50% at 50% 50%,rgba(8,136,197,.34),transparent 70%)}
+.hv{position:relative;border:1px solid var(--line);border-radius:14px;padding:16px 14px;
+background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.014));
+display:grid;gap:14px;align-content:start;min-height:120px;
+transition:border-color .18s,background .18s,transform .18s}
+.hv:hover{border-color:rgba(43,167,228,.65);transform:translateY(-2px);
+background:linear-gradient(180deg,rgba(8,136,197,.16),rgba(255,255,255,.014))}
+.hv .ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+background:rgba(8,136,197,.16);border:1px solid rgba(8,136,197,.36);color:var(--blue-lift)}
+.hv .ic svg{width:17px;height:17px}
+.hv b{font-size:12.5px;font-weight:600;letter-spacing:-.02em;line-height:1.32}
 
 /* ---- section anatomy (Span's) ---- */
 section{position:relative}
@@ -252,7 +256,7 @@ font-size:12px;color:var(--muted-2)}
 </header>
 
 <main>
-  <section class="hero center">
+  <section class="hero">
     <svg class="arcs" viewBox="0 0 1700 700" fill="none" aria-hidden="true">
 <ellipse cx="850" cy="330" rx="520" ry="300"
 stroke="rgba(255,255,255,0.07)" stroke-width="1"/><ellipse cx="850" cy="336" rx="640" ry="366"
@@ -261,35 +265,35 @@ stroke="rgba(255,255,255,0.04800000000000001)" stroke-width="1"/><ellipse cx="85
 stroke="rgba(255,255,255,0.037000000000000005)" stroke-width="1"/><ellipse cx="850" cy="354" rx="1000" ry="564"
 stroke="rgba(255,255,255,0.02600000000000001)" stroke-width="1"/>
 </svg>
-    <div class="wrap" style="position:relative">
-      <span class="badge"><b>Addis Ababa</b> Working with institutions nationwide</span>
-      <h1>Delivering secured solutions based on international standards</h1>
-      <p class="sub">Edge COMM-TECH maintains a specialized professional service team of experts to
-      advise, implement and manage all aspects of communication and information technology.</p>
-      <div class="acts">
-        <a class="btn btn-w" href="#solutions">See our solutions <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
-        <a class="btn btn-g" href="#contact">Talk to an engineer</a>
-      </div>
-
-      <dl class="statcard">
-        <div><dt>Certified vendor partners</dt><dd>8</dd></div>
-        <div><dt>Named institutional clients</dt><dd>5</dd></div>
-        <div><dt>Years operating</dt><dd><span class="ph">6</span></dd></div>
-      </dl>
-
-      <div class="panel">
-        <div class="panel-bar">
-          <span class="dots"><i></i><i></i><i></i></span>
-          <span class="crumb mono">edgecomm-tech.com / capability</span>
-          <span class="live"><i></i> Operating</span>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="badge"><b>Addis Ababa</b> Working with institutions nationwide</span>
+          <h1>Delivering secured solutions based on international standards</h1>
+          <p class="sub">Edge COMM-TECH maintains a specialized professional service team of
+          experts to advise, implement and manage all aspects of communication and information
+          technology.</p>
+          <div class="acts">
+            <a class="btn btn-w" href="#solutions">See our solutions <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+            <a class="btn btn-g" href="#contact">Talk to an engineer</a>
+          </div>
+          <dl class="statcard">
+            <div><dt>Certified vendor partners</dt><dd>8</dd></div>
+            <div><dt>Named institutional clients</dt><dd>5</dd></div>
+            <div><dt>Years operating</dt><dd><span class="ph">6</span></dd></div>
+          </dl>
         </div>
-        <div class="panel-body"><div class="cell">
-<p class="k mono">Datacenter</p><p class="n">Tier-rated build</p><p class="m">Power, cooling, containment</p></div><div class="cell">
-<p class="k mono">Network</p><p class="n">LAN and WLAN</p><p class="m">Cisco, Huawei, Juniper, Dell</p></div><div class="cell">
-<p class="k mono">Security</p><p class="n">NOC and SOC</p><p class="m">Carrier-grade operations</p></div><div class="cell">
-<p class="k mono">Communications</p><p class="n">Unified voice</p><p class="m">Presence, chat, mobile, data</p></div><div class="cell">
-<p class="k mono">Physical security</p><p class="n">CCTV and access</p><p class="m">Barriers and turnstiles</p></div><div class="cell">
-<p class="k mono">Support</p><p class="n">Helpdesk</p><p class="m">Remote and on site</p></div></div>
+
+        <div class="heroviz"><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M7 6h.01M7 12h.01M7 18h.01"/></svg></span><b>Datacenter</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v5m0 0-5 5m5-5 5 5"/></svg></span><b>Networks</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span><b>Cybersecurity</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg></span><b>NOC &amp; SOC</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span><b>Unified Comms</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg></span><b>Voice &amp; Data</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h11v8H3z"/><path d="m14 11 7-3v8l-7-3z"/><circle cx="7" cy="12" r="1.5"/></svg></span><b>CCTV &amp; Access</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4"/></svg></span><b>IT Support</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6a4 4 0 0 1 5 5l-8 8a2.8 2.8 0 0 1-4-4l8-8a4 4 0 0 1-1-1z"/></svg></span><b>Engineering</b></div></div>
       </div>
     </div>
   </section>
