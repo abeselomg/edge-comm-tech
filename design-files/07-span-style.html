@@ -93,24 +93,20 @@ background:radial-gradient(50% 50% at 50% 50%,
 width:1700px;pointer-events:none;opacity:.5}
 
 .hero-grid{position:relative;z-index:2;display:grid;gap:56px}
-@media (min-width:1000px){.hero-grid{grid-template-columns:minmax(0,620px);gap:0}}
+.hero-grid{justify-content:center}
+@media (min-width:1000px){.hero-grid{grid-template-columns:minmax(0,900px);gap:0}}
 .hero-copy{position:relative;z-index:2;text-align:center}
-@media (min-width:1000px){.hero-copy{text-align:left}}
 
 .badge{display:inline-flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;
 border-radius:99px;background:rgba(255,255,255,.05);border:1px solid var(--line);
 font-size:12.5px;color:#cfe0f2}
 .badge b{background:var(--blue);color:#fff;font-weight:600;font-size:11px;
 padding:3px 9px;border-radius:99px}
-h1{margin-top:24px;font-size:clamp(38px,4.6vw,58px);line-height:1.06;font-weight:500;
+h1{margin-top:24px;font-size:clamp(38px,5.8vw,66px);line-height:1.06;font-weight:500;
 letter-spacing:-.04em;text-wrap:balance}
-.hero .sub{margin:20px auto 0;max-width:48ch;color:var(--muted);
+.hero .sub{margin:20px auto 0;max-width:52ch;color:var(--muted);
 font-size:15px;line-height:1.6;font-weight:500}
 .acts{margin-top:28px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-@media (min-width:1000px){
-  .hero .sub{margin-left:0}
-  .hero .acts{justify-content:flex-start}
-}
 .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:99px;
 font-size:14px;font-weight:600;transition:background .16s,border-color .16s,color .16s}
 .btn-w{background:#fff;color:#04101c}
@@ -124,7 +120,6 @@ background:linear-gradient(180deg,rgba(10,22,40,.88),rgba(5,12,24,.80));
 backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);padding:18px 10px;
 box-shadow:0 20px 50px rgba(0,6,16,.5);
 display:grid;grid-template-columns:repeat(3,1fr)}
-@media (min-width:1000px){.statcard{margin-left:0}}
 .statcard div{padding:4px 14px}
 .statcard div + div{border-left:1px solid var(--line)}
 .statcard dt{font-size:12.5px;color:#a9bcd6}
