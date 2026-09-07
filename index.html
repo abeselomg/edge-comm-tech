@@ -3,98 +3,197 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>Edge COMM-TECH — six homepage directions</title>
+<meta name="robots" content="noindex, nofollow">
+<title>Edge COMM-TECH — design review</title>
+<meta name="description" content="Design review for Edge Communication Technologies.">
+<link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f%5B%5D=switzer@400,500,600,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fragment+Mono&display=swap">
 <style>
+:root{
+  --void:#000309; --ink:#03060e;
+  --line:rgba(255,255,255,.09); --line-2:rgba(255,255,255,.16);
+  --text:#fff; --muted:#93a4bd; --muted-2:#67788f;
+  --blue:#0888c5; --blue-lift:#3fb8f5; --blue-glow:#7ad4ff; --blue-pale:#b8d7ff;
+}
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:#070c16;color:#e8eef8;
-font:400 16px/1.62 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-h1,h2,p{margin:0}
+body{margin:0;background:var(--void);color:var(--text);
+font:500 15px/1.6 Switzer,system-ui,-apple-system,sans-serif;
+-webkit-font-smoothing:antialiased}
+h1,h2,h3,p,ul{margin:0}
 a{color:inherit;text-decoration:none}
-.wrap{max-width:1180px;margin:0 auto;padding:4rem 1.5rem 6rem}
-.mark{font-weight:600;letter-spacing:-.02em}
-.mark span{font-weight:400;color:#8496b4}
-h1{margin-top:2.5rem;font-weight:600;letter-spacing:-.035em;line-height:1.05;
-font-size:clamp(2rem,4vw,3.1rem);max-width:20ch}
-.lede{margin-top:1.25rem;max-width:66ch;color:#8496b4;font-size:1.0625rem}
-.grid{margin-top:3rem;display:grid;gap:1rem}
-@media (min-width:760px){.grid{grid-template-columns:1fr 1fr}}
-@media (min-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}}
-.card{display:block;border:1px solid rgba(228,236,250,.12);border-radius:12px;
-padding:1.5rem;background:#0b1220;transition:border-color .15s,background .15s}
-.card:hover{border-color:#5b8cff;background:#101a2c}
-.card .n{font-family:"IBM Plex Mono",monospace;font-size:.75rem;color:#5b8cff}
-.card h2{margin-top:.6rem;font-weight:600;letter-spacing:-.02em;font-size:1.3rem}
-.card .idea{margin-top:.7rem;font-size:.9375rem}
-.card .why{margin-top:.6rem;font-size:.875rem;color:#8496b4}
-.card .face{margin-top:1rem;font-family:"IBM Plex Mono",monospace;font-size:.6875rem;color:#8496b4}
-.note{margin-top:3rem;padding:1.4rem 1.5rem;border:1px solid rgba(228,236,250,.12);
-border-radius:12px;background:#0b1220;color:#8496b4;font-size:.9375rem;max-width:74ch}
-.note b{color:#e8eef8;font-weight:600}
-.note ul{margin:.7rem 0 0;padding-left:1.1rem}
-.note li{margin-top:.35rem}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+
+/* ---- masthead ---- */
+.top{position:relative;overflow:hidden;padding:88px 0 64px}
+.top::before{content:"";position:absolute;inset:-60% -20% auto -20%;height:900px;
+pointer-events:none;background:
+  radial-gradient(34% 40% at 16% 34%,rgba(63,184,245,.22),transparent 68%),
+  radial-gradient(34% 40% at 84% 30%,rgba(63,184,245,.20),transparent 68%)}
+.top .wrap{position:relative;z-index:1}
+.mark{display:inline-flex;align-items:center;gap:9px;padding:6px 14px;border-radius:99px;
+background:rgba(255,255,255,.05);border:1px solid var(--line);
+font-size:12.5px;font-weight:600;letter-spacing:-.02em}
+.mark i{width:6px;height:6px;border-radius:50%;background:var(--blue-lift);
+box-shadow:0 0 0 4px rgba(63,184,245,.18)}
+h1{margin-top:26px;font-size:clamp(32px,5vw,54px);line-height:1.07;font-weight:500;
+letter-spacing:-.04em;max-width:19ch}
+.lede{margin-top:20px;max-width:62ch;color:var(--muted);font-size:15px;line-height:1.65}
+
+/* ---- sections ---- */
+section{padding:0 0 72px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:5px 13px;border-radius:99px;
+background:rgba(255,255,255,.05);border:1px solid var(--line);
+font-size:12px;color:#cfe0f2}
+.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--blue);display:block}
+h2{margin-top:18px;font-size:clamp(22px,2.6vw,30px);line-height:1.2;font-weight:600;
+letter-spacing:-.04em}
+.sub{margin-top:12px;max-width:60ch;color:var(--muted);font-size:14.5px}
+
+/* ---- current pages ---- */
+.set{margin-top:32px;display:grid;gap:14px}
+@media (min-width:820px){.set{grid-template-columns:repeat(3,1fr)}}
+.page{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;
+background:linear-gradient(180deg,rgba(10,22,40,.7),rgba(5,12,24,.55));
+padding:24px 22px 22px;transition:border-color .16s,transform .16s,background .16s}
+.page:hover{border-color:var(--blue-lift);transform:translateY(-3px);
+background:linear-gradient(180deg,rgba(14,34,60,.85),rgba(6,16,32,.7))}
+.page .n{font-family:"Fragment Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+text-transform:uppercase;color:var(--blue-lift)}
+.page h3{margin-top:12px;font-size:19px;font-weight:600;letter-spacing:-.03em}
+.page p{margin-top:10px;font-size:13.5px;color:var(--muted);line-height:1.6}
+.page .go{margin-top:auto;padding-top:18px;font-size:13px;font-weight:600;color:var(--blue-pale);
+display:inline-flex;align-items:center;gap:8px}
+.page .go svg{width:14px;height:14px}
+
+/* ---- archive ---- */
+.old{margin-top:28px;display:grid;gap:1px;background:var(--line);
+border:1px solid var(--line);border-radius:14px;overflow:hidden;
+grid-template-columns:repeat(2,1fr)}
+@media (min-width:760px){.old{grid-template-columns:repeat(3,1fr)}}
+.old a{background:#040a13;padding:18px 20px;transition:background .16s}
+.old a:hover{background:#0b1a2e}
+.old .n{font-family:"Fragment Mono",monospace;font-size:10px;letter-spacing:.1em;
+text-transform:uppercase;color:var(--muted-2)}
+.old h3{margin-top:8px;font-size:15px;font-weight:600;letter-spacing:-.02em}
+.old p{margin-top:6px;font-size:12.5px;color:var(--muted-2);line-height:1.5}
+
+/* ---- open questions ---- */
+.note{margin-top:30px;border:1px solid var(--line);border-radius:14px;
+background:rgba(255,255,255,.026);padding:24px 24px 22px;max-width:74ch}
+.note h3{font-size:15px;font-weight:600;letter-spacing:-.02em}
+.note ul{margin-top:14px;padding-left:0;list-style:none}
+.note li{position:relative;padding-left:20px;margin-top:10px;
+font-size:13.5px;color:var(--muted);line-height:1.6}
+.note li::before{content:"";position:absolute;left:2px;top:9px;
+width:5px;height:5px;border-radius:50%;background:var(--blue)}
+.note b{color:var(--text);font-weight:600}
+
+footer{border-top:1px solid var(--line);padding:26px 0 40px;
+font-size:12.5px;color:var(--muted-2)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <p class="mark">Edge<span> COMM-TECH</span></p>
-  <h1>Six homepage directions</h1>
-  <p class="lede">Six genuinely different page architectures on one blue-black palette family,
-  each with its own accent and typeface. Same Edge content throughout, so what differs is
-  structure and voice rather than copy. Open any one, then use the bar at the bottom of the
-  screen to flip between them.</p>
 
-  <div class="grid"><a class="card" href="01-split.html">
-  <span class="n">01</span>
-  <h2>Split</h2>
-  <p class="idea">Fixed left half carries identity, statement and proof. The right half scrolls the catalogue.</p>
-  <p class="why">Navigation and the pitch are never off-screen. No top bar, no footer.</p>
-  <p class="face">Manrope</p>
-</a><a class="card" href="02-console.html">
-  <span class="n">02</span>
-  <h2>Console</h2>
-  <p class="idea">A dashboard grid. Tiles of different span rather than stacked full-width sections.</p>
-  <p class="why">Reads like the operations console Edge's clients already live in. Scanning order is set by weight.</p>
-  <p class="face">IBM Plex Sans and Mono</p>
-</a><a class="card" href="03-document.html">
-  <span class="n">03</span>
-  <h2>Document</h2>
-  <p class="idea">A capability statement issued like a drawing set: masthead, revision block, numbered clauses, dense tables.</p>
-  <p class="why">The only light direction, and the only one where the page is a deliverable rather than a pitch. Blue-black is the ink here, not the ground.</p>
-  <p class="face">Newsreader, Inter, Plex Mono</p>
-</a><a class="card" href="04-poster.html">
-  <span class="n">04</span>
-  <h2>Poster</h2>
-  <p class="idea">Near-black and sparse. One statement owns the first screen, then one domain per full-height frame.</p>
-  <p class="why">A confidence play. Very little on screen at any moment, everything at display size.</p>
-  <p class="face">Archivo</p>
-</a><a class="card" href="05-topology.html">
-  <span class="n">05</span>
-  <h2>Topology</h2>
-  <p class="idea">The homepage is a diagram: a core, six domain nodes, four sector endpoints, drawn to scale.</p>
-  <p class="why">Closest to how an integrator explains itself on a whiteboard. The written content hangs off the map.</p>
-  <p class="face">Space Grotesk</p>
-</a><a class="card" href="06-stack.html">
-  <span class="n">06</span>
-  <h2>Stack</h2>
-  <p class="idea">Organised by layer of infrastructure, not by marketing section. Facility at the base, services at the top.</p>
-  <p class="why">Reads bottom-up the way a build is actually delivered, with a depth gutter down the left.</p>
-  <p class="face">Chivo</p>
-</a></div>
-
-  <div class="note">
-    <p><b>Before this goes to the client, two things to know.</b></p>
-    <ul>
-      <li>Figures marked with a small square are placeholders. Edge has not confirmed years
-      operating, headcount, project counts or contact details, so none of those numbers are real.</li>
-      <li>The headline, &ldquo;Designed, commissioned, supported.&rdquo;, is a stand-in written to
-      hold the space. It is the largest text in every direction and needs Edge&rsquo;s own line
-      before this is shown as finished work.</li>
-    </ul>
+<header class="top">
+  <div class="wrap">
+    <span class="mark"><i></i> Edge COMM-TECH</span>
+    <h1>Website design, for review</h1>
+    <p class="lede">Three pages built to the direction we agreed. Everything here is real
+    Edge content unless it is marked otherwise &mdash; the services, the eight manufacturer
+    partnerships, the five client institutions and the contact details all come from Edge.
+    Open each page and click through; the navigation between the three works.</p>
   </div>
-</div>
+</header>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow"><i></i> Current direction</span>
+    <h2>Three pages</h2>
+    <p class="sub">Best viewed on a laptop. All three are responsive, so they are worth a
+    look on a phone too.</p>
+
+    <div class="set">
+      <a class="page" href="07-span-style.html">
+        <span class="n">01 &mdash; Home</span>
+        <h3>Homepage</h3>
+        <p>The full story in one scroll: what Edge does, the services, the client
+        institutions, the partner manufacturers and how to make contact.</p>
+        <span class="go">Open page
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <a class="page" href="08-span-about.html">
+        <span class="n">02 &mdash; About</span>
+        <h3>About us</h3>
+        <p>The company behind the build: how Edge works across advise, implement and manage,
+        and the four engineering disciplines on the team.</p>
+        <span class="go">Open page
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <a class="page" href="09-span-partners.html">
+        <span class="n">03 &mdash; Partners</span>
+        <h3>Partners</h3>
+        <p>The eight manufacturers Edge builds on, filterable by category, with the areas
+        we deliver alongside each one.</p>
+        <span class="go">Open page
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+    </div>
+
+    <div class="note">
+      <h3>What we still need from Edge</h3>
+      <ul>
+        <li>Figures marked with a small square on the pages are <b>placeholders</b>. We have
+        not invented a founding year, a headcount or a project count &mdash; those need real
+        numbers before launch.</li>
+        <li>The <b>full service list</b>. The services shown come from the current site, and
+        Edge has said the business is broader than that.</li>
+        <li>Whether Edge has <b>LinkedIn or X accounts</b>. The footer icons are placeholders
+        and will be removed if there are none.</li>
+        <li>The line about <b>hiring engineers</b> on the about page &mdash; confirm it is
+        true before it goes live.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow"><i></i> Archive</span>
+    <h2>Earlier directions</h2>
+    <p class="sub">Six homepage treatments explored before settling on the current one. Kept
+    for reference; they use placeholder content and are not being taken forward.</p>
+
+    <div class="old">
+      <a href="01-split.html"><span class="n">01</span><h3>Split</h3>
+        <p>Two columns, statement against index.</p></a>
+      <a href="02-console.html"><span class="n">02</span><h3>Console</h3>
+        <p>Operations dashboard as a layout.</p></a>
+      <a href="03-document.html"><span class="n">03</span><h3>Document</h3>
+        <p>Editorial, long measure, reads as a report.</p></a>
+      <a href="04-poster.html"><span class="n">04</span><h3>Poster</h3>
+        <p>One large statement, minimal chrome.</p></a>
+      <a href="05-topology.html"><span class="n">05</span><h3>Topology</h3>
+        <p>Network diagram driving the page.</p></a>
+      <a href="06-stack.html"><span class="n">06</span><h3>Stack</h3>
+        <p>Layered bands, one idea per band.</p></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Design review for Edge Communication Technologies &mdash; not a public site.</div>
+</footer>
+
 </body>
 </html>
