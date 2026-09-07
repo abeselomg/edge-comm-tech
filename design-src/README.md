@@ -36,8 +36,9 @@ Supporting modules:
 
 ## Earlier directions
 
-Six homepage treatments explored before the current one, kept as an archive
-and not being taken forward. Built by `build.mjs` from `content.json`:
+Six homepage treatments explored before the current one. **No longer published** —
+the review site shows the current direction only. The generators are kept so any
+of them can be rebuilt into `design-files/` if a comparison is ever wanted:
 
 ```bash
 node design-src/build.mjs design-files
