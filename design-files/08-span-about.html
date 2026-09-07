@@ -207,7 +207,7 @@ color:#bfe4fb;box-shadow:0 10px 28px rgba(0,6,16,.6)}
 background .16s,transform .16s}
 
 /* ---- category filter ---- */
-.fx{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.catin{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .filter-bar{margin-top:30px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .filter-bar label{cursor:pointer;display:inline-flex;align-items:center;gap:9px;
 padding:8px 15px;border-radius:9px;background:rgba(255,255,255,.045);
@@ -256,6 +256,40 @@ outline:2px solid var(--blue-glow);outline-offset:2px}
 #f-rck:checked~.logos figure:not(.c-rck){opacity:.16;filter:grayscale(1)}
 #f-rck:checked~.tally .t-rck{display:block}
 #f-all:checked~.tally .t-all{display:block}
+
+/* ---- animated network mesh (partners hero) ---- */
+.netfield{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+/* The mesh is the structure on this hero, so the ambient arcs step back. */
+.hero-net .arcs{opacity:.22}
+.netviz{position:absolute;inset:0;width:100%;height:100%;
+/* Fade the mesh out behind the headline so the type never fights it. */
+-webkit-mask-image:radial-gradient(62% 64% at 33% 48%,
+  transparent 8%,rgba(0,0,0,.5) 40%,#000 74%);
+mask-image:radial-gradient(62% 64% at 33% 48%,
+  transparent 8%,rgba(0,0,0,.5) 40%,#000 74%)}
+
+.wire{stroke:rgba(120,190,240,.17);stroke-width:1}
+.pulse{stroke:var(--blue-glow);stroke-width:1.9;stroke-linecap:round;
+stroke-dasharray:14 200;animation:flow var(--d,5s) linear var(--dl,0s) infinite}
+.pulses{filter:drop-shadow(0 0 5px rgba(122,212,255,.85))}
+.dot{fill:#7fc6f0;opacity:.5}
+.dot.lit{fill:#d6f1ff;opacity:.9;animation:breathe 4.6s ease-in-out var(--dl,0s) infinite}
+.dots{filter:drop-shadow(0 0 6px rgba(63,184,245,.7))}
+.ping{fill:none;stroke:var(--blue-lift);stroke-width:1.2;transform-origin:center;
+animation:ping 7.2s ease-out var(--dl,0s) infinite}
+
+@keyframes flow{from{stroke-dashoffset:14}to{stroke-dashoffset:-100}}
+@keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes ping{
+  0%{r:3;opacity:.75}
+  55%{r:52;opacity:0}
+  100%{r:52;opacity:0}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .pulse,.dot.lit,.ping{animation:none}
+  .ping{opacity:.25}
+}
 
 /* ---- section anatomy (Span's) ---- */
 section{position:relative}
