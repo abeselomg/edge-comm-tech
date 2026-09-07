@@ -120,22 +120,26 @@ display:grid;grid-template-columns:repeat(3,1fr)}
 .statcard dt{font-size:12.5px;color:var(--muted)}
 .statcard dd{margin-top:8px;font-size:24px;font-weight:600;letter-spacing:-.04em}
 
-/* capability grid — the nine services as icons, opposite the statement */
-.heroviz{position:relative;display:grid;gap:10px;grid-template-columns:repeat(2,1fr)}
-@media (min-width:520px){.heroviz{grid-template-columns:repeat(3,1fr)}}
-.heroviz::before{content:"";position:absolute;inset:-14% -10%;pointer-events:none;
-border-radius:50%;filter:blur(60px);
-background:radial-gradient(50% 50% at 50% 50%,rgba(8,136,197,.34),transparent 70%)}
-.hv{position:relative;border:1px solid var(--line);border-radius:14px;padding:16px 14px;
-background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.014));
-display:grid;gap:14px;align-content:start;min-height:120px;
-transition:border-color .18s,background .18s,transform .18s}
-.hv:hover{border-color:rgba(43,167,228,.65);transform:translateY(-2px);
-background:linear-gradient(180deg,rgba(8,136,197,.16),rgba(255,255,255,.014))}
-.hv .ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
-background:rgba(8,136,197,.16);border:1px solid rgba(8,136,197,.36);color:var(--blue-lift)}
-.hv .ic svg{width:17px;height:17px}
-.hv b{font-size:12.5px;font-weight:600;letter-spacing:-.02em;line-height:1.32}
+/* capability field — the nine services drifting across the background */
+.heroviz{position:relative;min-height:560px;pointer-events:none}
+.heroviz::before{content:"";position:absolute;inset:-16% -12%;pointer-events:none;
+border-radius:50%;filter:blur(70px);
+background:radial-gradient(50% 50% at 50% 50%,rgba(8,136,197,.30),transparent 70%)}
+.fx{position:absolute;color:var(--blue-lift);
+animation:drift var(--dur,13s) ease-in-out var(--del,0s) infinite}
+.fx svg{width:100%;height:100%;display:block;
+filter:drop-shadow(0 0 22px rgba(43,167,228,.30))}
+@keyframes drift{
+  0%,100%{transform:translate3d(0,0,0) rotate(var(--r,0deg))}
+  50%{transform:translate3d(0,-16px,0) rotate(calc(var(--r,0deg) + 2.5deg))}
+}
+
+/* On one column the field sits behind the copy as atmosphere. */
+@media (max-width:999px){
+  .heroviz{position:absolute;inset:0;min-height:0;opacity:.4;z-index:0}
+  .hero-copy{position:relative;z-index:1}
+  .hero-grid{gap:0}
+}
 
 /* ---- section anatomy (Span's) ---- */
 section{position:relative}
@@ -284,16 +288,16 @@ stroke="rgba(255,255,255,0.02600000000000001)" stroke-width="1"/>
           </dl>
         </div>
 
-        <div class="heroviz"><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M7 6h.01M7 12h.01M7 18h.01"/></svg></span><b>Datacenter</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v5m0 0-5 5m5-5 5 5"/></svg></span><b>Networks</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span><b>Cybersecurity</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg></span><b>NOC &amp; SOC</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span><b>Unified Comms</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg></span><b>Voice &amp; Data</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h11v8H3z"/><path d="m14 11 7-3v8l-7-3z"/><circle cx="7" cy="12" r="1.5"/></svg></span><b>CCTV &amp; Access</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4"/></svg></span><b>IT Support</b></div><div class="hv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6a4 4 0 0 1 5 5l-8 8a2.8 2.8 0 0 1-4-4l8-8a4 4 0 0 1-1-1z"/></svg></span><b>Engineering</b></div></div>
+        <div class="heroviz"><span class="fx" style="left:6%;top:8%;width:118px;height:118px;opacity:0.3;--r:-8deg;--dur:14s;--del:0s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M7 6h.01M7 12h.01M7 18h.01"/></svg></span><span class="fx" style="left:60%;top:2%;width:84px;height:84px;opacity:0.2;--r:10deg;--dur:12s;--del:1.6s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v5m0 0-5 5m5-5 5 5"/></svg></span><span class="fx" style="left:31%;top:25%;width:136px;height:136px;opacity:0.34;--r:-3deg;--dur:16s;--del:0.5s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="fx" style="left:83%;top:28%;width:74px;height:74px;opacity:0.17;--r:6deg;--dur:11s;--del:2.4s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg></span><span class="fx" style="left:3%;top:50%;width:94px;height:94px;opacity:0.24;--r:-12deg;--dur:15s;--del:3.1s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span><span class="fx" style="left:50%;top:56%;width:110px;height:110px;opacity:0.27;--r:4deg;--dur:13s;--del:0.9s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg></span><span class="fx" style="left:86%;top:63%;width:78px;height:78px;opacity:0.19;--r:-6deg;--dur:12s;--del:2s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h11v8H3z"/><path d="m14 11 7-3v8l-7-3z"/><circle cx="7" cy="12" r="1.5"/></svg></span><span class="fx" style="left:20%;top:80%;width:88px;height:88px;opacity:0.22;--r:9deg;--dur:15s;--del:1.2s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4"/></svg></span><span class="fx" style="left:63%;top:84%;width:98px;height:98px;opacity:0.25;--r:-10deg;--dur:13s;--del:3.6s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6a4 4 0 0 1 5 5l-8 8a2.8 2.8 0 0 1-4-4l8-8a4 4 0 0 1-1-1z"/></svg></span></div>
       </div>
     </div>
   </section>
