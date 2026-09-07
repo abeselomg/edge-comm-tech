@@ -1,8 +1,47 @@
-# Six homepage directions
+# Design sources
 
-Standalone mockups for Edge Communication Technologies. Open `index.html` —
-no server, no build, no dependencies. Every page has a switcher fixed to the
-bottom of the screen for flipping between all six.
+Generators for the standalone review pages. Nothing in here is published —
+`design-src/` builds into `design-files/`, and only `design-files/` is served.
+
+Live at **https://abeselomg.github.io/edge-comm-tech/**
+
+## Current direction
+
+Three pages, generated together from `span/gen-span.mjs`:
+
+| | Page | File |
+|---|---|---|
+| 01 | Homepage | `07-span-style.html` |
+| 02 | About us | `08-span-about.html` |
+| 03 | Partners | `09-span-partners.html` |
+
+```bash
+node design-src/span/gen-span.mjs design-files
+```
+
+One command rewrites all three. They share a stylesheet, a nav and a footer,
+so editing the shell in `gen-span.mjs` changes every page at once — never edit
+the generated HTML directly, it will be overwritten on the next build.
+
+Supporting modules:
+
+- `span/objects3d.mjs` — the isometric objects drifting behind the home and
+  about heroes. True 2:1 projection: a square footprint of half-diagonal `a`
+  projects to a diamond `2a` wide and `a` tall.
+- `span/netviz.mjs` — the animated mesh on the partners hero. The node layout
+  comes from a seeded generator, not `Math.random`, so every build produces
+  the same mesh.
+- `span/logos/` — Edge's real logo files, embedded as base64 at build time.
+  This is why the generated pages are 280–560KB and need no asset hosting.
+
+## Earlier directions
+
+Six homepage treatments explored before the current one, kept as an archive
+and not being taken forward. Built by `build.mjs` from `content.json`:
+
+```bash
+node design-src/build.mjs design-files
+```
 
 | | Direction | Idea | Typeface |
 |---|---|---|---|
@@ -13,24 +52,33 @@ bottom of the screen for flipping between all six.
 | 05 | Topology | The homepage is a capability diagram | Space Grotesk |
 | 06 | Stack | Organised by layer of infrastructure, read bottom-up | Chivo |
 
-All six share one blue-black palette family, each with its own accent. The
-content is Edge's real copy, exported from the CMS.
+## Publishing
 
-## Before showing these
-
-- **Figures marked with a small square are placeholders.** Years operating,
-  headcount, project counts and every contact detail are invented to hold the
-  layout. Nothing marked that way should be quoted.
-- **The headline is a stand-in.** "Designed, commissioned, supported." was
-  written to fill the space and is the largest text on every page. It needs
-  Edge's own line.
-
-## Regenerating
+The review site is GitHub Pages, served from the `gh-pages` branch, whose root
+is the contents of `design-files/`. To publish a change:
 
 ```bash
-node design-files/_src/build.mjs design-files
+node design-src/span/gen-span.mjs design-files
+git add design-files && git commit -m "..."
+git push
+git subtree push --prefix design-files origin gh-pages
 ```
 
-`_src/content.json` is a snapshot of the CMS content. To refresh it, re-export
-from the seed data in `src/seed/data/`. Editing a direction means editing its
-file in `_src/` and re-running the build; the HTML is generated, not hand-kept.
+The last line is what actually updates the live site; a plain `git push` only
+updates the source branch. The build takes about half a minute after the push.
+
+## Before showing these to Edge
+
+Figures marked with a small square (`▪`) are **placeholders**. No founding
+year, headcount or project count has been invented — those need real numbers
+from Edge before anything ships. Partner and client counts are real and
+countable.
+
+Still outstanding from Edge:
+
+- The full service list. The nine services shown come from the current site,
+  and Edge has said the business is broader.
+- Whether LinkedIn and X accounts exist. The footer icons point at `#`.
+- Whether the "we hire engineers" line on the about page is true.
+- Partner category assignments on the partners page, in particular whether
+  HP should be HPE, and whether Huawei should also carry compute and storage.
