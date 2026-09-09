@@ -68,6 +68,20 @@ text-transform:uppercase;color:var(--blue-lift)}
 display:inline-flex;align-items:center;gap:8px}
 .page .go svg{width:14px;height:14px}
 
+/* ---- alternative looks ---- */
+.alts{margin-top:28px;display:grid;gap:1px;background:var(--line);
+border:1px solid var(--line);border-radius:14px;overflow:hidden;
+grid-template-columns:repeat(1,1fr)}
+@media (min-width:700px){.alts{grid-template-columns:repeat(2,1fr)}}
+.alt{background:#040a13;padding:22px 22px 20px;transition:background .16s}
+.alt:hover{background:#0b1a2e}
+.alt .sw{display:flex;gap:6px;margin-bottom:14px}
+.alt .sw i{width:26px;height:26px;border-radius:7px;border:1px solid rgba(255,255,255,.14)}
+.alt h3{font-size:17px;font-weight:600;letter-spacing:-.03em}
+.alt p{margin-top:8px;font-size:13px;color:var(--muted);line-height:1.6}
+.alt .go{margin-top:14px;display:inline-block;font-size:12.5px;font-weight:600;
+color:var(--blue-pale)}
+
 /* ---- open questions ---- */
 .note{margin-top:30px;border:1px solid var(--line);border-radius:14px;
 background:rgba(255,255,255,.026);padding:24px 24px 22px;max-width:74ch}
@@ -89,10 +103,10 @@ font-size:12.5px;color:var(--muted-2)}
   <div class="wrap">
     <span class="mark"><i></i> Edge COMM-TECH</span>
     <h1>Website design, for review</h1>
-    <p class="lede">Three pages built to the direction we agreed. Everything here is real
-    Edge content unless it is marked otherwise &mdash; the services, the eight manufacturer
-    partnerships, the five client institutions and the contact details all come from Edge.
-    Open each page and click through; the navigation between the three works.</p>
+    <p class="lede">Three pages built to the direction we agreed, plus two alternative looks
+    for comparison. Everything here is real Edge content unless it is marked otherwise
+    &mdash; the services, the eight manufacturer partnerships, the five client institutions
+    and the contact details all come from Edge.</p>
   </div>
 </header>
 
@@ -136,6 +150,37 @@ font-size:12.5px;color:var(--muted-2)}
             stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
       </a>
+    </div>
+
+    <div style="margin-top:52px">
+      <span class="eyebrow"><i></i> Alternative looks</span>
+      <h2>Two other treatments</h2>
+      <p class="sub">The same Edge content in two different visual languages, for comparison
+      against the dark direction above. Single scrolling pages, light rather than dark.</p>
+
+      <div class="alts">
+        <a class="alt" href="landings/highland-microwave.html">
+          <span class="sw" aria-hidden="true">
+            <i style="background:#eef6f4"></i><i style="background:#0888c5"></i>
+            <i style="background:#c48a5a"></i><i style="background:#1c2430"></i>
+          </span>
+          <h3>Highland microwave</h3>
+          <p>Warm off-white paper with a sun disk over a horizon line, and the three-step
+          method drawn as hops along a dashed path. Geologica for display.</p>
+          <span class="go">Open page</span>
+        </a>
+
+        <a class="alt" href="landings/cyanotype-print.html">
+          <span class="sw" aria-hidden="true">
+            <i style="background:#e6f4fa"></i><i style="background:#0888c5"></i>
+            <i style="background:#ffe566"></i><i style="background:#062f44"></i>
+          </span>
+          <h3>Cyanotype construction print</h3>
+          <p>Laid out like a drawing set: blueprint blue, a measured grid, boxed title-block
+          cells and a bleach-yellow accent. Chakra Petch, all caps.</p>
+          <span class="go">Open page</span>
+        </a>
+      </div>
     </div>
 
     <div class="note">
