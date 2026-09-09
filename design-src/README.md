@@ -34,6 +34,20 @@ Supporting modules:
 - `span/logos/` — Edge's real logo files, embedded as base64 at build time.
   This is why the generated pages are 280–560KB and need no asset hosting.
 
+## Alternative looks
+
+`design-files/landings/` holds two single-page treatments of the same content in
+different visual languages, plus their own index:
+
+| File | Look |
+|---|---|
+| `highland-microwave.html` | Warm off-white paper, sun disk over a horizon, hops on a dashed path. Geologica. |
+| `cyanotype-print.html` | Blueprint blue, drawing grid, boxed title-block cells, bleach yellow. Chakra Petch. |
+
+These are **hand-authored, not generated** — the only files under `design-files/`
+that are edited in place rather than rebuilt. They use the Tailwind play CDN and
+Google Fonts at runtime, so unlike the pages above they need a network connection.
+
 ## Earlier directions
 
 Six homepage treatments explored before the current one. **No longer published** —

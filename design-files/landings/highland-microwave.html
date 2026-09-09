@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Edge COMM-TECH — Highland microwave</title>
+  <meta name="description" content="Edge Communication Technologies — ICT systems integration in Addis Ababa." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { DEFAULT: "#1c2430", 2: "#2a3544" },
+            paper: { DEFAULT: "#eef6f4", 2: "#ffffff" },
+            gold: { DEFAULT: "#0888c5", 2: "#056a9a" },
+            lamp: "#c48a5a",
+            steel: "#5c6b76",
+            rule: "#0888c530",
+          },
+          fontFamily: {
+            display: ["Geologica", "Segoe UI", "sans-serif"],
+            sans: ["Atkinson Hyperlegible", "Segoe UI", "sans-serif"],
+            mono: ["Fragment Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #eef6f4; color: #1c2430; font-family: "Atkinson Hyperlegible", sans-serif; }
+    .font-display { letter-spacing: -0.03em; font-weight: 700; }
+    .sun-disk {
+      position: absolute;
+      right: -6rem;
+      top: -5rem;
+      width: 22rem;
+      height: 22rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, #fff8 0%, #0888c5 42%, transparent 70%);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
+      pointer-events: none;
+    }
+    .hop-line {
+      flex: 1;
+      height: 1px;
+      margin-top: 0.55rem;
+      background-image: repeating-linear-gradient(90deg, #0888c5 0 6px, transparent 6px 12px);
+    }
+    .ph {
+      border-bottom: 1px dashed #0888c5;
+    }
+    .ph::after {
+      content: "▪";
+      font-size: 0.45em;
+      vertical-align: super;
+      margin-left: 0.15em;
+      color: #c48a5a;
+    }
+    :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+      <a href="#" class="leading-none">
+        <span class="block font-mono text-[10px] uppercase tracking-[0.35em] text-gold">Edge</span>
+        <span class="font-display text-xl tracking-tight">COMM-TECH</span>
+      </a>
+      <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
+        <a href="#about" class="text-ink/70 hover:text-gold">About</a>
+        <a href="#partners" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="#solutions" class="text-ink/70 hover:text-gold">Solutions</a>
+        <a href="#record" class="text-ink/70 hover:text-gold">Projects</a>
+        <a href="#academy" class="text-ink/70 hover:text-gold">Academy</a>
+        <a href="#career" class="text-ink/70 hover:text-gold">Career</a>
+        <a href="#blog" class="text-ink/70 hover:text-gold">Blog</a>
+      </nav>
+      <a href="#contact" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
+      <a href="#about" class="whitespace-nowrap text-ink/70">About</a>
+      <a href="#partners" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="#solutions" class="whitespace-nowrap text-ink/70">Solutions</a>
+      <a href="#record" class="whitespace-nowrap text-ink/70">Projects</a>
+      <a href="#academy" class="whitespace-nowrap text-ink/70">Academy</a>
+      <a href="#career" class="whitespace-nowrap text-ink/70">Career</a>
+      <a href="#blog" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="#contact" class="whitespace-nowrap text-gold">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="relative overflow-hidden bg-paper">
+      <div class="sun-disk" aria-hidden="true"></div>
+      <div class="horizon" aria-hidden="true"></div>
+      <div class="relative mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-[1fr_18rem] md:py-32">
+        <div>
+          <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Addis Ababa · Working with institutions nationwide</p>
+          <h1 class="mt-5 font-display text-[clamp(2.6rem,7vw,5.25rem)] leading-[0.95]">
+            Infrastructure built to international standards
+          </h1>
+          <p class="mt-8 max-w-lg text-lg leading-relaxed text-ink/75">
+            We advise, implement and manage communication and IT infrastructure for Ethiopia’s universities, hospitals and enterprises.
+          </p>
+          <div class="mt-10 flex flex-wrap gap-3">
+            <a href="#solutions" class="rounded-full bg-gold px-6 py-3 text-sm text-white">See our solutions</a>
+            <a href="#contact" class="rounded-full border border-gold px-6 py-3 text-sm text-gold">Contact us</a>
+          </div>
+        </div>
+        <aside class="relative z-10 self-end rounded-3xl bg-paper-2 p-6 shadow-[0_20px_50px_-24px_rgb(8_136_197_/_0.45)]">
+          <p class="font-mono text-[10px] uppercase tracking-[0.25em] text-gold">Office</p>
+          <p class="mt-3 font-display text-2xl leading-tight">An engineer replies, not a sales queue</p>
+          <p class="mt-3 text-sm text-ink/70">Bole, next to Ambassador Hotel. Lubaba Building, 3rd Floor.</p>
+          <a href="#contact" class="mt-5 inline-block text-sm text-gold">Call or write →</a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="bg-paper-2">
+      <div class="mx-auto grid max-w-6xl grid-cols-1 divide-y divide-rule md:grid-cols-3 md:divide-x md:divide-y-0">
+        <div class="px-6 py-10">
+          <p class="font-display text-4xl text-gold">8</p>
+          <p class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Certified vendor partners</p>
+        </div>
+        <div class="px-6 py-10">
+          <p class="font-display text-4xl text-gold">5</p>
+          <p class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Named institutional clients</p>
+        </div>
+        <div class="px-6 py-10">
+          <p class="font-display text-4xl text-gold"><span class="ph">6</span></p>
+          <p class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Years operating</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="clients" class="mx-auto max-w-6xl px-6 py-20">
+      <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Trusted by</p>
+      <h2 class="mt-2 max-w-3xl font-display text-4xl md:text-5xl">Universities and hospitals that cannot afford to be offline</h2>
+      <ul class="mt-10 flex flex-wrap gap-3">
+        <li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Bonga University</li>
+        <li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Bahir Dar University</li>
+        <li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Haramaya University</li>
+        <li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Mizan-Tepi University</li>
+        <li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Yekatit 12 Hospital</li>
+      </ul>
+    </section>
+
+    <section id="about" class="border-t border-rule bg-paper-2">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">What we do</p>
+        <h2 class="mt-2 max-w-3xl font-display text-4xl md:text-5xl">Advise, implement, manage. One team across all three.</h2>
+        <p class="mt-5 max-w-2xl text-ink/75">
+          Most failures we are called in to fix happen at the seam between two suppliers. Edge stays with a system from the first assessment to the after-sales contract.
+        </p>
+        <ol class="mt-12 flex flex-col gap-8 md:flex-row md:items-start">
+          <li class="flex flex-1 gap-0 md:flex-col">
+            <div class="flex w-full items-start gap-0">
+              <div>
+                <span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span>
+                <h3 class="mt-4 font-display text-3xl">Advise</h3>
+                <p class="mt-3 max-w-xs text-sm text-ink/75">We start from what you actually have and what it costs you to run it, then say plainly what should change and in what order.</p>
+              </div>
+              <div class="hop-line hidden md:block"></div>
+            </div>
+          </li>
+          <li class="flex flex-1 gap-0 md:flex-col">
+            <div class="flex w-full items-start gap-0">
+              <div>
+                <span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span>
+                <h3 class="mt-4 font-display text-3xl">Implement</h3>
+                <p class="mt-3 max-w-xs text-sm text-ink/75">Certified network and system engineers do the design, the configuration and the commissioning — to international standards, not to whatever fits.</p>
+              </div>
+              <div class="hop-line hidden md:block"></div>
+            </div>
+          </li>
+          <li class="flex flex-1 gap-0 md:flex-col">
+            <div class="flex w-full items-start gap-0">
+              <div>
+                <span class="inline-block h-2.5 w-2.5 rounded-full bg-lamp"></span>
+                <h3 class="mt-4 font-display text-3xl">Manage</h3>
+                <p class="mt-3 max-w-xs text-sm text-ink/75">Continuous follow-up and optimised after-sales service. The contract that builds it is the contract that keeps it running.</p>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="solutions" class="mx-auto max-w-6xl px-6 py-20">
+      <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Solutions</p>
+      <h2 class="mt-2 font-display text-4xl md:text-5xl">Nine services, delivered end to end</h2>
+      <p class="mt-5 max-w-2xl text-ink/75">
+        Voice, data and internet elements integrated end to end as a fully managed service — with the engineers who designed it still reachable afterwards.
+      </p>
+      <div class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <article class="rounded-2xl border-l-4 border-gold bg-paper-2 px-6 py-5">
+          <h3 class="font-display text-2xl">Datacenter Facility</h3>
+          <p class="mt-2 text-sm text-ink/70">Designed and built to house IT infrastructure with high-quality materials, industry-leading standards and Tier-rated architecture.</p>
+        </article>
+        <article class="rounded-2xl border-l-4 border-gold bg-paper-2 px-6 py-5">
+          <h3 class="font-display text-2xl">Networks (LAN/WLAN)</h3>
+          <p class="mt-2 text-sm text-ink/70">Campus and wireless networks delivered with our manufacturing partners — the experience and expertise the design actually needs.</p>
+        </article>
+        <article class="rounded-2xl border-l-4 border-gold bg-paper-2 px-6 py-5">
+          <h3 class="font-display text-2xl">Cybersecurity</h3>
+          <p class="mt-2 text-sm text-ink/70">A complete portfolio of network and data security services, plus the staff of security professionals who operate them.</p>
+        </article>
+        <article class="rounded-2xl border-l-4 border-gold bg-paper-2 px-6 py-5">
+          <h3 class="font-display text-2xl">NOC and SOC services</h3>
+          <p class="mt-2 text-sm text-ink/70">Build carrier-grade network operations and security operations centres, and the practice that runs them.</p>
+        </article>
+        <article class="rounded-2xl border-l-4 border-gold bg-paper-2 px-6 py-5">
+          <h3 class="font-display text-2xl">Unified Communications</h3>
+          <p class="mt-2 text-sm text-ink/70">Phone services with unified voice, presence, chat, mobile and data integration across the organisation.</p>
+        </article>
+        <article class="rounded-2xl border-l-4 border-gold bg-paper-2 px-6 py-5">
+          <h3 class="font-display text-2xl">Voice / Data / Internet</h3>
+          <p class="mt-2 text-sm text-ink/70">A wide array of plan options and service alternatives, with all telecom and unified communication elements integrated end to end as a fully managed service.</p>
+        </article>
+        <article class="rounded-2xl border-l-4 border-gold bg-paper-2 px-6 py-5">
+          <h3 class="font-display text-2xl">CCTV and Physical security</h3>
+          <p class="mt-2 text-sm text-ink/70">Design and installation of CCTV, access control systems, gate barriers, turnstiles and related physical security.</p>
+        </article>
+        <article class="rounded-2xl border-l-4 border-gold bg-paper-2 px-6 py-5">
+          <h3 class="font-display text-2xl">IT service / Desktop support</h3>
+          <p class="mt-2 text-sm text-ink/70">Remote and on-site IT helpdesk for enterprise network infrastructure, servers, software and systems.</p>
+        </article>
+        <article class="rounded-2xl border-l-4 border-gold bg-paper-2 px-6 py-5">
+          <h3 class="font-display text-2xl">Professional services</h3>
+          <p class="mt-2 text-sm text-ink/70">Expert-level certified network and system engineers specialising in design, configuration and troubleshooting.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="border-t border-rule bg-paper-2">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Custom solutions</p>
+        <h2 class="mt-2 font-display text-4xl md:text-5xl">Built for the site, not from a catalogue</h2>
+        <ol class="mt-12 grid gap-6 md:grid-cols-3">
+          <li>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">01</p>
+            <h3 class="mt-2 font-display text-2xl">Private residences</h3>
+            <p class="mt-3 text-sm text-ink/75">Networks, surveillance and access control for homes and residential compounds.</p>
+          </li>
+          <li>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">02</p>
+            <h3 class="mt-2 font-display text-2xl">Organizations</h3>
+            <p class="mt-3 text-sm text-ink/75">Campus and enterprise builds for universities, hospitals and public bodies.</p>
+          </li>
+          <li>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">03</p>
+            <h3 class="mt-2 font-display text-2xl">Factories</h3>
+            <p class="mt-3 text-sm text-ink/75">Industrial sites where the network and the physical security are one system.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="partners" class="mx-auto max-w-6xl px-6 py-20">
+      <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Partners</p>
+      <h2 class="mt-2 max-w-3xl font-display text-4xl md:text-5xl">Certified across the platforms that run critical systems</h2>
+      <p class="mt-5 max-w-2xl text-ink/75">Our network group, together with our manufacturing partners, has the experience and expertise the work needs.</p>
+      <ul class="mt-10 flex flex-wrap gap-3">
+        <li class="rounded-full bg-paper-2 px-4 py-2 text-sm">Cisco</li>
+        <li class="rounded-full bg-paper-2 px-4 py-2 text-sm">Dell</li>
+        <li class="rounded-full bg-paper-2 px-4 py-2 text-sm">HP</li>
+        <li class="rounded-full bg-paper-2 px-4 py-2 text-sm">Huawei</li>
+        <li class="rounded-full bg-paper-2 px-4 py-2 text-sm">Palo Alto Networks</li>
+        <li class="rounded-full bg-paper-2 px-4 py-2 text-sm">Vertiv</li>
+        <li class="rounded-full bg-paper-2 px-4 py-2 text-sm">Tripp Lite</li>
+        <li class="rounded-full bg-paper-2 px-4 py-2 text-sm">Canovate Group</li>
+      </ul>
+    </section>
+
+    <section id="record" class="border-t border-rule bg-paper-2">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Track record</p>
+        <h2 class="mt-2 font-display text-4xl md:text-5xl">The numbers Edge can evidence</h2>
+        <div class="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
+          <div>
+            <p class="font-display text-4xl text-gold">8</p>
+            <p class="mt-1 text-sm text-ink/70">Certified vendor partners</p>
+          </div>
+          <div>
+            <p class="font-display text-4xl text-gold">5</p>
+            <p class="mt-1 text-sm text-ink/70">Named institutional clients</p>
+          </div>
+          <div>
+            <p class="font-display text-4xl text-gold"><span class="ph">120</span></p>
+            <p class="mt-1 text-sm text-ink/70">Projects delivered</p>
+          </div>
+          <div>
+            <p class="font-display text-4xl text-gold"><span class="ph">40</span></p>
+            <p class="mt-1 text-sm text-ink/70">Engineers on staff</p>
+          </div>
+        </div>
+        <p class="mt-8 max-w-2xl text-sm text-steel">
+          Figures marked with a square are placeholders. Edge has not published headcount, project counts or a founding year. Partner and client counts are real and countable.
+        </p>
+      </div>
+    </section>
+
+    <section id="contact" class="mx-auto max-w-6xl px-6 py-20">
+      <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Get in touch</p>
+      <h2 class="mt-2 max-w-3xl font-display text-4xl md:text-5xl">Tell us what you need to build, secure or keep running</h2>
+      <p class="mt-5 text-ink/75">An engineer replies, not a sales queue.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="tel:+251922555055" class="rounded-full bg-gold px-6 py-3 text-sm text-white">Call the office</a>
+        <a href="mailto:sales@edgecomm-tech.com" class="rounded-full border border-gold px-6 py-3 text-sm text-gold">Email sales</a>
+      </div>
+      <dl class="mt-12 grid gap-8 text-sm md:grid-cols-3">
+        <div>
+          <dt class="font-mono text-[10px] uppercase tracking-widest text-gold">Office</dt>
+          <dd class="mt-2 text-ink/80">Addis Ababa, Bole<br />Next to Ambassador Hotel<br />Lubaba Building, 3rd Floor</dd>
+        </div>
+        <div>
+          <dt class="font-mono text-[10px] uppercase tracking-widest text-gold">Telephone</dt>
+          <dd class="mt-2">
+            <a class="text-gold" href="tel:+251922555055">+251 92 255 5055</a><br />
+            <a class="text-gold" href="tel:+251911538809">+251 91 153 8809</a>
+          </dd>
+        </div>
+        <div>
+          <dt class="font-mono text-[10px] uppercase tracking-widest text-gold">Email</dt>
+          <dd class="mt-2">
+            <a class="text-gold" href="mailto:info@edgecomm-tech.com">info@edgecomm-tech.com</a><br />
+            <a class="text-gold" href="mailto:sales@edgecomm-tech.com">sales@edgecomm-tech.com</a><br />
+            <a class="text-gold" href="mailto:support@edgecomm-tech.com">support@edgecomm-tech.com</a>
+          </dd>
+        </div>
+      </dl>
+    </section>
+  </main>
+
+  <footer class="border-t border-rule bg-paper-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <p class="font-mono text-[10px] uppercase tracking-[0.35em] text-gold">Edge</p>
+        <p class="font-display text-2xl">COMM-TECH</p>
+        <p class="mt-3 max-w-sm text-sm text-ink/70">An ICT systems integration company in Addis Ababa, delivering datacenter, network, security, communications and support to the institutions that depend on them.</p>
+        <p class="mt-3 text-sm font-semibold text-gold">Built to international standards.</p>
+      </div>
+      <div>
+        <h4 class="font-display text-sm">Solutions</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="#solutions">Datacenter Facility</a></li>
+          <li><a href="#solutions">Networks (LAN/WLAN)</a></li>
+          <li><a href="#solutions">Cybersecurity</a></li>
+          <li><a href="#solutions">NOC and SOC services</a></li>
+          <li><a href="#solutions">Unified Communications</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-display text-sm">Company</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="#about">About us</a></li>
+          <li><a href="#partners">Partners</a></li>
+          <li><a href="#clients">Our clients</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-display text-sm">Get in touch</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li>Bole, Lubaba Building, 3rd Floor<br />Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:info@edgecomm-tech.com">info@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251922555055">+251 92 255 5055</a></li>
+          <li><a href="https://edgecomm-tech.com">edgecomm-tech.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
+      <p>© 2026 Edge Communication Technologies. Advise, implement, manage.</p>
+      <p id="academy" class="text-ink/50">Academy, Career and Blog are not published yet.</p>
+    </div>
+    <span id="career" class="sr-only"></span>
+    <span id="blog" class="sr-only"></span>
+  </footer>
+</body>
+</html>
