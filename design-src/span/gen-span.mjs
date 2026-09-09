@@ -119,8 +119,6 @@ const catCount = (k) =>
     ? PARTNERS.length
     : PARTNERS.filter(([, n]) => (PARTNER_CATS[n] ?? []).includes(k)).length;
 
-const NAV = ["Solutions", "Clients", "Partners", "About", "Contact"];
-
 /* ------------------------------------------------------------------- icons */
 
 const ICONS = {
@@ -238,7 +236,38 @@ background:rgba(255,255,255,.045);border:1px solid var(--line);backdrop-filter:b
 .pillnav a{padding:8px 14px;border-radius:99px;font-size:13px;color:#cfe0f2;
 transition:background .15s,color .15s}
 .pillnav a:hover{background:rgba(255,255,255,.08);color:#fff}
-@media (min-width:940px){.pillnav{display:flex}}
+.pillnav a[aria-current]{background:rgba(63,184,245,.16);color:#fff}
+
+/* Below the pill's breakpoint the bar would otherwise carry no navigation at
+   all, so the same links open as a panel. Checkbox rather than script, to keep
+   these files standalone. */
+.navtog{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.burger{display:flex;flex-direction:column;justify-content:center;gap:5px;
+width:42px;height:38px;padding:0 10px;cursor:pointer;border-radius:9px;
+background:rgba(255,255,255,.045);border:1px solid var(--line);
+/* The bar is space-between; without this the burger sits marooned in the
+   middle once the pill is hidden. Auto margin gathers it to the CTA. */
+margin-left:auto}
+.burger span{display:block;height:1.5px;border-radius:2px;background:#cfe0f2;
+transition:transform .2s,opacity .2s}
+.navtog:checked~.burger span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.navtog:checked~.burger span:nth-child(2){opacity:0}
+.navtog:checked~.burger span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.navtog:focus-visible~.burger{outline:2px solid var(--blue-glow);outline-offset:2px}
+.navtog:checked~.pillnav{display:flex;flex-direction:column;gap:2px;
+position:absolute;left:16px;right:16px;top:72px;padding:8px;border-radius:14px;
+background:rgba(6,14,26,.94);box-shadow:0 24px 60px rgba(0,6,16,.7)}
+.navtog:checked~.pillnav a{padding:13px 14px;border-radius:9px;font-size:15px}
+
+@media (min-width:940px){
+  .pillnav{display:flex}
+  .burger{display:none}
+  /* The panel rules must not survive past the breakpoint if the box is
+     still ticked from a narrower window. */
+  .navtog:checked~.pillnav{flex-direction:row;position:static;padding:5px;
+    border-radius:99px;background:rgba(255,255,255,.045);box-shadow:none}
+  .navtog:checked~.pillnav a{padding:8px 14px;border-radius:99px;font-size:13px}
+}
 .navcta{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:9px;
 background:#fff;color:#04101c;font-size:13px;font-weight:600;white-space:nowrap}
 .navcta:hover{background:var(--blue-pale)}
@@ -633,22 +662,29 @@ const PAGES = {
   partners: "09-span-partners.html",
 };
 
-const HREF = {
-  Solutions: (pg) => (pg === "home" ? "#solutions" : PAGES.home + "#solutions"),
-  Clients: (pg) => (pg === "home" ? "#clients" : "#clients"),
-  Partners: () => PAGES.partners,
-  About: () => PAGES.about,
-  Contact: () => "#contact",
-};
+/* Header items, in the order Edge's requirements document sets out.
+   Third entry is the page an item owns, used to mark the current one;
+   Career and Blog have no page designed yet and park on "#". Contact is
+   deliberately absent -- the button at the end of the bar is the contact
+   route, and listing it twice would be noise. */
+const NAV = [
+  ["About", () => PAGES.about, "about"],
+  ["Partners", () => PAGES.partners, "partners"],
+  ["Solutions", (pg) => (pg === "home" ? "#solutions" : PAGES.home + "#solutions")],
+  ["Career", () => "#"],
+  ["Blog", () => "#"],
+];
 
 const navFor = (pg) => `<header class="nav">
   <a class="brand" href="${PAGES.home}" aria-label="Edge Communication Technologies">
     <img src="${b64("icon.png")}" alt="">
   </a>
+  <input class="navtog" type="checkbox" id="navtog">
+  <label class="burger" for="navtog" aria-label="Open menu"><span></span><span></span><span></span></label>
   <nav class="pillnav" aria-label="Main">
     ${NAV.map(
-      (n) =>
-        `<a href="${HREF[n](pg)}"${(n === "About" && pg === "about") || (n === "Partners" && pg === "partners") ? ' aria-current="page"' : ""}>${n}</a>`,
+      ([label, href, owns]) =>
+        `<a href="${href(pg)}"${owns === pg ? ' aria-current="page"' : ""}>${esc(label)}</a>`,
     ).join("")}
   </nav>
   <a class="navcta" href="#contact">Contact us ${arrow}</a>
