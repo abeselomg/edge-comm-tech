@@ -671,6 +671,8 @@ const NAV = [
   ["About", () => PAGES.about, "about"],
   ["Partners", () => PAGES.partners, "partners"],
   ["Solutions", (pg) => (pg === "home" ? "#solutions" : PAGES.home + "#solutions")],
+  ["Projects", () => "#"],
+  ["Academy", () => "#"],
   ["Career", () => "#"],
   ["Blog", () => "#"],
 ];
