@@ -11,7 +11,10 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
-    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts"
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
+    "highland": "node design-src/highland/gen.mjs design-files/highland",
+    "check:links": "node tools/check-links.mjs design-files/highland",
+    "check:render": "node tools/check-render.mjs design-files/highland"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
@@ -35,6 +38,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^9.34.0",
     "eslint-config-next": "^15.4.6",
+    "playwright-core": "^1.56.0",
     "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2"
   },
