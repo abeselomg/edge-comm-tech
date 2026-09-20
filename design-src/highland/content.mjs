@@ -213,3 +213,33 @@ export const COURSE_DETAIL = {
       lessons: ["Triage and disposition", "Containment decisions", "Handover and the written record"] },
   ],
 };
+
+export const JOBS = [
+  { slug: "network-engineer", title: "Network Engineer", team: "Networks",
+    type: "Full time", positions: 2, deadline: "Rolling" },
+  { slug: "security-analyst", title: "Security Analyst (SOC)", team: "Cybersecurity",
+    type: "Full time", positions: 2, deadline: "Rolling" },
+  { slug: "facilities-engineer", title: "Datacenter Facilities Engineer", team: "Datacenter",
+    type: "Full time", positions: 1, deadline: "Rolling" },
+  { slug: "support-engineer", title: "IT Support Engineer", team: "Support",
+    type: "Full time", positions: 3, deadline: "Rolling" },
+];
+
+export const JOB_DETAIL = {
+  slug: "network-engineer",
+  location: "Addis Ababa, Bole — on site, with travel to client sites nationwide",
+  summary:
+    "Design, configure and commission campus and wide-area networks for universities, hospitals and enterprises. You will be in the room when a build is commissioned, not only on the drawing.",
+  responsibilities: [
+    "Survey sites and produce network designs against a written requirement",
+    "Configure and commission switching, routing and wireless",
+    "Hand over documented, labelled and tested installations",
+    "Support the estate you built, through the after-sales contract",
+  ],
+  qualifications: [
+    "Degree in computer engineering, electrical engineering or a related field",
+    "CCNA or equivalent; CCNP an advantage",
+    "Two years or more of hands-on campus network delivery",
+    "Willingness to travel to client sites outside Addis Ababa",
+  ],
+};
