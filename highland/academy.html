@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Academy — Edge COMM-TECH</title>
+  <meta name="description" content="Training in the systems Edge designs and operates." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { DEFAULT: "#1c2430", 2: "#2a3544" },
+            paper: { DEFAULT: "#eef6f4", 2: "#ffffff" },
+            gold: { DEFAULT: "#0888c5", 2: "#056a9a" },
+            lamp: "#c48a5a",
+            steel: "#5c6b76",
+            rule: "#0888c530",
+          },
+          fontFamily: {
+            display: ["Geologica", "Segoe UI", "sans-serif"],
+            sans: ["Atkinson Hyperlegible", "Segoe UI", "sans-serif"],
+            mono: ["Fragment Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #eef6f4; color: #1c2430; font-family: "Atkinson Hyperlegible", sans-serif; }
+    .font-display { letter-spacing: -0.03em; font-weight: 700; }
+    .sun-disk {
+      position: absolute;
+      right: -6rem;
+      top: -5rem;
+      width: 22rem;
+      height: 22rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, #fff8 0%, #0888c5 42%, transparent 70%);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
+      pointer-events: none;
+    }
+    .hop-line {
+      flex: 1;
+      height: 1px;
+      margin-top: 0.55rem;
+      background-image: repeating-linear-gradient(90deg, #0888c5 0 6px, transparent 6px 12px);
+    }
+    .ph {
+      border-bottom: 1px dashed #0888c5;
+    }
+    .ph::after {
+      content: "▪";
+      font-size: 0.45em;
+      vertical-align: super;
+      margin-left: 0.15em;
+      color: #c48a5a;
+    }
+    :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+      <a href="index.html" class="leading-none">
+        <span class="block font-mono text-[10px] uppercase tracking-[0.35em] text-gold">Edge</span>
+        <span class="font-display text-xl tracking-tight">COMM-TECH</span>
+      </a>
+      <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
+        <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
+        <a href="academy.html" class="text-gold" aria-current="page">Academy</a>
+        <a href="career.html" class="text-ink/70 hover:text-gold">Career</a>
+        <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+      </nav>
+      <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
+      <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
+      <a href="academy.html" class="whitespace-nowrap text-gold">Academy</a>
+      <a href="career.html" class="whitespace-nowrap text-ink/70">Career</a>
+      <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-6 py-20">
+    <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Academy</p>
+    <h1 class="mt-3 max-w-3xl font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]">
+      We teach what we build
+    </h1>
+    <p class="mt-5 max-w-2xl text-ink/75">
+      6 courses, each tied to a service Edge delivers. Taught by the engineers
+      who do the work, not by a training department.
+    </p>
+
+    <ol class="relative mt-16 space-y-px pl-10">
+      <span class="absolute left-[3px] top-2 h-[calc(100%-1rem)] w-px bg-[repeating-linear-gradient(180deg,#0888c5_0_6px,transparent_6px_12px)]" aria-hidden="true"></span>
+      
+      <li class="relative">
+        <span class="absolute left-[-2.5rem] top-7 h-2 w-2 rounded-full bg-gold ring-4 ring-paper"></span>
+        <a href="course-soc.html" class="block border-b border-rule py-6 hover:bg-paper-2">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">01 · NOC and SOC services</p>
+          <h2 class="mt-2 font-display text-2xl">Security Operations Centre fundamentals</h2>
+          <p class="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-steel">
+            <span>1 week</span><span>Intermediate</span><span>10 lessons</span>
+          </p>
+        </a>
+      </li>
+      <li class="relative">
+        <span class="absolute left-[-2.5rem] top-7 h-2 w-2 rounded-full bg-gold ring-4 ring-paper"></span>
+        <a href="#" class="block border-b border-rule py-6 hover:bg-paper-2">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">02 · Cybersecurity</p>
+          <h2 class="mt-2 font-display text-2xl">Firewall administration and perimeter security</h2>
+          <p class="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-steel">
+            <span>1 week</span><span>Intermediate</span><span>8 lessons</span>
+          </p>
+        </a>
+      </li>
+      <li class="relative">
+        <span class="absolute left-[-2.5rem] top-7 h-2 w-2 rounded-full bg-gold ring-4 ring-paper"></span>
+        <a href="#" class="block border-b border-rule py-6 hover:bg-paper-2">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">03 · Networks (LAN/WLAN)</p>
+          <h2 class="mt-2 font-display text-2xl">Enterprise wireless design and management</h2>
+          <p class="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-steel">
+            <span>5 days</span><span>Intermediate</span><span>7 lessons</span>
+          </p>
+        </a>
+      </li>
+      <li class="relative">
+        <span class="absolute left-[-2.5rem] top-7 h-2 w-2 rounded-full bg-gold ring-4 ring-paper"></span>
+        <a href="#" class="block border-b border-rule py-6 hover:bg-paper-2">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">04 · Datacenter Facility</p>
+          <h2 class="mt-2 font-display text-2xl">Datacenter facility systems</h2>
+          <p class="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-steel">
+            <span>4 days</span><span>Beginner</span><span>6 lessons</span>
+          </p>
+        </a>
+      </li>
+      <li class="relative">
+        <span class="absolute left-[-2.5rem] top-7 h-2 w-2 rounded-full bg-gold ring-4 ring-paper"></span>
+        <a href="#" class="block border-b border-rule py-6 hover:bg-paper-2">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">05 · Professional services</p>
+          <h2 class="mt-2 font-display text-2xl">Backup, disaster recovery and business continuity</h2>
+          <p class="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-steel">
+            <span>1 week</span><span>Intermediate</span><span>9 lessons</span>
+          </p>
+        </a>
+      </li>
+      <li class="relative">
+        <span class="absolute left-[-2.5rem] top-7 h-2 w-2 rounded-full bg-gold ring-4 ring-paper"></span>
+        <a href="#" class="block border-b border-rule py-6 hover:bg-paper-2">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">06 · IT service / Desktop support</p>
+          <h2 class="mt-2 font-display text-2xl">IT support and system administration essentials</h2>
+          <p class="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-steel">
+            <span>2 weeks</span><span>Beginner</span><span>12 lessons</span>
+          </p>
+        </a>
+      </li>
+    </ol>
+  </main>
+
+  <footer class="border-t border-rule bg-paper-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <p class="font-mono text-[10px] uppercase tracking-[0.35em] text-gold">Edge</p>
+        <p class="font-display text-2xl">COMM-TECH</p>
+        <p class="mt-3 max-w-sm text-sm text-ink/70">An ICT systems integration company in Addis Ababa, delivering datacenter, network, security, communications and support to the institutions that depend on them.</p>
+        <p class="mt-3 text-sm font-semibold text-gold">Built to international standards.</p>
+      </div>
+      <div>
+        <h4 class="font-display text-sm">Solutions</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="solutions.html">Datacenter Facility</a></li>
+          <li><a href="solutions.html">Networks (LAN/WLAN)</a></li>
+          <li><a href="solutions.html">Cybersecurity</a></li>
+          <li><a href="solutions.html">NOC and SOC services</a></li>
+          <li><a href="solutions.html">Unified Communications</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-display text-sm">Company</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="about.html">About us</a></li>
+          <li><a href="partners.html">Partners</a></li>
+          <li><a href="about.html#clients">Our clients</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-display text-sm">Get in touch</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li>Bole, Lubaba Building, 3rd Floor<br />Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:info@edgecomm-tech.com">info@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251922555055">+251 92 255 5055</a></li>
+          <li><a href="https://edgecomm-tech.com">edgecomm-tech.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
+      <p>© 2026 Edge Communication Technologies. Advise, implement, manage.</p>
+    </div>
+  </footer>
+</body>
+</html>
