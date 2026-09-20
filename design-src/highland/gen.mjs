@@ -111,6 +111,7 @@ ${body}
 const PAGES = [
   ["index.html", () => import("./pages/home.mjs")],
   ["contact.html", () => import("./pages/contact.mjs")],
+  ["about.html", () => import("./pages/about.mjs")],
 ];
 
 const outDir = process.argv[2];

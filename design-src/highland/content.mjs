@@ -77,3 +77,34 @@ export const NAV = [
   ["Career", "career.html"],
   ["Blog", "blog.html"],
 ];
+
+/* --------------------------------------------------------------- drafted */
+/* Written for this design. Edge has not published an executive roster; the
+   names below are placeholders and must be replaced before launch. */
+
+export const METHOD = [
+  { title: "Advise",
+    body: "We start from what you actually have and what it costs you to run it, then say plainly what should change and in what order." },
+  { title: "Implement",
+    body: "Certified network and system engineers do the design, the configuration and the commissioning — to international standards, not to whatever fits." },
+  { title: "Manage",
+    body: "Continuous follow-up and optimised after-sales service. The contract that builds it is the contract that keeps it running." },
+];
+
+export const DISCIPLINES = [
+  { title: "Network engineers",
+    body: "Certified across Cisco, Huawei and Dell for campus, wireless and wide-area design." },
+  { title: "Security professionals",
+    body: "The staff behind the NOC and SOC portfolio, from perimeter policy through to incident response." },
+  { title: "Facilities engineers",
+    body: "Power, cooling, containment and structured cabling for Tier-rated rooms." },
+  { title: "Support engineers",
+    body: "Remote and on-site helpdesk across servers, software and systems." },
+];
+
+export const EXECUTIVES = [
+  { name: "Name to confirm", role: "Managing Director" },
+  { name: "Name to confirm", role: "Technical Director" },
+  { name: "Name to confirm", role: "Operations Manager" },
+  { name: "Name to confirm", role: "Head of Service Delivery" },
+];
