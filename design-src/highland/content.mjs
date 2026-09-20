@@ -108,3 +108,40 @@ export const EXECUTIVES = [
   { name: "Name to confirm", role: "Operations Manager" },
   { name: "Name to confirm", role: "Head of Service Delivery" },
 ];
+
+/* One worked service page. The other eight are the same template with
+   different data, which is what the client approved. */
+export const SOLUTION_DETAIL = {
+  slug: "datacenter",
+  overview:
+    "A datacenter is the one part of an estate where a mistake is expensive to undo. Edge designs the room before the racks are ordered: load, cooling, containment, power path and cable routes, sized against what the institution will run in five years rather than what it runs today.",
+  scope: [
+    "Site survey and load assessment against current and projected IT load",
+    "Room design: containment, raised floor or slab, cable routing, clearances",
+    "Power path: utility, generator, UPS, distribution, rPDU to the rack",
+    "Cooling design and airflow modelling",
+    "Rack elevation drawings and structured cabling schedule",
+    "Commissioning, load testing and handover documentation",
+  ],
+  deliverables: [
+    "As-built drawings and rack elevations",
+    "Power and cooling calculations",
+    "Commissioning and load test records",
+    "Operations and maintenance manual",
+    "Handover training for the site team",
+  ],
+  capabilities: [
+    { acronym: "Tier III", expansion: "Concurrently maintainable topology",
+      value: "Any single component can be taken out for service without shutting the room down." },
+    { acronym: "N+1", expansion: "One redundant unit per capacity group",
+      value: "A failed cooling or UPS unit does not reduce capacity below the design load." },
+    { acronym: "HCI", expansion: "Hyper-converged infrastructure",
+      value: "Compute, storage and networking in one appliance, so a small team can run it." },
+    { acronym: "rPDU", expansion: "Rack power distribution unit",
+      value: "Per-outlet metering, so you find the circuit that is about to trip before it does." },
+    { acronym: "PUE", expansion: "Power usage effectiveness",
+      value: "The ratio that tells you how much of the electricity bill reaches the servers." },
+  ],
+  partners: ["Vertiv", "Tripp Lite", "Canovate Group", "Dell", "HP"],
+  sectors: ["Higher education", "Public health"],
+};
