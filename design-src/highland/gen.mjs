@@ -110,6 +110,7 @@ ${body}
 /* Registry. Later tasks add to this list and nothing else changes. */
 const PAGES = [
   ["index.html", () => import("./pages/home.mjs")],
+  ["contact.html", () => import("./pages/contact.mjs")],
 ];
 
 const outDir = process.argv[2];
