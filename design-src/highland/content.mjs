@@ -177,3 +177,39 @@ export const PROJECT_DETAIL = {
   changed:
     "Faults are located from the network operations view rather than by walking buildings, and the university adds a new block by extending a documented design rather than by improvising.",
 };
+
+/* Courses map onto Edge's own service lines -- Edge teaches what it builds. */
+export const COURSES = [
+  { slug: "soc", title: "Security Operations Centre fundamentals", service: "NOC and SOC services",
+    duration: "1 week", level: "Intermediate", lessons: 10 },
+  { slug: "firewall", title: "Firewall administration and perimeter security", service: "Cybersecurity",
+    duration: "1 week", level: "Intermediate", lessons: 8 },
+  { slug: "wireless", title: "Enterprise wireless design and management", service: "Networks (LAN/WLAN)",
+    duration: "5 days", level: "Intermediate", lessons: 7 },
+  { slug: "datacenter-ops", title: "Datacenter facility systems", service: "Datacenter Facility",
+    duration: "4 days", level: "Beginner", lessons: 6 },
+  { slug: "backup", title: "Backup, disaster recovery and business continuity", service: "Professional services",
+    duration: "1 week", level: "Intermediate", lessons: 9 },
+  { slug: "itsupport", title: "IT support and system administration essentials", service: "IT service / Desktop support",
+    duration: "2 weeks", level: "Beginner", lessons: 12 },
+];
+
+export const COURSE_DETAIL = {
+  slug: "soc",
+  summary:
+    "How a security operations centre is staffed, tooled and run day to day — written for engineers who will be on the rota, not for managers buying one.",
+  outcomes: [
+    "Describe the tiers of a SOC and what each is accountable for",
+    "Triage an alert from first sight to disposition, with the reasoning written down",
+    "Build a detection from a log source, and explain why it will not flood the queue",
+    "Run an incident to handover, including the record the next shift needs",
+  ],
+  modules: [
+    { title: "What a SOC is for",
+      lessons: ["Tiers, rotas and escalation", "What the SOC does not do", "Measuring a SOC honestly"] },
+    { title: "Sources and signal",
+      lessons: ["Log sources worth having", "Normalisation and why it breaks", "Writing a detection that survives contact"] },
+    { title: "Working an incident",
+      lessons: ["Triage and disposition", "Containment decisions", "Handover and the written record"] },
+  ],
+};
