@@ -121,6 +121,8 @@ const PAGES = [
   ["course-soc.html", () => import("./pages/course-soc.mjs")],
   ["career.html", () => import("./pages/career.mjs")],
   ["job-network-engineer.html", () => import("./pages/job-network-engineer.mjs")],
+  ["blog.html", () => import("./pages/blog.mjs")],
+  ["blog-post.html", () => import("./pages/blog-post.mjs")],
 ];
 
 const outDir = process.argv[2];

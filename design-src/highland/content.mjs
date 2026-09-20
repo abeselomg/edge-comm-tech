@@ -243,3 +243,30 @@ export const JOB_DETAIL = {
     "Willingness to travel to client sites outside Addis Ababa",
   ],
 };
+
+export const POSTS = [
+  { slug: "tier-ratings", title: "What a Tier rating actually buys you",
+    standfirst: "Tier III is quoted in every datacenter tender in Addis and understood in almost none of them. What the rating covers, what it does not, and when paying for it is wrong.",
+    category: "Datacenter", date: "2026-08-14", tags: ["Tier III", "Power", "Cooling"] },
+  { slug: "nac-rollout", title: "Network access control without stopping the campus",
+    standfirst: "How to phase a NAC rollout across a university so that the day it goes enforcing is uneventful.",
+    category: "Security", date: "2026-07-02", tags: ["NAC", "Campus"] },
+  { slug: "wifi-density", title: "Designing wireless for lecture-theatre density",
+    standfirst: "Coverage surveys answer the wrong question when four hundred devices associate in ninety seconds.",
+    category: "Networks", date: "2026-05-21", tags: ["WLAN", "Higher education"] },
+  { slug: "soc-staffing", title: "The smallest SOC that is worth running",
+    standfirst: "Below a certain staffing level a security operations centre generates alerts nobody acts on. Where that line sits.",
+    category: "Security", date: "2026-04-09", tags: ["SOC", "Operations"] },
+];
+
+export const POST_DETAIL = {
+  slug: "tier-ratings",
+  author: "Edge engineering",
+  pull: "A Tier rating describes the topology, not the operator. A Tier III room run without change control fails like a Tier I room.",
+  paras: [
+    "Tier III appears in almost every datacenter specification written in Addis Ababa, usually without a definition attached. It is worth being precise, because the rating is a claim about one specific property and buyers routinely read it as a claim about several.",
+    "The property is concurrent maintainability. A Tier III topology lets any single capacity component or distribution path be removed from service — for maintenance, replacement or repair — without taking the IT load down. That is it. It is a statement about the power and cooling paths, and about nothing else.",
+    "What it does not cover is instructive. It says nothing about the building's physical security, nothing about the network above the floor, and nothing at all about how the room is operated. A Tier III room run without change control fails like a Tier I room, on a Tuesday, because two people worked on the same distribution board.",
+    "It is also possible to over-specify. An institution running a single teaching application with a documented four-hour recovery target is buying redundancy it will never draw on. The honest recommendation is often a well-built Tier II room and a tested restore procedure, and an integrator who never says that is selling, not advising.",
+  ],
+};
