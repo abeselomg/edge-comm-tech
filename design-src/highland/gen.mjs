@@ -115,6 +115,8 @@ const PAGES = [
   ["partners.html", () => import("./pages/partners.mjs")],
   ["solutions.html", () => import("./pages/solutions.mjs")],
   ["solution-datacenter.html", () => import("./pages/solution-datacenter.mjs")],
+  ["projects.html", () => import("./pages/projects.mjs")],
+  ["project-bonga.html", () => import("./pages/project-bonga.mjs")],
 ];
 
 const outDir = process.argv[2];

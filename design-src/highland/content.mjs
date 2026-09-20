@@ -145,3 +145,35 @@ export const SOLUTION_DETAIL = {
   partners: ["Vertiv", "Tripp Lite", "Canovate Group", "Dell", "HP"],
   sectors: ["Higher education", "Public health"],
 };
+
+/* Edge's five real clients crossed with Edge's real services. Drafted, but
+   grounded -- no engagement here belongs to another integrator.
+   Yekatit 12 deliberately avoids datacenter and HCI: IE Networks publish
+   that exact engagement as theirs. */
+export const PROJECTS = [
+  { slug: "bonga", client: "Bonga University", sector: "Higher education", year: "2024",
+    scope: "Campus LAN and wireless network",
+    tech: ["Cisco", "Huawei"] },
+  { slug: "bahirdar", client: "Bahir Dar University", sector: "Higher education", year: "2024",
+    scope: "Datacenter facility, power and cooling",
+    tech: ["Vertiv", "Tripp Lite", "Canovate Group"] },
+  { slug: "haramaya", client: "Haramaya University", sector: "Higher education", year: "2023",
+    scope: "Structured cabling and rack build-out",
+    tech: ["Canovate Group"] },
+  { slug: "mizantepi", client: "Mizan-Tepi University", sector: "Higher education", year: "2023",
+    scope: "Perimeter security and network access control",
+    tech: ["Palo Alto Networks", "Cisco"] },
+  { slug: "yekatit", client: "Yekatit 12 Hospital", sector: "Public health", year: "2023",
+    scope: "CCTV, access control and IP telephony",
+    tech: ["Cisco", "Dell"] },
+];
+
+export const PROJECT_DETAIL = {
+  slug: "bonga",
+  before:
+    "Teaching buildings were on separate, independently managed switches with no common addressing, so a fault in one block took a working day to locate and there was no way to see the campus as one network.",
+  built:
+    "One routed core with distribution to each block, campus-wide wireless on a single controller, and a management VLAN that reaches every switch. Cabling was re-terminated and labelled to a documented schedule.",
+  changed:
+    "Faults are located from the network operations view rather than by walking buildings, and the university adds a new block by extending a documented design rather than by improvising.",
+};
