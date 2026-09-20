@@ -21,8 +21,9 @@ if (!files.includes("index.html")) problems.push("no index.html emitted");
 for (const f of files) {
   const html = readFileSync(path.join(dir, f), "utf8");
 
-  if (!/<meta name="robots" content="noindex/.test(html)) {
-    problems.push(`${f}: missing robots noindex`);
+  const robotsMatch = html.match(/<meta name="robots" content="([^"]*)"/);
+  if (!robotsMatch || !robotsMatch[1].includes("noindex") || !robotsMatch[1].includes("nofollow")) {
+    problems.push(`${f}: missing robots noindex, nofollow`);
   }
 
   // Every internal link must resolve to a file that exists.
@@ -36,6 +37,12 @@ for (const f of files) {
     }
   }
 
+  // A fragment link that points at no id on this page is a dead link.
+  const ids = new Set([...html.matchAll(/id="([^"]+)"/g)].map((m) => m[1]));
+  for (const m of html.matchAll(/href="#([^"]+)"/g)) {
+    if (!ids.has(m[1])) problems.push(`${f}: dead fragment "#${m[1]}"`);
+  }
+
   // The desktop nav must carry all seven items.
   const nav = html.match(/<nav class="hidden[^>]*>([\s\S]*?)<\/nav>/);
   if (!nav) {
@@ -43,6 +50,11 @@ for (const f of files) {
   } else {
     for (const label of EXPECTED_NAV) {
       if (!nav[1].includes(`>${label}</a>`)) problems.push(`${f}: nav missing "${label}"`);
+    }
+    const navPositions = EXPECTED_NAV.map((label) => nav[1].indexOf(`>${label}</a>`));
+    if (navPositions.every((p) => p !== -1)) {
+      const inOrder = navPositions.every((p, i) => i === 0 || p > navPositions[i - 1]);
+      if (!inOrder) problems.push(`${f}: nav items out of order`);
     }
   }
 

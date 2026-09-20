@@ -17,6 +17,29 @@ const parts = JSON.parse(readFileSync(path.join(here, "shell-parts.json"), "utf8
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+/* The footer came from a single-page design, where these were section
+   anchors. They are now separate pages, and a footer reused on fourteen
+   pages cannot carry links that only resolve on one. */
+const FOOTER_REWRITES = [
+  ['href="#about"', 'href="about.html"'],
+  ['href="#partners"', 'href="partners.html"'],
+  ['href="#solutions"', 'href="solutions.html"'],
+  ['href="#clients"', 'href="about.html#clients"'],
+  ['href="#contact"', 'href="contact.html"'],
+];
+
+let footer = FOOTER_REWRITES.reduce((s, [a, b]) => s.split(a).join(b), parts.footer);
+
+/* Same reason: that sentence claimed Academy/Career/Blog weren't published
+   yet, which stops being true the moment those pages exist -- along with
+   the sr-only spans that gave its anchors somewhere to land. */
+const FOOTER_REMOVALS = [
+  '\n      <p id="academy" class="text-ink/50">Academy, Career and Blog are not published yet.</p>',
+  '\n    <span id="career" class="sr-only"></span>',
+  '\n    <span id="blog" class="sr-only"></span>',
+];
+for (const s of FOOTER_REMOVALS) footer = footer.split(s).join("");
+
 const navFor = (file) => `<header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
     <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
       <a href="index.html" class="leading-none">
@@ -79,7 +102,7 @@ const shell = ({ file, title, desc, body }) => `<!DOCTYPE html>
 
 ${body}
 
-  ${parts.footer}
+  ${footer}
 </body>
 </html>
 `;
