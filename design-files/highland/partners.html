@@ -204,35 +204,69 @@
       <span class="t-rck"><b class="font-semibold text-ink">2 of 8</b> supply racks and cabling.</span>
     </p>
 
-    <ul class="mlist mt-10 divide-y divide-rule border-y border-rule md:hidden">
-      <li class="c-net c-sec flex items-baseline justify-between gap-4 py-4">
-        <span class="font-display text-lg">Cisco</span>
+    <ul class="mlist mt-10 divide-y divide-rule border-y border-rule lg:hidden">
+      <li class="c-net c-sec flex items-center justify-between gap-4 py-4">
+        <span class="flex items-center gap-4">
+          <img src="logos/cisco.png" alt="" width="240" height="160"
+               class="h-9 w-24 shrink-0 object-contain" decoding="async">
+          <span class="font-display text-base">Cisco</span>
+        </span>
         <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Networking<br>Security</span>
-      </li><li class="c-net c-cmp flex items-baseline justify-between gap-4 py-4">
-        <span class="font-display text-lg">Dell</span>
+      </li><li class="c-net c-cmp flex items-center justify-between gap-4 py-4">
+        <span class="flex items-center gap-4">
+          <img src="logos/dell.png" alt="" width="240" height="160"
+               class="h-9 w-24 shrink-0 object-contain" decoding="async">
+          <span class="font-display text-base">Dell</span>
+        </span>
         <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Networking<br>Compute and storage</span>
-      </li><li class="c-cmp flex items-baseline justify-between gap-4 py-4">
-        <span class="font-display text-lg">HP</span>
+      </li><li class="c-cmp flex items-center justify-between gap-4 py-4">
+        <span class="flex items-center gap-4">
+          <img src="logos/hp.png" alt="" width="240" height="160"
+               class="h-9 w-24 shrink-0 object-contain" decoding="async">
+          <span class="font-display text-base">HP</span>
+        </span>
         <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Compute and storage</span>
-      </li><li class="c-net flex items-baseline justify-between gap-4 py-4">
-        <span class="font-display text-lg">Huawei</span>
+      </li><li class="c-net flex items-center justify-between gap-4 py-4">
+        <span class="flex items-center gap-4">
+          <img src="logos/huawei.png" alt="" width="240" height="160"
+               class="h-9 w-24 shrink-0 object-contain" decoding="async">
+          <span class="font-display text-base">Huawei</span>
+        </span>
         <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Networking</span>
-      </li><li class="c-sec flex items-baseline justify-between gap-4 py-4">
-        <span class="font-display text-lg">Palo Alto Networks</span>
+      </li><li class="c-sec flex items-center justify-between gap-4 py-4">
+        <span class="flex items-center gap-4">
+          <img src="logos/paloalto.png" alt="" width="240" height="160"
+               class="h-9 w-24 shrink-0 object-contain" decoding="async">
+          <span class="font-display text-base">Palo Alto Networks</span>
+        </span>
         <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Security</span>
-      </li><li class="c-pwr flex items-baseline justify-between gap-4 py-4">
-        <span class="font-display text-lg">Vertiv</span>
+      </li><li class="c-pwr flex items-center justify-between gap-4 py-4">
+        <span class="flex items-center gap-4">
+          <img src="logos/vertiv.png" alt="" width="240" height="160"
+               class="h-9 w-24 shrink-0 object-contain" decoding="async">
+          <span class="font-display text-base">Vertiv</span>
+        </span>
         <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Power and cooling</span>
-      </li><li class="c-pwr c-rck flex items-baseline justify-between gap-4 py-4">
-        <span class="font-display text-lg">Tripp Lite</span>
+      </li><li class="c-pwr c-rck flex items-center justify-between gap-4 py-4">
+        <span class="flex items-center gap-4">
+          <img src="logos/tripplite.png" alt="" width="240" height="160"
+               class="h-9 w-24 shrink-0 object-contain" decoding="async">
+          <span class="font-display text-base">Tripp Lite</span>
+        </span>
         <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Power and cooling<br>Racks and cabling</span>
-      </li><li class="c-rck flex items-baseline justify-between gap-4 py-4">
-        <span class="font-display text-lg">Canovate Group</span>
+      </li><li class="c-rck flex items-center justify-between gap-4 py-4">
+        <span class="flex items-center gap-4">
+          <img src="logos/canovate.png" alt="" width="240" height="160"
+               class="h-9 w-24 shrink-0 object-contain" decoding="async">
+          <span class="font-display text-base">Canovate Group</span>
+        </span>
         <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Racks and cabling</span>
       </li>
     </ul>
 
-    <div class="mesh relative mx-auto mt-10 hidden aspect-square w-full max-w-3xl md:block">
+    <!-- The ring needs real width once the nodes carry logo cards rather than
+         short names; below this it is the list instead. -->
+    <div class="mesh relative mx-auto mt-10 hidden aspect-square w-full max-w-3xl lg:block">
       <svg class="absolute inset-0 h-full w-full" viewBox="0 0 800 800" fill="none" aria-hidden="true">
         <defs>
           <radialGradient id="spoke" gradientUnits="userSpaceOnUse" cx="400" cy="400" r="300">
@@ -282,73 +316,81 @@
       
       <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
            style="--d:0.50s;left:50.00%;top:12.50%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
-          Cisco
+        <span tabindex="0" class="relative grid h-[4.75rem] w-[9rem] cursor-default place-items-center rounded-2xl border border-rule bg-paper-2 px-4 shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
+          <img src="logos/cisco.png" alt="Cisco" width="240" height="160"
+               class="max-h-16 w-auto object-contain" decoding="async">
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
-            Networking · Security
+            Cisco &middot; Networking · Security
           </span>
         </span>
       </div>
       <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
            style="--d:0.57s;left:76.52%;top:23.48%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
-          Dell
+        <span tabindex="0" class="relative grid h-[4.75rem] w-[9rem] cursor-default place-items-center rounded-2xl border border-rule bg-paper-2 px-4 shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
+          <img src="logos/dell.png" alt="Dell" width="240" height="160"
+               class="max-h-16 w-auto object-contain" decoding="async">
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
-            Networking · Compute and storage
+            Dell &middot; Networking · Compute and storage
           </span>
         </span>
       </div>
       <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
            style="--d:0.64s;left:87.50%;top:50.00%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
-          HP
+        <span tabindex="0" class="relative grid h-[4.75rem] w-[9rem] cursor-default place-items-center rounded-2xl border border-rule bg-paper-2 px-4 shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
+          <img src="logos/hp.png" alt="HP" width="240" height="160"
+               class="max-h-16 w-auto object-contain" decoding="async">
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
-            Compute and storage
+            HP &middot; Compute and storage
           </span>
         </span>
       </div>
       <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
            style="--d:0.71s;left:76.52%;top:76.52%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
-          Huawei
+        <span tabindex="0" class="relative grid h-[4.75rem] w-[9rem] cursor-default place-items-center rounded-2xl border border-rule bg-paper-2 px-4 shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
+          <img src="logos/huawei.png" alt="Huawei" width="240" height="160"
+               class="max-h-16 w-auto object-contain" decoding="async">
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
-            Networking
+            Huawei &middot; Networking
           </span>
         </span>
       </div>
       <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
            style="--d:0.78s;left:50.00%;top:87.50%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
-          Palo Alto Networks
+        <span tabindex="0" class="relative grid h-[4.75rem] w-[9rem] cursor-default place-items-center rounded-2xl border border-rule bg-paper-2 px-4 shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
+          <img src="logos/paloalto.png" alt="Palo Alto Networks" width="240" height="160"
+               class="max-h-16 w-auto object-contain" decoding="async">
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
-            Security
+            Palo Alto Networks &middot; Security
           </span>
         </span>
       </div>
       <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
            style="--d:0.85s;left:23.48%;top:76.52%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
-          Vertiv
+        <span tabindex="0" class="relative grid h-[4.75rem] w-[9rem] cursor-default place-items-center rounded-2xl border border-rule bg-paper-2 px-4 shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
+          <img src="logos/vertiv.png" alt="Vertiv" width="240" height="160"
+               class="max-h-16 w-auto object-contain" decoding="async">
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
-            Power and cooling
+            Vertiv &middot; Power and cooling
           </span>
         </span>
       </div>
       <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
            style="--d:0.92s;left:12.50%;top:50.00%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
-          Tripp Lite
+        <span tabindex="0" class="relative grid h-[4.75rem] w-[9rem] cursor-default place-items-center rounded-2xl border border-rule bg-paper-2 px-4 shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
+          <img src="logos/tripplite.png" alt="Tripp Lite" width="240" height="160"
+               class="max-h-16 w-auto object-contain" decoding="async">
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
-            Power and cooling · Racks and cabling
+            Tripp Lite &middot; Power and cooling · Racks and cabling
           </span>
         </span>
       </div>
       <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
            style="--d:0.99s;left:23.48%;top:23.48%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
-          Canovate Group
+        <span tabindex="0" class="relative grid h-[4.75rem] w-[9rem] cursor-default place-items-center rounded-2xl border border-rule bg-paper-2 px-4 shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
+          <img src="logos/canovate.png" alt="Canovate Group" width="240" height="160"
+               class="max-h-16 w-auto object-contain" decoding="async">
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
-            Racks and cabling
+            Canovate Group &middot; Racks and cabling
           </span>
         </span>
       </div>

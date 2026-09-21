@@ -1,4 +1,4 @@
-import { SERVICES, PROJECTS } from "../content.mjs";
+import { SERVICES, PROJECTS, PARTNERS } from "../content.mjs";
 import { SERVICE_DETAIL } from "../service-detail.mjs";
 
 /*
@@ -134,10 +134,19 @@ export const make = (slug) => {
         </dl>
 
         <p class="mt-8 font-mono text-[10px] uppercase tracking-widest" style="color:${c}">Platforms used</p>
-        <ul class="mt-3 flex flex-wrap gap-2">
+        <ul class="mt-3 grid grid-cols-3 gap-2">
           ${d.partners
-            .map((x) => `<li class="rounded-full bg-paper-2 px-3 py-1.5 text-xs">${x}</li>`)
-            .join("\n          ")}
+            .map((x) => {
+              const p = PARTNERS.find((q) => q.name === x);
+              /* Falls back to the name if a partner has no mark on file, so a
+                 new entry never renders as an empty box. */
+              return p
+                ? `<li class="grid h-12 place-items-center rounded-xl bg-paper-2 px-2">
+            <img src="logos/${p.logo}.png" alt="${p.name}" width="240" height="160"
+                 class="max-h-10 w-auto object-contain" decoding="async"></li>`
+                : `<li class="grid h-12 place-items-center rounded-xl bg-paper-2 px-2 text-center text-[11px]">${x}</li>`;
+            })
+            .join("")}
         </ul>
 
         <a href="contact.html" class="mt-8 block rounded-full px-5 py-3 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5"

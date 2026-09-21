@@ -44,14 +44,14 @@ export const AREAS = [
 ];
 
 export const PARTNERS = [
-  { name: "Cisco", areas: ["net", "sec"] },
-  { name: "Dell", areas: ["net", "cmp"] },
-  { name: "HP", areas: ["cmp"] },
-  { name: "Huawei", areas: ["net"] },
-  { name: "Palo Alto Networks", areas: ["sec"] },
-  { name: "Vertiv", areas: ["pwr"] },
-  { name: "Tripp Lite", areas: ["pwr", "rck"] },
-  { name: "Canovate Group", areas: ["rck"] },
+  { name: "Cisco", logo: "cisco", areas: ["net", "sec"] },
+  { name: "Dell", logo: "dell", areas: ["net", "cmp"] },
+  { name: "HP", logo: "hp", areas: ["cmp"] },
+  { name: "Huawei", logo: "huawei", areas: ["net"] },
+  { name: "Palo Alto Networks", logo: "paloalto", areas: ["sec"] },
+  { name: "Vertiv", logo: "vertiv", areas: ["pwr"] },
+  { name: "Tripp Lite", logo: "tripplite", areas: ["pwr", "rck"] },
+  { name: "Canovate Group", logo: "canovate", areas: ["rck"] },
 ];
 
 export const CLIENTS = [

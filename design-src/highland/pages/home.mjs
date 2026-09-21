@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { SERVICES } from "../content.mjs";
+import { SERVICES, PARTNERS } from "../content.mjs";
 
 /*
  * The approved homepage, with the changes the client asked for applied as
@@ -98,6 +98,22 @@ cut("contact section", '<section id="contact"', "</main>");
       exists. They go to the Contact page, like every other contact route on
       the site. The link checker catches this if it is ever missed. */
 apply("contact anchors", (s) => s.split('href="#contact"').join('href="contact.html"'));
+
+/* 5. The partner band showed names set as type. It shows their marks. */
+apply("partner marks", (s) => {
+  const open = s.indexOf('<ul class="mt-10 flex flex-wrap gap-3">', s.indexOf('id="partners"'));
+  const close = s.indexOf("</ul>", open);
+  if (open === -1 || close === -1) return s;
+  const band = `<ul class="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-4">
+        ${PARTNERS.map(
+          (p) => `<li class="grid place-items-center bg-paper-2 px-5 py-7">
+          <img src="logos/${p.logo}.png" alt="${p.name}" width="240" height="160"
+               class="h-14 w-auto max-w-[10rem] object-contain" decoding="async">
+        </li>`,
+        ).join("")}
+      `;
+  return s.slice(0, open) + band + s.slice(close);
+});
 
 export default {
   title: "Edge COMM-TECH — Infrastructure built to international standards",

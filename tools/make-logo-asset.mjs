@@ -11,11 +11,14 @@
  *   node tools/make-logo-asset.mjs
  */
 import { chromium } from "playwright-core";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { PARTNERS } from "../design-src/highland/content.mjs";
 
 const SRC = "design-src/span/logos/wordmark.png";
 const OUT = "design-files/highland/edge-logo.png";
 const TARGET_H = 176; // ~3x the 56px the header reserves
+const PARTNER_SRC = "design-src/span/logos";
+const PARTNER_OUT = "design-files/highland/logos";
 
 const browser = await chromium.launch({ channel: "chrome" });
 try {
@@ -71,6 +74,36 @@ try {
   const bytes = readFileSync(OUT).length;
   console.log(`trimmed ${dataUrl.trimmed[0]}x${dataUrl.trimmed[1]} → ${dataUrl.w}x${dataUrl.h}`);
   console.log(`wrote ${OUT} (${(bytes / 1024).toFixed(1)} KB)`);
+
+  /* The eight manufacturers' marks, published alongside.
+     These arrive already padded into a common 300x200 box — someone has
+     optically balanced them against each other, and trimming to the ink
+     would undo that and make Cisco tower over HP. They are copied at their
+     given framing and only downscaled. */
+  mkdirSync(PARTNER_OUT, { recursive: true });
+  let total = 0;
+  for (const p of PARTNERS) {
+    const src = `${PARTNER_SRC}/${p.logo}.png`;
+    const out = await page.evaluate(
+      async ({ src, h }) => {
+        const img = new Image();
+        img.src = src;
+        await img.decode();
+        const c = document.createElement("canvas");
+        c.height = h;
+        c.width = Math.round((img.width / img.height) * h);
+        const g = c.getContext("2d");
+        g.imageSmoothingQuality = "high";
+        g.drawImage(img, 0, 0, c.width, c.height);
+        return c.toDataURL("image/png");
+      },
+      { src: "data:image/png;base64," + readFileSync(src).toString("base64"), h: 160 },
+    );
+    const file = `${PARTNER_OUT}/${p.logo}.png`;
+    writeFileSync(file, Buffer.from(out.split(",")[1], "base64"));
+    total += readFileSync(file).length;
+  }
+  console.log(`wrote ${PARTNERS.length} partner marks to ${PARTNER_OUT} (${(total / 1024).toFixed(1)} KB total)`);
 } finally {
   await browser.close();
 }

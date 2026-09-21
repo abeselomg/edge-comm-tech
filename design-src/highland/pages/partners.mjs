@@ -54,10 +54,11 @@ const nodes = ORBIT.map(
   (p, i) => `
       <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
            style="--d:${(0.5 + i * 0.07).toFixed(2)}s;left:${((p.x / 800) * 100).toFixed(2)}%;top:${((p.y / 800) * 100).toFixed(2)}%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
-          ${p.name}
+        <span tabindex="0" class="relative grid h-[4.75rem] w-[9rem] cursor-default place-items-center rounded-2xl border border-rule bg-paper-2 px-4 shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
+          <img src="logos/${p.logo}.png" alt="${p.name}" width="240" height="160"
+               class="max-h-16 w-auto object-contain" decoding="async">
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
-            ${p.areas.map(label).join(" · ")}
+            ${p.name} &middot; ${p.areas.map(label).join(" · ")}
           </span>
         </span>
       </div>`,
@@ -107,16 +108,22 @@ export default {
       ).join("\n      ")}
     </p>
 
-    <ul class="mlist mt-10 divide-y divide-rule border-y border-rule md:hidden">
+    <ul class="mlist mt-10 divide-y divide-rule border-y border-rule lg:hidden">
       ${PARTNERS.map(
-        (p) => `<li class="${cls(p)} flex items-baseline justify-between gap-4 py-4">
-        <span class="font-display text-lg">${p.name}</span>
+        (p) => `<li class="${cls(p)} flex items-center justify-between gap-4 py-4">
+        <span class="flex items-center gap-4">
+          <img src="logos/${p.logo}.png" alt="" width="240" height="160"
+               class="h-9 w-24 shrink-0 object-contain" decoding="async">
+          <span class="font-display text-base">${p.name}</span>
+        </span>
         <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">${p.areas.map(label).join("<br>")}</span>
       </li>`,
       ).join("")}
     </ul>
 
-    <div class="mesh relative mx-auto mt-10 hidden aspect-square w-full max-w-3xl md:block">
+    <!-- The ring needs real width once the nodes carry logo cards rather than
+         short names; below this it is the list instead. -->
+    <div class="mesh relative mx-auto mt-10 hidden aspect-square w-full max-w-3xl lg:block">
       <svg class="absolute inset-0 h-full w-full" viewBox="0 0 800 800" fill="none" aria-hidden="true">
         <defs>
           <radialGradient id="spoke" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R}">
