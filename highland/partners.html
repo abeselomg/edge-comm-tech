@@ -106,11 +106,33 @@
   <main class="mx-auto max-w-6xl px-6 py-20">
     <style>
 #f-all:checked~.fbar label[for=f-all],#f-net:checked~.fbar label[for=f-net],#f-sec:checked~.fbar label[for=f-sec],#f-cmp:checked~.fbar label[for=f-cmp],#f-pwr:checked~.fbar label[for=f-pwr],#f-rck:checked~.fbar label[for=f-rck]{background:#0888c5;color:#fff;border-color:#0888c5}
-#f-net:checked~.matrix tr:not(.c-net){opacity:.2}
-#f-sec:checked~.matrix tr:not(.c-sec){opacity:.2}
-#f-cmp:checked~.matrix tr:not(.c-cmp){opacity:.2}
-#f-pwr:checked~.matrix tr:not(.c-pwr){opacity:.2}
-#f-rck:checked~.matrix tr:not(.c-rck){opacity:.2}
+
+#f-net:checked~.mesh .node:not(.c-net){opacity:.2}
+#f-net:checked~.mlist li:not(.c-net){display:none}
+#f-net:checked~.mesh .spoke:not(.c-net){opacity:.12}
+#f-net:checked~.tally .t-net{display:block}
+#f-sec:checked~.mesh .node:not(.c-sec){opacity:.2}
+#f-sec:checked~.mlist li:not(.c-sec){display:none}
+#f-sec:checked~.mesh .spoke:not(.c-sec){opacity:.12}
+#f-sec:checked~.tally .t-sec{display:block}
+#f-cmp:checked~.mesh .node:not(.c-cmp){opacity:.2}
+#f-cmp:checked~.mlist li:not(.c-cmp){display:none}
+#f-cmp:checked~.mesh .spoke:not(.c-cmp){opacity:.12}
+#f-cmp:checked~.tally .t-cmp{display:block}
+#f-pwr:checked~.mesh .node:not(.c-pwr){opacity:.2}
+#f-pwr:checked~.mlist li:not(.c-pwr){display:none}
+#f-pwr:checked~.mesh .spoke:not(.c-pwr){opacity:.12}
+#f-pwr:checked~.tally .t-pwr{display:block}
+#f-rck:checked~.mesh .node:not(.c-rck){opacity:.2}
+#f-rck:checked~.mlist li:not(.c-rck){display:none}
+#f-rck:checked~.mesh .spoke:not(.c-rck){opacity:.12}
+#f-rck:checked~.tally .t-rck{display:block}
+#f-all:checked~.tally .t-all{display:block}
+.node,.spoke{transition:opacity .22s}
+.tally span{display:none}
+.node .areas{opacity:0;visibility:hidden;transition:opacity .15s}
+.node:hover .areas,.node:focus-visible .areas{opacity:1;visibility:visible}
+.node:hover{z-index:20}
 </style>
 
     <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Partner network</p>
@@ -129,7 +151,7 @@
     <input class="sr-only" type="radio" name="area" id="f-pwr">
     <input class="sr-only" type="radio" name="area" id="f-rck">
 
-    <div class="fbar mt-12 flex flex-wrap gap-2">
+    <div class="fbar mt-10 flex flex-wrap gap-2">
       <label for="f-all" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">All <span class="font-mono text-[10px] text-steel">8</span></label>
       <label for="f-net" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Networking <span class="font-mono text-[10px] text-steel">3</span></label>
       <label for="f-sec" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Security <span class="font-mono text-[10px] text-steel">2</span></label>
@@ -138,92 +160,149 @@
       <label for="f-rck" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Racks and cabling <span class="font-mono text-[10px] text-steel">2</span></label>
     </div>
 
-    <div class="matrix mt-10 overflow-x-auto">
-      <table class="w-full min-w-[42rem] border-collapse text-left">
-        <thead>
-          <tr class="border-b border-gold">
-            <th class="py-3 pr-4 font-mono text-[10px] uppercase tracking-widest text-steel">Manufacturer</th>
-            <th class="py-3 px-3 font-mono text-[10px] uppercase tracking-widest text-steel">Networking</th>
-            <th class="py-3 px-3 font-mono text-[10px] uppercase tracking-widest text-steel">Security</th>
-            <th class="py-3 px-3 font-mono text-[10px] uppercase tracking-widest text-steel">Compute and storage</th>
-            <th class="py-3 px-3 font-mono text-[10px] uppercase tracking-widest text-steel">Power and cooling</th>
-            <th class="py-3 px-3 font-mono text-[10px] uppercase tracking-widest text-steel">Racks and cabling</th>
-          </tr>
-        </thead>
-        <tbody>
-          
-          <tr class="c-net c-sec border-b border-rule transition-opacity">
-            <td class="py-4 pr-4 font-display text-lg">Cisco</td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-          </tr>
-          <tr class="c-net c-cmp border-b border-rule transition-opacity">
-            <td class="py-4 pr-4 font-display text-lg">Dell</td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-          </tr>
-          <tr class="c-cmp border-b border-rule transition-opacity">
-            <td class="py-4 pr-4 font-display text-lg">HP</td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-          </tr>
-          <tr class="c-net border-b border-rule transition-opacity">
-            <td class="py-4 pr-4 font-display text-lg">Huawei</td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-          </tr>
-          <tr class="c-sec border-b border-rule transition-opacity">
-            <td class="py-4 pr-4 font-display text-lg">Palo Alto Networks</td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-          </tr>
-          <tr class="c-pwr border-b border-rule transition-opacity">
-            <td class="py-4 pr-4 font-display text-lg">Vertiv</td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-          </tr>
-          <tr class="c-pwr c-rck border-b border-rule transition-opacity">
-            <td class="py-4 pr-4 font-display text-lg">Tripp Lite</td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-          </tr>
-          <tr class="c-rck border-b border-rule transition-opacity">
-            <td class="py-4 pr-4 font-display text-lg">Canovate Group</td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-px w-3 bg-rule"></span></td>
-            <td class="px-3 py-4"><span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="mt-4 text-xs text-steel">
-      Several partners cover more than one area, so the counts add to more than eight.
+    <p class="tally mt-5 min-h-[1.25rem] text-sm text-steel">
+      <span class="t-all">Hover a manufacturer to see the areas we deliver with them.</span>
+      <span class="t-net"><b class="font-semibold text-ink">3 of 8</b> supply networking.</span>
+      <span class="t-sec"><b class="font-semibold text-ink">2 of 8</b> supply security.</span>
+      <span class="t-cmp"><b class="font-semibold text-ink">2 of 8</b> supply compute and storage.</span>
+      <span class="t-pwr"><b class="font-semibold text-ink">2 of 8</b> supply power and cooling.</span>
+      <span class="t-rck"><b class="font-semibold text-ink">2 of 8</b> supply racks and cabling.</span>
     </p>
 
-    <section class="mt-24 grid gap-10 border-t border-rule pt-14 md:grid-cols-3">
+    <ul class="mlist mt-10 divide-y divide-rule border-y border-rule md:hidden">
+      <li class="c-net c-sec flex items-baseline justify-between gap-4 py-4">
+        <span class="font-display text-lg">Cisco</span>
+        <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Networking<br>Security</span>
+      </li><li class="c-net c-cmp flex items-baseline justify-between gap-4 py-4">
+        <span class="font-display text-lg">Dell</span>
+        <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Networking<br>Compute and storage</span>
+      </li><li class="c-cmp flex items-baseline justify-between gap-4 py-4">
+        <span class="font-display text-lg">HP</span>
+        <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Compute and storage</span>
+      </li><li class="c-net flex items-baseline justify-between gap-4 py-4">
+        <span class="font-display text-lg">Huawei</span>
+        <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Networking</span>
+      </li><li class="c-sec flex items-baseline justify-between gap-4 py-4">
+        <span class="font-display text-lg">Palo Alto Networks</span>
+        <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Security</span>
+      </li><li class="c-pwr flex items-baseline justify-between gap-4 py-4">
+        <span class="font-display text-lg">Vertiv</span>
+        <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Power and cooling</span>
+      </li><li class="c-pwr c-rck flex items-baseline justify-between gap-4 py-4">
+        <span class="font-display text-lg">Tripp Lite</span>
+        <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Power and cooling<br>Racks and cabling</span>
+      </li><li class="c-rck flex items-baseline justify-between gap-4 py-4">
+        <span class="font-display text-lg">Canovate Group</span>
+        <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">Racks and cabling</span>
+      </li>
+    </ul>
+
+    <div class="mesh relative mx-auto mt-10 hidden aspect-square w-full max-w-3xl md:block">
+      <svg class="absolute inset-0 h-full w-full" viewBox="0 0 800 800" fill="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="spoke" gradientUnits="userSpaceOnUse" cx="400" cy="400" r="300">
+            <stop offset="0" stop-color="#0888c5" stop-opacity=".85" />
+            <stop offset="0.6" stop-color="#0888c5" stop-opacity=".4" />
+            <stop offset="1" stop-color="#0888c5" stop-opacity=".12" />
+          </radialGradient>
+          <radialGradient id="hub" cx="38%" cy="32%" r="70%">
+            <stop offset="0" stop-color="#2ba8de" />
+            <stop offset="100%" stop-color="#056a9a" />
+          </radialGradient>
+        </defs>
+        <circle cx="400" cy="400" r="300" stroke="#0888c5" stroke-opacity=".16" />
+        <circle cx="400" cy="400" r="205" stroke="#0888c5" stroke-opacity=".10" />
+        <line class="spoke c-net c-sec" x1="400" y1="400" x2="400.0" y2="100.0" stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke c-net c-cmp" x1="400" y1="400" x2="612.1" y2="187.9" stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke c-cmp" x1="400" y1="400" x2="700.0" y2="400.0" stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke c-net" x1="400" y1="400" x2="612.1" y2="612.1" stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke c-sec" x1="400" y1="400" x2="400.0" y2="700.0" stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke c-pwr" x1="400" y1="400" x2="187.9" y2="612.1" stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke c-pwr c-rck" x1="400" y1="400" x2="100.0" y2="400.0" stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke c-rck" x1="400" y1="400" x2="187.9" y2="187.9" stroke="url(#spoke)" stroke-width="1.5" />
+        <circle cx="400" cy="400" r="118" fill="url(#hub)" />
+      </svg>
+
+      <div class="absolute left-1/2 top-1/2 w-[30%] -translate-x-1/2 -translate-y-1/2 text-center text-paper">
+        <p class="font-display text-lg leading-tight">EDGE<br />COMM-TECH</p>
+        <p class="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-paper/80">Partner network</p>
+      </div>
+      
+      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
+           style="left:50.00%;top:12.50%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+          Cisco
+          <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+            Networking · Security
+          </span>
+        </span>
+      </div>
+      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
+           style="left:76.52%;top:23.48%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+          Dell
+          <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+            Networking · Compute and storage
+          </span>
+        </span>
+      </div>
+      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
+           style="left:87.50%;top:50.00%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+          HP
+          <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+            Compute and storage
+          </span>
+        </span>
+      </div>
+      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
+           style="left:76.52%;top:76.52%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+          Huawei
+          <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+            Networking
+          </span>
+        </span>
+      </div>
+      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
+           style="left:50.00%;top:87.50%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+          Palo Alto Networks
+          <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+            Security
+          </span>
+        </span>
+      </div>
+      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
+           style="left:23.48%;top:76.52%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+          Vertiv
+          <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+            Power and cooling
+          </span>
+        </span>
+      </div>
+      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
+           style="left:12.50%;top:50.00%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+          Tripp Lite
+          <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+            Power and cooling · Racks and cabling
+          </span>
+        </span>
+      </div>
+      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
+           style="left:23.48%;top:23.48%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+          Canovate Group
+          <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+            Racks and cabling
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <section class="mt-20 grid gap-10 border-t border-rule pt-14 md:grid-cols-3">
       <div>
         <p class="font-mono text-[10px] uppercase tracking-widest text-gold">01</p>
         <h3 class="mt-2 font-display text-2xl">Specified against the requirement</h3>
