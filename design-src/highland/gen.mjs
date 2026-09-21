@@ -30,6 +30,19 @@ const FOOTER_REWRITES = [
 
 let footer = FOOTER_REWRITES.reduce((s, [a, b]) => s.split(a).join(b), parts.footer);
 
+/* The footer set the name as type too. Same artwork, same source of truth.
+   Matched line by line so no newline has to survive being written into this
+   file, which is where every previous attempt at this went wrong. */
+const FOOTER_BRAND = [
+  ['<p class="font-mono text-[10px] uppercase tracking-[0.35em] text-gold">Edge</p>',
+   '<img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176" class="h-16 w-auto" decoding="async">'],
+  ['<p class="font-display text-2xl">COMM-TECH</p>', ""],
+];
+for (const [from, to] of FOOTER_BRAND) {
+  if (!footer.includes(from)) throw new Error(`footer brand: no match for ${from.slice(0, 48)}…`);
+  footer = footer.split(from).join(to);
+}
+
 /* Same reason: that sentence claimed Academy/Career/Blog weren't published
    yet, which stops being true the moment those pages exist -- along with
    the sr-only spans that gave its anchors somewhere to land. */
@@ -78,9 +91,9 @@ const ANIM_CSS = `<style>
 
 const navFor = (file) => `<header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
     <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
-      <a href="index.html" class="leading-none">
-        <span class="block font-mono text-[10px] uppercase tracking-[0.35em] text-gold">Edge</span>
-        <span class="font-display text-xl tracking-tight">COMM-TECH</span>
+      <a href="index.html" class="shrink-0 leading-none">
+        <img src="edge-logo.png" alt="Edge Communication Technologies"
+             width="391" height="176" class="h-14 w-auto" decoding="async">
       </a>
       <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
         ${NAV.map(([label, href]) =>
