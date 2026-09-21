@@ -72,6 +72,32 @@
     }
     :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
   </style>
+  <style>
+@keyframes eg-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes eg-pop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes eg-spin{to{transform:rotate(360deg)}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
 </head>
 <body>
   <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
@@ -113,7 +139,7 @@
           Work delivered, <span class="text-gold">by sector</span>
         </h1>
 
-        <dl class="mt-12 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl bg-rule">
+        <dl class="eg-rise mt-12 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl bg-rule" style="--d:.2s">
           <div class="bg-paper-2 px-5 py-6">
             <dt class="font-display text-3xl text-gold">5</dt>
             <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Named engagements</dd>
@@ -149,11 +175,11 @@
 
       <ul class="reg mt-10 space-y-3">
         
-        <li class="k-higher-education">
+        <li class="eg-inview k-higher-education">
           <a href="project-bonga.html"
-             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_54px_-26px_rgb(8_136_197/0.5)] md:flex-row md:items-center">
             
-        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl transition-transform duration-500 group-hover:scale-[1.04] md:h-20 md:w-36"
               style="background:linear-gradient(135deg,#0888c51f,#0888c508)" aria-hidden="true">
           <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
                stroke="#0888c5" stroke-opacity="0.55" stroke-width="1.2">
@@ -181,11 +207,11 @@
             </span>
           </a>
         </li>
-        <li class="k-higher-education">
+        <li class="eg-inview k-higher-education">
           <a href="#"
-             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_54px_-26px_rgb(8_136_197/0.5)] md:flex-row md:items-center">
             
-        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl transition-transform duration-500 group-hover:scale-[1.04] md:h-20 md:w-36"
               style="background:linear-gradient(135deg,#0888c51f,#0888c508)" aria-hidden="true">
           <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
                stroke="#0888c5" stroke-opacity="0.55" stroke-width="1.2">
@@ -214,11 +240,11 @@
             </span>
           </a>
         </li>
-        <li class="k-higher-education">
+        <li class="eg-inview k-higher-education">
           <a href="#"
-             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_54px_-26px_rgb(8_136_197/0.5)] md:flex-row md:items-center">
             
-        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl transition-transform duration-500 group-hover:scale-[1.04] md:h-20 md:w-36"
               style="background:linear-gradient(135deg,#0888c51f,#0888c508)" aria-hidden="true">
           <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
                stroke="#0888c5" stroke-opacity="0.55" stroke-width="1.2">
@@ -245,11 +271,11 @@
             </span>
           </a>
         </li>
-        <li class="k-higher-education">
+        <li class="eg-inview k-higher-education">
           <a href="#"
-             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_54px_-26px_rgb(8_136_197/0.5)] md:flex-row md:items-center">
             
-        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl transition-transform duration-500 group-hover:scale-[1.04] md:h-20 md:w-36"
               style="background:linear-gradient(135deg,#0888c51f,#0888c508)" aria-hidden="true">
           <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
                stroke="#0888c5" stroke-opacity="0.55" stroke-width="1.2">
@@ -277,11 +303,11 @@
             </span>
           </a>
         </li>
-        <li class="k-public-health">
+        <li class="eg-inview k-public-health">
           <a href="#"
-             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_54px_-26px_rgb(8_136_197/0.5)] md:flex-row md:items-center">
             
-        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl transition-transform duration-500 group-hover:scale-[1.04] md:h-20 md:w-36"
               style="background:linear-gradient(135deg,#c48a5a1f,#c48a5a08)" aria-hidden="true">
           <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
                stroke="#c48a5a" stroke-opacity="0.55" stroke-width="1.2">

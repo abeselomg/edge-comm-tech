@@ -72,6 +72,32 @@
     }
     :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
   </style>
+  <style>
+@keyframes eg-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes eg-pop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes eg-spin{to{transform:rotate(360deg)}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
 </head>
 <body>
   <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
@@ -210,17 +236,34 @@
             <stop offset="100%" stop-color="#056a9a" />
           </radialGradient>
         </defs>
-        <circle cx="400" cy="400" r="300" stroke="#0888c5" stroke-opacity=".16" />
+        <circle class="eg-spin-slow" cx="400" cy="400" r="300" stroke="#0888c5" stroke-opacity=".16"
+                stroke-dasharray="3 9" />
         <circle cx="400" cy="400" r="205" stroke="#0888c5" stroke-opacity=".10" />
-        <line class="spoke c-net c-sec" x1="400" y1="400" x2="400.0" y2="100.0" stroke="url(#spoke)" stroke-width="1.5" />
-          <line class="spoke c-net c-cmp" x1="400" y1="400" x2="612.1" y2="187.9" stroke="url(#spoke)" stroke-width="1.5" />
-          <line class="spoke c-cmp" x1="400" y1="400" x2="700.0" y2="400.0" stroke="url(#spoke)" stroke-width="1.5" />
-          <line class="spoke c-net" x1="400" y1="400" x2="612.1" y2="612.1" stroke="url(#spoke)" stroke-width="1.5" />
-          <line class="spoke c-sec" x1="400" y1="400" x2="400.0" y2="700.0" stroke="url(#spoke)" stroke-width="1.5" />
-          <line class="spoke c-pwr" x1="400" y1="400" x2="187.9" y2="612.1" stroke="url(#spoke)" stroke-width="1.5" />
-          <line class="spoke c-pwr c-rck" x1="400" y1="400" x2="100.0" y2="400.0" stroke="url(#spoke)" stroke-width="1.5" />
-          <line class="spoke c-rck" x1="400" y1="400" x2="187.9" y2="187.9" stroke="url(#spoke)" stroke-width="1.5" />
-        <circle cx="400" cy="400" r="118" fill="url(#hub)" />
+        <line class="spoke eg-draw c-net c-sec" style="--len:300;--d:0.00s"
+      x1="400" y1="400" x2="400.0" y2="100.0"
+      stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke eg-draw c-net c-cmp" style="--len:300;--d:0.09s"
+      x1="400" y1="400" x2="612.1" y2="187.9"
+      stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke eg-draw c-cmp" style="--len:300;--d:0.18s"
+      x1="400" y1="400" x2="700.0" y2="400.0"
+      stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke eg-draw c-net" style="--len:300;--d:0.27s"
+      x1="400" y1="400" x2="612.1" y2="612.1"
+      stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke eg-draw c-sec" style="--len:300;--d:0.36s"
+      x1="400" y1="400" x2="400.0" y2="700.0"
+      stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke eg-draw c-pwr" style="--len:300;--d:0.45s"
+      x1="400" y1="400" x2="187.9" y2="612.1"
+      stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke eg-draw c-pwr c-rck" style="--len:300;--d:0.54s"
+      x1="400" y1="400" x2="100.0" y2="400.0"
+      stroke="url(#spoke)" stroke-width="1.5" />
+          <line class="spoke eg-draw c-rck" style="--len:300;--d:0.63s"
+      x1="400" y1="400" x2="187.9" y2="187.9"
+      stroke="url(#spoke)" stroke-width="1.5" />
+        <circle class="eg-breathe" cx="400" cy="400" r="118" fill="url(#hub)" />
       </svg>
 
       <div class="absolute left-1/2 top-1/2 w-[30%] -translate-x-1/2 -translate-y-1/2 text-center text-paper">
@@ -228,72 +271,72 @@
         <p class="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-paper/80">Partner network</p>
       </div>
       
-      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
-           style="left:50.00%;top:12.50%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+      <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
+           style="--d:0.50s;left:50.00%;top:12.50%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
           Cisco
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
             Networking · Security
           </span>
         </span>
       </div>
-      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
-           style="left:76.52%;top:23.48%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+      <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
+           style="--d:0.57s;left:76.52%;top:23.48%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
           Dell
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
             Networking · Compute and storage
           </span>
         </span>
       </div>
-      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
-           style="left:87.50%;top:50.00%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+      <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
+           style="--d:0.64s;left:87.50%;top:50.00%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
           HP
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
             Compute and storage
           </span>
         </span>
       </div>
-      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
-           style="left:76.52%;top:76.52%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+      <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
+           style="--d:0.71s;left:76.52%;top:76.52%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
           Huawei
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
             Networking
           </span>
         </span>
       </div>
-      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
-           style="left:50.00%;top:87.50%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+      <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
+           style="--d:0.78s;left:50.00%;top:87.50%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
           Palo Alto Networks
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
             Security
           </span>
         </span>
       </div>
-      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
-           style="left:23.48%;top:76.52%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+      <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
+           style="--d:0.85s;left:23.48%;top:76.52%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
           Vertiv
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
             Power and cooling
           </span>
         </span>
       </div>
-      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
-           style="left:12.50%;top:50.00%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+      <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
+           style="--d:0.92s;left:12.50%;top:50.00%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
           Tripp Lite
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
             Power and cooling · Racks and cabling
           </span>
         </span>
       </div>
-      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
-           style="left:23.48%;top:23.48%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+      <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
+           style="--d:0.99s;left:23.48%;top:23.48%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
           Canovate Group
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
             Racks and cabling

@@ -22,7 +22,7 @@ const colour = (p) => SECTOR_COLOUR[key(p.sector)] ?? "#0888c5";
 /* A plate per project: concentric arcs over a tinted field, rotated by index
    so no two rows look alike. */
 const plate = (p, i) => `
-        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl transition-transform duration-500 group-hover:scale-[1.04] md:h-20 md:w-36"
               style="background:linear-gradient(135deg,${colour(p)}1f,${colour(p)}08)" aria-hidden="true">
           <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
                stroke="${colour(p)}" stroke-opacity="0.55" stroke-width="1.2">
@@ -54,7 +54,7 @@ export default {
           Work delivered, <span class="text-gold">by sector</span>
         </h1>
 
-        <dl class="mt-12 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl bg-rule">
+        <dl class="eg-rise mt-12 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl bg-rule" style="--d:.2s">
           <div class="bg-paper-2 px-5 py-6">
             <dt class="font-display text-3xl text-gold">${PROJECTS.length}</dt>
             <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Named engagements</dd>
@@ -89,9 +89,9 @@ export default {
       <ul class="reg mt-10 space-y-3">
         ${PROJECTS.map(
           (p, i) => `
-        <li class="k-${key(p.sector)}">
+        <li class="eg-inview k-${key(p.sector)}">
           <a href="${p.slug === "bonga" ? "project-bonga.html" : "#"}"
-             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_54px_-26px_rgb(8_136_197/0.5)] md:flex-row md:items-center">
             ${plate(p, i)}
             <span class="min-w-0 flex-1">
               <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"

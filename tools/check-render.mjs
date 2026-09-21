@@ -26,14 +26,47 @@ const problems = [];
 const shots = [];
 
 const browser = await chromium.launch({ channel: "chrome", args: ["--hide-scrollbars"] });
+
+/* Fetch the Tailwind runtime once and serve every page from memory.
+   Fourteen pages at four widths is 56 loads; hitting the CDN that many times
+   in a burst gets throttled, and a throttled load looks exactly like a broken
+   page to the checks below. Cached, it is also several times faster. */
+let tw = null;
+const cacheTailwind = async (page) => {
+  await page.route("**/cdn.tailwindcss.com/**", async (route) => {
+    if (!tw) {
+      const res = await route.fetch();
+      tw = await res.text();
+    }
+    await route.fulfill({ status: 200, contentType: "application/javascript", body: tw });
+  });
+};
+
 try {
   for (const f of files) {
     const url = pathToFileURL(path.resolve(dir, f)).href;
 
     for (const w of WIDTHS) {
       const page = await browser.newPage({ viewport: { width: w, height: 900 } });
+      await cacheTailwind(page);
       await page.goto(url, { waitUntil: "load", timeout: 60000 });
-      await page.waitForTimeout(2200); // Tailwind play CDN compiles at runtime
+
+      /* Wait for the fact, not for a guess at how long it takes.
+         The Tailwind play CDN compiles at runtime, and a fixed sleep produced
+         false overflow failures on a slow compile: the page is measured while
+         `overflow-hidden` has not yet applied, so a decorative element that is
+         meant to be clipped still counts toward scrollWidth. Poll for the
+         compiled max-width instead. */
+      await page
+        .waitForFunction(
+          () => {
+            const el = document.querySelector('[class*="max-w-6xl"]');
+            return el && getComputedStyle(el).maxWidth === "1152px";
+          },
+          { timeout: 20000 },
+        )
+        .catch(() => problems.push(`${f} @${w}: Tailwind never compiled within 20s`));
+      await page.waitForTimeout(120); // let the resulting layout settle
 
       const r = await page.evaluate(() => {
         const el = document.querySelector('[class*="max-w-6xl"], main');

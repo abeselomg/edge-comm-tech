@@ -72,6 +72,32 @@
     }
     :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
   </style>
+  <style>
+@keyframes eg-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes eg-pop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes eg-spin{to{transform:rotate(360deg)}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
 </head>
 <body>
   <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
@@ -103,59 +129,124 @@
     </nav>
   </header>
 
-  <main class="mx-auto max-w-6xl px-6 py-20">
-    <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Blog</p>
-    <h1 class="mt-3 font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]">Notes from the field</h1>
+  <main>
+    <section class="relative overflow-hidden border-b border-rule bg-paper-2">
+      <span class="pointer-events-none absolute -right-28 -top-36 h-[32rem] w-[32rem] rounded-full"
+            style="background:radial-gradient(circle,#c48a5a1f,transparent 70%)" aria-hidden="true"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-20">
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Blog</p>
+        <h1 class="eg-rise mt-3 font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]" style="--d:.08s">
+          Notes <span class="text-gold">from the field</span>
+        </h1>
+        <p class="eg-rise mt-5 max-w-2xl text-ink/75" style="--d:.16s">
+          Written by the engineers who do the work, about the decisions that actually
+          bite on Ethiopian campuses and hospitals.
+        </p>
+      </div>
+    </section>
 
-    <div class="mt-14 grid gap-14 lg:grid-cols-[1fr_15rem]">
+    <div class="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[1fr_15rem]">
       <div>
-        <article class="border-b border-gold pb-10">
-          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">Datacenter · 14 August 2026</p>
-          <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.75rem,3.5vw,2.75rem)] leading-[1.06]">
-            <a href="blog-post.html" class="hover:text-gold">What a Tier rating actually buys you</a>
-          </h2>
-          <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink/75">Tier III is quoted in every datacenter tender in Addis and understood in almost none of them. What the rating covers, what it does not, and when paying for it is wrong.</p>
-          <a href="blog-post.html" class="mt-5 inline-block text-sm text-gold">Read →</a>
-        </article>
+        <a href="blog-post.html"
+           class="eg-rise group block overflow-hidden rounded-3xl bg-paper-2 shadow-[0_20px_46px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_60px_-28px_rgb(8_136_197/0.5)]"
+           style="--d:.24s">
+          <span class="relative block h-44 overflow-hidden md:h-56"
+                style="background:linear-gradient(130deg,#c48a5a2e,#c48a5a0d)" aria-hidden="true">
+            <svg viewBox="0 0 800 220" class="absolute inset-0 h-full w-full" fill="none"
+                 stroke="#c48a5a" stroke-opacity=".45" stroke-width="1.3">
+              <circle cx="640" cy="110" r="52" />
+              <circle cx="640" cy="110" r="92" stroke-opacity=".28" />
+              <circle cx="640" cy="110" r="136" stroke-opacity=".16" />
+              <path d="M0 62h800M0 158h800" stroke-opacity=".18" />
+            </svg>
+          </span>
+          <span class="block p-8">
+            <span class="inline-block rounded-full px-3 py-1 font-mono text-[9px] uppercase tracking-widest"
+                  style="background:#c48a5a1a;color:#c48a5a">Datacenter</span>
+            <span class="ml-2 font-mono text-[10px] uppercase tracking-widest text-steel">14 August 2026</span>
+            <span class="mt-3 block max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-[1.08] group-hover:text-gold">
+              What a Tier rating actually buys you
+            </span>
+            <span class="mt-3 block max-w-2xl text-lg leading-relaxed text-ink/75">Tier III is quoted in every datacenter tender in Addis and understood in almost none of them. What the rating covers, what it does not, and when paying for it is wrong.</span>
+            <span class="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white"
+                  style="background:#c48a5a">Read the piece &rarr;</span>
+          </span>
+        </a>
 
-        <ul class="divide-y divide-rule">
+        <ul class="mt-4 space-y-3">
           
-          <li class="py-7">
-            <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Security · 2 July 2026</p>
-            <h3 class="mt-2 font-display text-xl"><a href="#" class="hover:text-gold">Network access control without stopping the campus</a></h3>
-            <p class="mt-2 max-w-2xl text-sm text-ink/70">How to phase a NAC rollout across a university so that the day it goes enforcing is uneventful.</p>
+          <li class="eg-inview">
+            <a href="#" class="group flex gap-5 rounded-2xl bg-paper-2 p-5 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-26px_rgb(8_136_197/0.45)]">
+              <span class="w-1 shrink-0 self-stretch rounded-full" style="background:#056a9a" aria-hidden="true"></span>
+              <span class="min-w-0">
+                <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
+                      style="background:#056a9a1a;color:#056a9a">Security</span>
+                <span class="ml-2 font-mono text-[9px] uppercase tracking-widest text-steel">2 July 2026</span>
+                <span class="mt-2 block font-display text-xl leading-tight group-hover:text-gold">Network access control without stopping the campus</span>
+                <span class="mt-1.5 block max-w-2xl text-sm text-ink/70">How to phase a NAC rollout across a university so that the day it goes enforcing is uneventful.</span>
+              </span>
+            </a>
           </li>
-          <li class="py-7">
-            <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Networks · 21 May 2026</p>
-            <h3 class="mt-2 font-display text-xl"><a href="#" class="hover:text-gold">Designing wireless for lecture-theatre density</a></h3>
-            <p class="mt-2 max-w-2xl text-sm text-ink/70">Coverage surveys answer the wrong question when four hundred devices associate in ninety seconds.</p>
+          <li class="eg-inview">
+            <a href="#" class="group flex gap-5 rounded-2xl bg-paper-2 p-5 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-26px_rgb(8_136_197/0.45)]">
+              <span class="w-1 shrink-0 self-stretch rounded-full" style="background:#0888c5" aria-hidden="true"></span>
+              <span class="min-w-0">
+                <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
+                      style="background:#0888c51a;color:#0888c5">Networks</span>
+                <span class="ml-2 font-mono text-[9px] uppercase tracking-widest text-steel">21 May 2026</span>
+                <span class="mt-2 block font-display text-xl leading-tight group-hover:text-gold">Designing wireless for lecture-theatre density</span>
+                <span class="mt-1.5 block max-w-2xl text-sm text-ink/70">Coverage surveys answer the wrong question when four hundred devices associate in ninety seconds.</span>
+              </span>
+            </a>
           </li>
-          <li class="py-7">
-            <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Security · 9 April 2026</p>
-            <h3 class="mt-2 font-display text-xl"><a href="#" class="hover:text-gold">The smallest SOC that is worth running</a></h3>
-            <p class="mt-2 max-w-2xl text-sm text-ink/70">Below a certain staffing level a security operations centre generates alerts nobody acts on. Where that line sits.</p>
+          <li class="eg-inview">
+            <a href="#" class="group flex gap-5 rounded-2xl bg-paper-2 p-5 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-26px_rgb(8_136_197/0.45)]">
+              <span class="w-1 shrink-0 self-stretch rounded-full" style="background:#056a9a" aria-hidden="true"></span>
+              <span class="min-w-0">
+                <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
+                      style="background:#056a9a1a;color:#056a9a">Security</span>
+                <span class="ml-2 font-mono text-[9px] uppercase tracking-widest text-steel">9 April 2026</span>
+                <span class="mt-2 block font-display text-xl leading-tight group-hover:text-gold">The smallest SOC that is worth running</span>
+                <span class="mt-1.5 block max-w-2xl text-sm text-ink/70">Below a certain staffing level a security operations centre generates alerts nobody acts on. Where that line sits.</span>
+              </span>
+            </a>
           </li>
         </ul>
       </div>
 
       <aside class="self-start lg:sticky lg:top-32">
         <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Categories</p>
-        <ul class="mt-3 space-y-1.5 text-sm">
-          <li><a href="#" class="text-ink/70 hover:text-gold">Datacenter <span class="font-mono text-[10px] text-steel">1</span></a></li>
-          <li><a href="#" class="text-ink/70 hover:text-gold">Security <span class="font-mono text-[10px] text-steel">2</span></a></li>
-          <li><a href="#" class="text-ink/70 hover:text-gold">Networks <span class="font-mono text-[10px] text-steel">1</span></a></li>
+        <ul class="mt-3 space-y-1.5">
+          <li><a href="#" class="flex items-center gap-2.5 rounded-lg py-1 pl-1 text-sm text-ink/70 hover:bg-paper-2 hover:text-ink">
+            <span class="h-2 w-2 rounded-full" style="background:#c48a5a"></span>
+            Datacenter <span class="font-mono text-[10px] text-steel">1</span></a></li>
+          <li><a href="#" class="flex items-center gap-2.5 rounded-lg py-1 pl-1 text-sm text-ink/70 hover:bg-paper-2 hover:text-ink">
+            <span class="h-2 w-2 rounded-full" style="background:#056a9a"></span>
+            Security <span class="font-mono text-[10px] text-steel">2</span></a></li>
+          <li><a href="#" class="flex items-center gap-2.5 rounded-lg py-1 pl-1 text-sm text-ink/70 hover:bg-paper-2 hover:text-ink">
+            <span class="h-2 w-2 rounded-full" style="background:#0888c5"></span>
+            Networks <span class="font-mono text-[10px] text-steel">1</span></a></li>
         </ul>
         <p class="mt-8 font-mono text-[10px] uppercase tracking-widest text-gold">Tags</p>
         <ul class="mt-3 flex flex-wrap gap-2">
-          <li><a href="#" class="block rounded-full bg-paper-2 px-3 py-1 text-xs text-ink/70 hover:text-gold">Tier III</a></li>
-          <li><a href="#" class="block rounded-full bg-paper-2 px-3 py-1 text-xs text-ink/70 hover:text-gold">Power</a></li>
-          <li><a href="#" class="block rounded-full bg-paper-2 px-3 py-1 text-xs text-ink/70 hover:text-gold">Cooling</a></li>
-          <li><a href="#" class="block rounded-full bg-paper-2 px-3 py-1 text-xs text-ink/70 hover:text-gold">NAC</a></li>
-          <li><a href="#" class="block rounded-full bg-paper-2 px-3 py-1 text-xs text-ink/70 hover:text-gold">Campus</a></li>
-          <li><a href="#" class="block rounded-full bg-paper-2 px-3 py-1 text-xs text-ink/70 hover:text-gold">WLAN</a></li>
-          <li><a href="#" class="block rounded-full bg-paper-2 px-3 py-1 text-xs text-ink/70 hover:text-gold">Higher education</a></li>
-          <li><a href="#" class="block rounded-full bg-paper-2 px-3 py-1 text-xs text-ink/70 hover:text-gold">SOC</a></li>
-          <li><a href="#" class="block rounded-full bg-paper-2 px-3 py-1 text-xs text-ink/70 hover:text-gold">Operations</a></li>
+          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
+              style="background:#c48a5a14;color:#c48a5a">Tier III</a></li>
+          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
+              style="background:#056a9a14;color:#056a9a">Power</a></li>
+          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
+              style="background:#0888c514;color:#0888c5">Cooling</a></li>
+          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
+              style="background:#c48a5a14;color:#c48a5a">NAC</a></li>
+          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
+              style="background:#056a9a14;color:#056a9a">Campus</a></li>
+          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
+              style="background:#0888c514;color:#0888c5">WLAN</a></li>
+          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
+              style="background:#c48a5a14;color:#c48a5a">Higher education</a></li>
+          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
+              style="background:#056a9a14;color:#056a9a">SOC</a></li>
+          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
+              style="background:#0888c514;color:#0888c5">Operations</a></li>
         </ul>
       </aside>
     </div>

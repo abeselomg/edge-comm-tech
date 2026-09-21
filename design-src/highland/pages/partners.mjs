@@ -44,17 +44,17 @@ ${AREAS.map(
 `;
 
 const spokes = ORBIT.map(
-  (p) =>
-    `<line class="spoke ${cls(p)}" x1="${CX}" y1="${CY}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(
-      1,
-    )}" stroke="url(#spoke)" stroke-width="1.5" />`,
+  (p, i) =>
+    `<line class="spoke eg-draw ${cls(p)}" style="--len:${R};--d:${(i * 0.09).toFixed(2)}s"
+      x1="${CX}" y1="${CY}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}"
+      stroke="url(#spoke)" stroke-width="1.5" />`,
 ).join("\n          ");
 
 const nodes = ORBIT.map(
-  (p) => `
-      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
-           style="left:${((p.x / 800) * 100).toFixed(2)}%;top:${((p.y / 800) * 100).toFixed(2)}%">
-        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+  (p, i) => `
+      <div class="node eg-pop absolute -translate-x-1/2 -translate-y-1/2"
+           style="--d:${(0.5 + i * 0.07).toFixed(2)}s;left:${((p.x / 800) * 100).toFixed(2)}%;top:${((p.y / 800) * 100).toFixed(2)}%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197/0.7)] transition duration-200 hover:-translate-y-0.5 hover:border-gold hover:shadow-[0_14px_30px_-14px_rgb(8_136_197/0.8)]">
           ${p.name}
           <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
             ${p.areas.map(label).join(" · ")}
@@ -120,10 +120,11 @@ export default {
             <stop offset="100%" stop-color="#056a9a" />
           </radialGradient>
         </defs>
-        <circle cx="${CX}" cy="${CY}" r="${R}" stroke="#0888c5" stroke-opacity=".16" />
+        <circle class="eg-spin-slow" cx="${CX}" cy="${CY}" r="${R}" stroke="#0888c5" stroke-opacity=".16"
+                stroke-dasharray="3 9" />
         <circle cx="${CX}" cy="${CY}" r="205" stroke="#0888c5" stroke-opacity=".10" />
         ${spokes}
-        <circle cx="${CX}" cy="${CY}" r="118" fill="url(#hub)" />
+        <circle class="eg-breathe" cx="${CX}" cy="${CY}" r="118" fill="url(#hub)" />
       </svg>
 
       <div class="absolute left-1/2 top-1/2 w-[30%] -translate-x-1/2 -translate-y-1/2 text-center text-paper">

@@ -33,7 +33,7 @@ const MARK = {
   "professional-services": '<circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/>',
 };
 
-const tile = (s) => `<span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl"
+const tile = (s) => `<span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
         style="background:${ACCENT[s.slug]}14;color:${ACCENT[s.slug]}">
         <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
              stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${MARK[s.slug]}</svg>
@@ -58,7 +58,8 @@ export default {
         <ul class="mt-10 flex flex-wrap gap-2">
           ${SERVICES.map(
             (s) =>
-              `<li><a href="#s${s.n}" class="block rounded-full px-3.5 py-1.5 text-xs font-semibold"
+              `<li class="eg-rise" style="--d:${(0.15 + s.n * 0.05).toFixed(2)}s"><a href="#s${s.n}"
+              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
               style="background:${ACCENT[s.slug]}14;color:${ACCENT[s.slug]}">${s.title}</a></li>`,
           ).join("\n          ")}
         </ul>
@@ -81,9 +82,9 @@ export default {
       <div class="space-y-5">
         ${SERVICES.map(
           (s) => `
-        <article id="s${s.n}" class="scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48_/_0.5)]">
+        <article id="s${s.n}" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
           <span class="block h-1.5" style="background:linear-gradient(90deg,${ACCENT[s.slug]},${ACCENT[s.slug]}22)"></span>
-          <div class="flex gap-5 p-7">
+          <div class="group/card flex gap-5 p-7">
             ${tile(s)}
             <div>
               <p class="font-mono text-[10px] uppercase tracking-widest" style="color:${ACCENT[s.slug]}">Service ${String(s.n).padStart(2, "0")}</p>

@@ -40,6 +40,42 @@ const FOOTER_REMOVALS = [
 ];
 for (const s of FOOTER_REMOVALS) footer = footer.split(s).join("");
 
+/*
+ * Shared motion. Defined once here so pages opt in with a class rather than
+ * each carrying its own keyframes.
+ *
+ * Two rules govern everything below. Content is never hidden by a missing
+ * animation: `eg-inview` lives inside an @supports block, so a browser
+ * without scroll-driven animations simply shows the element. And
+ * prefers-reduced-motion switches the lot off rather than merely slowing it.
+ */
+const ANIM_CSS = `<style>
+@keyframes eg-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes eg-pop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes eg-spin{to{transform:rotate(360deg)}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>`;
+
 const navFor = (file) => `<header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
     <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
       <a href="index.html" class="leading-none">
@@ -96,6 +132,7 @@ const shell = ({ file, title, desc, body }) => `<!DOCTYPE html>
     };
   </script>
   ${parts.styles}
+  ${ANIM_CSS}
 </head>
 <body>
   ${navFor(file)}
