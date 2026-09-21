@@ -16,13 +16,34 @@ export default {
   title: "About — Edge COMM-TECH",
   desc: "The company behind the build: an ICT systems integrator in Addis Ababa.",
   body: `  <main>
-    <section class="bg-ink text-paper">
-      <div class="mx-auto max-w-6xl px-6 py-24">
-        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-lamp">The company</p>
+    <section class="relative overflow-hidden border-b border-rule bg-paper-2">
+      <!-- Concentric arcs, not the homepage's solid sun disk: the same warm light,
+           a different instrument. Blue-black panels read as a different brand. -->
+      <svg class="pointer-events-none absolute -right-40 -top-56 h-[44rem] w-[44rem] opacity-70"
+           viewBox="0 0 400 400" fill="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="ab-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#0888c5" stop-opacity="0.20" />
+            <stop offset="60%" stop-color="#0888c5" stop-opacity="0.05" />
+            <stop offset="100%" stop-color="#0888c5" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="200" r="200" fill="url(#ab-glow)" />
+        <circle cx="200" cy="200" r="70" stroke="#0888c5" stroke-opacity="0.35" />
+        <circle cx="200" cy="200" r="110" stroke="#0888c5" stroke-opacity="0.26" />
+        <circle cx="200" cy="200" r="152" stroke="#0888c5" stroke-opacity="0.18" />
+        <circle cx="200" cy="200" r="196" stroke="#0888c5" stroke-opacity="0.12" />
+        <circle cx="200" cy="200" r="7" fill="#c48a5a" />
+      </svg>
+      <span class="pointer-events-none absolute inset-x-0 top-[78%] h-px
+                   bg-gradient-to-r from-transparent via-gold/50 to-transparent" aria-hidden="true"></span>
+
+      <div class="relative mx-auto max-w-6xl px-6 py-28">
+        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">The company</p>
         <h1 class="mt-4 max-w-4xl font-display text-[clamp(2.4rem,6vw,4.5rem)] leading-[0.98]">
-          Most failures happen at the seam between two suppliers
+          Most failures happen at <span class="text-gold">the seam</span> between two suppliers
         </h1>
-        <p class="mt-8 max-w-xl text-lg leading-relaxed text-paper/75">
+        <p class="mt-8 max-w-xl text-lg leading-relaxed text-ink/75">
           Edge stays with a system from the first assessment to the after-sales contract,
           so there is no seam to fail at.
         </p>

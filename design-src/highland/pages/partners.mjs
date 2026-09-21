@@ -1,14 +1,67 @@
 import { PARTNERS, AREAS } from "../content.mjs";
 
-const count = (k) => PARTNERS.filter((p) => p.areas.includes(k)).length;
+/*
+ * Hub and spokes, after the reference the client pointed at: Edge at the
+ * centre, the manufacturers on a ring, a line from the hub to each.
+ *
+ * Geometry is computed here rather than positioned by hand so the ring stays
+ * even if a ninth partner is added. The SVG is a square 800x800 space; nodes
+ * are placed as percentages of it so they scale with the container.
+ */
 
-/* Radio + sibling selectors, no script, so the file stays standalone. */
+const R = 300;
+const CX = 400;
+const CY = 400;
+
+const ORBIT = PARTNERS.map((p, i) => {
+  const a = (i / PARTNERS.length) * Math.PI * 2 - Math.PI / 2;
+  return { ...p, x: CX + R * Math.cos(a), y: CY + R * Math.sin(a) };
+});
+
+const count = (k) => PARTNERS.filter((p) => p.areas.includes(k)).length;
+const label = (k) => AREAS.find(([key]) => key === k)[1];
+const cls = (p) => p.areas.map((a) => `c-${a}`).join(" ");
+
+/* Radio inputs plus sibling selectors — no script, so the page stays a
+   standalone file. One rule set per category. */
 const filterCss = `
 ${["all", ...AREAS.map(([k]) => k)]
   .map((k) => `#f-${k}:checked~.fbar label[for=f-${k}]`)
   .join(",")}{background:#0888c5;color:#fff;border-color:#0888c5}
-${AREAS.map(([k]) => `#f-${k}:checked~.matrix tr:not(.c-${k}){opacity:.2}`).join("\n")}
+${AREAS.map(
+  ([k]) => `
+#f-${k}:checked~.mesh .node:not(.c-${k}){opacity:.2}
+#f-${k}:checked~.mlist li:not(.c-${k}){display:none}
+#f-${k}:checked~.mesh .spoke:not(.c-${k}){opacity:.12}
+#f-${k}:checked~.tally .t-${k}{display:block}`,
+).join("")}
+#f-all:checked~.tally .t-all{display:block}
+.node,.spoke{transition:opacity .22s}
+.tally span{display:none}
+.node .areas{opacity:0;visibility:hidden;transition:opacity .15s}
+.node:hover .areas,.node:focus-visible .areas{opacity:1;visibility:visible}
+.node:hover{z-index:20}
 `;
+
+const spokes = ORBIT.map(
+  (p) =>
+    `<line class="spoke ${cls(p)}" x1="${CX}" y1="${CY}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(
+      1,
+    )}" stroke="url(#spoke)" stroke-width="1.5" />`,
+).join("\n          ");
+
+const nodes = ORBIT.map(
+  (p) => `
+      <div class="node absolute -translate-x-1/2 -translate-y-1/2"
+           style="left:${((p.x / 800) * 100).toFixed(2)}%;top:${((p.y / 800) * 100).toFixed(2)}%">
+        <span tabindex="0" class="relative block cursor-default whitespace-nowrap rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm font-semibold shadow-[0_8px_24px_-14px_rgb(8_136_197_/_0.7)] hover:border-gold">
+          ${p.name}
+          <span class="areas absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+            ${p.areas.map(label).join(" · ")}
+          </span>
+        </span>
+      </div>`,
+).join("");
 
 export default {
   title: "Partners — Edge COMM-TECH",
@@ -29,37 +82,58 @@ export default {
       .map((k, i) => `<input class="sr-only" type="radio" name="area" id="f-${k}"${i === 0 ? " checked" : ""}>`)
       .join("\n    ")}
 
-    <div class="fbar mt-12 flex flex-wrap gap-2">
+    <div class="fbar mt-10 flex flex-wrap gap-2">
       <label for="f-all" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">All <span class="font-mono text-[10px] text-steel">${PARTNERS.length}</span></label>
-      ${AREAS.map(([k, label]) => `<label for="f-${k}" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">${label} <span class="font-mono text-[10px] text-steel">${count(k)}</span></label>`).join("\n      ")}
+      ${AREAS.map(
+        ([k, l]) =>
+          `<label for="f-${k}" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">${l} <span class="font-mono text-[10px] text-steel">${count(k)}</span></label>`,
+      ).join("\n      ")}
     </div>
 
-    <div class="matrix mt-10 overflow-x-auto">
-      <table class="w-full min-w-[42rem] border-collapse text-left">
-        <thead>
-          <tr class="border-b border-gold">
-            <th class="py-3 pr-4 font-mono text-[10px] uppercase tracking-widest text-steel">Manufacturer</th>
-            ${AREAS.map(([, label]) => `<th class="py-3 px-3 font-mono text-[10px] uppercase tracking-widest text-steel">${label}</th>`).join("\n            ")}
-          </tr>
-        </thead>
-        <tbody>
-          ${PARTNERS.map((p) => `
-          <tr class="${p.areas.map((a) => "c-" + a).join(" ")} border-b border-rule transition-opacity">
-            <td class="py-4 pr-4 font-display text-lg">${p.name}</td>
-            ${AREAS.map(([k]) => `<td class="px-3 py-4">${
-              p.areas.includes(k)
-                ? '<span class="inline-block h-2.5 w-2.5 rounded-full bg-gold"></span>'
-                : '<span class="inline-block h-px w-3 bg-rule"></span>'
-            }</td>`).join("\n            ")}
-          </tr>`).join("")}
-        </tbody>
-      </table>
-    </div>
-    <p class="mt-4 text-xs text-steel">
-      Several partners cover more than one area, so the counts add to more than eight.
+    <p class="tally mt-5 min-h-[1.25rem] text-sm text-steel">
+      <span class="t-all">Hover a manufacturer to see the areas we deliver with them.</span>
+      ${AREAS.map(
+        ([k, l]) =>
+          `<span class="t-${k}"><b class="font-semibold text-ink">${count(k)} of ${PARTNERS.length}</b> supply ${l.toLowerCase()}.</span>`,
+      ).join("\n      ")}
     </p>
 
-    <section class="mt-24 grid gap-10 border-t border-rule pt-14 md:grid-cols-3">
+    <ul class="mlist mt-10 divide-y divide-rule border-y border-rule md:hidden">
+      ${PARTNERS.map(
+        (p) => `<li class="${cls(p)} flex items-baseline justify-between gap-4 py-4">
+        <span class="font-display text-lg">${p.name}</span>
+        <span class="text-right font-mono text-[9px] uppercase tracking-widest text-steel">${p.areas.map(label).join("<br>")}</span>
+      </li>`,
+      ).join("")}
+    </ul>
+
+    <div class="mesh relative mx-auto mt-10 hidden aspect-square w-full max-w-3xl md:block">
+      <svg class="absolute inset-0 h-full w-full" viewBox="0 0 800 800" fill="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="spoke" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R}">
+            <stop offset="0" stop-color="#0888c5" stop-opacity=".85" />
+            <stop offset="0.6" stop-color="#0888c5" stop-opacity=".4" />
+            <stop offset="1" stop-color="#0888c5" stop-opacity=".12" />
+          </radialGradient>
+          <radialGradient id="hub" cx="38%" cy="32%" r="70%">
+            <stop offset="0" stop-color="#2ba8de" />
+            <stop offset="100%" stop-color="#056a9a" />
+          </radialGradient>
+        </defs>
+        <circle cx="${CX}" cy="${CY}" r="${R}" stroke="#0888c5" stroke-opacity=".16" />
+        <circle cx="${CX}" cy="${CY}" r="205" stroke="#0888c5" stroke-opacity=".10" />
+        ${spokes}
+        <circle cx="${CX}" cy="${CY}" r="118" fill="url(#hub)" />
+      </svg>
+
+      <div class="absolute left-1/2 top-1/2 w-[30%] -translate-x-1/2 -translate-y-1/2 text-center text-paper">
+        <p class="font-display text-lg leading-tight">EDGE<br />COMM-TECH</p>
+        <p class="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-paper/80">Partner network</p>
+      </div>
+      ${nodes}
+    </div>
+
+    <section class="mt-20 grid gap-10 border-t border-rule pt-14 md:grid-cols-3">
       <div>
         <p class="font-mono text-[10px] uppercase tracking-widest text-gold">01</p>
         <h3 class="mt-2 font-display text-2xl">Specified against the requirement</h3>

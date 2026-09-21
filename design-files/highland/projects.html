@@ -103,91 +103,219 @@
     </nav>
   </header>
 
-  <main class="mx-auto max-w-6xl px-6 py-20">
-    <style>
+  <main>
+    <section class="relative overflow-hidden border-b border-rule bg-paper-2">
+      <span class="pointer-events-none absolute -left-32 -top-40 h-[34rem] w-[34rem] rounded-full"
+            style="background:radial-gradient(circle,#0888c51f,transparent 70%)" aria-hidden="true"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-20">
+        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Projects</p>
+        <h1 class="mt-3 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]">
+          Work delivered, <span class="text-gold">by sector</span>
+        </h1>
+
+        <dl class="mt-12 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl bg-rule">
+          <div class="bg-paper-2 px-5 py-6">
+            <dt class="font-display text-3xl text-gold">5</dt>
+            <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Named engagements</dd>
+          </div>
+          <div class="bg-paper-2 px-5 py-6">
+            <dt class="font-display text-3xl text-gold">2</dt>
+            <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Sectors served</dd>
+          </div>
+          <div class="bg-paper-2 px-5 py-6">
+            <dt class="font-display text-3xl text-gold"><span class="ph">120</span></dt>
+            <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Delivered overall</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="mx-auto max-w-6xl px-6 py-16">
+      <style>
 #p-all:checked~.pbar label[for=p-all],#p-higher-education:checked~.pbar label[for=p-higher-education],#p-public-health:checked~.pbar label[for=p-public-health]{background:#0888c5;color:#fff;border-color:#0888c5}
 #p-higher-education:checked~.reg li:not(.k-higher-education){display:none}
 #p-public-health:checked~.reg li:not(.k-public-health){display:none}
 </style>
 
-    <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Projects</p>
-    <h1 class="mt-3 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]">
-      Work delivered, by sector
-    </h1>
+      <input class="sr-only" type="radio" name="sector" id="p-all" checked>
+      <input class="sr-only" type="radio" name="sector" id="p-higher-education">
+      <input class="sr-only" type="radio" name="sector" id="p-public-health">
 
-    <input class="sr-only" type="radio" name="sector" id="p-all" checked>
-    <input class="sr-only" type="radio" name="sector" id="p-higher-education">
-    <input class="sr-only" type="radio" name="sector" id="p-public-health">
+      <div class="pbar flex flex-wrap gap-2">
+        <label for="p-all" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">All <span class="font-mono text-[10px] text-steel">5</span></label>
+        <label for="p-higher-education" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Higher education <span class="font-mono text-[10px] text-steel">4</span></label>
+        <label for="p-public-health" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Public health <span class="font-mono text-[10px] text-steel">1</span></label>
+      </div>
 
-    <div class="pbar mt-10 flex flex-wrap gap-2">
-      <label for="p-all" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">All <span class="font-mono text-[10px] text-steel">5</span></label>
-      <label for="p-higher-education" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Higher education <span class="font-mono text-[10px] text-steel">4</span></label>
-      <label for="p-public-health" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Public health <span class="font-mono text-[10px] text-steel">1</span></label>
+      <ul class="reg mt-10 space-y-3">
+        
+        <li class="k-higher-education">
+          <a href="project-bonga.html"
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+            
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+              style="background:linear-gradient(135deg,#0888c51f,#0888c508)" aria-hidden="true">
+          <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
+               stroke="#0888c5" stroke-opacity="0.55" stroke-width="1.2">
+            <g transform="rotate(0 80 45)">
+              <circle cx="28" cy="45" r="16" />
+              <circle cx="28" cy="45" r="30" stroke-opacity="0.3" />
+              <path d="M0 20h160M0 64h160" stroke-opacity="0.22" />
+            </g>
+          </svg>
+          <span class="absolute bottom-2 right-2.5 font-mono text-[9px] uppercase tracking-widest"
+                style="color:#0888c5">01</span>
+        </span>
+            <span class="min-w-0 flex-1">
+              <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
+                    style="background:#0888c51a;color:#0888c5">Higher education</span>
+              <span class="mt-2 block font-display text-2xl leading-tight group-hover:text-gold">Campus LAN and wireless network</span>
+              <span class="mt-1 block text-sm text-steel">Bonga University</span>
+            </span>
+            <span class="flex shrink-0 items-center gap-6">
+              <span class="hidden flex-wrap justify-end gap-1.5 md:flex md:max-w-[12rem]">
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Cisco</span>
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Huawei</span>
+              </span>
+              <span class="font-display text-xl text-steel">2024</span>
+            </span>
+          </a>
+        </li>
+        <li class="k-higher-education">
+          <a href="#"
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+            
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+              style="background:linear-gradient(135deg,#0888c51f,#0888c508)" aria-hidden="true">
+          <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
+               stroke="#0888c5" stroke-opacity="0.55" stroke-width="1.2">
+            <g transform="rotate(27 80 45)">
+              <circle cx="46" cy="45" r="16" />
+              <circle cx="46" cy="45" r="30" stroke-opacity="0.3" />
+              <path d="M0 29h160M0 58h160" stroke-opacity="0.22" />
+            </g>
+          </svg>
+          <span class="absolute bottom-2 right-2.5 font-mono text-[9px] uppercase tracking-widest"
+                style="color:#0888c5">02</span>
+        </span>
+            <span class="min-w-0 flex-1">
+              <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
+                    style="background:#0888c51a;color:#0888c5">Higher education</span>
+              <span class="mt-2 block font-display text-2xl leading-tight group-hover:text-gold">Datacenter facility, power and cooling</span>
+              <span class="mt-1 block text-sm text-steel">Bahir Dar University</span>
+            </span>
+            <span class="flex shrink-0 items-center gap-6">
+              <span class="hidden flex-wrap justify-end gap-1.5 md:flex md:max-w-[12rem]">
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Vertiv</span>
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Tripp Lite</span>
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Canovate Group</span>
+              </span>
+              <span class="font-display text-xl text-steel">2024</span>
+            </span>
+          </a>
+        </li>
+        <li class="k-higher-education">
+          <a href="#"
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+            
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+              style="background:linear-gradient(135deg,#0888c51f,#0888c508)" aria-hidden="true">
+          <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
+               stroke="#0888c5" stroke-opacity="0.55" stroke-width="1.2">
+            <g transform="rotate(54 80 45)">
+              <circle cx="64" cy="45" r="16" />
+              <circle cx="64" cy="45" r="30" stroke-opacity="0.3" />
+              <path d="M0 38h160M0 52h160" stroke-opacity="0.22" />
+            </g>
+          </svg>
+          <span class="absolute bottom-2 right-2.5 font-mono text-[9px] uppercase tracking-widest"
+                style="color:#0888c5">03</span>
+        </span>
+            <span class="min-w-0 flex-1">
+              <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
+                    style="background:#0888c51a;color:#0888c5">Higher education</span>
+              <span class="mt-2 block font-display text-2xl leading-tight group-hover:text-gold">Structured cabling and rack build-out</span>
+              <span class="mt-1 block text-sm text-steel">Haramaya University</span>
+            </span>
+            <span class="flex shrink-0 items-center gap-6">
+              <span class="hidden flex-wrap justify-end gap-1.5 md:flex md:max-w-[12rem]">
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Canovate Group</span>
+              </span>
+              <span class="font-display text-xl text-steel">2023</span>
+            </span>
+          </a>
+        </li>
+        <li class="k-higher-education">
+          <a href="#"
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+            
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+              style="background:linear-gradient(135deg,#0888c51f,#0888c508)" aria-hidden="true">
+          <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
+               stroke="#0888c5" stroke-opacity="0.55" stroke-width="1.2">
+            <g transform="rotate(81 80 45)">
+              <circle cx="82" cy="45" r="16" />
+              <circle cx="82" cy="45" r="30" stroke-opacity="0.3" />
+              <path d="M0 47h160M0 46h160" stroke-opacity="0.22" />
+            </g>
+          </svg>
+          <span class="absolute bottom-2 right-2.5 font-mono text-[9px] uppercase tracking-widest"
+                style="color:#0888c5">04</span>
+        </span>
+            <span class="min-w-0 flex-1">
+              <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
+                    style="background:#0888c51a;color:#0888c5">Higher education</span>
+              <span class="mt-2 block font-display text-2xl leading-tight group-hover:text-gold">Perimeter security and network access control</span>
+              <span class="mt-1 block text-sm text-steel">Mizan-Tepi University</span>
+            </span>
+            <span class="flex shrink-0 items-center gap-6">
+              <span class="hidden flex-wrap justify-end gap-1.5 md:flex md:max-w-[12rem]">
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Palo Alto Networks</span>
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Cisco</span>
+              </span>
+              <span class="font-display text-xl text-steel">2023</span>
+            </span>
+          </a>
+        </li>
+        <li class="k-public-health">
+          <a href="#"
+             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition hover:shadow-[0_22px_50px_-28px_rgb(8_136_197/0.45)] md:flex-row md:items-center">
+            
+        <span class="relative block h-24 w-full overflow-hidden rounded-2xl md:h-20 md:w-36"
+              style="background:linear-gradient(135deg,#c48a5a1f,#c48a5a08)" aria-hidden="true">
+          <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
+               stroke="#c48a5a" stroke-opacity="0.55" stroke-width="1.2">
+            <g transform="rotate(108 80 45)">
+              <circle cx="100" cy="45" r="16" />
+              <circle cx="100" cy="45" r="30" stroke-opacity="0.3" />
+              <path d="M0 56h160M0 40h160" stroke-opacity="0.22" />
+            </g>
+          </svg>
+          <span class="absolute bottom-2 right-2.5 font-mono text-[9px] uppercase tracking-widest"
+                style="color:#c48a5a">05</span>
+        </span>
+            <span class="min-w-0 flex-1">
+              <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
+                    style="background:#c48a5a1a;color:#c48a5a">Public health</span>
+              <span class="mt-2 block font-display text-2xl leading-tight group-hover:text-gold">CCTV, access control and IP telephony</span>
+              <span class="mt-1 block text-sm text-steel">Yekatit 12 Hospital</span>
+            </span>
+            <span class="flex shrink-0 items-center gap-6">
+              <span class="hidden flex-wrap justify-end gap-1.5 md:flex md:max-w-[12rem]">
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Cisco</span>
+                <span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">Dell</span>
+              </span>
+              <span class="font-display text-xl text-steel">2023</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="mt-8 text-xs text-steel">
+        The five above are the institutions Edge names publicly. Plates are drawn rather than
+        photographed — Edge has supplied no project imagery.
+      </p>
     </div>
-
-    <ul class="reg mt-12 divide-y divide-rule border-y border-rule">
-      
-      <li class="k-higher-education group">
-        <a href="project-bonga.html" class="grid gap-2 py-7 md:grid-cols-[1fr_14rem_5rem] md:items-baseline md:gap-8">
-          <div>
-            <h2 class="font-display text-2xl group-hover:text-gold">Campus LAN and wireless network</h2>
-            <p class="mt-1 text-sm text-steel">Bonga University</p>
-            <p class="mt-2 hidden font-mono text-[10px] uppercase tracking-widest text-lamp group-hover:block">Cisco · Huawei</p>
-          </div>
-          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Higher education</p>
-          <p class="font-mono text-sm text-steel md:text-right">2024</p>
-        </a>
-      </li>
-      <li class="k-higher-education group">
-        <a href="#" class="grid gap-2 py-7 md:grid-cols-[1fr_14rem_5rem] md:items-baseline md:gap-8">
-          <div>
-            <h2 class="font-display text-2xl group-hover:text-gold">Datacenter facility, power and cooling</h2>
-            <p class="mt-1 text-sm text-steel">Bahir Dar University</p>
-            <p class="mt-2 hidden font-mono text-[10px] uppercase tracking-widest text-lamp group-hover:block">Vertiv · Tripp Lite · Canovate Group</p>
-          </div>
-          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Higher education</p>
-          <p class="font-mono text-sm text-steel md:text-right">2024</p>
-        </a>
-      </li>
-      <li class="k-higher-education group">
-        <a href="#" class="grid gap-2 py-7 md:grid-cols-[1fr_14rem_5rem] md:items-baseline md:gap-8">
-          <div>
-            <h2 class="font-display text-2xl group-hover:text-gold">Structured cabling and rack build-out</h2>
-            <p class="mt-1 text-sm text-steel">Haramaya University</p>
-            <p class="mt-2 hidden font-mono text-[10px] uppercase tracking-widest text-lamp group-hover:block">Canovate Group</p>
-          </div>
-          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Higher education</p>
-          <p class="font-mono text-sm text-steel md:text-right">2023</p>
-        </a>
-      </li>
-      <li class="k-higher-education group">
-        <a href="#" class="grid gap-2 py-7 md:grid-cols-[1fr_14rem_5rem] md:items-baseline md:gap-8">
-          <div>
-            <h2 class="font-display text-2xl group-hover:text-gold">Perimeter security and network access control</h2>
-            <p class="mt-1 text-sm text-steel">Mizan-Tepi University</p>
-            <p class="mt-2 hidden font-mono text-[10px] uppercase tracking-widest text-lamp group-hover:block">Palo Alto Networks · Cisco</p>
-          </div>
-          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Higher education</p>
-          <p class="font-mono text-sm text-steel md:text-right">2023</p>
-        </a>
-      </li>
-      <li class="k-public-health group">
-        <a href="#" class="grid gap-2 py-7 md:grid-cols-[1fr_14rem_5rem] md:items-baseline md:gap-8">
-          <div>
-            <h2 class="font-display text-2xl group-hover:text-gold">CCTV, access control and IP telephony</h2>
-            <p class="mt-1 text-sm text-steel">Yekatit 12 Hospital</p>
-            <p class="mt-2 hidden font-mono text-[10px] uppercase tracking-widest text-lamp group-hover:block">Cisco · Dell</p>
-          </div>
-          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Public health</p>
-          <p class="font-mono text-sm text-steel md:text-right">2023</p>
-        </a>
-      </li>
-    </ul>
-
-    <p class="mt-8 text-xs text-steel">
-      Project count is <span class="ph">120</span> overall, for Edge to confirm. The five above are the
-      institutions Edge names publicly.
-    </p>
   </main>
 
   <footer class="border-t border-rule bg-paper-2">
