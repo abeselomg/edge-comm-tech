@@ -9,7 +9,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { NAV } from "./content.mjs";
+import { NAV, SERVICES } from "./content.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const parts = JSON.parse(readFileSync(path.join(here, "shell-parts.json"), "utf8"));
@@ -151,7 +151,12 @@ const PAGES = [
   ["about.html", () => import("./pages/about.mjs")],
   ["partners.html", () => import("./pages/partners.mjs")],
   ["solutions.html", () => import("./pages/solutions.mjs")],
-  ["solution-datacenter.html", () => import("./pages/solution-datacenter.mjs")],
+  /* One page per service, from a single factory: a tenth service needs a
+     content entry and nothing here but another SERVICES row. */
+  ...SERVICES.map((svc) => [
+    `solution-${svc.slug}.html`,
+    () => import("./pages/solution.mjs").then((m) => ({ default: m.make(svc.slug) })),
+  ]),
   ["projects.html", () => import("./pages/projects.mjs")],
   ["project-bonga.html", () => import("./pages/project-bonga.mjs")],
   ["academy.html", () => import("./pages/academy.mjs")],

@@ -48,13 +48,21 @@ export default {
     <section class="relative overflow-hidden border-b border-rule bg-paper-2">
       <span class="pointer-events-none absolute -left-32 -top-40 h-[34rem] w-[34rem] rounded-full"
             style="background:radial-gradient(circle,#0888c51f,transparent 70%)" aria-hidden="true"></span>
-      <div class="relative mx-auto max-w-6xl px-6 py-20">
+      <div class="relative mx-auto max-w-6xl px-6 pb-12 pt-16">
         <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Projects</p>
-        <h1 class="mt-3 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]">
-          Work delivered, <span class="text-gold">by sector</span>
-        </h1>
+        <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <h1 class="eg-rise mt-3 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]" style="--d:.06s">
+              Work delivered, <span class="text-gold">by sector</span>
+            </h1>
+            <p class="eg-rise mt-4 max-w-xl text-ink/75" style="--d:.12s">
+              Campus networks, datacenter rooms, cabling and physical security for
+              institutions across Ethiopia. Filter by sector, or open a project for the
+              scope and the technologies behind it.
+            </p>
+          </div>
 
-        <dl class="eg-rise mt-12 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl bg-rule" style="--d:.2s">
+        <dl class="eg-rise grid w-full grid-cols-3 gap-px overflow-hidden rounded-2xl bg-rule lg:w-[26rem]" style="--d:.2s">
           <div class="bg-paper-2 px-5 py-6">
             <dt class="font-display text-3xl text-gold">${PROJECTS.length}</dt>
             <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Named engagements</dd>
@@ -68,6 +76,7 @@ export default {
             <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Delivered overall</dd>
           </div>
         </dl>
+        </div>
       </div>
     </section>
 

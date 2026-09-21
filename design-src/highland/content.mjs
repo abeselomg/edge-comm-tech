@@ -270,3 +270,25 @@ export const POST_DETAIL = {
     "It is also possible to over-specify. An institution running a single teaching application with a documented four-hour recovery target is buying redundancy it will never draw on. The honest recommendation is often a well-built Tier II room and a tested restore procedure, and an integrator who never says that is selling, not advising.",
   ],
 };
+
+/* Mission, vision and values. Written from how Edge already describes itself
+   on its own site and in the approved homepage copy -- "advise, implement and
+   manage", "built to international standards", "an engineer replies, not a
+   sales queue". Nothing here asserts a fact Edge has not already published. */
+export const PURPOSE = {
+  mission:
+    "To design, build and keep running the communication and IT infrastructure that Ethiopia's universities, hospitals and enterprises depend on — to international standards, and with the same team from the first assessment to the after-sales contract.",
+  vision:
+    "That an institution in Ethiopia should never have to choose between infrastructure it can trust and infrastructure it can support locally.",
+};
+
+export const VALUES = [
+  { title: "Advise before we sell",
+    body: "The right recommendation is sometimes a smaller one, or a platform we do not carry. We say so, because the alternative is a system nobody can afford to run." },
+  { title: "One team, end to end",
+    body: "The engineers who assess the estate design the build, commission it, and are still reachable afterwards. Most failures we are called to fix happen at the seam between two suppliers." },
+  { title: "Built to standards, not to fit",
+    body: "Tier-rated rooms, documented addressing, labelled cabling, tested restores. The parts nobody sees are the parts that decide whether it lasts." },
+  { title: "Answerable after handover",
+    body: "An engineer replies, not a sales queue. The contract that builds a system is the contract that keeps it running." },
+];

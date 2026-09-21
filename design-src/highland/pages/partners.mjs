@@ -69,14 +69,23 @@ export default {
   body: `  <main class="mx-auto max-w-6xl px-6 py-20">
     <style>${filterCss}</style>
 
-    <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Partner network</p>
-    <h1 class="mt-3 max-w-3xl font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]">
-      Eight manufacturers, one point of contact
+    <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Partner network</p>
+    <h1 class="eg-rise mt-3 max-w-3xl font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]" style="--d:.06s">
+      Certified on the platforms, <span class="text-gold">accountable for the outcome</span>
     </h1>
-    <p class="mt-5 max-w-2xl text-ink/75">
-      Edge holds the partner relationship, so escalation, firmware and lifecycle support
-      run through one team rather than eight.
+    <p class="eg-rise mt-5 max-w-2xl text-ink/75" style="--d:.14s">
+      Being a partner is not a logo on a page. It means our engineers hold current
+      certifications on what we sell, we escalate directly to the manufacturer rather than
+      through a reseller, and we see firmware and end-of-support notices before you do.
     </p>
+    <dl class="eg-rise mt-9 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl bg-rule" style="--d:.22s">
+      <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold">${PARTNERS.length}</dt>
+        <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">Manufacturers</dd></div>
+      <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold">${AREAS.length}</dt>
+        <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">Capability areas</dd></div>
+      <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold">1</dt>
+        <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">Point of contact</dd></div>
+    </dl>
 
     ${["all", ...AREAS.map(([k]) => k)]
       .map((k, i) => `<input class="sr-only" type="radio" name="area" id="f-${k}"${i === 0 ? " checked" : ""}>`)

@@ -1,4 +1,4 @@
-import { CLIENTS, METHOD, DISCIPLINES, EXECUTIVES } from "../content.mjs";
+import { CLIENTS, METHOD, DISCIPLINES, EXECUTIVES, PURPOSE, VALUES } from "../content.mjs";
 
 /* Stations alternate sides of the spine. On narrow screens the spine moves
    to the far left and every station sits to its right. */
@@ -39,14 +39,54 @@ export default {
                    bg-gradient-to-r from-transparent via-gold/50 to-transparent" aria-hidden="true"></span>
 
       <div class="relative mx-auto max-w-6xl px-6 py-28">
-        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">The company</p>
-        <h1 class="mt-4 max-w-4xl font-display text-[clamp(2.4rem,6vw,4.5rem)] leading-[0.98]">
-          Most failures happen at <span class="text-gold">the seam</span> between two suppliers
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em] text-gold">The company</p>
+        <h1 class="eg-rise mt-4 max-w-4xl font-display text-[clamp(2.2rem,5.5vw,4rem)] leading-[1.0]" style="--d:.06s">
+          An ICT systems integrator for the institutions that
+          <span class="text-gold">cannot afford to be offline</span>
         </h1>
-        <p class="mt-8 max-w-xl text-lg leading-relaxed text-ink/75">
-          Edge stays with a system from the first assessment to the after-sales contract,
-          so there is no seam to fail at.
+        <p class="eg-rise mt-8 max-w-2xl text-lg leading-relaxed text-ink/75" style="--d:.14s">
+          Edge designs, builds and runs communication and IT infrastructure from an office in
+          Bole, Addis Ababa. Universities, hospitals and enterprises across Ethiopia, delivered
+          by certified engineers who stay with a system after it is commissioned.
         </p>
+        <dl class="eg-rise mt-10 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-4" style="--d:.22s">
+          <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold">9</dt>
+            <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">Services</dd></div>
+          <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold">8</dt>
+            <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">Partners</dd></div>
+          <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold">5</dt>
+            <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">Named clients</dd></div>
+          <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold"><span class="ph">40</span></dt>
+            <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">People</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="border-b border-rule">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        <div class="grid gap-5 md:grid-cols-2">
+          <div class="eg-inview overflow-hidden rounded-3xl p-8 text-paper"
+               style="background:linear-gradient(135deg,#056a9a,#0888c5 70%)">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-paper/70">Mission</p>
+            <p class="mt-4 font-display text-[clamp(1.15rem,1.9vw,1.6rem)] leading-snug">${PURPOSE.mission}</p>
+          </div>
+          <div class="eg-inview overflow-hidden rounded-3xl border border-rule bg-paper-2 p-8">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">Vision</p>
+            <p class="mt-4 font-display text-[clamp(1.15rem,1.9vw,1.6rem)] leading-snug">${PURPOSE.vision}</p>
+          </div>
+        </div>
+
+        <p class="mt-16 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Core values</p>
+        <h2 class="mt-2 font-display text-3xl md:text-4xl">What we hold to</h2>
+        <ol class="mt-8 grid gap-4 md:grid-cols-2">
+          ${VALUES.map(
+            (v, i) => `<li class="eg-inview rounded-2xl bg-paper-2 p-6 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)]">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">0${i + 1}</p>
+            <h3 class="mt-2 font-display text-xl">${v.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/75">${v.body}</p>
+          </li>`,
+          ).join("")}
+        </ol>
       </div>
     </section>
 
@@ -92,9 +132,32 @@ export default {
     <section id="clients" class="border-t border-rule">
       <div class="mx-auto max-w-6xl px-6 py-20">
         <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Who we serve</p>
-        <h2 class="mt-2 max-w-3xl font-display text-4xl md:text-5xl">Institutions that cannot afford to be offline</h2>
-        <ul class="mt-10 divide-y divide-rule border-y border-rule text-lg">
-          ${CLIENTS.map((c) => `<li class="py-5 font-display">${c}</li>`).join("")}
+        <h2 class="mt-2 max-w-3xl font-display text-4xl md:text-5xl">Where an outage stops teaching or treatment</h2>
+        <p class="mt-5 max-w-2xl text-ink/75">
+          Higher education and public health are Edge's proven base: campuses where four hundred
+          devices associate in ninety seconds, and hospitals where the network is clinical
+          infrastructure. The same standards carry into enterprise and industrial sites.
+        </p>
+
+        <div class="mt-10 grid gap-3 sm:grid-cols-3">
+          ${[
+            ["Higher education", "Campus networks, datacenter rooms, structured cabling and access control across university estates.", "#0888c5"],
+            ["Public health", "Hospitals where surveillance, telephony and the network are treated as clinical infrastructure.", "#c48a5a"],
+            ["Enterprise and industry", "Offices, factories and residential compounds where the network and physical security are one system.", "#056a9a"],
+          ].map(
+            ([t, b, c]) => `<div class="eg-inview rounded-2xl bg-paper-2 p-6">
+            <span class="block h-1 w-10 rounded-full" style="background:${c}"></span>
+            <h3 class="mt-4 font-display text-xl">${t}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/75">${b}</p>
+          </div>`,
+          ).join("")}
+        </div>
+
+        <p class="mt-12 font-mono text-[10px] uppercase tracking-widest text-steel">Named publicly</p>
+        <ul class="mt-4 flex flex-wrap gap-2">
+          ${CLIENTS.map(
+            (c) => `<li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">${c}</li>`,
+          ).join("")}
         </ul>
       </div>
     </section>

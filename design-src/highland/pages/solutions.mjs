@@ -88,13 +88,11 @@ export default {
             ${tile(s)}
             <div>
               <p class="font-mono text-[10px] uppercase tracking-widest" style="color:${ACCENT[s.slug]}">Service ${String(s.n).padStart(2, "0")}</p>
-              <h2 class="mt-1.5 font-display text-2xl">${s.title}</h2>
+              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-${s.slug}.html" class="hover:text-gold">${s.title}</a></h2>
               <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">${s.blurb}</p>
-              ${
-                s.slug === "datacenter"
-                  ? `<a href="solution-datacenter.html" class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white" style="background:${ACCENT[s.slug]}">Read the full service page &rarr;</a>`
-                  : ""
-              }
+              <a href="solution-${s.slug}.html"
+                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
+                 style="background:${ACCENT[s.slug]}">Read the full service page &rarr;</a>
             </div>
           </div>
         </article>`,
