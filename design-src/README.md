@@ -39,14 +39,42 @@ Supporting modules:
 `design-files/landings/` holds two single-page treatments of the same content in
 different visual languages, plus their own index:
 
-| File | Look |
-|---|---|
-| `highland-microwave.html` | Warm off-white paper, sun disk over a horizon, hops on a dashed path. Geologica. |
-| `cyanotype-print.html` | Blueprint blue, drawing grid, boxed title-block cells, bleach yellow. Chakra Petch. |
+| File | Look | Status |
+|---|---|---|
+| `design-files/highland/` | Warm off-white paper, sun disk over a horizon, hops on a dashed path. Geologica. | **Chosen. Now a fourteen-page site — see below.** |
+| `landings/cyanotype-print.html` | Blueprint blue, drawing grid, boxed title-block cells, bleach yellow. Chakra Petch. | Not taken forward; hand-authored |
 
-These are **hand-authored, not generated** — the only files under `design-files/`
-that are edited in place rather than rebuilt. They use the Tailwind play CDN and
-Google Fonts at runtime, so unlike the pages above they need a network connection.
+`landings/cyanotype-print.html` is hand-authored and edited in place. Both looks pull
+Tailwind and their fonts at runtime, so unlike the pages above they need a network
+connection.
+
+## The Highland site
+
+The chosen direction, generated from `design-src/highland/` into
+`design-files/highland/`. **Never hand-edit `design-files/highland/` — it is
+overwritten on every build.**
+
+```bash
+npm run highland        # emit all fourteen pages
+npm run check:links     # links resolve, nav intact, no dead fragments, robots tags
+npm run check:render    # overflow at 4 widths, Tailwind compiled, contact sheet
+node tools/check-home-unchanged.mjs   # the approved homepage is still byte-identical
+```
+
+- `gen.mjs` — the shell (head, header, nav, footer) and the page registry. Adding a
+  page is one registry line plus one module.
+- `content.mjs` — all content as data. The block above the `drafted` divider is
+  verified Edge material; below it is written for the design and needs replacing
+  before launch.
+- `pages/*.mjs` — one module per page, each exporting `{ title, desc, body }`.
+- `shell-parts.json` — the approved landing page's head, styles, main and footer,
+  lifted verbatim. This is now the authoritative copy: the original file at
+  `design-files/landings/highland-microwave.html` is a redirect.
+
+`check-render.mjs` writes `shots-highland/sheet.html`, a contact sheet of all fourteen
+pages as thumbnails. That sheet is the test for the one design requirement the client
+stated — that no page be redundant. It cannot be asserted from markup, so it is judged
+by eye against that sheet.
 
 ## Earlier directions
 
