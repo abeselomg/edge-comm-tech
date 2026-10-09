@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Documentary Videos — Edge Comm-Tech</title>
+  <meta name="description" content="Documentary videos covering project delivery, client environments, technology explainers and the people behind the engineering." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { DEFAULT: "#1c2430", 2: "#2a3544" },
+            paper: { DEFAULT: "#eef6f4", 2: "#ffffff" },
+            gold: { DEFAULT: "#0888c5", 2: "#056a9a" },
+            lamp: "#c48a5a",
+            steel: "#5c6b76",
+            rule: "#0888c530",
+          },
+          fontFamily: {
+            display: ["Geologica", "Segoe UI", "sans-serif"],
+            sans: ["Atkinson Hyperlegible", "Segoe UI", "sans-serif"],
+            mono: ["Fragment Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #eef6f4; color: #1c2430; font-family: "Atkinson Hyperlegible", sans-serif; }
+    .font-display { letter-spacing: -0.03em; font-weight: 700; }
+    .sun-disk {
+      position: absolute;
+      right: -6rem;
+      top: -5rem;
+      width: 22rem;
+      height: 22rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, #fff8 0%, #0888c5 42%, transparent 70%);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
+      pointer-events: none;
+    }
+    .hop-line {
+      flex: 1;
+      height: 1px;
+      margin-top: 0.55rem;
+      background-image: repeating-linear-gradient(90deg, #0888c5 0 6px, transparent 6px 12px);
+    }
+    .ph {
+      border-bottom: 1px dashed #0888c5;
+    }
+    .ph::after {
+      content: "▪";
+      font-size: 0.45em;
+      vertical-align: super;
+      margin-left: 0.15em;
+      color: #c48a5a;
+    }
+    :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
+  </style>
+  <style>
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+      <a href="index.html" class="shrink-0 leading-none">
+        <img src="edge-logo.png" alt="Edge Communication Technologies"
+             width="391" height="176" class="h-14 w-auto" decoding="async">
+      </a>
+      <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
+        <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
+        <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
+        <a href="clients.html" class="text-ink/70 hover:text-gold">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
+        <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+        <a href="careers.html" class="text-ink/70 hover:text-gold">Careers</a>
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
+      </nav>
+      <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
+      <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
+      <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
+      <a href="clients.html" class="whitespace-nowrap text-ink/70">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
+      <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-ink/70">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
+      <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="relative overflow-hidden border-b" style="border-color:#2ba8de2e;background:linear-gradient(140deg,#2ba8de12,#2ba8de04)">
+      <span class="pointer-events-none absolute -left-24 top-0 h-full w-[28rem] -skew-x-12"
+             style="background:linear-gradient(90deg,#2ba8de1f,transparent)" aria-hidden="true"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        <nav class="font-mono text-[10px] uppercase tracking-widest text-steel" aria-label="Breadcrumb">
+          <a href="resources.html" class="hover:text-gold">Resources</a><span class="mx-2">/</span>Documentary Videos
+        </nav>
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#2ba8de">Short films about the work</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">Documentary Videos</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Documentary videos covering project delivery, client environments, technology explainers and the people behind the engineering.</p>
+        <p class="eg-rise mt-6"><span class="inline-flex items-center gap-1.5 rounded-full border border-lamp/40 bg-lamp/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-lamp">
+    <svg viewBox="0 0 8 8" class="h-1.5 w-1.5" aria-hidden="true"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>Material pending approval from Edge</span></p>
+        
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-5xl px-6 py-16">
+      <!-- Honest empty state. The structure is here; the items are not. -->
+      <section class="rounded-3xl border border-dashed p-10 text-center" style="border-color:#2ba8de55;background:#2ba8de08">
+        <svg viewBox="0 0 24 24" class="mx-auto h-8 w-8" fill="none" stroke="#2ba8de" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/>
+        </svg>
+        <h2 class="mt-4 font-display text-xl">No documentary videos are published yet.</h2>
+        <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-ink/70">
+          This section is built and ready. Items appear as soon as Edge Comm-Tech approves the material,
+          with its source and review recorded.
+        </p>
+        <div class="mt-7 flex flex-wrap justify-center gap-3">
+          <a href="subscribe.html" class="rounded-full px-5 py-2.5 text-sm font-semibold text-white" style="background:#2ba8de">Tell me when it is published</a>
+          <a href="news.html" class="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold">Read company news</a>
+        </div>
+      </section>
+
+      <section class="mt-16">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">What will appear here</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">The material this section will carry</h2>
+      
+        <div class="mt-8 grid gap-3 sm:grid-cols-3">
+          <div class="eg-inview flex flex-col rounded-2xl bg-paper-2 p-6">
+            <h3 class="font-display text-base leading-snug">Project films</h3>
+            <p class="mt-2 text-[13px] leading-relaxed text-ink/70">How an engagement was scoped, delivered and handed over, filmed on site with the client's consent.</p>
+          </div>
+          <div class="eg-inview flex flex-col rounded-2xl bg-paper-2 p-6">
+            <h3 class="font-display text-base leading-snug">Technology explainers</h3>
+            <p class="mt-2 text-[13px] leading-relaxed text-ink/70">Short pieces on what a technology does and what it requires to run well.</p>
+          </div>
+          <div class="eg-inview flex flex-col rounded-2xl bg-paper-2 p-6">
+            <h3 class="font-display text-base leading-snug">Team and practice</h3>
+            <p class="mt-2 text-[13px] leading-relaxed text-ink/70">The engineers, the methodology and the standards the work is held to.</p>
+          </div>
+        </div>
+        <p class="mt-7 max-w-2xl text-sm leading-relaxed text-ink/70">If you would like to feature a delivered project, or need footage for an institutional presentation, talk to us.</p>
+      </section>
+
+      <!-- Something to actually read, so the page is not a dead end -->
+      <section class="mt-16 border-t border-rule pt-10">
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Published now</p>
+          <a href="news.html" class="font-mono text-[10px] uppercase tracking-widest text-gold">All news &rarr;</a>
+        </div>
+        <ul class="mt-5 divide-y divide-rule">
+          <li><a href="news-edge-comm-tech-established-2018.html" class="group grid gap-x-8 gap-y-1.5 py-5 lg:grid-cols-[8rem_1fr]">
+            <span class="font-mono text-[10px] uppercase tracking-widest text-steel">Company milestone</span>
+            <span class="min-w-0">
+              <span class="block font-display text-base leading-snug group-hover:text-gold">Edge Communication Technologies PLC established to deliver integrated technology solutions</span>
+              <span class="mt-1.5 block max-w-2xl text-[13px] leading-relaxed text-ink/65">Edge Communication Technologies PLC was established in 2018 with a clear purpose: to help Ethiopian organizations design, implement, integrate, and sustain the technologies required for reliable operations and long-term digital progress.</span>
+            </span>
+          </a></li>
+          <li><a href="news-ethiopia-digital-transformation-foundations.html" class="group grid gap-x-8 gap-y-1.5 py-5 lg:grid-cols-[8rem_1fr]">
+            <span class="font-mono text-[10px] uppercase tracking-widest text-steel">Insight</span>
+            <span class="min-w-0">
+              <span class="block font-display text-base leading-snug group-hover:text-gold">Building the foundations of Ethiopia's digital transformation</span>
+              <span class="mt-1.5 block max-w-2xl text-[13px] leading-relaxed text-ink/65">Digital transformation is not a single application or infrastructure purchase. It is the coordinated improvement of services, processes, skills, data, connectivity, computing, security, power, and institutional capability.</span>
+            </span>
+          </a></li>
+        </ul>
+      </section>
+
+      <nav class="mt-14 grid gap-3 sm:grid-cols-2">
+        <a href="media-press-releases.html" class="eg-inview flex items-center justify-between gap-4 rounded-2xl border border-rule px-6 py-5 transition hover:border-gold hover:text-gold">
+          <span>
+            <span class="block font-display text-base">Press Releases</span>
+            <span class="mt-0.5 block font-mono text-[10px] uppercase tracking-widest text-steel">Official statements</span>
+          </span>
+          <span aria-hidden="true" class="text-gold">&rarr;</span>
+        </a>
+        <a href="media-coverage.html" class="eg-inview flex items-center justify-between gap-4 rounded-2xl border border-rule px-6 py-5 transition hover:border-gold hover:text-gold">
+          <span>
+            <span class="block font-display text-base">Media Coverage</span>
+            <span class="mt-0.5 block font-mono text-[10px] uppercase tracking-widest text-steel">Edge in the press</span>
+          </span>
+          <span aria-hidden="true" class="text-gold">&rarr;</span>
+        </a>
+      </nav>
+    </div>
+
+    
+    <section class="relative overflow-hidden border-t border-rule">
+      <span class="pointer-events-none absolute inset-0" aria-hidden="true"
+            style="background:linear-gradient(120deg,#2ba8de16,transparent 60%)"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <h2 class="eg-inview max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.8rem)] leading-tight">Media and press enquiries</h2>
+        <p class="eg-inview mt-4 max-w-2xl text-ink/75">For interviews, statements, company information or approved media assets, email <a href="mailto:sales@edgecomm-tech.com" class="underline decoration-rule underline-offset-2 hover:text-gold">sales@edgecomm-tech.com</a> or use the contact form.</p>
+        
+  <div class="eg-rise mt-8 flex flex-wrap items-center gap-3" style="--d:.24s">
+    <a href="contact.html" class="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+       style="background:#2ba8de">Contact our team</a>
+    <a href="resources.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Back to resources</a>
+  </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-rule bg-paper-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Solutions</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Company</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Get in touch</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
+  </footer>
+</body>
+</html>

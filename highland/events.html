@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Technology Events and Webinars — Edge Comm-Tech</title>
+  <meta name="description" content="Join Edge Comm-Tech webinars, briefings and exhibitions on enterprise AI, infrastructure, cybersecurity and digital transformation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { DEFAULT: "#1c2430", 2: "#2a3544" },
+            paper: { DEFAULT: "#eef6f4", 2: "#ffffff" },
+            gold: { DEFAULT: "#0888c5", 2: "#056a9a" },
+            lamp: "#c48a5a",
+            steel: "#5c6b76",
+            rule: "#0888c530",
+          },
+          fontFamily: {
+            display: ["Geologica", "Segoe UI", "sans-serif"],
+            sans: ["Atkinson Hyperlegible", "Segoe UI", "sans-serif"],
+            mono: ["Fragment Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #eef6f4; color: #1c2430; font-family: "Atkinson Hyperlegible", sans-serif; }
+    .font-display { letter-spacing: -0.03em; font-weight: 700; }
+    .sun-disk {
+      position: absolute;
+      right: -6rem;
+      top: -5rem;
+      width: 22rem;
+      height: 22rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, #fff8 0%, #0888c5 42%, transparent 70%);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
+      pointer-events: none;
+    }
+    .hop-line {
+      flex: 1;
+      height: 1px;
+      margin-top: 0.55rem;
+      background-image: repeating-linear-gradient(90deg, #0888c5 0 6px, transparent 6px 12px);
+    }
+    .ph {
+      border-bottom: 1px dashed #0888c5;
+    }
+    .ph::after {
+      content: "▪";
+      font-size: 0.45em;
+      vertical-align: super;
+      margin-left: 0.15em;
+      color: #c48a5a;
+    }
+    :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
+  </style>
+  <style>
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+      <a href="index.html" class="shrink-0 leading-none">
+        <img src="edge-logo.png" alt="Edge Communication Technologies"
+             width="391" height="176" class="h-14 w-auto" decoding="async">
+      </a>
+      <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
+        <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
+        <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
+        <a href="clients.html" class="text-ink/70 hover:text-gold">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
+        <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+        <a href="careers.html" class="text-ink/70 hover:text-gold">Careers</a>
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
+      </nav>
+      <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
+      <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
+      <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
+      <a href="clients.html" class="whitespace-nowrap text-ink/70">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
+      <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-ink/70">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
+      <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="relative overflow-hidden border-b" style="border-color:#0888c52e;background:linear-gradient(140deg,#0888c512,#0888c504)">
+      <span class="pointer-events-none absolute -left-24 top-0 h-full w-[28rem] -skew-x-12"
+             style="background:linear-gradient(90deg,#0888c51f,transparent)" aria-hidden="true"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        <nav class="font-mono text-[10px] uppercase tracking-widest text-steel" aria-label="Breadcrumb">
+          <a href="resources.html" class="hover:text-gold">Resources</a><span class="mx-2">/</span>Events
+        </nav>
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#0888c5">Events and webinars</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">Sessions worth your hour</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Online discussions, institutional briefings and international exhibitions where our team shares what is working in practice — and answers the questions that follow.</p>
+        
+        
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-6xl px-6 py-16">
+      <section>
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+          <h2 class="font-display text-[clamp(1.4rem,2.6vw,2rem)]">Upcoming</h2>
+          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">2 sessions</p>
+        </div>
+        <ul class="mt-8 space-y-4">
+          <li><a href="event-agentic-ai-universities-2026.html"
+          class="eg-inview group grid overflow-hidden rounded-3xl border border-rule transition hover:border-gold lg:grid-cols-[1fr_15rem]">
+          <div class="p-8">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">University and education event</p>
+            <h3 class="mt-3 font-display text-[clamp(1.35rem,2.5vw,2rem)] leading-tight group-hover:text-gold">Trusted AI for learning, research, knowledge and university services</h3>
+            <p class="mt-3 max-w-2xl text-sm leading-relaxed text-ink/70">A focused university event bringing together institutional leaders, academic departments, researchers, instructors, ICT teams, and technology specialists to explore responsible Agentic AI and knowledge solutions for higher education.</p>
+            <p class="mt-5 text-xs text-steel">For university leaders, faculty, researchers, ict teams, librarians, and education stakeholders</p>
+            <span class="mt-6 inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-white">Request an Invitation <span aria-hidden="true">&rarr;</span></span>
+          </div>
+          <dl class="grid content-start gap-px bg-rule">
+            <div class="bg-paper-2 px-6 py-5">
+              <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Date</dt>
+              <dd class="mt-1.5 text-sm leading-snug">23 October 2026</dd>
+            </div>
+            <div class="bg-paper-2 px-6 py-5">
+              <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Format</dt>
+              <dd class="mt-1.5 text-sm leading-snug">In person</dd>
+            </div>
+            <div class="bg-paper-2 px-6 py-5">
+              <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Venue</dt>
+              <dd class="mt-1.5 text-sm leading-snug">Ethiopian Skylight Hotel, Addis Ababa — final room to be confirmed</dd>
+            </div>
+          </dl>
+        </a></li>
+          <li><a href="event-gitex-global-2026.html"
+          class="eg-inview group grid overflow-hidden rounded-3xl border border-rule transition hover:border-gold lg:grid-cols-[1fr_15rem]">
+          <div class="p-8">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Exhibition and conference</p>
+            <h3 class="mt-3 font-display text-[clamp(1.35rem,2.5vw,2rem)] leading-tight group-hover:text-gold">Connect with Edge Comm-Tech at GITEX GLOBAL 2026</h3>
+            <p class="mt-3 max-w-2xl text-sm leading-relaxed text-ink/70">Edge Comm-Tech plans to engage technology partners, clients, innovators, and industry leaders during GITEX GLOBAL 2026 in Dubai. Visitors can register their interest in a meeting to discuss AI, cloud, cybersecurity, datacenter infrastructure, enterprise systems, networks, power, education technology, and partnership opportunities.</p>
+            <p class="mt-5 text-xs text-steel">For technology partners, clients, innovators and industry leaders</p>
+            <span class="mt-6 inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-white">Request a Meeting <span aria-hidden="true">&rarr;</span></span>
+          </div>
+          <dl class="grid content-start gap-px bg-rule">
+            <div class="bg-paper-2 px-6 py-5">
+              <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Date</dt>
+              <dd class="mt-1.5 text-sm leading-snug">7–11 December 2026</dd>
+            </div>
+            <div class="bg-paper-2 px-6 py-5">
+              <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Format</dt>
+              <dd class="mt-1.5 text-sm leading-snug">In person</dd>
+            </div>
+            <div class="bg-paper-2 px-6 py-5">
+              <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Venue</dt>
+              <dd class="mt-1.5 text-sm leading-snug">Dubai Exhibition Centre, Expo City Dubai, United Arab Emirates</dd>
+            </div>
+          </dl>
+        </a></li>
+        </ul>
+      </section>
+
+      <section class="mt-16">
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+          <h2 class="font-display text-[clamp(1.3rem,2.2vw,1.7rem)]">Already held</h2>
+          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Materials added once approved</p>
+        </div>
+        <ul class="mt-6 divide-y divide-rule border-t border-rule">
+          <li><a href="event-agentic-ai-online-2026.html" class="group grid gap-x-8 gap-y-2 py-6 lg:grid-cols-[11rem_1fr]">
+            <span class="shrink-0">
+              <span class="block font-mono text-[10px] uppercase tracking-widest text-steel">28 September 2026</span>
+              <span class="mt-1 block font-mono text-[9px] uppercase tracking-widest text-steel">Online</span>
+            </span>
+            <span class="min-w-0">
+              <span class="block font-display text-lg leading-snug group-hover:text-gold">Agentic AI Online Event</span>
+              <span class="mt-1.5 block max-w-2xl text-[13px] leading-relaxed text-ink/65">An online discussion on how Agentic AI can support multi-step organizational work while maintaining approved data access, human oversight, security, accountability, and measurable business value.</span>
+            </span>
+          </a></li>
+        </ul>
+      </section>
+
+      <section class="mt-16 grid gap-3 sm:grid-cols-3">
+        <div class="eg-inview flex flex-col rounded-2xl bg-paper-2 p-6">
+          <h3 class="font-display text-lg leading-snug">Speak at an Edge session</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink/70">We invite client and partner practitioners to share real delivery experience.</p>
+          <a href="contact.html" class="mt-4 font-mono text-[10px] uppercase tracking-widest text-gold">Propose a speaker &rarr;</a>
+        </div>
+        <div class="eg-inview flex flex-col rounded-2xl bg-paper-2 p-6">
+          <h3 class="font-display text-lg leading-snug">Host a private briefing</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink/70">A session scoped to one institution's leadership team and its own priorities.</p>
+          <a href="contact.html" class="mt-4 font-mono text-[10px] uppercase tracking-widest text-gold">Request a briefing &rarr;</a>
+        </div>
+        <div class="eg-inview flex flex-col rounded-2xl bg-paper-2 p-6">
+          <h3 class="font-display text-lg leading-snug">Never miss one</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink/70">Occasional notices when a new session is confirmed. Nothing else.</p>
+          <a href="subscribe.html" class="mt-4 font-mono text-[10px] uppercase tracking-widest text-gold">Subscribe &rarr;</a>
+        </div>
+      </section>
+    </div>
+
+    
+    <section class="relative overflow-hidden border-t border-rule">
+      <span class="pointer-events-none absolute inset-0" aria-hidden="true"
+            style="background:linear-gradient(120deg,#0888c516,transparent 60%)"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <h2 class="eg-inview max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.8rem)] leading-tight">Bring your questions</h2>
+        <p class="eg-inview mt-4 max-w-2xl text-ink/75">Our sessions are built around the decisions institutions are actually facing. If you have a specific one, tell us before you attend.</p>
+        
+  <div class="eg-rise mt-8 flex flex-wrap items-center gap-3" style="--d:.24s">
+    <a href="contact.html" class="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+       style="background:#0888c5">Talk to our experts</a>
+    <a href="resources.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Back to resources</a>
+  </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-rule bg-paper-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Solutions</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Company</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Get in touch</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
+  </footer>
+</body>
+</html>

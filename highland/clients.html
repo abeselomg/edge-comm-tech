@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Our Clients — Banks, Universities and Government Institutions | Edge Comm-Tech</title>
+  <meta name="description" content="Edge Comm-Tech works with Ethiopian banks, universities, ministries and public institutions delivering infrastructure, security, power and digital learning technology." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { DEFAULT: "#1c2430", 2: "#2a3544" },
+            paper: { DEFAULT: "#eef6f4", 2: "#ffffff" },
+            gold: { DEFAULT: "#0888c5", 2: "#056a9a" },
+            lamp: "#c48a5a",
+            steel: "#5c6b76",
+            rule: "#0888c530",
+          },
+          fontFamily: {
+            display: ["Geologica", "Segoe UI", "sans-serif"],
+            sans: ["Atkinson Hyperlegible", "Segoe UI", "sans-serif"],
+            mono: ["Fragment Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #eef6f4; color: #1c2430; font-family: "Atkinson Hyperlegible", sans-serif; }
+    .font-display { letter-spacing: -0.03em; font-weight: 700; }
+    .sun-disk {
+      position: absolute;
+      right: -6rem;
+      top: -5rem;
+      width: 22rem;
+      height: 22rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, #fff8 0%, #0888c5 42%, transparent 70%);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
+      pointer-events: none;
+    }
+    .hop-line {
+      flex: 1;
+      height: 1px;
+      margin-top: 0.55rem;
+      background-image: repeating-linear-gradient(90deg, #0888c5 0 6px, transparent 6px 12px);
+    }
+    .ph {
+      border-bottom: 1px dashed #0888c5;
+    }
+    .ph::after {
+      content: "▪";
+      font-size: 0.45em;
+      vertical-align: super;
+      margin-left: 0.15em;
+      color: #c48a5a;
+    }
+    :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
+  </style>
+  <style>
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+      <a href="index.html" class="shrink-0 leading-none">
+        <img src="edge-logo.png" alt="Edge Communication Technologies"
+             width="391" height="176" class="h-14 w-auto" decoding="async">
+      </a>
+      <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
+        <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
+        <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
+        <a href="clients.html" class="text-gold" aria-current="page">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
+        <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+        <a href="careers.html" class="text-ink/70 hover:text-gold">Careers</a>
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
+      </nav>
+      <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
+      <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
+      <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
+      <a href="clients.html" class="whitespace-nowrap text-gold">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
+      <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-ink/70">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
+      <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="relative overflow-hidden border-b" style="border-color:#056a9a2e;background:linear-gradient(140deg,#056a9a12,#056a9a04)">
+      <span class="pointer-events-none absolute inset-0 opacity-[0.35]" aria-hidden="true"
+             style="background-image:linear-gradient(#056a9a14 1px,transparent 1px),linear-gradient(90deg,#056a9a14 1px,transparent 1px);background-size:56px 56px"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#056a9a">Clients</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">Trusted where reliability is not negotiable</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Banks, universities, ministries and public institutions choose Edge Comm-Tech because their systems have to work. Our client relationships are built on careful delivery, documentation, training and support that continues after handover.</p>
+        
+        <div class="eg-rise mt-8 flex flex-wrap gap-3" style="--d:.24s">
+          <a href="contact.html" class="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">Become a client</a>
+          <a href="projects.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Read the project records</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- The mark wall. Uniform frames, so a name reads as deliberately as a
+         logo and the grid stays even while artwork is still being collected. -->
+    <section class="border-b border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-14">
+        <div class="flex flex-wrap items-baseline justify-between gap-3">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Institutions we serve</p>
+          <span class="inline-flex items-center gap-1.5 rounded-full border border-lamp/40 bg-lamp/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-lamp">
+    <svg viewBox="0 0 8 8" class="h-1.5 w-1.5" aria-hidden="true"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>9 marks pending approved artwork</span>
+        </div>
+        <ul class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <img src="clients/bahirdar.png" alt="Bahir Dar University" width="240" height="160"
+           class="h-10 w-auto max-w-full object-contain" decoding="async">
+          </li>
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Arba Minch University</span>
+          </li>
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Ministry of Education</span>
+          </li>
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Gadaa Bank</span>
+          </li>
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">National Bank of Ethiopia</span>
+          </li>
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Siinqee Bank</span>
+          </li>
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Zemen Bank</span>
+          </li>
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Ethiopian Securities Exchange</span>
+          </li>
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Ministry of Urban and Infrastructure</span>
+          </li>
+          <li class="eg-inview flex h-20 items-center justify-center rounded-2xl border border-rule bg-paper px-4 transition hover:border-gold">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Ministry of Health</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Sector sections ----------------------------------------------------- -->
+    <section class="border-t border-rule">
+      <div class="mx-auto max-w-6xl px-6 py-16">
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+          <div>
+            <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">Sector</p>
+            <h2 class="mt-2 font-display text-[clamp(1.5rem,2.8vw,2.1rem)]">Universities and Education</h2>
+          </div>
+          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">3 institutions</p>
+        </div>
+        <div class="mt-8">
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <img src="clients/bahirdar.png" alt="Bahir Dar University" width="240" height="160"
+           class="h-11 w-auto max-w-full object-contain" decoding="async">
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">Bahir Dar University</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Digital learning and campus infrastructure delivered across the university's campuses, combining modern classroom environments with integrated monitoring and communications infrastructure.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-software-ai-digital.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#0888c516;color:#0888c5">Software, AI &amp; Digital</a>
+              <a href="solution-datacenter-facility-it-infrastructure.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#0b6fa816;color:#0b6fa8">Datacenter &amp; Infrastructure</a>
+            </div>
+            <ul class="mt-5 space-y-1.5">
+              <li><a href="project-bahir-dar-university-smart-classrooms.html" class="group flex items-baseline justify-between gap-4 rounded-xl bg-paper-2 px-4 py-2.5">
+                <span class="text-[13px] group-hover:text-gold">Bahir Dar University Smart Classrooms</span>
+                <span class="shrink-0 font-mono text-[9px] uppercase tracking-widest text-steel">2024/2025</span>
+              </a></li>
+              <li><a href="project-bahir-dar-university-safe-campus.html" class="group flex items-baseline justify-between gap-4 rounded-xl bg-paper-2 px-4 py-2.5">
+                <span class="text-[13px] group-hover:text-gold">Bahir Dar University CCTV and Security Infrastructure</span>
+                <span class="shrink-0 font-mono text-[9px] uppercase tracking-widest text-steel">Year TBC</span>
+              </a></li>
+            </ul>
+          </div>
+        </article>
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Arba Minch University</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">Arba Minch University</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Smart meeting-room infrastructure designed to improve research collaboration, remote participation and knowledge exchange at the university's Secha Campus.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-software-ai-digital.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#0888c516;color:#0888c5">Software, AI &amp; Digital</a>
+              <a href="solution-enterprise-network.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#2ba8de16;color:#2ba8de">Enterprise Network</a>
+            </div>
+            <ul class="mt-5 space-y-1.5">
+              <li><a href="project-arba-minch-university-smart-meeting-rooms.html" class="group flex items-baseline justify-between gap-4 rounded-xl bg-paper-2 px-4 py-2.5">
+                <span class="text-[13px] group-hover:text-gold">Arba Minch University Smart Meeting Rooms</span>
+                <span class="shrink-0 font-mono text-[9px] uppercase tracking-widest text-steel">2024/2025</span>
+              </a></li>
+            </ul>
+          </div>
+        </article>
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Ministry of Education</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">Ministry of Education</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Indoor LED display infrastructure supporting institutional communication, presentations and visual information delivery.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-datacenter-facility-it-infrastructure.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#0b6fa816;color:#0b6fa8">Datacenter &amp; Infrastructure</a>
+              <a href="solution-broadcast-satellite.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#3d8fb816;color:#3d8fb8">Broadcast &amp; Satellite</a>
+            </div>
+            <p class="mt-5 text-[13px] text-steel">Engagement details are not published for this institution.</p>
+          </div>
+        </article>
+        </div>
+      </div>
+    </section>
+    <section class="border-t border-rule">
+      <div class="mx-auto max-w-6xl px-6 py-16">
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+          <div>
+            <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#056a9a">Sector</p>
+            <h2 class="mt-2 font-display text-[clamp(1.5rem,2.8vw,2.1rem)]">Banking and Financial Markets</h2>
+          </div>
+          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">5 institutions</p>
+        </div>
+        <div class="mt-8">
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Gadaa Bank</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">Gadaa Bank</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Computing infrastructure modernization using hyperconverged architecture to support critical banking applications and provide a scalable foundation for future private-cloud capabilities.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-system-cloud.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#056a9a16;color:#056a9a">System &amp; Cloud</a>
+            </div>
+            <ul class="mt-5 space-y-1.5">
+              <li><a href="project-gadaa-bank-computing-infrastructure.html" class="group flex items-baseline justify-between gap-4 rounded-xl bg-paper-2 px-4 py-2.5">
+                <span class="text-[13px] group-hover:text-gold">Gadaa Bank Computing Infrastructure</span>
+                <span class="shrink-0 font-mono text-[9px] uppercase tracking-widest text-steel">2025</span>
+              </a></li>
+            </ul>
+          </div>
+        </article>
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">National Bank of Ethiopia</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">National Bank of Ethiopia</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Backup infrastructure designed to strengthen the secure retention, recoverability and operational protection of critical institutional information.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-system-cloud.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#056a9a16;color:#056a9a">System &amp; Cloud</a>
+              <a href="solution-cybersecurity.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#1c6ea416;color:#1c6ea4">Cybersecurity</a>
+            </div>
+            <ul class="mt-5 space-y-1.5">
+              <li><a href="project-national-bank-ethiopia-backup-infrastructure.html" class="group flex items-baseline justify-between gap-4 rounded-xl bg-paper-2 px-4 py-2.5">
+                <span class="text-[13px] group-hover:text-gold">National Bank of Ethiopia Backup Infrastructure</span>
+                <span class="shrink-0 font-mono text-[9px] uppercase tracking-widest text-steel">2025/2026</span>
+              </a></li>
+            </ul>
+          </div>
+        </article>
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Siinqee Bank</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">Siinqee Bank</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Datacenter facility and resilient power infrastructure supporting the availability and continuity requirements of the bank's critical technology environment.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-datacenter-facility-it-infrastructure.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#0b6fa816;color:#0b6fa8">Datacenter &amp; Infrastructure</a>
+              <a href="solution-power-technology.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#c48a5a16;color:#c48a5a">Power Technology</a>
+            </div>
+            <ul class="mt-5 space-y-1.5">
+              <li><a href="project-siinqee-bank-datacenter-power.html" class="group flex items-baseline justify-between gap-4 rounded-xl bg-paper-2 px-4 py-2.5">
+                <span class="text-[13px] group-hover:text-gold">Siinqee Bank Datacenter Facility and Power Solutions</span>
+                <span class="shrink-0 font-mono text-[9px] uppercase tracking-widest text-steel">2024</span>
+              </a></li>
+            </ul>
+          </div>
+        </article>
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Zemen Bank</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">Zemen Bank</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Generator solutions deployed for branches across Ethiopia to provide dependable backup power and support continuous banking services.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-power-technology.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#c48a5a16;color:#c48a5a">Power Technology</a>
+            </div>
+            <ul class="mt-5 space-y-1.5">
+              <li><a href="project-zemen-bank-generator-solutions.html" class="group flex items-baseline justify-between gap-4 rounded-xl bg-paper-2 px-4 py-2.5">
+                <span class="text-[13px] group-hover:text-gold">Zemen Bank Generator Solutions</span>
+                <span class="shrink-0 font-mono text-[9px] uppercase tracking-widest text-steel">2024/2025</span>
+              </a></li>
+            </ul>
+          </div>
+        </article>
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Ethiopian Securities Exchange</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">Ethiopian Securities Exchange</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Oracle database software and database-security capabilities supporting the exchange's core data environment and controlled access to critical information.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-software-ai-digital.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#0888c516;color:#0888c5">Software, AI &amp; Digital</a>
+              <a href="solution-system-cloud.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#056a9a16;color:#056a9a">System &amp; Cloud</a>
+              <a href="solution-cybersecurity.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#1c6ea416;color:#1c6ea4">Cybersecurity</a>
+            </div>
+            <p class="mt-5 text-[13px] text-steel">Engagement details are not published for this institution.</p>
+          </div>
+        </article>
+        </div>
+      </div>
+    </section>
+    <section class="border-t border-rule">
+      <div class="mx-auto max-w-6xl px-6 py-16">
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+          <div>
+            <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0b6fa8">Sector</p>
+            <h2 class="mt-2 font-display text-[clamp(1.5rem,2.8vw,2.1rem)]">Government and Public Institutions</h2>
+          </div>
+          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">2 institutions</p>
+        </div>
+        <div class="mt-8">
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Ministry of Urban and Infrastructure</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">Ministry of Urban and Infrastructure</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Computing, switching, storage and application-delivery infrastructure supporting resilient operation of important ministry applications and data services.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-enterprise-network.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#2ba8de16;color:#2ba8de">Enterprise Network</a>
+              <a href="solution-system-cloud.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#056a9a16;color:#056a9a">System &amp; Cloud</a>
+            </div>
+            <ul class="mt-5 space-y-1.5">
+              <li><a href="project-ministry-urban-infrastructure-computing.html" class="group flex items-baseline justify-between gap-4 rounded-xl bg-paper-2 px-4 py-2.5">
+                <span class="text-[13px] group-hover:text-gold">Ministry of Urban and Infrastructure Computing Solutions</span>
+                <span class="shrink-0 font-mono text-[9px] uppercase tracking-widest text-steel">2024/2025</span>
+              </a></li>
+            </ul>
+          </div>
+        </article>
+          <article class="eg-inview grid gap-7 border-t border-rule py-9 lg:grid-cols-[11rem_1fr]">
+          <div class="flex h-20 w-full max-w-[11rem] items-center justify-center rounded-2xl border border-rule bg-paper-2 px-4">
+            <span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Ministry of Health</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-xl leading-snug">Ministry of Health</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">Power infrastructure solutions supporting dependable operation of technology and electrical systems at the West Treatment Plant.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <a href="solution-power-technology.html" class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95" style="background:#c48a5a16;color:#c48a5a">Power Technology</a>
+            </div>
+            <p class="mt-5 text-[13px] text-steel">Engagement details are not published for this institution.</p>
+          </div>
+        </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Why institutions stay</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">The reasons clients come back for the next project</h2>
+      
+        <div class="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="eg-inview border-t border-rule pt-5">
+            <h3 class="font-display text-lg">End-to-End Capability</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">One accountable partner from consultation and design through sourcing, implementation, integration, training, support, and lifecycle improvement.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <h3 class="font-display text-lg">Engineering-Led Approach</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Solutions shaped by experienced technical professionals who understand performance, interoperability, security, and operational realities.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <h3 class="font-display text-lg">Trusted Global Partnerships</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Access to proven platforms, specialist expertise, and vendor-aligned implementation through respected technology manufacturers and distributors.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <h3 class="font-display text-lg">Mission-Critical Experience</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Practical understanding of the reliability, security, documentation, and continuity needs of banks, government institutions, universities, and major enterprises.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <h3 class="font-display text-lg">Flexible Scalable Architecture</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Designs that address current requirements while creating a practical path for expansion, integration, modernization, and future technologies.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <h3 class="font-display text-lg">Commitment Beyond Handover</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Training, knowledge transfer, maintenance, and responsive support that help clients protect their investments.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-4xl px-6 py-20">
+      
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">References</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Client references on request</h2>
+      <p class="mt-4 max-w-2xl text-ink/75">Detailed references, named contacts and completion certificates are shared directly with prospective clients and tender committees, subject to each institution's consent.</p>
+      <p class="mt-6">
+        <a href="contact.html" class="inline-block rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Request references</a>
+      </p>
+    </section>
+
+    
+    <section class="relative overflow-hidden border-t border-rule">
+      <span class="pointer-events-none absolute inset-0" aria-hidden="true"
+            style="background:linear-gradient(120deg,#056a9a16,transparent 60%)"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <h2 class="eg-inview max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.8rem)] leading-tight">Let's talk about your institution</h2>
+        <p class="eg-inview mt-4 max-w-2xl text-ink/75">Tell us what you are modernizing and what it has to keep running while you do it. We will come back with a practical approach.</p>
+        
+  <div class="eg-rise mt-8 flex flex-wrap items-center gap-3" style="--d:.24s">
+    <a href="contact.html" class="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+       style="background:#056a9a">Contact our team</a>
+    <a href="partners.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">See our technology partners</a>
+  </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-rule bg-paper-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Solutions</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Company</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Get in touch</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Solutions — Edge COMM-TECH</title>
-  <meta name="description" content="Nine services, delivered end to end." />
+  <title>Technology Solutions and Services in Ethiopia — Edge Comm-Tech</title>
+  <meta name="description" content="Explore Edge Comm-Tech solutions across enterprise networks, cloud, datacenters, cybersecurity, software, AI, power, broadcast, and satellite technologies." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -73,11 +73,22 @@
     :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
   </style>
   <style>
-@keyframes eg-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@keyframes eg-pop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
 @keyframes eg-draw{to{stroke-dashoffset:0}}
-@keyframes eg-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
-@keyframes eg-spin{to{transform:rotate(360deg)}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
 
 .eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
 .eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
@@ -107,324 +118,409 @@
              width="391" height="176" class="h-14 w-auto" decoding="async">
       </a>
       <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
-        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
-        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
         <a href="solutions.html" class="text-gold" aria-current="page">Solutions</a>
         <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
-        <a href="academy.html" class="text-ink/70 hover:text-gold">Academy</a>
-        <a href="career.html" class="text-ink/70 hover:text-gold">Career</a>
+        <a href="clients.html" class="text-ink/70 hover:text-gold">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
         <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+        <a href="careers.html" class="text-ink/70 hover:text-gold">Careers</a>
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
       </nav>
       <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
     </div>
     <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
-      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
-      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
       <a href="solutions.html" class="whitespace-nowrap text-gold">Solutions</a>
       <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
-      <a href="academy.html" class="whitespace-nowrap text-ink/70">Academy</a>
-      <a href="career.html" class="whitespace-nowrap text-ink/70">Career</a>
+      <a href="clients.html" class="whitespace-nowrap text-ink/70">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
       <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-ink/70">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
       <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
     </nav>
   </header>
 
   <main>
-    <section class="relative overflow-hidden border-b border-rule bg-paper-2">
-      <span class="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full"
-            style="background:radial-gradient(circle,#0888c526,transparent 70%)" aria-hidden="true"></span>
-      <div class="relative mx-auto max-w-6xl px-6 py-20">
-        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Solutions</p>
-        <h1 class="mt-3 max-w-3xl font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]">
-          Nine services, <span class="text-gold">delivered end to end</span>
-        </h1>
-        <p class="mt-5 max-w-2xl text-ink/75">
-          Voice, data and internet integrated as one managed service — with the engineers
-          who designed it still reachable afterwards.
-        </p>
-        <ul class="mt-10 flex flex-wrap gap-2">
-          <li class="eg-rise" style="--d:0.20s"><a href="#s1"
-              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-              style="background:#0888c514;color:#0888c5">Datacenter Facility</a></li>
-          <li class="eg-rise" style="--d:0.25s"><a href="#s2"
-              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-              style="background:#2ba8de14;color:#2ba8de">Networks (LAN/WLAN)</a></li>
-          <li class="eg-rise" style="--d:0.30s"><a href="#s3"
-              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-              style="background:#056a9a14;color:#056a9a">Cybersecurity</a></li>
-          <li class="eg-rise" style="--d:0.35s"><a href="#s4"
-              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-              style="background:#0b6fa814;color:#0b6fa8">NOC and SOC services</a></li>
-          <li class="eg-rise" style="--d:0.40s"><a href="#s5"
-              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-              style="background:#c48a5a14;color:#c48a5a">Unified Communications</a></li>
-          <li class="eg-rise" style="--d:0.45s"><a href="#s6"
-              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-              style="background:#2ba8de14;color:#2ba8de">Voice / Data / Internet</a></li>
-          <li class="eg-rise" style="--d:0.50s"><a href="#s7"
-              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-              style="background:#056a9a14;color:#056a9a">CCTV and Physical security</a></li>
-          <li class="eg-rise" style="--d:0.55s"><a href="#s8"
-              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-              style="background:#0888c514;color:#0888c5">IT service / Desktop support</a></li>
-          <li class="eg-rise" style="--d:0.60s"><a href="#s9"
-              class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-              style="background:#c48a5a14;color:#c48a5a">Professional services</a></li>
+    <header class="relative overflow-hidden border-b" style="border-color:#0888c52e;background:linear-gradient(140deg,#0888c512,#0888c504)">
+      <span class="pointer-events-none absolute inset-0 opacity-[0.35]" aria-hidden="true"
+             style="background-image:linear-gradient(#0888c514 1px,transparent 1px),linear-gradient(90deg,#0888c514 1px,transparent 1px);background-size:56px 56px"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#0888c5">Solutions and services</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">Technology that works together</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Edge Comm-Tech delivers integrated technology solutions that connect infrastructure, data, applications, security, operations, and people. We help organizations modernize with architectures designed for performance, resilience, security, scalability, and long-term value.</p>
+        
+        <div class="eg-rise mt-8 flex flex-wrap gap-3" style="--d:.24s">
+          <a href="contact.html" class="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">Talk to our experts</a>
+          <a href="#industries" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Explore solutions by industry</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="mx-auto max-w-4xl px-6 py-16">
+      
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Our approach</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">From individual technologies to one operational ecosystem</h2>
+      
+      <p class="mt-6 text-lg leading-relaxed text-ink/80">
+        A successful transformation depends on more than selecting products. Networks must support applications.
+        Datacenter facilities must provide resilient environments for critical systems. IT infrastructure must
+        connect, monitor, and protect physical operations. Cybersecurity must protect cloud services, networks,
+        applications, endpoints, identities, operations, perimeters, and data. Power must sustain critical
+        operations. Software and AI must connect to trusted information and existing workflows.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink/70">
+        Edge Comm-Tech brings these requirements together through assessment, design, sourcing, implementation,
+        integration, testing, training, support, and continuous improvement.
+      </p>
+    </section>
+
+    <!-- The seven families, as a ledger rather than a card grid: the homepage
+         already shows them as cards, and this page is the catalogue. -->
+    <section class="border-y border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Solution portfolio</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Seven integrated solution families</h2>
+      
+        <ul class="mt-10">
+          <li><a href="solution-software-ai-digital.html"
+            class="eg-inview group grid gap-x-8 gap-y-3 border-t border-rule py-8 transition lg:grid-cols-[4rem_1fr_9rem]">
+            <span class="font-display text-3xl leading-none" style="color:#0888c5">01</span>
+            <span class="min-w-0">
+              <span class="block font-display text-[clamp(1.3rem,2.2vw,1.85rem)] leading-snug group-hover:text-gold">Software, AI &amp; Digital Solutions</span>
+              <span class="mt-2 block max-w-2xl text-sm leading-relaxed text-ink/70">Enterprise software, automation, analytics, AI knowledge assistants, private RAG, voice automation, industry-specific AI agents, education AI, local-language applications, and custom digital platforms.</span>
+            </span>
+            <span class="flex flex-col items-start gap-2 lg:items-end lg:text-right">
+              <span class="rounded-full px-3 py-1 font-mono text-[9px] uppercase tracking-widest" style="background:#0888c514;color:#0888c5">2 projects</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-gold">Explore &rarr;</span>
+            </span>
+          </a></li>
+          <li><a href="solution-enterprise-network.html"
+            class="eg-inview group grid gap-x-8 gap-y-3 border-t border-rule py-8 transition lg:grid-cols-[4rem_1fr_9rem]">
+            <span class="font-display text-3xl leading-none" style="color:#2ba8de">02</span>
+            <span class="min-w-0">
+              <span class="block font-display text-[clamp(1.3rem,2.2vw,1.85rem)] leading-snug group-hover:text-gold">Enterprise Network Solutions</span>
+              <span class="mt-2 block max-w-2xl text-sm leading-relaxed text-ink/70">Secure LAN and WLAN, software-defined networking, network management, collaboration, unified communications, contact centers, structured cabling, and network security.</span>
+            </span>
+            <span class="flex flex-col items-start gap-2 lg:items-end lg:text-right">
+              <span class="rounded-full px-3 py-1 font-mono text-[9px] uppercase tracking-widest" style="background:#2ba8de14;color:#2ba8de">4 projects</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-gold">Explore &rarr;</span>
+            </span>
+          </a></li>
+          <li><a href="solution-system-cloud.html"
+            class="eg-inview group grid gap-x-8 gap-y-3 border-t border-rule py-8 transition lg:grid-cols-[4rem_1fr_9rem]">
+            <span class="font-display text-3xl leading-none" style="color:#056a9a">03</span>
+            <span class="min-w-0">
+              <span class="block font-display text-[clamp(1.3rem,2.2vw,1.85rem)] leading-snug group-hover:text-gold">System &amp; Cloud Solutions</span>
+              <span class="mt-2 block max-w-2xl text-sm leading-relaxed text-ink/70">Enterprise compute, storage, engineered systems, virtualization, HCI, backup, disaster recovery, databases, load balancing, hybrid cloud, and end-user computing.</span>
+            </span>
+            <span class="flex flex-col items-start gap-2 lg:items-end lg:text-right">
+              <span class="rounded-full px-3 py-1 font-mono text-[9px] uppercase tracking-widest" style="background:#056a9a14;color:#056a9a">3 projects</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-gold">Explore &rarr;</span>
+            </span>
+          </a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html"
+            class="eg-inview group grid gap-x-8 gap-y-3 border-t border-rule py-8 transition lg:grid-cols-[4rem_1fr_9rem]">
+            <span class="font-display text-3xl leading-none" style="color:#0b6fa8">04</span>
+            <span class="min-w-0">
+              <span class="block font-display text-[clamp(1.3rem,2.2vw,1.85rem)] leading-snug group-hover:text-gold">Datacenter Facility &amp; IT Infrastructure</span>
+              <span class="mt-2 block max-w-2xl text-sm leading-relaxed text-ink/70">Tier-aligned datacenter facilities, modular datacenters, cooling, DCIM, environmental monitoring, fire suppression, racks, fiber-optic and copper structured cabling, CCTV, barriers, access control, and related IT infrastructure.</span>
+            </span>
+            <span class="flex flex-col items-start gap-2 lg:items-end lg:text-right">
+              <span class="rounded-full px-3 py-1 font-mono text-[9px] uppercase tracking-widest" style="background:#0b6fa814;color:#0b6fa8">4 projects</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-gold">Explore &rarr;</span>
+            </span>
+          </a></li>
+          <li><a href="solution-cybersecurity.html"
+            class="eg-inview group grid gap-x-8 gap-y-3 border-t border-rule py-8 transition lg:grid-cols-[4rem_1fr_9rem]">
+            <span class="font-display text-3xl leading-none" style="color:#1c6ea4">05</span>
+            <span class="min-w-0">
+              <span class="block font-display text-[clamp(1.3rem,2.2vw,1.85rem)] leading-snug group-hover:text-gold">Cybersecurity Solutions</span>
+              <span class="mt-2 block max-w-2xl text-sm leading-relaxed text-ink/70">Cloud, network, application, endpoint, digital identity, operational, perimeter, and data security; vulnerability management; ADC and next-generation load balancing; Zero Trust Network Access and NAC; SIEM; SOAR; WAF; EDR; IAM; PAM; and DLP.</span>
+            </span>
+            <span class="flex flex-col items-start gap-2 lg:items-end lg:text-right">
+              <span class="rounded-full px-3 py-1 font-mono text-[9px] uppercase tracking-widest" style="background:#1c6ea414;color:#1c6ea4">3 projects</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-gold">Explore &rarr;</span>
+            </span>
+          </a></li>
+          <li><a href="solution-power-technology.html"
+            class="eg-inview group grid gap-x-8 gap-y-3 border-t border-rule py-8 transition lg:grid-cols-[4rem_1fr_9rem]">
+            <span class="font-display text-3xl leading-none" style="color:#c48a5a">06</span>
+            <span class="min-w-0">
+              <span class="block font-display text-[clamp(1.3rem,2.2vw,1.85rem)] leading-snug group-hover:text-gold">Power Technology Solutions</span>
+              <span class="mt-2 block max-w-2xl text-sm leading-relaxed text-ink/70">UPS, generators, automatic transfer systems, electrical infrastructure, solar and hybrid power, monitoring, transmission technologies, and EV charging.</span>
+            </span>
+            <span class="flex flex-col items-start gap-2 lg:items-end lg:text-right">
+              <span class="rounded-full px-3 py-1 font-mono text-[9px] uppercase tracking-widest" style="background:#c48a5a14;color:#c48a5a">2 projects</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-gold">Explore &rarr;</span>
+            </span>
+          </a></li>
+          <li><a href="solution-broadcast-satellite.html"
+            class="eg-inview group grid gap-x-8 gap-y-3 border-t border-rule py-8 transition lg:grid-cols-[4rem_1fr_9rem]">
+            <span class="font-display text-3xl leading-none" style="color:#3d8fb8">07</span>
+            <span class="min-w-0">
+              <span class="block font-display text-[clamp(1.3rem,2.2vw,1.85rem)] leading-snug group-hover:text-gold">Broadcast &amp; Satellite Solutions</span>
+              <span class="mt-2 block max-w-2xl text-sm leading-relaxed text-ink/70">FM and AM, studio systems, television transmission, LED displays, satellite broadcasting, video over IP, and broadband satellite connectivity.</span>
+            </span>
+            <span class="flex flex-col items-start gap-2 lg:items-end lg:text-right">
+              
+              <span class="font-mono text-[10px] uppercase tracking-widest text-gold">Explore &rarr;</span>
+            </span>
+          </a></li>
         </ul>
       </div>
     </section>
 
-    <div class="mx-auto grid max-w-6xl gap-12 px-6 py-16 md:grid-cols-[14rem_1fr]">
-      <nav class="self-start md:sticky md:top-32" aria-label="Services">
-        <p class="font-mono text-[10px] uppercase tracking-widest text-steel">All nine</p>
-        <ol class="mt-4 space-y-1">
-          <li><a href="#s1" class="group flex items-center gap-3 rounded-lg py-1.5 pl-2 pr-1 text-sm text-ink/70 hover:bg-paper hover:text-ink">
-            <span class="h-2 w-2 shrink-0 rounded-full" style="background:#0888c5"></span>
-            <span class="font-mono text-[10px] text-steel">01</span>
-            Datacenter Facility</a></li>
-          <li><a href="#s2" class="group flex items-center gap-3 rounded-lg py-1.5 pl-2 pr-1 text-sm text-ink/70 hover:bg-paper hover:text-ink">
-            <span class="h-2 w-2 shrink-0 rounded-full" style="background:#2ba8de"></span>
-            <span class="font-mono text-[10px] text-steel">02</span>
-            Networks (LAN/WLAN)</a></li>
-          <li><a href="#s3" class="group flex items-center gap-3 rounded-lg py-1.5 pl-2 pr-1 text-sm text-ink/70 hover:bg-paper hover:text-ink">
-            <span class="h-2 w-2 shrink-0 rounded-full" style="background:#056a9a"></span>
-            <span class="font-mono text-[10px] text-steel">03</span>
-            Cybersecurity</a></li>
-          <li><a href="#s4" class="group flex items-center gap-3 rounded-lg py-1.5 pl-2 pr-1 text-sm text-ink/70 hover:bg-paper hover:text-ink">
-            <span class="h-2 w-2 shrink-0 rounded-full" style="background:#0b6fa8"></span>
-            <span class="font-mono text-[10px] text-steel">04</span>
-            NOC and SOC services</a></li>
-          <li><a href="#s5" class="group flex items-center gap-3 rounded-lg py-1.5 pl-2 pr-1 text-sm text-ink/70 hover:bg-paper hover:text-ink">
-            <span class="h-2 w-2 shrink-0 rounded-full" style="background:#c48a5a"></span>
-            <span class="font-mono text-[10px] text-steel">05</span>
-            Unified Communications</a></li>
-          <li><a href="#s6" class="group flex items-center gap-3 rounded-lg py-1.5 pl-2 pr-1 text-sm text-ink/70 hover:bg-paper hover:text-ink">
-            <span class="h-2 w-2 shrink-0 rounded-full" style="background:#2ba8de"></span>
-            <span class="font-mono text-[10px] text-steel">06</span>
-            Voice / Data / Internet</a></li>
-          <li><a href="#s7" class="group flex items-center gap-3 rounded-lg py-1.5 pl-2 pr-1 text-sm text-ink/70 hover:bg-paper hover:text-ink">
-            <span class="h-2 w-2 shrink-0 rounded-full" style="background:#056a9a"></span>
-            <span class="font-mono text-[10px] text-steel">07</span>
-            CCTV and Physical security</a></li>
-          <li><a href="#s8" class="group flex items-center gap-3 rounded-lg py-1.5 pl-2 pr-1 text-sm text-ink/70 hover:bg-paper hover:text-ink">
-            <span class="h-2 w-2 shrink-0 rounded-full" style="background:#0888c5"></span>
-            <span class="font-mono text-[10px] text-steel">08</span>
-            IT service / Desktop support</a></li>
-          <li><a href="#s9" class="group flex items-center gap-3 rounded-lg py-1.5 pl-2 pr-1 text-sm text-ink/70 hover:bg-paper hover:text-ink">
-            <span class="h-2 w-2 shrink-0 rounded-full" style="background:#c48a5a"></span>
-            <span class="font-mono text-[10px] text-steel">09</span>
-            Professional services</a></li>
-        </ol>
-      </nav>
+    <!-- Professional services ------------------------------------------------ -->
+    <section class="mx-auto max-w-6xl px-6 py-20">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Professional services</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Services that turn technology into operational value</h2>
+      <p class="mt-4 max-w-2xl text-ink/75">Services can support a focused requirement or an integrated multi-technology program.</p>
+        </div>
+        <a href="services.html" class="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold">Explore our service model</a>
+      </div>
+      <div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="service-advisory-assessment-design.html" class="eg-inview group flex flex-col rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Service 01</span>
+          <h3 class="mt-1.5 font-display text-lg leading-snug group-hover:text-gold">Technology Advisory, Assessment &amp; Solution Design</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink/70">Current-state assessment, requirements analysis, architecture, specifications, bills of quantities, roadmaps, budgets, risk planning, and tender support.</p>
+        </a>
+        <a href="service-procurement-supply.html" class="eg-inview group flex flex-col rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#c48a5a">Service 02</span>
+          <h3 class="mt-1.5 font-display text-lg leading-snug group-hover:text-gold">Technology Procurement &amp; Supply</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink/70">OEM and distributor coordination, compliant sourcing, commercial comparison, licensing, logistics, delivery control, documentation, and warranty registration.</p>
+        </a>
+        <a href="service-implementation-integration.html" class="eg-inview group flex flex-col rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">Service 03</span>
+          <h3 class="mt-1.5 font-display text-lg leading-snug group-hover:text-gold">Implementation, Integration &amp; Commissioning</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink/70">Site readiness, installation, configuration, migration, interoperability, testing, commissioning, acceptance, documentation, and handover.</p>
+        </a>
+        <a href="service-project-management-deployment.html" class="eg-inview group flex flex-col rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#056a9a">Service 04</span>
+          <h3 class="mt-1.5 font-display text-lg leading-snug group-hover:text-gold">Project Management &amp; Deployment</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink/70">Governance, schedules, resources, dependencies, stakeholder coordination, quality, risk, changes, reporting, and formal closure.</p>
+        </a>
+        <a href="service-managed-support-maintenance.html" class="eg-inview group flex flex-col rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#0b6fa8">Service 05</span>
+          <h3 class="mt-1.5 font-display text-lg leading-snug group-hover:text-gold">Managed Services, Maintenance &amp; Technical Support</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink/70">Monitoring, service desk, preventive and corrective maintenance, incident response, vendor escalation, health checks, updates, reporting, and lifecycle planning.</p>
+        </a>
+        <a href="service-training-knowledge-transfer.html" class="eg-inview group flex flex-col rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#3d8fb8">Service 06</span>
+          <h3 class="mt-1.5 font-display text-lg leading-snug group-hover:text-gold">Training &amp; Knowledge Transfer</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-ink/70">Administrator and user training, operational runbooks, workshops, handover, coaching, and E-Academy programs.</p>
+        </a>
+      </div>
+    </section>
 
-      <div class="space-y-5">
+    <!-- Technology priorities --------------------------------------------- -->
+    <section class="border-t border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-20">
         
-        <article id="s1" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
-          <span class="block h-1.5" style="background:linear-gradient(90deg,#0888c5,#0888c522)"></span>
-          <div class="group/card flex gap-5 p-7">
-            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
-        style="background:#0888c514;color:#0888c5">
-        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="6" rx="1.5"/><rect x="4" y="11" width="16" height="6" rx="1.5"/><path d="M7 6h.01M7 14h.01M4 19v2M20 19v2"/></svg>
-      </span>
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Service 01</p>
-              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-datacenter.html" class="hover:text-gold">Datacenter Facility</a></h2>
-              <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">Designed and built to house IT infrastructure with high-quality materials, industry-leading standards and Tier-rated architecture.</p>
-              <a href="solution-datacenter.html"
-                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                 style="background:#0888c5">Read the full service page &rarr;</a>
-            </div>
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Technology priorities</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Designed for current needs and future change</h2>
+      
+        <div class="mt-10 grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">01</span>
+            <h3 class="mt-1.5 font-display text-xl">AI-ready and data-driven</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Infrastructure and platforms prepared for analytics, automation, enterprise AI, and growing data workloads.</p>
           </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">02</span>
+            <h3 class="mt-1.5 font-display text-xl">Hybrid and interoperable</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Architectures that connect on-premises, cloud, edge, applications, devices, and existing investments.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">03</span>
+            <h3 class="mt-1.5 font-display text-xl">Secure by design</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Identity-centered controls, least privilege, monitoring, resilience, recovery, and responsible data handling.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">04</span>
+            <h3 class="mt-1.5 font-display text-xl">Operationally resilient</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Redundancy, business continuity, backup, disaster recovery, power protection, environmental control, and support.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">05</span>
+            <h3 class="mt-1.5 font-display text-xl">Sustainable by lifecycle</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Energy efficiency, maintainability, monitoring, responsible sourcing, electronic-waste considerations, and long-term value.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Industry solutions -------------------------------------------------- -->
+    <section id="industries" class="mx-auto max-w-6xl px-6 py-20">
+      
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Industry solutions</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Technology aligned with sector priorities</h2>
+      
+      <div class="mt-10 grid gap-4 sm:grid-cols-2">
+        <article class="eg-inview rounded-2xl border border-rule p-7 transition hover:border-gold">
+          <h3 class="font-display text-xl">Financial Services</h3>
+          <p class="mt-2.5 text-sm leading-relaxed text-ink/70">Secure banking infrastructure, resilient datacenters, enterprise compute and storage, databases, digital platforms, AI-enabled service automation, cybersecurity, business continuity, and payment solutions.</p>
         </article>
-        <article id="s2" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
-          <span class="block h-1.5" style="background:linear-gradient(90deg,#2ba8de,#2ba8de22)"></span>
-          <div class="group/card flex gap-5 p-7">
-            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
-        style="background:#2ba8de14;color:#2ba8de">
-        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M12 7.2v4.3m0 0L6.6 16m5.4-4.5L17.4 16"/></svg>
-      </span>
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">Service 02</p>
-              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-networks.html" class="hover:text-gold">Networks (LAN/WLAN)</a></h2>
-              <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">Campus and wireless networks delivered with our manufacturing partners — the experience and expertise the design actually needs.</p>
-              <a href="solution-networks.html"
-                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                 style="background:#2ba8de">Read the full service page &rarr;</a>
-            </div>
-          </div>
+        <article class="eg-inview rounded-2xl border border-rule p-7 transition hover:border-gold">
+          <h3 class="font-display text-xl">Education</h3>
+          <p class="mt-2.5 text-sm leading-relaxed text-ink/70">Smart classrooms, AI learning resources, campus networks, VDI, interactive displays, collaboration, computing infrastructure, surveillance, and smart meeting facilities.</p>
         </article>
-        <article id="s3" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
-          <span class="block h-1.5" style="background:linear-gradient(90deg,#056a9a,#056a9a22)"></span>
-          <div class="group/card flex gap-5 p-7">
-            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
-        style="background:#056a9a14;color:#056a9a">
-        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4.2 3 7.4 7 9 4-1.6 7-4.8 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>
-      </span>
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#056a9a">Service 03</p>
-              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></h2>
-              <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">A complete portfolio of network and data security services, plus the staff of security professionals who operate them.</p>
-              <a href="solution-cybersecurity.html"
-                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                 style="background:#056a9a">Read the full service page &rarr;</a>
-            </div>
-          </div>
+        <article class="eg-inview rounded-2xl border border-rule p-7 transition hover:border-gold">
+          <h3 class="font-display text-xl">Government &amp; Public Sector</h3>
+          <p class="mt-2.5 text-sm leading-relaxed text-ink/70">Secure digital infrastructure, modernization platforms, institutional knowledge assistants, datacenters, enterprise systems, connectivity, cybersecurity, collaboration, and citizen-service technologies.</p>
         </article>
-        <article id="s4" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
-          <span class="block h-1.5" style="background:linear-gradient(90deg,#0b6fa8,#0b6fa822)"></span>
-          <div class="group/card flex gap-5 p-7">
-            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
-        style="background:#0b6fa814;color:#0b6fa8">
-        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3.5l2.2 6 4.2-13 2.3 8.5 1.6-1.5H21"/></svg>
-      </span>
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0b6fa8">Service 04</p>
-              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-noc-soc.html" class="hover:text-gold">NOC and SOC services</a></h2>
-              <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">Build carrier-grade network operations and security operations centres, and the practice that runs them.</p>
-              <a href="solution-noc-soc.html"
-                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                 style="background:#0b6fa8">Read the full service page &rarr;</a>
-            </div>
-          </div>
-        </article>
-        <article id="s5" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
-          <span class="block h-1.5" style="background:linear-gradient(90deg,#c48a5a,#c48a5a22)"></span>
-          <div class="group/card flex gap-5 p-7">
-            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
-        style="background:#c48a5a14;color:#c48a5a">
-        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.4 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
-      </span>
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#c48a5a">Service 05</p>
-              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-unified-comms.html" class="hover:text-gold">Unified Communications</a></h2>
-              <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">Phone services with unified voice, presence, chat, mobile and data integration across the organisation.</p>
-              <a href="solution-unified-comms.html"
-                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                 style="background:#c48a5a">Read the full service page &rarr;</a>
-            </div>
-          </div>
-        </article>
-        <article id="s6" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
-          <span class="block h-1.5" style="background:linear-gradient(90deg,#2ba8de,#2ba8de22)"></span>
-          <div class="group/card flex gap-5 p-7">
-            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
-        style="background:#2ba8de14;color:#2ba8de">
-        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>
-      </span>
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">Service 06</p>
-              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-voice-data-internet.html" class="hover:text-gold">Voice / Data / Internet</a></h2>
-              <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">A wide array of plan options and service alternatives, with all telecom and unified communication elements integrated end to end as a fully managed service.</p>
-              <a href="solution-voice-data-internet.html"
-                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                 style="background:#2ba8de">Read the full service page &rarr;</a>
-            </div>
-          </div>
-        </article>
-        <article id="s7" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
-          <span class="block h-1.5" style="background:linear-gradient(90deg,#056a9a,#056a9a22)"></span>
-          <div class="group/card flex gap-5 p-7">
-            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
-        style="background:#056a9a14;color:#056a9a">
-        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h11v8H3z"/><path d="m14 11 7-3v8l-7-3z"/><circle cx="7.5" cy="12" r="1.6"/></svg>
-      </span>
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#056a9a">Service 07</p>
-              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-physical-security.html" class="hover:text-gold">CCTV and Physical security</a></h2>
-              <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">Design and installation of CCTV, access control systems, gate barriers, turnstiles and related physical security.</p>
-              <a href="solution-physical-security.html"
-                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                 style="background:#056a9a">Read the full service page &rarr;</a>
-            </div>
-          </div>
-        </article>
-        <article id="s8" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
-          <span class="block h-1.5" style="background:linear-gradient(90deg,#0888c5,#0888c522)"></span>
-          <div class="group/card flex gap-5 p-7">
-            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
-        style="background:#0888c514;color:#0888c5">
-        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4"/></svg>
-      </span>
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Service 08</p>
-              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-it-support.html" class="hover:text-gold">IT service / Desktop support</a></h2>
-              <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">Remote and on-site IT helpdesk for enterprise network infrastructure, servers, software and systems.</p>
-              <a href="solution-it-support.html"
-                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                 style="background:#0888c5">Read the full service page &rarr;</a>
-            </div>
-          </div>
-        </article>
-        <article id="s9" class="eg-inview scroll-mt-32 overflow-hidden rounded-3xl bg-paper-2 shadow-[0_18px_40px_-30px_rgb(28_36_48/0.5)] transition duration-300 hover:shadow-[0_26px_54px_-30px_rgb(8_136_197/0.55)]">
-          <span class="block h-1.5" style="background:linear-gradient(90deg,#c48a5a,#c48a5a22)"></span>
-          <div class="group/card flex gap-5 p-7">
-            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl transition-transform duration-300 group-hover/card:scale-110"
-        style="background:#c48a5a14;color:#c48a5a">
-        <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor"
-             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>
-      </span>
-            <div>
-              <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#c48a5a">Service 09</p>
-              <h2 class="mt-1.5 font-display text-2xl"><a href="solution-professional-services.html" class="hover:text-gold">Professional services</a></h2>
-              <p class="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/75">Expert-level certified network and system engineers specialising in design, configuration and troubleshooting.</p>
-              <a href="solution-professional-services.html"
-                 class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                 style="background:#c48a5a">Read the full service page &rarr;</a>
-            </div>
-          </div>
+        <article class="eg-inview rounded-2xl border border-rule p-7 transition hover:border-gold">
+          <h3 class="font-display text-xl">Enterprise &amp; Industry</h3>
+          <p class="mt-2.5 text-sm leading-relaxed text-ink/70">Business applications, cloud modernization, networks, cybersecurity, intelligent automation, agentic AI, power continuity, collaboration, and data-driven operational tools.</p>
         </article>
       </div>
-    </div>
+    </section>
+
+    <!-- Delivery framework --------------------------------------------------- -->
+    <section class="border-t border-rule">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Delivery framework</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">One accountable partner across the lifecycle</h2>
+      
+        <ol class="mt-10 grid gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-2 lg:grid-cols-3">
+          <li class="eg-inview bg-paper-2 p-7">
+            <span class="font-display text-3xl text-gold/25">01</span>
+            <h3 class="mt-2 font-display text-lg">Discover</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Understand business priorities, users, data, risks, current systems, dependencies, and desired outcomes.</p>
+          </li>
+          <li class="eg-inview bg-paper-2 p-7">
+            <span class="font-display text-3xl text-gold/25">02</span>
+            <h3 class="mt-2 font-display text-lg">Design</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Develop secure, scalable, interoperable, and commercially practical architectures.</p>
+          </li>
+          <li class="eg-inview bg-paper-2 p-7">
+            <span class="font-display text-3xl text-gold/25">03</span>
+            <h3 class="mt-2 font-display text-lg">Source</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Coordinate suitable technologies through qualified vendors, OEMs, and distributors.</p>
+          </li>
+          <li class="eg-inview bg-paper-2 p-7">
+            <span class="font-display text-3xl text-gold/25">04</span>
+            <h3 class="mt-2 font-display text-lg">Implement</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Manage logistics, installation, configuration, integration, testing, documentation, and acceptance.</p>
+          </li>
+          <li class="eg-inview bg-paper-2 p-7">
+            <span class="font-display text-3xl text-gold/25">05</span>
+            <h3 class="mt-2 font-display text-lg">Enable</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Provide training, knowledge transfer, handover documentation, and operational guidance.</p>
+          </li>
+          <li class="eg-inview bg-paper-2 p-7">
+            <span class="font-display text-3xl text-gold/25">06</span>
+            <h3 class="mt-2 font-display text-lg">Support &amp; optimize</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Maintain availability, address incidents, improve performance, manage upgrades, and prepare for growth.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Featured experience ---------------------------------------------------- -->
+    <section class="border-t border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Featured experience</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Solutions proven in critical environments</h2>
+      <p class="mt-4 max-w-2xl text-ink/75">Relevant experience includes Bahir Dar University smart classrooms and CCTV, Gadaa Bank computing infrastructure, National Bank of Ethiopia backup systems, Ministry of Urban and Infrastructure computing, Siinqee Bank power and datacenter-related solutions, Zemen Bank generators, Arba Minch University smart meeting rooms, and Ethiopian Securities Exchange database software.</p>
+        <ul class="mt-9 flex flex-wrap gap-2">
+          <li><a href="project-bahir-dar-university-smart-classrooms.html" class="block rounded-full bg-paper-2 px-4 py-2 text-xs transition hover:text-gold">Bahir Dar University &middot; Smart learning and collaboration</a></li>
+          <li><a href="project-bahir-dar-university-safe-campus.html" class="block rounded-full bg-paper-2 px-4 py-2 text-xs transition hover:text-gold">Bahir Dar University &middot; Safe-campus IT infrastructure</a></li>
+          <li><a href="project-gadaa-bank-computing-infrastructure.html" class="block rounded-full bg-paper-2 px-4 py-2 text-xs transition hover:text-gold">Gadaa Bank &middot; HCI and private-cloud readiness</a></li>
+          <li><a href="project-national-bank-ethiopia-backup-infrastructure.html" class="block rounded-full bg-paper-2 px-4 py-2 text-xs transition hover:text-gold">National Bank of Ethiopia &middot; Backup and recovery</a></li>
+          <li><a href="project-ministry-urban-infrastructure-computing.html" class="block rounded-full bg-paper-2 px-4 py-2 text-xs transition hover:text-gold">Ministry of Urban and Infrastructure &middot; Compute, storage, switching, ADC</a></li>
+          <li><a href="project-siinqee-bank-datacenter-power.html" class="block rounded-full bg-paper-2 px-4 py-2 text-xs transition hover:text-gold">Siinqee Bank &middot; Datacenter critical power</a></li>
+          <li><a href="project-arba-minch-university-smart-meeting-rooms.html" class="block rounded-full bg-paper-2 px-4 py-2 text-xs transition hover:text-gold">Arba Minch University &middot; Research collaboration</a></li>
+          <li><a href="project-zemen-bank-generator-solutions.html" class="block rounded-full bg-paper-2 px-4 py-2 text-xs transition hover:text-gold">Zemen Bank &middot; Multi-site backup generation</a></li>
+        </ul>
+      </div>
+    </section>
+
+    
+    <section class="relative overflow-hidden border-t border-rule">
+      <span class="pointer-events-none absolute inset-0" aria-hidden="true"
+            style="background:linear-gradient(120deg,#0888c516,transparent 60%)"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <h2 class="eg-inview max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.8rem)] leading-tight">Tell us what you need to deliver</h2>
+        <p class="eg-inview mt-4 max-w-2xl text-ink/75">Share your goals, constraints and existing environment. Our team will help define a practical, interoperable solution pathway.</p>
+        
+  <div class="eg-rise mt-8 flex flex-wrap items-center gap-3" style="--d:.24s">
+    <a href="contact.html" class="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+       style="background:#0888c5">Request a consultation</a>
+    <a href="projects.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Explore our projects</a>
+  </div>
+      </div>
+    </section>
   </main>
 
   <footer class="border-t border-rule bg-paper-2">
     <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
       <div class="lg:col-span-2">
-        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176" class="h-16 w-auto" decoding="async">
-        
-        <p class="mt-3 max-w-sm text-sm text-ink/70">An ICT systems integration company in Addis Ababa, delivering datacenter, network, security, communications and support to the institutions that depend on them.</p>
-        <p class="mt-3 text-sm font-semibold text-gold">Built to international standards.</p>
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
       </div>
+
       <div>
         <h4 class="font-display text-sm">Solutions</h4>
         <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
-          <li><a href="solutions.html">Datacenter Facility</a></li>
-          <li><a href="solutions.html">Networks (LAN/WLAN)</a></li>
-          <li><a href="solutions.html">Cybersecurity</a></li>
-          <li><a href="solutions.html">NOC and SOC services</a></li>
-          <li><a href="solutions.html">Unified Communications</a></li>
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
         </ul>
       </div>
+
       <div>
         <h4 class="font-display text-sm">Company</h4>
         <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
-          <li><a href="about.html">About us</a></li>
-          <li><a href="partners.html">Partners</a></li>
-          <li><a href="about.html#clients">Our clients</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
         </ul>
       </div>
+
       <div>
         <h4 class="font-display text-sm">Get in touch</h4>
         <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
-          <li>Bole, Lubaba Building, 3rd Floor<br />Addis Ababa, Ethiopia</li>
-          <li><a href="mailto:info@edgecomm-tech.com">info@edgecomm-tech.com</a></li>
-          <li><a href="tel:+251922555055">+251 92 255 5055</a></li>
-          <li><a href="https://edgecomm-tech.com">edgecomm-tech.com</a></li>
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
         </ul>
       </div>
     </div>
+
     <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
-      <p>© 2026 Edge Communication Technologies. Advise, implement, manage.</p>
-    </div>
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
   </footer>
 </body>
 </html>

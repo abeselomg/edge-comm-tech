@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Bahir Dar University CCTV and Security Infrastructure — Edge Comm-Tech</title>
+  <meta name="description" content="Integrated surveillance, campus monitoring, security control-room and radio-communication infrastructure across Bahir Dar University campuses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { DEFAULT: "#1c2430", 2: "#2a3544" },
+            paper: { DEFAULT: "#eef6f4", 2: "#ffffff" },
+            gold: { DEFAULT: "#0888c5", 2: "#056a9a" },
+            lamp: "#c48a5a",
+            steel: "#5c6b76",
+            rule: "#0888c530",
+          },
+          fontFamily: {
+            display: ["Geologica", "Segoe UI", "sans-serif"],
+            sans: ["Atkinson Hyperlegible", "Segoe UI", "sans-serif"],
+            mono: ["Fragment Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #eef6f4; color: #1c2430; font-family: "Atkinson Hyperlegible", sans-serif; }
+    .font-display { letter-spacing: -0.03em; font-weight: 700; }
+    .sun-disk {
+      position: absolute;
+      right: -6rem;
+      top: -5rem;
+      width: 22rem;
+      height: 22rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, #fff8 0%, #0888c5 42%, transparent 70%);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
+      pointer-events: none;
+    }
+    .hop-line {
+      flex: 1;
+      height: 1px;
+      margin-top: 0.55rem;
+      background-image: repeating-linear-gradient(90deg, #0888c5 0 6px, transparent 6px 12px);
+    }
+    .ph {
+      border-bottom: 1px dashed #0888c5;
+    }
+    .ph::after {
+      content: "▪";
+      font-size: 0.45em;
+      vertical-align: super;
+      margin-left: 0.15em;
+      color: #c48a5a;
+    }
+    :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
+  </style>
+  <style>
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+      <a href="index.html" class="shrink-0 leading-none">
+        <img src="edge-logo.png" alt="Edge Communication Technologies"
+             width="391" height="176" class="h-14 w-auto" decoding="async">
+      </a>
+      <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
+        <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
+        <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
+        <a href="clients.html" class="text-ink/70 hover:text-gold">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
+        <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+        <a href="careers.html" class="text-ink/70 hover:text-gold">Careers</a>
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
+      </nav>
+      <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
+      <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
+      <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
+      <a href="clients.html" class="whitespace-nowrap text-ink/70">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
+      <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-ink/70">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
+      <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="relative overflow-hidden border-b" style="border-color:#0888c52e;background:linear-gradient(140deg,#0888c512,#0888c504)">
+      <span class="pointer-events-none absolute inset-0 opacity-[0.35]" aria-hidden="true"
+             style="background-image:linear-gradient(#0888c514 1px,transparent 1px),linear-gradient(90deg,#0888c514 1px,transparent 1px);background-size:56px 56px"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        <nav class="font-mono text-[10px] uppercase tracking-widest text-steel" aria-label="Breadcrumb">
+          <a href="projects.html" class="hover:text-gold">Projects</a><span class="mx-2">/</span>Bahir Dar University
+        </nav>
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#0888c5">Education &middot; Completed</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">A connected safe-campus foundation across Bahir Dar University</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Integrated surveillance, campus monitoring, security control-room and radio-communication infrastructure across Bahir Dar University campuses.</p>
+        
+        
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-6xl px-6">
+      <dl class="eg-rise -mt-9 grid gap-px overflow-hidden rounded-2xl border border-rule bg-rule shadow-[0_20px_50px_-40px_rgb(28_36_48/0.6)] sm:grid-cols-3 lg:grid-cols-6">
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Client</dt>
+          <dd class="mt-1.5 text-sm leading-snug">Bahir Dar University</dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Sector</dt>
+          <dd class="mt-1.5 text-sm leading-snug">Higher Education</dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Location</dt>
+          <dd class="mt-1.5 text-sm leading-snug">Bahir Dar — university campuses</dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Completion</dt>
+          <dd class="mt-1.5 text-sm leading-snug"><span class="inline-flex items-center gap-1.5 rounded-full border border-lamp/40 bg-lamp/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-lamp">
+    <svg viewBox="0 0 8 8" class="h-1.5 w-1.5" aria-hidden="true"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>Year to confirm</span></dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Status</dt>
+          <dd class="mt-1.5 text-sm leading-snug">Completed</dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Technology</dt>
+          <dd class="mt-1.5 text-sm leading-snug">Hikvision</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="mx-auto max-w-3xl px-6 py-16">
+      <section>
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Client context</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">The need</h2>
+      
+        <p class="mt-5 text-lg leading-relaxed text-ink/80">A university campus is an open and active environment serving students, academic staff, administrators, visitors, facilities, and valuable assets. Bahir Dar University required an integrated approach that could improve visibility across multiple campuses and help security personnel coordinate their work from purpose-built operational spaces.</p>
+      </section>
+
+      <section class="mt-14">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Project scope</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">What Edge Comm-Tech delivered</h2>
+      
+        <ul class="mt-6 space-y-2.5">
+          <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4 text-sm">
+            <span class="pt-0.5 font-mono text-[10px]" style="color:#0888c5">01</span>
+            <span class="text-ink/80">Campus security assessment, coverage planning, and surveillance architecture.</span>
+          </li>
+          <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4 text-sm">
+            <span class="pt-0.5 font-mono text-[10px]" style="color:#0888c5">02</span>
+            <span class="text-ink/80">IP camera infrastructure, video management, recording, storage, and authorized viewing.</span>
+          </li>
+          <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4 text-sm">
+            <span class="pt-0.5 font-mono text-[10px]" style="color:#0888c5">03</span>
+            <span class="text-ink/80">Dedicated security operations and control rooms for campus monitoring and coordination.</span>
+          </li>
+          <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4 text-sm">
+            <span class="pt-0.5 font-mono text-[10px]" style="color:#0888c5">04</span>
+            <span class="text-ink/80">Operator displays, workstations, supporting networks, racks, cabling, power, and room infrastructure.</span>
+          </li>
+          <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4 text-sm">
+            <span class="pt-0.5 font-mono text-[10px]" style="color:#0888c5">05</span>
+            <span class="text-ink/80">Radio communication across campus security operations to improve field coordination.</span>
+          </li>
+          <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4 text-sm">
+            <span class="pt-0.5 font-mono text-[10px]" style="color:#0888c5">06</span>
+            <span class="text-ink/80">System configuration, testing, commissioning, operating procedures, training, and handover.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="mt-14">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Delivered solution</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">An integrated operational solution</h2>
+      
+        <div class="mt-6 space-y-3">
+          <article class="eg-inview rounded-2xl border-l-2 bg-paper-2 py-5 pl-6 pr-6" style="border-color:#0888c5">
+            <h3 class="font-display text-lg">Continuous monitoring platform</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Authorized operators can monitor priority campus areas through a centralized video-management environment designed for continuous security operations.</p>
+          </article>
+          <article class="eg-inview rounded-2xl border-l-2 bg-paper-2 py-5 pl-6 pr-6" style="border-color:#0888c5">
+            <h3 class="font-display text-lg">Campus security control rooms</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Each operational room brings video feeds, recording access, operator workstations, communications, and incident coordination into a structured workspace.</p>
+          </article>
+          <article class="eg-inview rounded-2xl border-l-2 bg-paper-2 py-5 pl-6 pr-6" style="border-color:#0888c5">
+            <h3 class="font-display text-lg">Recorded evidence</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Managed recording and retrieval support authorized review of incidents, investigations, and operational follow-up in line with university policy and retention requirements.</p>
+          </article>
+          <article class="eg-inview rounded-2xl border-l-2 bg-paper-2 py-5 pl-6 pr-6" style="border-color:#0888c5">
+            <h3 class="font-display text-lg">Field communication</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Radio communication helps control-room staff and field personnel coordinate observations, dispatch, escalation, and response across campus environments.</p>
+          </article>
+          <article class="eg-inview rounded-2xl border-l-2 bg-paper-2 py-5 pl-6 pr-6" style="border-color:#0888c5">
+            <h3 class="font-display text-lg">Integrated infrastructure</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Cameras, networks, storage, displays, power, cabling, and room systems were delivered as a coordinated operational platform.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="mt-14">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Implementation</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">From assessment to operational handover</h2>
+      
+        <p class="mt-5 leading-relaxed text-ink/75">Edge Comm-Tech coordinated the project across requirements validation, detailed design, sourcing, logistics, site preparation, installation, configuration, integration, testing, issue resolution, client acceptance, documentation, training, and handover.</p>
+      </section>
+
+      <section class="mt-14 rounded-3xl p-8" style="background:#0888c50e">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Outcomes</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">The result</h2>
+      
+        <ul class="mt-6 space-y-3">
+          <li class="flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>Improved situational awareness across monitored campus areas.</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>More coordinated communication between control-room operators and field security personnel.</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>A structured process for live monitoring, event review, escalation, and authorized evidence retrieval.</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>Purpose-built campus security control rooms supporting consistent daily operations.</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>A scalable safe-campus foundation that can be governed, maintained, and expanded over time.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="mt-14 grid gap-8 border-t border-rule pt-10 sm:grid-cols-2">
+        <div>
+          <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Technology</p>
+          <p class="mt-3 text-sm leading-relaxed text-ink/75">Hikvision video-surveillance and management technologies.</p>
+          <ul class="mt-4 flex flex-wrap gap-2">
+            <li class="grid h-11 min-w-[6rem] place-items-center rounded-xl bg-paper-2 px-3"><span class="px-2 text-center font-display text-[13px] leading-tight text-ink/70">Hikvision</span></li>
+          </ul>
+          
+        </div>
+        <div>
+          <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Training and handover</p>
+          <p class="mt-3 text-sm leading-relaxed text-ink/75">Local and international training was provided to designated personnel, with training-completion certificates issued as applicable.</p>
+        </div>
+      </section>
+
+      <p class="mt-8 flex items-start gap-2.5 rounded-2xl bg-paper-2 px-6 py-5 text-xs leading-relaxed text-steel">
+        <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+        <span>Surveillance infrastructure supports safety and authorized response. It does not guarantee safety or prevent every incident, and its use is governed by university policy, access control and retention rules.</span></p>
+
+      <section class="mt-14 border-t border-rule pt-10">
+        <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Related capability</p>
+        <ul class="mt-4 flex flex-wrap gap-2">
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#0b6fa814;color:#0b6fa8">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-enterprise-network.html" class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#2ba8de14;color:#2ba8de">Enterprise Network</a></li>
+          <li><a href="clients.html" class="block rounded-full border border-rule px-4 py-2 text-xs font-semibold transition hover:border-gold hover:text-gold">All Bahir Dar University work</a></li>
+        </ul>
+      </section>
+
+      <section class="mt-12">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-steel">More in education</p>
+        <ul class="mt-4 divide-y divide-rule border-y border-rule">
+          <li><a href="project-bahir-dar-university-smart-classrooms.html" class="group flex items-baseline justify-between gap-4 py-4">
+            <span class="font-display text-base group-hover:text-gold">Bahir Dar University Smart Classrooms</span>
+            <span class="shrink-0 font-mono text-xs text-steel">2024/2025</span>
+          </a></li>
+          <li><a href="project-arba-minch-university-smart-meeting-rooms.html" class="group flex items-baseline justify-between gap-4 py-4">
+            <span class="font-display text-base group-hover:text-gold">Arba Minch University Smart Meeting Rooms</span>
+            <span class="shrink-0 font-mono text-xs text-steel">2024/2025</span>
+          </a></li>
+        </ul>
+      </section>
+    </div>
+
+    
+    <section class="relative overflow-hidden border-t border-rule">
+      <span class="pointer-events-none absolute inset-0" aria-hidden="true"
+            style="background:linear-gradient(120deg,#0888c516,transparent 60%)"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <h2 class="eg-inview max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.8rem)] leading-tight">Plan your project with Edge Comm-Tech</h2>
+        <p class="eg-inview mt-4 max-w-2xl text-ink/75">Every engagement on this page began with an assessment and a written requirement. Tell us yours and we will start in the same place.</p>
+        
+  <div class="eg-rise mt-8 flex flex-wrap items-center gap-3" style="--d:.24s">
+    <a href="contact.html" class="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+       style="background:#0888c5">Discuss a similar project</a>
+    <a href="projects.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">View all completed projects</a>
+  </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-rule bg-paper-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Solutions</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Company</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Get in touch</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
+  </footer>
+</body>
+</html>

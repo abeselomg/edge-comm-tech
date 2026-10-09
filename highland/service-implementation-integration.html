@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Implementation, Integration &amp; Commissioning — Edge Comm-Tech</title>
+  <meta name="description" content="Site readiness, installation, configuration, migration, interoperability, testing, commissioning, acceptance, documentation, and handover." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { DEFAULT: "#1c2430", 2: "#2a3544" },
+            paper: { DEFAULT: "#eef6f4", 2: "#ffffff" },
+            gold: { DEFAULT: "#0888c5", 2: "#056a9a" },
+            lamp: "#c48a5a",
+            steel: "#5c6b76",
+            rule: "#0888c530",
+          },
+          fontFamily: {
+            display: ["Geologica", "Segoe UI", "sans-serif"],
+            sans: ["Atkinson Hyperlegible", "Segoe UI", "sans-serif"],
+            mono: ["Fragment Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #eef6f4; color: #1c2430; font-family: "Atkinson Hyperlegible", sans-serif; }
+    .font-display { letter-spacing: -0.03em; font-weight: 700; }
+    .sun-disk {
+      position: absolute;
+      right: -6rem;
+      top: -5rem;
+      width: 22rem;
+      height: 22rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, #fff8 0%, #0888c5 42%, transparent 70%);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
+      pointer-events: none;
+    }
+    .hop-line {
+      flex: 1;
+      height: 1px;
+      margin-top: 0.55rem;
+      background-image: repeating-linear-gradient(90deg, #0888c5 0 6px, transparent 6px 12px);
+    }
+    .ph {
+      border-bottom: 1px dashed #0888c5;
+    }
+    .ph::after {
+      content: "▪";
+      font-size: 0.45em;
+      vertical-align: super;
+      margin-left: 0.15em;
+      color: #c48a5a;
+    }
+    :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
+  </style>
+  <style>
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+      <a href="index.html" class="shrink-0 leading-none">
+        <img src="edge-logo.png" alt="Edge Communication Technologies"
+             width="391" height="176" class="h-14 w-auto" decoding="async">
+      </a>
+      <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
+        <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
+        <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
+        <a href="clients.html" class="text-ink/70 hover:text-gold">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
+        <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+        <a href="careers.html" class="text-ink/70 hover:text-gold">Careers</a>
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
+      </nav>
+      <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
+      <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
+      <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
+      <a href="clients.html" class="whitespace-nowrap text-ink/70">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
+      <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-ink/70">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
+      <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="relative overflow-hidden border-b" style="border-color:#2ba8de2e;background:linear-gradient(140deg,#2ba8de12,#2ba8de04)">
+      <span class="pointer-events-none absolute -left-24 top-0 h-full w-[28rem] -skew-x-12"
+             style="background:linear-gradient(90deg,#2ba8de1f,transparent)" aria-hidden="true"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        <nav class="font-mono text-[10px] uppercase tracking-widest text-steel" aria-label="Breadcrumb">
+          <a href="solutions.html" class="hover:text-gold">Solutions</a><span class="mx-2">/</span><a href="services.html" class="hover:text-gold">Services</a><span class="mx-2">/</span>Implementation & Integration
+        </nav>
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#2ba8de">Service 03 of 6</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">Turn approved designs into stable working systems</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Edge Comm-Tech implements and integrates technologies across software, networks, systems, cloud, datacenters, IT infrastructure, cybersecurity, power, broadcast, and satellite environments. Work is controlled through approved designs, method statements, testing, documentation, and acceptance.</p>
+        
+        
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-4xl px-6 py-16">
+      <section>
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">Core services</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">What the engagement covers</h2>
+      
+        <ol class="mt-7">
+          <li class="eg-inview grid gap-x-6 gap-y-2 border-t border-rule py-6 sm:grid-cols-[3.5rem_1fr]">
+            <span class="font-mono text-sm" style="color:#2ba8de">01</span>
+            <span>
+              <span class="block font-display text-xl leading-snug">Site Readiness & Method Planning</span>
+              <span class="mt-2 block text-sm leading-relaxed text-ink/70">Confirm access, civil and electrical readiness, space, cooling, cabling, connectivity, dependencies, safety, downtime, resources, and implementation methods.</span>
+            </span>
+          </li>
+          <li class="eg-inview grid gap-x-6 gap-y-2 border-t border-rule py-6 sm:grid-cols-[3.5rem_1fr]">
+            <span class="font-mono text-sm" style="color:#2ba8de">02</span>
+            <span>
+              <span class="block font-display text-xl leading-snug">Installation & Configuration</span>
+              <span class="mt-2 block text-sm leading-relaxed text-ink/70">Install, assemble, label, configure, update, harden, and connect equipment and software in accordance with approved designs and vendor guidance.</span>
+            </span>
+          </li>
+          <li class="eg-inview grid gap-x-6 gap-y-2 border-t border-rule py-6 sm:grid-cols-[3.5rem_1fr]">
+            <span class="font-mono text-sm" style="color:#2ba8de">03</span>
+            <span>
+              <span class="block font-display text-xl leading-snug">Migration & Cutover</span>
+              <span class="mt-2 block text-sm leading-relaxed text-ink/70">Prepare inventories, backups, test migrations, rollback plans, communications, change windows, validation, and controlled production transition.</span>
+            </span>
+          </li>
+          <li class="eg-inview grid gap-x-6 gap-y-2 border-t border-rule py-6 sm:grid-cols-[3.5rem_1fr]">
+            <span class="font-mono text-sm" style="color:#2ba8de">04</span>
+            <span>
+              <span class="block font-display text-xl leading-snug">Systems Integration</span>
+              <span class="mt-2 block text-sm leading-relaxed text-ink/70">Connect platforms, applications, APIs, identity, monitoring, networks, data, power, facilities, security controls, and management tools as required.</span>
+            </span>
+          </li>
+          <li class="eg-inview grid gap-x-6 gap-y-2 border-t border-rule py-6 sm:grid-cols-[3.5rem_1fr]">
+            <span class="font-mono text-sm" style="color:#2ba8de">05</span>
+            <span>
+              <span class="block font-display text-xl leading-snug">Testing & Quality Assurance</span>
+              <span class="mt-2 block text-sm leading-relaxed text-ink/70">Perform inspection, functional testing, performance and resilience checks, security validation within scope, defect tracking, remediation, and retesting.</span>
+            </span>
+          </li>
+          <li class="eg-inview grid gap-x-6 gap-y-2 border-t border-rule py-6 sm:grid-cols-[3.5rem_1fr]">
+            <span class="font-mono text-sm" style="color:#2ba8de">06</span>
+            <span>
+              <span class="block font-display text-xl leading-snug">Commissioning & Acceptance</span>
+              <span class="mt-2 block text-sm leading-relaxed text-ink/70">Execute approved test scripts, demonstrate requirements, record results, resolve punch-list items, and support formal acceptance.</span>
+            </span>
+          </li>
+          <li class="eg-inview grid gap-x-6 gap-y-2 border-t border-rule py-6 sm:grid-cols-[3.5rem_1fr]">
+            <span class="font-mono text-sm" style="color:#2ba8de">07</span>
+            <span>
+              <span class="block font-display text-xl leading-snug">Documentation & Handover</span>
+              <span class="mt-2 block text-sm leading-relaxed text-ink/70">Provide configurations, diagrams, inventories, licenses, warranties, test results, as-built records, operating guidance, credentials handover, and training as applicable.</span>
+            </span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="mt-16 rounded-3xl p-8" style="background:#2ba8de0c">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">Deliverables</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Interoperable, secure, documented and supportable</h2>
+      
+        
+        <ul class="mt-5 grid gap-2.5 sm:grid-cols-1">
+          <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#2ba8de"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>Use approved architecture and controlled changes</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#2ba8de"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>Protect production data and maintain rollback options</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#2ba8de"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>Coordinate dependencies across vendors and contractors</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#2ba8de"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>Apply secure configuration and least privilege</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#2ba8de"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>Test normal, failure and recovery conditions where authorized</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#2ba8de"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>Maintain accurate as-built documentation</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm text-ink/80">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#2ba8de"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+            <span>Transfer operational knowledge before closure</span>
+          </li>
+        </ul>
+      </section>
+
+      
+
+      <section class="mt-16 border-t border-rule pt-10">
+        <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">Best suited for</p>
+        <p class="mt-3 text-lg leading-relaxed text-ink/80">Edge Comm-Tech has executed and delivered more than 67 projects, including computing, backup, smart classroom, smart meeting, CCTV, datacenter-related, power, generator, database and LED display assignments for financial institutions, universities and public organizations.</p>
+      </section>
+
+      
+
+      <section class="mt-16 border-t border-rule pt-10">
+        <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">Related services</p>
+        <ul class="mt-4 flex flex-wrap gap-2">
+          <li><a href="service-project-management-deployment.html" class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#056a9a14;color:#056a9a">Project Management</a></li>
+          <li><a href="service-training-knowledge-transfer.html" class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#3d8fb814;color:#3d8fb8">Training</a></li>
+          <li><a href="service-managed-support-maintenance.html" class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#0b6fa814;color:#0b6fa8">Managed Support</a></li>
+        </ul>
+      </section>
+    </div>
+
+    
+    <section class="relative overflow-hidden border-t border-rule">
+      <span class="pointer-events-none absolute inset-0" aria-hidden="true"
+            style="background:linear-gradient(120deg,#2ba8de16,transparent 60%)"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <h2 class="eg-inview max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.8rem)] leading-tight">Tell us what you need to deliver</h2>
+        <p class="eg-inview mt-4 max-w-2xl text-ink/75">Share the requirement, the constraints and the environment you already run. We will say what we would do, in what order, and what it depends on.</p>
+        
+  <div class="eg-rise mt-8 flex flex-wrap items-center gap-3" style="--d:.24s">
+    <a href="contact.html" class="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+       style="background:#2ba8de">Request a service consultation</a>
+    <a href="projects.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">View projects and success stories</a>
+  </div>
+      </div>
+    </section>
+
+    <section class="border-t border-rule bg-paper-2">
+      <div class="mx-auto max-w-6xl px-6 py-12">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-gold">The other five services</p>
+        <ul class="mt-5 flex flex-wrap gap-2">
+          <li><a href="service-advisory-assessment-design.html"
+            class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#0888c514;color:#0888c5">Advisory &amp; Design</a></li>
+          <li><a href="service-procurement-supply.html"
+            class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#c48a5a14;color:#c48a5a">Procurement &amp; Supply</a></li>
+          <li><a href="service-project-management-deployment.html"
+            class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#056a9a14;color:#056a9a">Project Management</a></li>
+          <li><a href="service-managed-support-maintenance.html"
+            class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#0b6fa814;color:#0b6fa8">Managed Support</a></li>
+          <li><a href="service-training-knowledge-transfer.html"
+            class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:#3d8fb814;color:#3d8fb8">Training</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-rule bg-paper-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Solutions</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Company</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Get in touch</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
+  </footer>
+</body>
+</html>
