@@ -1,168 +1,254 @@
-import { SERVICES, PROJECTS, PARTNERS } from "../content.mjs";
-import { SERVICE_DETAIL } from "../service-detail.mjs";
+import { SOLUTIONS, SERVICES, PROJECTS, PARTNERS, ACCENT } from "../content.mjs";
+import { SOLUTION_DETAIL } from "../detail.mjs";
+import { POSTS } from "../editorial.mjs";
+import { pageHead, crumb, sectionHead, checkList, numberedSteps, mark, closingCta, esc } from "../ui.mjs";
 
 /*
- * One factory, nine pages. `make(slug)` returns the page object the generator
- * expects, so a tenth service needs a content entry and a registry line and
- * nothing else.
+ * One factory, seven solution-family pages.
  *
- * Structure is a datasheet: title block, prose column, pinned specifications
- * sidebar. That shape belongs to this page type and appears nowhere else.
+ * The skeleton is a datasheet -- prose column, pinned capability sidebar --
+ * but each family draws only the optional blocks its content carries, so
+ * Datacenter gets two capability bands, Software/AI gets an architecture
+ * stack, Cybersecurity gets a resilience sequence, and no two read alike.
  */
 
-const ACCENT = {
-  datacenter: "#0888c5",
-  networks: "#2ba8de",
-  cybersecurity: "#056a9a",
-  "noc-soc": "#0b6fa8",
-  "unified-comms": "#c48a5a",
-  "voice-data-internet": "#2ba8de",
-  "physical-security": "#056a9a",
-  "it-support": "#0888c5",
-  "professional-services": "#c48a5a",
+/* Blog cards link to fragments on these pages. The content master requires
+   that every destination anchor exists, so each is attached to the capability
+   it names rather than invented at the top of the page. */
+const ANCHOR_CAPABILITY = {
+  "private-rag": "Private Enterprise AI & RAG",
+  "agentic-ai": "Industry-Specific Agentic AI",
+  "ai-education": "AI for Education",
+  "local-language-ai": "Local-Language AI",
+  "hci-private-cloud": "Hyperconverged Infrastructure",
+  "backup-disaster-recovery": "Backup & Recovery",
+  "zero-trust-ztna-nac": "Zero Trust Network Access & NAC",
 };
+/* The datacenter page has bands rather than a flat list, so its two anchors
+   attach to the bands themselves. */
+const ANCHOR_BAND = { "datacenter-facility": 0, "safe-campus": 1 };
 
-/* Projects that used this service, matched on the scope text. Keeps the
-   related list honest: no service claims work it was not part of. */
-const KEYWORDS = {
-  datacenter: ["datacenter"],
-  networks: ["lan", "wireless", "network"],
-  cybersecurity: ["security", "access control"],
-  "physical-security": ["cctv", "access control"],
-  "it-support": [],
-  "noc-soc": [],
-  "unified-comms": ["telephony"],
-  "voice-data-internet": [],
-  "professional-services": ["cabling", "rack"],
-};
-const related = (slug) =>
-  PROJECTS.filter((p) =>
-    (KEYWORDS[slug] ?? []).some((k) => p.scope.toLowerCase().includes(k)),
-  ).slice(0, 3);
+const anchorsFor = (slug) => POSTS.filter((p) => p.to === slug && p.anchor).map((p) => p.anchor);
+
+const relatedProjects = (slug) => PROJECTS.filter((p) => p.solutions.includes(slug));
 
 export const make = (slug) => {
-  const svc = SERVICES.find((s) => s.slug === slug);
-  const d = SERVICE_DETAIL[slug];
-  if (!svc) throw new Error(`no SERVICES entry for "${slug}"`);
-  if (!d) throw new Error(`no SERVICE_DETAIL entry for "${slug}"`);
+  const svc = SOLUTIONS.find((s) => s.slug === slug);
+  const d = SOLUTION_DETAIL[slug];
+  if (!svc) throw new Error(`no SOLUTIONS entry for "${slug}"`);
+  if (!d) throw new Error(`no SOLUTION_DETAIL entry for "${slug}"`);
   const c = ACCENT[slug];
-  const others = SERVICES.filter((s) => s.slug !== slug);
-  const rel = related(slug);
+  const anchors = anchorsFor(slug);
+  const capAnchor = Object.fromEntries(
+    anchors.filter((a) => ANCHOR_CAPABILITY[a]).map((a) => [ANCHOR_CAPABILITY[a], a]),
+  );
+  const bandAnchor = Object.fromEntries(
+    anchors.filter((a) => a in ANCHOR_BAND).map((a) => [ANCHOR_BAND[a], a]),
+  );
+  const others = SOLUTIONS.filter((s) => s.slug !== slug);
+  const rel = relatedProjects(slug);
+
+  const capCard = (x) => `<article class="eg-inview rounded-2xl bg-paper-2 p-6"${capAnchor[x.title] ? ` id="${capAnchor[x.title]}"` : ""}>
+            <h3 class="font-display text-xl leading-snug">${x.title}</h3>
+            <p class="mt-2.5 text-sm leading-relaxed text-ink/70">${x.body}</p>
+          </article>`;
 
   return {
-    title: `${svc.title} — Edge COMM-TECH`,
+    title: `${svc.title} — Edge Comm-Tech`,
     desc: svc.blurb,
     body: `  <main>
-    <header class="relative overflow-hidden border-b" style="border-color:${c}33;background:linear-gradient(140deg,${c}14,${c}05)">
-      <span class="pointer-events-none absolute -right-24 -top-32 h-[30rem] w-[30rem] rounded-full"
-            style="background:radial-gradient(circle,${c}26,transparent 70%)" aria-hidden="true"></span>
-      <div class="relative mx-auto max-w-6xl px-6 py-16">
-        <nav class="font-mono text-[10px] uppercase tracking-widest text-steel" aria-label="Breadcrumb">
-          <a href="solutions.html" class="hover:text-gold">Solutions</a>
-          <span class="mx-2">/</span>Service ${String(svc.n).padStart(2, "0")}
-        </nav>
-        <h1 class="eg-rise mt-4 max-w-3xl font-display text-[clamp(2rem,5vw,3.75rem)] leading-[1.0]">${svc.title}</h1>
-        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.08s">${svc.blurb}</p>
-        <ul class="eg-rise mt-7 flex flex-wrap gap-2" style="--d:.16s">
-          ${d.capabilities
-            .map((x) => `<li class="rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest"
-              style="background:${c}1a;color:${c}">${x.a}</li>`)
-            .join("\n          ")}
-        </ul>
-      </div>
-    </header>
+    ${pageHead({
+      eyebrow: `Solution ${String(svc.n).padStart(2, "0")} of ${SOLUTIONS.length}`,
+      title: d.headline,
+      intro: d.intro,
+      accent: c,
+      variant: "wash",
+      crumb: crumb([{ label: "Solutions", href: "solutions.html" }, { label: svc.short }]),
+    })}
 
-    <div class="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[1fr_20rem]">
-      <article>
-        <p class="max-w-2xl text-lg leading-relaxed">${d.overview}</p>
+    <div class="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[1fr_19rem]">
+      <article class="min-w-0">
+        ${d.lead ? `<p class="max-w-2xl text-lg leading-relaxed">${d.lead}</p>` : ""}
 
-        <h2 class="mt-12 font-display text-2xl">Scope of work</h2>
-        <ol class="mt-5 space-y-2.5">
-          ${d.scope
-            .map(
-              (x, i) => `<li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4 text-sm">
-            <span class="font-mono text-[10px] pt-0.5" style="color:${c}">${String(i + 1).padStart(2, "0")}</span>
-            <span class="text-ink/80">${x}</span>
-          </li>`,
-            )
-            .join("\n          ")}
-        </ol>
+        ${
+          d.outcomes
+            ? `<section>
+          ${sectionHead({ eyebrow: "Business outcomes", title: d.outcomesTitle, accent: c })}
+          ${checkList(d.outcomes, c)}
+        </section>`
+            : ""
+        }
 
-        <h2 class="mt-12 font-display text-2xl">What you receive</h2>
-        <ul class="mt-5 grid gap-2.5 sm:grid-cols-2">
-          ${d.deliverables
-            .map(
-              (x) => `<li class="flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm text-ink/80">
-            <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="${c}"
-                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
-            ${x}
-          </li>`,
-            )
-            .join("\n          ")}
-        </ul>
+        ${
+          d.bands
+            ? d.bands
+                .map(
+                  (b, i) => `<section class="mt-14"${bandAnchor[i] ? ` id="${bandAnchor[i]}"` : ""}>
+          ${sectionHead({ eyebrow: b.label, title: b.title, accent: c })}
+          <div class="mt-6 grid gap-3 sm:grid-cols-2">
+          ${b.items.map(capCard).join("\n          ")}
+          </div>
+        </section>`,
+                )
+                .join("\n        ")
+            : ""
+        }
+
+        ${
+          d.capabilities && d.capabilities.length
+            ? `<section class="${d.outcomes || d.lead ? "mt-14" : ""}">
+          ${sectionHead({ eyebrow: "Core capabilities", title: "What this covers", accent: c })}
+          <div class="mt-6 grid gap-3 sm:grid-cols-2">
+          ${d.capabilities.map(capCard).join("\n          ")}
+          </div>
+        </section>`
+            : ""
+        }
+
+        ${
+          d.layers
+            ? `<section class="mt-14">
+          ${sectionHead({ eyebrow: "Solution architecture", title: d.layersTitle, accent: c })}
+          <ol class="mt-6 overflow-hidden rounded-2xl border border-rule">
+            ${d.layers
+              .map(
+                (l, i) => `<li class="eg-inview flex gap-5 border-b border-rule bg-paper-2 px-6 py-5 last:border-0">
+              <span class="mt-1 h-fit rounded-md px-2 py-0.5 font-mono text-[10px]" style="background:${c}18;color:${c}">L${d.layers.length - i}</span>
+              <span><span class="block font-display text-lg">${l.title}</span>
+              <span class="mt-1 block text-sm text-ink/70">${l.body}</span></span>
+            </li>`,
+              )
+              .join("\n            ")}
+          </ol>
+        </section>`
+            : ""
+        }
+
+        ${
+          d.steps
+            ? `<section class="mt-14">
+          ${sectionHead({ eyebrow: "Approach", title: d.stepsTitle, accent: c })}
+          ${numberedSteps(d.steps, c)}
+        </section>`
+            : ""
+        }
+
+        ${
+          d.checklist
+            ? `<section class="mt-14">
+          ${sectionHead({ eyebrow: "What we weigh", title: d.checklistTitle, accent: c })}
+          ${d.checklistNote ? `<p class="mt-4 max-w-2xl text-sm text-ink/70">${d.checklistNote}</p>` : ""}
+          ${checkList(d.checklist, c)}
+        </section>`
+            : ""
+        }
+
+        ${
+          d.measures
+            ? `<section class="mt-14">
+          ${sectionHead({ eyebrow: "Success measures", title: d.measuresTitle, accent: c })}
+          <ul class="mt-5 flex flex-wrap gap-2">
+            ${d.measures
+              .map(
+                (x) => `<li class="rounded-full px-3.5 py-1.5 text-xs" style="background:${c}12;color:${c}">${x}</li>`,
+              )
+              .join("\n            ")}
+          </ul>
+        </section>`
+            : ""
+        }
+
+        ${
+          d.sectors
+            ? `<section class="mt-14">
+          ${sectionHead({ eyebrow: "Sector relevance", title: "Where it applies", accent: c })}
+          <dl class="mt-6 divide-y divide-rule border-y border-rule">
+            ${d.sectors
+              .map(
+                (s) => `<div class="eg-inview grid gap-2 py-5 sm:grid-cols-[13rem_1fr] sm:gap-6">
+              <dt class="font-display text-lg">${s.title}</dt>
+              <dd class="text-sm text-ink/70">${s.body}</dd>
+            </div>`,
+              )
+              .join("\n            ")}
+          </dl>
+        </section>`
+            : ""
+        }
 
         ${
           rel.length
-            ? `<h2 class="mt-12 font-display text-2xl">Where we have delivered it</h2>
-        <ul class="mt-5 divide-y divide-rule border-y border-rule">
-          ${rel
-            .map(
-              (p) => `<li class="flex items-baseline justify-between gap-4 py-4">
-            <span><span class="block font-display text-lg">${p.scope}</span>
-            <span class="text-sm text-steel">${p.client}</span></span>
-            <span class="font-mono text-xs text-steel">${p.year}</span>
-          </li>`,
-            )
-            .join("\n          ")}
-        </ul>`
+            ? `<section class="mt-14">
+          ${sectionHead({ eyebrow: "Delivered work", title: "Where we have built it", accent: c })}
+          <ul class="mt-5 divide-y divide-rule border-y border-rule">
+            ${rel
+              .map(
+                (p) => `<li><a href="project-${p.slug}.html" class="group flex items-baseline justify-between gap-4 py-4">
+              <span><span class="block font-display text-lg group-hover:text-gold">${p.title}</span>
+              <span class="text-sm text-steel">${p.client} &middot; ${p.primary}</span></span>
+              <span class="shrink-0 font-mono text-xs text-steel">${p.year}</span>
+            </a></li>`,
+              )
+              .join("\n            ")}
+          </ul>
+        </section>`
+            : ""
+        }
+
+        ${
+          d.experience
+            ? `<p class="mt-10 rounded-2xl bg-paper-2 px-6 py-5 text-sm leading-relaxed text-ink/70">${d.experience}</p>`
+            : ""
+        }
+        ${
+          d.note
+            ? `<p class="mt-4 flex items-start gap-2.5 text-xs leading-relaxed text-steel">
+          <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+          <span>${d.note}</span></p>`
             : ""
         }
       </article>
 
       <aside class="self-start lg:sticky lg:top-32">
-        <p class="font-mono text-[10px] uppercase tracking-widest" style="color:${c}">Capabilities</p>
-        <dl class="mt-4 space-y-3">
-          ${d.capabilities
-            .map(
-              (x) => `<div class="rounded-2xl bg-paper-2 p-4">
-            <dt class="font-display text-base">${x.a}
-              <span class="block font-sans text-[11px] font-normal text-steel">${x.x}</span></dt>
-            <dd class="mt-2 text-xs leading-relaxed text-ink/70">${x.v}</dd>
-          </div>`,
-            )
-            .join("\n          ")}
-        </dl>
-
-        <p class="mt-8 font-mono text-[10px] uppercase tracking-widest" style="color:${c}">Platforms used</p>
-        <ul class="mt-3 grid grid-cols-3 gap-2">
+        <p class="font-mono text-[10px] uppercase tracking-widest" style="color:${c}">Technologies we build on</p>
+        <ul class="mt-3 grid grid-cols-2 gap-2">
           ${d.partners
-            .map((x) => {
-              const p = PARTNERS.find((q) => q.name === x);
-              /* Falls back to the name if a partner has no mark on file, so a
-                 new entry never renders as an empty box. */
-              return p
-                ? `<li class="grid h-12 place-items-center rounded-xl bg-paper-2 px-2">
-            <img src="logos/${p.logo}.png" alt="${p.name}" width="240" height="160"
-                 class="max-h-10 w-auto object-contain" decoding="async"></li>`
-                : `<li class="grid h-12 place-items-center rounded-xl bg-paper-2 px-2 text-center text-[11px]">${x}</li>`;
+            .map((name) => {
+              const p = PARTNERS.find((q) => q.name === name);
+              return `<li class="grid h-14 place-items-center rounded-xl bg-paper-2 px-2">${mark(p ?? { name, logo: null })}</li>`;
             })
-            .join("")}
+            .join("\n          ")}
+        </ul>
+        <p class="mt-3 text-[11px] leading-relaxed text-steel">
+          Edge Comm-Tech selects technology by suitability, interoperability, scalability, security and long-term support.
+        </p>
+
+        <p class="mt-8 font-mono text-[10px] uppercase tracking-widest" style="color:${c}">Related solutions</p>
+        <ul class="mt-3 space-y-1.5">
+          ${d.links
+            .map((s) => {
+              const t = [...SOLUTIONS, ...SERVICES].find((x) => x.slug === s);
+              const file = SOLUTIONS.some((x) => x.slug === s) ? "solution-" : "service-";
+              return `<li><a href="${file}${s}.html" class="block rounded-xl bg-paper-2 px-4 py-2.5 text-sm transition hover:text-gold">${t.short}</a></li>`;
+            })
+            .join("\n          ")}
         </ul>
 
         <a href="contact.html" class="mt-8 block rounded-full px-5 py-3 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5"
-           style="background:${c}">Discuss ${svc.title.toLowerCase()}</a>
+           style="background:${c}">Request a consultation</a>
       </aside>
     </div>
 
     <section class="border-t border-rule bg-paper-2">
       <div class="mx-auto max-w-6xl px-6 py-14">
-        <p class="font-mono text-[10px] uppercase tracking-widest text-gold">The other eight</p>
+        <p class="font-mono text-[10px] uppercase tracking-widest text-gold">The other six families</p>
         <ul class="mt-5 flex flex-wrap gap-2">
           ${others
             .map(
               (s) => `<li><a href="solution-${s.slug}.html"
-            class="block rounded-full px-3.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5"
-            style="background:${ACCENT[s.slug]}14;color:${ACCENT[s.slug]}">${s.title}</a></li>`,
+            class="block rounded-full px-4 py-2 text-xs font-semibold transition hover:-translate-y-0.5"
+            style="background:${ACCENT[s.slug]}14;color:${ACCENT[s.slug]}">${esc(s.short)}</a></li>`,
             )
             .join("\n          ")}
         </ul>

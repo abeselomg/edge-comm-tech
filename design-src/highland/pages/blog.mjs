@@ -1,114 +1,94 @@
-import { POSTS } from "../content.mjs";
+import { POSTS, BLOG_CATEGORIES } from "../editorial.mjs";
+import { SOLUTIONS, ACCENT } from "../content.mjs";
+import { pageHead, closingCta, esc } from "../ui.mjs";
 
 /*
- * Editorial hierarchy, not a grid of equal cards: one lead at full width,
- * the rest as a dated list, categories and tags in a rail. A blog where
- * every post looks equally important tells the reader nothing.
+ * Insights.
  *
- * Categories are coloured by name rather than by index, so a new post never
- * reshuffles the palette.
+ * The content master is explicit that the ten launch articles are short by
+ * design and that their Read More goes straight to the matching solution
+ * page: "do not create thin article-detail pages containing the same short
+ * copy solely to insert another click."
+ *
+ * So this page is the articles, not a list of links to them. Each one is
+ * published in full, in a readable measure, with its Read More pointing at
+ * the solution capability it introduces. There are no post detail pages and
+ * none are generated.
  */
 
-const [lead, ...rest] = POSTS;
+const catLabel = (k) => BLOG_CATEGORIES.find(([key]) => key === k)?.[1] ?? k;
+const solTitle = (slug) => SOLUTIONS.find((s) => s.slug === slug)?.title ?? slug;
 
-const CAT = {
-  Datacenter: "#c48a5a",
-  Security: "#056a9a",
-  Networks: "#0888c5",
+/* Only the categories that actually have an article, in article order, so the
+   rail can never offer a jump to an empty section. */
+const USED = [...new Set(POSTS.map((p) => p.cat))];
+
+/* One post deliberately has no anchor: the power-technology page has no single
+   capability that matches it, so the link goes to the top of that page rather
+   than to a fragment that does not exist. */
+const article = (p, i) => {
+  const c = ACCENT[p.to] ?? "#0888c5";
+  return `<article id="post-${p.slug}" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:${c}">
+            ${String(i + 1).padStart(2, "0")} &middot; ${esc(catLabel(p.cat))}
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">${esc(p.title)}</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            ${p.paras.map((x) => `<p class="eg-inview leading-relaxed text-ink/80">${esc(x)}</p>`).join("\n            ")}
+          </div>
+          <a href="solution-${p.to}.html${p.anchor ? `#${p.anchor}` : ""}"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:${c}">
+            ${esc(p.label)} <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to ${esc(solTitle(p.to))}</p>
+        </article>`;
 };
-const cat = (p) => CAT[p.category] ?? "#0888c5";
-
-const CATEGORIES = [...new Set(POSTS.map((p) => p.category))];
-const TAGS = [...new Set(POSTS.flatMap((p) => p.tags))];
-const nice = (d) =>
-  new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
 export default {
-  title: "Blog — Edge COMM-TECH",
-  desc: "Notes from the engineers who build and run the infrastructure.",
+  title: "Insights on Technology, AI and Digital Transformation — Edge Comm-Tech",
+  desc: "Practical perspectives from Edge Comm-Tech on enterprise AI, networks, cloud, datacenters, cybersecurity, power, broadcast and digital transformation in Ethiopia.",
   body: `  <main>
-    <section class="relative overflow-hidden border-b border-rule bg-paper-2">
-      <span class="pointer-events-none absolute -right-28 -top-36 h-[32rem] w-[32rem] rounded-full"
-            style="background:radial-gradient(circle,#c48a5a1f,transparent 70%)" aria-hidden="true"></span>
-      <div class="relative mx-auto max-w-6xl px-6 py-20">
-        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Blog</p>
-        <h1 class="eg-rise mt-3 font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]" style="--d:.08s">
-          Notes <span class="text-gold">from the field</span>
-        </h1>
-        <p class="eg-rise mt-5 max-w-2xl text-ink/75" style="--d:.16s">
-          Written by the engineers who do the work, about the decisions that actually
-          bite on Ethiopian campuses and hospitals.
-        </p>
-      </div>
-    </section>
+    ${pageHead({
+      eyebrow: "Insights",
+      title: "Practical thinking on the technology decisions in front of you",
+      intro: "Short, useful notes from the work itself — what a technology actually requires, where it tends to go wrong, and what good looks like. Each piece links through to the solution it belongs to.",
+      accent: "#2ba8de",
+      variant: "rule",
+    })}
 
-    <div class="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[1fr_15rem]">
-      <div>
-        <a href="blog-post.html"
-           class="eg-rise group block overflow-hidden rounded-3xl bg-paper-2 shadow-[0_20px_46px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_60px_-28px_rgb(8_136_197/0.5)]"
-           style="--d:.24s">
-          <span class="relative block h-44 overflow-hidden md:h-56"
-                style="background:linear-gradient(130deg,${cat(lead)}2e,${cat(lead)}0d)" aria-hidden="true">
-            <svg viewBox="0 0 800 220" class="absolute inset-0 h-full w-full" fill="none"
-                 stroke="${cat(lead)}" stroke-opacity=".45" stroke-width="1.3">
-              <circle cx="640" cy="110" r="52" />
-              <circle cx="640" cy="110" r="92" stroke-opacity=".28" />
-              <circle cx="640" cy="110" r="136" stroke-opacity=".16" />
-              <path d="M0 62h800M0 158h800" stroke-opacity=".18" />
-            </svg>
-          </span>
-          <span class="block p-8">
-            <span class="inline-block rounded-full px-3 py-1 font-mono text-[9px] uppercase tracking-widest"
-                  style="background:${cat(lead)}1a;color:${cat(lead)}">${lead.category}</span>
-            <span class="ml-2 font-mono text-[10px] uppercase tracking-widest text-steel">${nice(lead.date)}</span>
-            <span class="mt-3 block max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-[1.08] group-hover:text-gold">
-              ${lead.title}
-            </span>
-            <span class="mt-3 block max-w-2xl text-lg leading-relaxed text-ink/75">${lead.standfirst}</span>
-            <span class="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white"
-                  style="background:${cat(lead)}">Read the piece &rarr;</span>
-          </span>
-        </a>
-
-        <ul class="mt-4 space-y-3">
-          ${rest
-            .map(
-              (p, i) => `
-          <li class="eg-inview">
-            <a href="#" class="group flex gap-5 rounded-2xl bg-paper-2 p-5 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-26px_rgb(8_136_197/0.45)]">
-              <span class="w-1 shrink-0 self-stretch rounded-full" style="background:${cat(p)}" aria-hidden="true"></span>
-              <span class="min-w-0">
-                <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
-                      style="background:${cat(p)}1a;color:${cat(p)}">${p.category}</span>
-                <span class="ml-2 font-mono text-[9px] uppercase tracking-widest text-steel">${nice(p.date)}</span>
-                <span class="mt-2 block font-display text-xl leading-tight group-hover:text-gold">${p.title}</span>
-                <span class="mt-1.5 block max-w-2xl text-sm text-ink/70">${p.standfirst}</span>
-              </span>
-            </a>
-          </li>`,
-            )
-            .join("")}
-        </ul>
-      </div>
-
+    <div class="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[14rem_1fr]">
+      <!-- Topic rail. Anchors, not filters: ten articles are all published on
+           this page, so jumping is the useful action. -->
       <aside class="self-start lg:sticky lg:top-32">
-        <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Categories</p>
-        <ul class="mt-3 space-y-1.5">
-          ${CATEGORIES.map(
-            (c) => `<li><a href="#" class="flex items-center gap-2.5 rounded-lg py-1 pl-1 text-sm text-ink/70 hover:bg-paper-2 hover:text-ink">
-            <span class="h-2 w-2 rounded-full" style="background:${CAT[c] ?? "#0888c5"}"></span>
-            ${c} <span class="font-mono text-[10px] text-steel">${POSTS.filter((p) => p.category === c).length}</span></a></li>`,
-          ).join("\n          ")}
+        <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Topics</p>
+        <ul class="mt-3 space-y-0.5">
+          ${USED.map((k) => {
+            const first = POSTS.find((p) => p.cat === k);
+            const n = POSTS.filter((p) => p.cat === k).length;
+            return `<li><a href="#post-${first.slug}" class="flex items-baseline justify-between gap-3 rounded-xl px-3 py-2 text-[13px] leading-snug text-ink/70 transition hover:bg-paper-2 hover:text-gold">
+            <span>${esc(catLabel(k))}</span>
+            ${n > 1 ? `<span class="shrink-0 font-mono text-[9px] text-steel">${n}</span>` : ""}
+          </a></li>`;
+          }).join("\n          ")}
         </ul>
-        <p class="mt-8 font-mono text-[10px] uppercase tracking-widest text-gold">Tags</p>
-        <ul class="mt-3 flex flex-wrap gap-2">
-          ${TAGS.map(
-            (t, i) =>
-              `<li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:${Object.values(CAT)[i % 3]}14;color:${Object.values(CAT)[i % 3]}">${t}</a></li>`,
-          ).join("\n          ")}
-        </ul>
+        <a href="subscribe.html" class="mt-7 block rounded-2xl bg-paper-2 p-4 text-sm transition hover:text-gold">
+          <span class="block font-display text-base">Get new insights</span>
+          <span class="mt-1 block text-xs text-steel">Occasional updates, no noise.</span>
+        </a>
       </aside>
+
+      <div class="min-w-0">
+        ${POSTS.map(article).join("\n        ")}
+      </div>
     </div>
+
+    ${closingCta({
+      title: "Want to talk any of this through?",
+      body: "If one of these notes describes a decision you are facing, our team is happy to go into the detail with you.",
+      primary: { href: "contact.html", label: "Talk to our experts" },
+      secondary: { href: "resources.html", label: "Browse all resources" },
+      accent: "#2ba8de",
+    })}
   </main>`,
 };

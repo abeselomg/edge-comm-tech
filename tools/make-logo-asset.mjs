@@ -11,14 +11,15 @@
  *   node tools/make-logo-asset.mjs
  */
 import { chromium } from "playwright-core";
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { PARTNERS } from "../design-src/highland/content.mjs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync, existsSync } from "node:fs";
+import { PARTNERS, CLIENTS } from "../design-src/highland/content.mjs";
 
 const SRC = "design-src/span/logos/wordmark.png";
 const OUT = "design-files/highland/edge-logo.png";
 const TARGET_H = 176; // ~3x the 56px the header reserves
-const PARTNER_SRC = "design-src/span/logos";
+const MARK_SRC = "design-src/span/logos";
 const PARTNER_OUT = "design-files/highland/logos";
+const CLIENT_OUT = "design-files/highland/clients";
 
 const browser = await chromium.launch({ channel: "chrome" });
 try {
@@ -75,35 +76,61 @@ try {
   console.log(`trimmed ${dataUrl.trimmed[0]}x${dataUrl.trimmed[1]} → ${dataUrl.w}x${dataUrl.h}`);
   console.log(`wrote ${OUT} (${(bytes / 1024).toFixed(1)} KB)`);
 
-  /* The eight manufacturers' marks, published alongside.
-     These arrive already padded into a common 300x200 box — someone has
-     optically balanced them against each other, and trimming to the ink
-     would undo that and make Cisco tower over HP. They are copied at their
-     given framing and only downscaled. */
-  mkdirSync(PARTNER_OUT, { recursive: true });
-  let total = 0;
-  for (const p of PARTNERS) {
-    const src = `${PARTNER_SRC}/${p.logo}.png`;
-    const out = await page.evaluate(
-      async ({ src, h }) => {
-        const img = new Image();
-        img.src = src;
-        await img.decode();
-        const c = document.createElement("canvas");
-        c.height = h;
-        c.width = Math.round((img.width / img.height) * h);
-        const g = c.getContext("2d");
-        g.imageSmoothingQuality = "high";
-        g.drawImage(img, 0, 0, c.width, c.height);
-        return c.toDataURL("image/png");
-      },
-      { src: "data:image/png;base64," + readFileSync(src).toString("base64"), h: 160 },
+  /* Brand and client marks, published alongside.
+     These arrive already padded into a common 300x200 box -- someone has
+     optically balanced them against each other, and trimming to the ink would
+     undo that and make one brand tower over another. They are copied at their
+     given framing and only downscaled.
+
+     Only the entries whose `logo` is set are published. Most of the approved
+     brands and institutions have no artwork on file yet and render as their
+     name instead, so there is nothing here to publish for them. Anything left
+     over in the output folder from an earlier model is removed, so a retired
+     brand's mark cannot linger in the published site. */
+  const publish = async (items, outDir, what) => {
+    mkdirSync(outDir, { recursive: true });
+    const wanted = new Set();
+    let total = 0;
+
+    for (const item of items.filter((i) => i.logo)) {
+      const src = `${MARK_SRC}/${item.logo}.png`;
+      if (!existsSync(src)) throw new Error(`${item.name}: no artwork at ${src}`);
+
+      const out = await page.evaluate(
+        async ({ src, h }) => {
+          const img = new Image();
+          img.src = src;
+          await img.decode();
+          const c = document.createElement("canvas");
+          c.height = h;
+          c.width = Math.round((img.width / img.height) * h);
+          const g = c.getContext("2d");
+          g.imageSmoothingQuality = "high";
+          g.drawImage(img, 0, 0, c.width, c.height);
+          return c.toDataURL("image/png");
+        },
+        { src: "data:image/png;base64," + readFileSync(src).toString("base64"), h: 160 },
+      );
+
+      const name = `${item.logo}.png`;
+      writeFileSync(`${outDir}/${name}`, Buffer.from(out.split(",")[1], "base64"));
+      wanted.add(name);
+      total += readFileSync(`${outDir}/${name}`).length;
+    }
+
+    const stale = readdirSync(outDir).filter((f) => f.endsWith(".png") && !wanted.has(f));
+    for (const f of stale) rmSync(`${outDir}/${f}`);
+
+    console.log(
+      `wrote ${wanted.size} ${what} mark(s) to ${outDir} (${(total / 1024).toFixed(1)} KB total)` +
+        (stale.length ? `, removed ${stale.length} orphaned: ${stale.join(", ")}` : ""),
     );
-    const file = `${PARTNER_OUT}/${p.logo}.png`;
-    writeFileSync(file, Buffer.from(out.split(",")[1], "base64"));
-    total += readFileSync(file).length;
-  }
-  console.log(`wrote ${PARTNERS.length} partner marks to ${PARTNER_OUT} (${(total / 1024).toFixed(1)} KB total)`);
+    const pending = items.filter((i) => !i.logo).length;
+    if (pending) console.log(`  ${pending} ${what}(s) still awaiting approved artwork`);
+  };
+
+  await publish(PARTNERS, PARTNER_OUT, "partner");
+  await publish(CLIENTS, CLIENT_OUT, "client");
 } finally {
   await browser.close();
 }

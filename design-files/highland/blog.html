@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Blog — Edge COMM-TECH</title>
-  <meta name="description" content="Notes from the engineers who build and run the infrastructure." />
+  <title>Insights on Technology, AI and Digital Transformation — Edge Comm-Tech</title>
+  <meta name="description" content="Practical perspectives from Edge Comm-Tech on enterprise AI, networks, cloud, datacenters, cybersecurity, power, broadcast and digital transformation in Ethiopia." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -73,11 +73,22 @@
     :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
   </style>
   <style>
-@keyframes eg-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@keyframes eg-pop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
 @keyframes eg-draw{to{stroke-dashoffset:0}}
-@keyframes eg-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
-@keyframes eg-spin{to{transform:rotate(360deg)}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
 
 .eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
 .eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
@@ -107,191 +118,321 @@
              width="391" height="176" class="h-14 w-auto" decoding="async">
       </a>
       <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
-        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
-        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
         <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
         <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
-        <a href="academy.html" class="text-ink/70 hover:text-gold">Academy</a>
-        <a href="career.html" class="text-ink/70 hover:text-gold">Career</a>
+        <a href="clients.html" class="text-ink/70 hover:text-gold">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
         <a href="blog.html" class="text-gold" aria-current="page">Blog</a>
+        <a href="careers.html" class="text-ink/70 hover:text-gold">Careers</a>
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
       </nav>
       <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
     </div>
     <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
-      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
-      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
       <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
       <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
-      <a href="academy.html" class="whitespace-nowrap text-ink/70">Academy</a>
-      <a href="career.html" class="whitespace-nowrap text-ink/70">Career</a>
+      <a href="clients.html" class="whitespace-nowrap text-ink/70">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
       <a href="blog.html" class="whitespace-nowrap text-gold">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-ink/70">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
       <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
     </nav>
   </header>
 
   <main>
-    <section class="relative overflow-hidden border-b border-rule bg-paper-2">
-      <span class="pointer-events-none absolute -right-28 -top-36 h-[32rem] w-[32rem] rounded-full"
-            style="background:radial-gradient(circle,#c48a5a1f,transparent 70%)" aria-hidden="true"></span>
-      <div class="relative mx-auto max-w-6xl px-6 py-20">
-        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Blog</p>
-        <h1 class="eg-rise mt-3 font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]" style="--d:.08s">
-          Notes <span class="text-gold">from the field</span>
-        </h1>
-        <p class="eg-rise mt-5 max-w-2xl text-ink/75" style="--d:.16s">
-          Written by the engineers who do the work, about the decisions that actually
-          bite on Ethiopian campuses and hospitals.
-        </p>
+    <header class="relative overflow-hidden border-b" style="border-color:#2ba8de2e;background:linear-gradient(140deg,#2ba8de12,#2ba8de04)">
+      <span class="pointer-events-none absolute inset-x-0 bottom-0 h-px" style="background:linear-gradient(90deg,#2ba8de,transparent)" aria-hidden="true"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#2ba8de">Insights</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">Practical thinking on the technology decisions in front of you</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Short, useful notes from the work itself — what a technology actually requires, where it tends to go wrong, and what good looks like. Each piece links through to the solution it belongs to.</p>
+        
+        
+      </div>
+    </header>
+
+    <div class="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[14rem_1fr]">
+      <!-- Topic rail. Anchors, not filters: ten articles are all published on
+           this page, so jumping is the useful action. -->
+      <aside class="self-start lg:sticky lg:top-32">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Topics</p>
+        <ul class="mt-3 space-y-0.5">
+          <li><a href="#post-private-rag-secure-enterprise-ai" class="flex items-baseline justify-between gap-3 rounded-xl px-3 py-2 text-[13px] leading-snug text-ink/70 transition hover:bg-paper-2 hover:text-gold">
+            <span>Artificial Intelligence and Digital Solutions</span>
+            <span class="shrink-0 font-mono text-[9px] text-steel">2</span>
+          </a></li>
+          <li><a href="#post-agentic-ai-for-universities" class="flex items-baseline justify-between gap-3 rounded-xl px-3 py-2 text-[13px] leading-snug text-ink/70 transition hover:bg-paper-2 hover:text-gold">
+            <span>Smart Education</span>
+            <span class="shrink-0 font-mono text-[9px] text-steel">2</span>
+          </a></li>
+          <li><a href="#post-hci-foundation-private-cloud" class="flex items-baseline justify-between gap-3 rounded-xl px-3 py-2 text-[13px] leading-snug text-ink/70 transition hover:bg-paper-2 hover:text-gold">
+            <span>Systems and Cloud</span>
+            <span class="shrink-0 font-mono text-[9px] text-steel">2</span>
+          </a></li>
+          <li><a href="#post-tier-aligned-modern-datacenter" class="flex items-baseline justify-between gap-3 rounded-xl px-3 py-2 text-[13px] leading-snug text-ink/70 transition hover:bg-paper-2 hover:text-gold">
+            <span>Datacenter Facilities and IT Infrastructure</span>
+            <span class="shrink-0 font-mono text-[9px] text-steel">2</span>
+          </a></li>
+          <li><a href="#post-zero-trust-ztna-nac" class="flex items-baseline justify-between gap-3 rounded-xl px-3 py-2 text-[13px] leading-snug text-ink/70 transition hover:bg-paper-2 hover:text-gold">
+            <span>Cybersecurity</span>
+            
+          </a></li>
+          <li><a href="#post-reliable-power-critical-technology" class="flex items-baseline justify-between gap-3 rounded-xl px-3 py-2 text-[13px] leading-snug text-ink/70 transition hover:bg-paper-2 hover:text-gold">
+            <span>Power and Business Continuity</span>
+            
+          </a></li>
+        </ul>
+        <a href="subscribe.html" class="mt-7 block rounded-2xl bg-paper-2 p-4 text-sm transition hover:text-gold">
+          <span class="block font-display text-base">Get new insights</span>
+          <span class="mt-1 block text-xs text-steel">Occasional updates, no noise.</span>
+        </a>
+      </aside>
+
+      <div class="min-w-0">
+        <article id="post-private-rag-secure-enterprise-ai" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">
+            01 &middot; Artificial Intelligence and Digital Solutions
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">Private RAG and secure enterprise AI</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">Organizations want the speed and convenience of generative AI without losing control of confidential policies, manuals, procedures, and operational data. Private Retrieval-Augmented Generation, or private RAG, connects an AI assistant to approved internal knowledge so users can receive relevant answers grounded in information the organization controls.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">A dependable enterprise design should include role-based access, source references, document governance, auditability, security controls, quality evaluation, and human escalation. Edge Comm-Tech helps organizations plan and implement private knowledge assistants that align with existing systems, workflows, data policies, and deployment requirements.</p>
+          </div>
+          <a href="solution-software-ai-digital.html#private-rag"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#0888c5">
+            Read more about Private RAG and secure enterprise AI solutions <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to Software, AI &amp; Digital Solutions</p>
+        </article>
+        <article id="post-agentic-ai-for-universities" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">
+            02 &middot; Smart Education
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">Agentic AI for universities</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">Agentic AI can help universities move beyond simple question-and-answer tools by supporting controlled multi-step activities across student services, research, academic administration, institutional knowledge, and digital learning. An AI agent can gather approved information, prepare outputs, initiate permitted workflows, and request human authorization when a decision is required.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">Universities should begin with clearly defined use cases and strong governance for privacy, academic integrity, identity, access, evaluation, and human oversight. Edge Comm-Tech develops education-focused AI solutions, private RAG environments, AI learning resources, and local-language capabilities designed around institutional policies and priorities.</p>
+          </div>
+          <a href="solution-software-ai-digital.html#agentic-ai"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#0888c5">
+            Read more about Agentic AI and AI solutions for universities <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to Software, AI &amp; Digital Solutions</p>
+        </article>
+        <article id="post-hci-foundation-private-cloud" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#056a9a">
+            03 &middot; Systems and Cloud
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">HCI as a foundation for private cloud</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">Hyperconverged infrastructure combines computing, storage, virtualization, and centralized management in a coordinated platform. By reducing separate infrastructure silos, HCI can simplify operations, strengthen resilience, and make expansion more predictable for growing application and data workloads.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">HCI can also provide a practical technical foundation for private cloud, but the transition requires more than hardware. Governance, automation, identity, security, backup, monitoring, service management, capacity planning, and operational skills must develop together. Edge Comm-Tech supports clients from assessment and architecture through implementation, migration, training, and lifecycle support.</p>
+          </div>
+          <a href="solution-system-cloud.html#hci-private-cloud"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#056a9a">
+            Read more about HCI and private cloud solutions <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to System &amp; Cloud Solutions</p>
+        </article>
+        <article id="post-backup-versus-disaster-recovery" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#056a9a">
+            04 &middot; Systems and Cloud
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">Backup versus disaster recovery</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">Backup creates recoverable copies of data, while disaster recovery coordinates how applications, infrastructure, data, people, and procedures restore critical services after a serious disruption. A backup may protect information, but it does not by itself guarantee that an organization can recover complete business services within the required time.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">An effective strategy defines recovery priorities, recovery time objectives, recovery point objectives, dependencies, retention, off-site or isolated copies, testing, responsibilities, and communication. Edge Comm-Tech helps organizations design integrated backup and disaster-recovery solutions that match workload criticality, risk, operating capacity, and business-continuity requirements.</p>
+          </div>
+          <a href="solution-system-cloud.html#backup-disaster-recovery"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#056a9a">
+            Read more about backup and disaster recovery solutions <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to System &amp; Cloud Solutions</p>
+        </article>
+        <article id="post-tier-aligned-modern-datacenter" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#0b6fa8">
+            05 &middot; Datacenter Facilities and IT Infrastructure
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">Building a Tier-aligned modern datacenter</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">A modern datacenter is an integrated facility where power, cooling, space, fire protection, connectivity, monitoring, security, and operating procedures support the required availability of critical systems. Tier-aligned design applies recognized availability and maintainability principles to the client's actual workloads, site constraints, budget, and growth plan.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">Successful delivery depends on coordinated architecture, electrical and mechanical engineering, installation, commissioning, documentation, training, and maintenance readiness. Edge Comm-Tech designs and implements Tier-aligned datacenter facilities and related IT infrastructure, while using certified terminology only when independent certification has been formally achieved.</p>
+          </div>
+          <a href="solution-datacenter-facility-it-infrastructure.html#datacenter-facility"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#0b6fa8">
+            Read more about Tier-aligned datacenter facility solutions <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to Datacenter Facility &amp; IT Infrastructure</p>
+        </article>
+        <article id="post-zero-trust-ztna-nac" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#1c6ea4">
+            06 &middot; Cybersecurity
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">Zero Trust, ZTNA and network access control</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">Zero Trust is a security approach that does not grant broad access simply because a user or device is inside a network. Access decisions consider identity, device condition, requested resource, context, risk, and policy, then apply least privilege and continued verification.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">Zero Trust Network Access provides controlled access to approved applications, while Network Access Control governs how devices and users enter and move within network environments. Edge Comm-Tech integrates identity, multifactor authentication, device posture, segmentation, ZTNA, NAC, monitoring, and policy enforcement to help organizations reduce unnecessary exposure without obstructing legitimate work.</p>
+          </div>
+          <a href="solution-cybersecurity.html#zero-trust-ztna-nac"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#1c6ea4">
+            Read more about Zero Trust, ZTNA and network access control <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to Cybersecurity Solutions</p>
+        </article>
+        <article id="post-smart-classrooms-ai-education" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">
+            07 &middot; Smart Education
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">Smart classrooms and AI-powered education</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">Smart classrooms combine interactive displays, collaboration technology, digital content, audio and video, connectivity, and intuitive control to create more engaging learning environments. They help instructors present, annotate, demonstrate, connect remote participants, and share learning material beyond a single physical board.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">AI-powered education resources can extend this environment with assistants grounded in approved curricula, policies, manuals, libraries, and institutional knowledge. Edge Comm-Tech brings classroom infrastructure and responsible AI together through assessment, design, implementation, integration, training, and support for universities and education departments.</p>
+          </div>
+          <a href="solution-software-ai-digital.html#ai-education"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#0888c5">
+            Read more about smart classrooms and AI-powered education solutions <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to Software, AI &amp; Digital Solutions</p>
+        </article>
+        <article id="post-reliable-power-critical-technology" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#c48a5a">
+            08 &middot; Power and Business Continuity
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">Designing reliable power for critical technology</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">Critical technology depends on power that is available, stable, protected, and maintainable. A reliable design begins with actual load, criticality, runtime, redundancy, growth, grid conditions, power quality, transfer requirements, safety, monitoring, and maintenance capability rather than selecting equipment by rating alone.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">UPS systems, batteries, generators, automatic transfer, distribution, grounding, protection, and solar or hybrid sources must operate as one coordinated power path. Edge Comm-Tech assesses, designs, supplies, integrates, tests, and supports power infrastructure for datacenters, banks, branches, public institutions, campuses, and other continuity-sensitive environments.</p>
+          </div>
+          <a href="solution-power-technology.html"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#c48a5a">
+            Read more about reliable power technology solutions <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to Power Technology Solutions</p>
+        </article>
+        <article id="post-local-language-ai" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">
+            09 &middot; Artificial Intelligence and Digital Solutions
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">Local-language AI for Ethiopian organizations</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">Local-language AI can make digital services easier to access for employees, customers, students, and citizens who prefer to read, write, or speak in Ethiopian languages. Potential applications include knowledge assistants, voice services, education resources, institutional information, service navigation, and routine customer-support interactions.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">Quality varies by language, domain, model, data, speech conditions, and use case, so every solution requires careful evaluation and human review. Edge Comm-Tech can develop text- and voice-based applications using approved organizational knowledge, secure integration, clear escalation, and language testing appropriate to the intended audience.</p>
+          </div>
+          <a href="solution-software-ai-digital.html#local-language-ai"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#0888c5">
+            Read more about local-language AI solutions <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to Software, AI &amp; Digital Solutions</p>
+        </article>
+        <article id="post-safe-connected-university-campus" class="scroll-mt-28 border-t border-rule py-14 first:border-t-0 first:pt-0">
+          <p class="eg-inview font-mono text-[10px] uppercase tracking-widest" style="color:#0b6fa8">
+            10 &middot; Datacenter Facilities and IT Infrastructure
+          </p>
+          <h2 class="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">Building a safe and connected university campus</h2>
+          <div class="mt-5 max-w-[42rem] space-y-4">
+            <p class="eg-inview leading-relaxed text-ink/80">A safe and connected campus brings surveillance, communications, networks, structured cabling, access infrastructure, control rooms, power, policies, and trained personnel into one coordinated operating environment. The goal is stronger visibility, communication, incident awareness, and authorized response across teaching, research, administrative, residential, and public spaces.</p>
+            <p class="eg-inview leading-relaxed text-ink/80">Technology should support safety operations without creating unsupported guarantees or ignoring privacy and governance. Edge Comm-Tech delivers integrated campus IT infrastructure, including IP video, monitoring and recording, control rooms, radio communication, access control, barriers, connectivity, training, documentation, and lifecycle support.</p>
+          </div>
+          <a href="solution-datacenter-facility-it-infrastructure.html#safe-campus"
+             class="eg-inview mt-7 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+             style="background:#0b6fa8">
+            Read more about safe and connected campus infrastructure <span aria-hidden="true">&rarr;</span>
+          </a>
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-steel">Goes to Datacenter Facility &amp; IT Infrastructure</p>
+        </article>
+      </div>
+    </div>
+
+    
+    <section class="relative overflow-hidden border-t border-rule">
+      <span class="pointer-events-none absolute inset-0" aria-hidden="true"
+            style="background:linear-gradient(120deg,#2ba8de16,transparent 60%)"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <h2 class="eg-inview max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.8rem)] leading-tight">Want to talk any of this through?</h2>
+        <p class="eg-inview mt-4 max-w-2xl text-ink/75">If one of these notes describes a decision you are facing, our team is happy to go into the detail with you.</p>
+        
+  <div class="eg-rise mt-8 flex flex-wrap items-center gap-3" style="--d:.24s">
+    <a href="contact.html" class="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+       style="background:#2ba8de">Talk to our experts</a>
+    <a href="resources.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Browse all resources</a>
+  </div>
       </div>
     </section>
-
-    <div class="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[1fr_15rem]">
-      <div>
-        <a href="blog-post.html"
-           class="eg-rise group block overflow-hidden rounded-3xl bg-paper-2 shadow-[0_20px_46px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_60px_-28px_rgb(8_136_197/0.5)]"
-           style="--d:.24s">
-          <span class="relative block h-44 overflow-hidden md:h-56"
-                style="background:linear-gradient(130deg,#c48a5a2e,#c48a5a0d)" aria-hidden="true">
-            <svg viewBox="0 0 800 220" class="absolute inset-0 h-full w-full" fill="none"
-                 stroke="#c48a5a" stroke-opacity=".45" stroke-width="1.3">
-              <circle cx="640" cy="110" r="52" />
-              <circle cx="640" cy="110" r="92" stroke-opacity=".28" />
-              <circle cx="640" cy="110" r="136" stroke-opacity=".16" />
-              <path d="M0 62h800M0 158h800" stroke-opacity=".18" />
-            </svg>
-          </span>
-          <span class="block p-8">
-            <span class="inline-block rounded-full px-3 py-1 font-mono text-[9px] uppercase tracking-widest"
-                  style="background:#c48a5a1a;color:#c48a5a">Datacenter</span>
-            <span class="ml-2 font-mono text-[10px] uppercase tracking-widest text-steel">14 August 2026</span>
-            <span class="mt-3 block max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-[1.08] group-hover:text-gold">
-              What a Tier rating actually buys you
-            </span>
-            <span class="mt-3 block max-w-2xl text-lg leading-relaxed text-ink/75">Tier III is quoted in every datacenter tender in Addis and understood in almost none of them. What the rating covers, what it does not, and when paying for it is wrong.</span>
-            <span class="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold text-white"
-                  style="background:#c48a5a">Read the piece &rarr;</span>
-          </span>
-        </a>
-
-        <ul class="mt-4 space-y-3">
-          
-          <li class="eg-inview">
-            <a href="#" class="group flex gap-5 rounded-2xl bg-paper-2 p-5 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-26px_rgb(8_136_197/0.45)]">
-              <span class="w-1 shrink-0 self-stretch rounded-full" style="background:#056a9a" aria-hidden="true"></span>
-              <span class="min-w-0">
-                <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
-                      style="background:#056a9a1a;color:#056a9a">Security</span>
-                <span class="ml-2 font-mono text-[9px] uppercase tracking-widest text-steel">2 July 2026</span>
-                <span class="mt-2 block font-display text-xl leading-tight group-hover:text-gold">Network access control without stopping the campus</span>
-                <span class="mt-1.5 block max-w-2xl text-sm text-ink/70">How to phase a NAC rollout across a university so that the day it goes enforcing is uneventful.</span>
-              </span>
-            </a>
-          </li>
-          <li class="eg-inview">
-            <a href="#" class="group flex gap-5 rounded-2xl bg-paper-2 p-5 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-26px_rgb(8_136_197/0.45)]">
-              <span class="w-1 shrink-0 self-stretch rounded-full" style="background:#0888c5" aria-hidden="true"></span>
-              <span class="min-w-0">
-                <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
-                      style="background:#0888c51a;color:#0888c5">Networks</span>
-                <span class="ml-2 font-mono text-[9px] uppercase tracking-widest text-steel">21 May 2026</span>
-                <span class="mt-2 block font-display text-xl leading-tight group-hover:text-gold">Designing wireless for lecture-theatre density</span>
-                <span class="mt-1.5 block max-w-2xl text-sm text-ink/70">Coverage surveys answer the wrong question when four hundred devices associate in ninety seconds.</span>
-              </span>
-            </a>
-          </li>
-          <li class="eg-inview">
-            <a href="#" class="group flex gap-5 rounded-2xl bg-paper-2 p-5 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_48px_-26px_rgb(8_136_197/0.45)]">
-              <span class="w-1 shrink-0 self-stretch rounded-full" style="background:#056a9a" aria-hidden="true"></span>
-              <span class="min-w-0">
-                <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
-                      style="background:#056a9a1a;color:#056a9a">Security</span>
-                <span class="ml-2 font-mono text-[9px] uppercase tracking-widest text-steel">9 April 2026</span>
-                <span class="mt-2 block font-display text-xl leading-tight group-hover:text-gold">The smallest SOC that is worth running</span>
-                <span class="mt-1.5 block max-w-2xl text-sm text-ink/70">Below a certain staffing level a security operations centre generates alerts nobody acts on. Where that line sits.</span>
-              </span>
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <aside class="self-start lg:sticky lg:top-32">
-        <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Categories</p>
-        <ul class="mt-3 space-y-1.5">
-          <li><a href="#" class="flex items-center gap-2.5 rounded-lg py-1 pl-1 text-sm text-ink/70 hover:bg-paper-2 hover:text-ink">
-            <span class="h-2 w-2 rounded-full" style="background:#c48a5a"></span>
-            Datacenter <span class="font-mono text-[10px] text-steel">1</span></a></li>
-          <li><a href="#" class="flex items-center gap-2.5 rounded-lg py-1 pl-1 text-sm text-ink/70 hover:bg-paper-2 hover:text-ink">
-            <span class="h-2 w-2 rounded-full" style="background:#056a9a"></span>
-            Security <span class="font-mono text-[10px] text-steel">2</span></a></li>
-          <li><a href="#" class="flex items-center gap-2.5 rounded-lg py-1 pl-1 text-sm text-ink/70 hover:bg-paper-2 hover:text-ink">
-            <span class="h-2 w-2 rounded-full" style="background:#0888c5"></span>
-            Networks <span class="font-mono text-[10px] text-steel">1</span></a></li>
-        </ul>
-        <p class="mt-8 font-mono text-[10px] uppercase tracking-widest text-gold">Tags</p>
-        <ul class="mt-3 flex flex-wrap gap-2">
-          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:#c48a5a14;color:#c48a5a">Tier III</a></li>
-          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:#056a9a14;color:#056a9a">Power</a></li>
-          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:#0888c514;color:#0888c5">Cooling</a></li>
-          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:#c48a5a14;color:#c48a5a">NAC</a></li>
-          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:#056a9a14;color:#056a9a">Campus</a></li>
-          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:#0888c514;color:#0888c5">WLAN</a></li>
-          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:#c48a5a14;color:#c48a5a">Higher education</a></li>
-          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:#056a9a14;color:#056a9a">SOC</a></li>
-          <li><a href="#" class="block rounded-full px-3 py-1 text-xs transition hover:-translate-y-0.5"
-              style="background:#0888c514;color:#0888c5">Operations</a></li>
-        </ul>
-      </aside>
-    </div>
   </main>
 
   <footer class="border-t border-rule bg-paper-2">
     <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
       <div class="lg:col-span-2">
-        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176" class="h-16 w-auto" decoding="async">
-        
-        <p class="mt-3 max-w-sm text-sm text-ink/70">An ICT systems integration company in Addis Ababa, delivering datacenter, network, security, communications and support to the institutions that depend on them.</p>
-        <p class="mt-3 text-sm font-semibold text-gold">Built to international standards.</p>
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
       </div>
+
       <div>
         <h4 class="font-display text-sm">Solutions</h4>
         <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
-          <li><a href="solutions.html">Datacenter Facility</a></li>
-          <li><a href="solutions.html">Networks (LAN/WLAN)</a></li>
-          <li><a href="solutions.html">Cybersecurity</a></li>
-          <li><a href="solutions.html">NOC and SOC services</a></li>
-          <li><a href="solutions.html">Unified Communications</a></li>
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
         </ul>
       </div>
+
       <div>
         <h4 class="font-display text-sm">Company</h4>
         <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
-          <li><a href="about.html">About us</a></li>
-          <li><a href="partners.html">Partners</a></li>
-          <li><a href="about.html#clients">Our clients</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
         </ul>
       </div>
+
       <div>
         <h4 class="font-display text-sm">Get in touch</h4>
         <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
-          <li>Bole, Lubaba Building, 3rd Floor<br />Addis Ababa, Ethiopia</li>
-          <li><a href="mailto:info@edgecomm-tech.com">info@edgecomm-tech.com</a></li>
-          <li><a href="tel:+251922555055">+251 92 255 5055</a></li>
-          <li><a href="https://edgecomm-tech.com">edgecomm-tech.com</a></li>
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
         </ul>
       </div>
     </div>
+
     <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
-      <p>© 2026 Edge Communication Technologies. Advise, implement, manage.</p>
-    </div>
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
   </footer>
 </body>
 </html>

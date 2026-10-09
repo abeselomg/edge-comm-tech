@@ -13,6 +13,7 @@ import { chromium } from "playwright-core";
 import { readdirSync, writeFileSync, mkdirSync } from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
+import { NAV } from "../design-src/highland/content.mjs";
 
 const dir = process.argv[2];
 if (!dir) throw new Error("usage: node check-render.mjs <dir>");
@@ -21,14 +22,18 @@ const SHOTS = "shots-highland";
 mkdirSync(SHOTS, { recursive: true });
 
 const files = readdirSync(dir).filter((f) => f.endsWith(".html")).sort();
-const WIDTHS = [390, 768, 940, 1440];
+/* 1024 is in here because it is the `lg` breakpoint: the first width at which
+   the desktop layout applies, and the tightest one it ever runs at. A ring node
+   on the partners page overflowed by 40px at exactly this width while passing
+   at both 940 and 1440. */
+const WIDTHS = [390, 768, 940, 1024, 1440];
 const problems = [];
 const shots = [];
 
 const browser = await chromium.launch({ channel: "chrome", args: ["--hide-scrollbars"] });
 
 /* Fetch the Tailwind runtime once and serve every page from memory.
-   Fourteen pages at four widths is 56 loads; hitting the CDN that many times
+   Fifty-one pages at five widths is 255 loads; hitting the CDN that many times
    in a burst gets throttled, and a throttled load looks exactly like a broken
    page to the checks below. Cached, it is also several times faster. */
 let tw = null;
@@ -82,7 +87,11 @@ try {
 
       if (w === 1440) {
         if (r.maxW !== "1152px") problems.push(`${f}: Tailwind did not compile (max-width ${r.maxW})`);
-        if (r.navItems !== 7) problems.push(`${f}: desktop nav has ${r.navItems} items, expected 7`);
+        /* Counted against NAV rather than a literal, so adding a nav item
+           does not make every page fail this check. */
+        if (r.navItems !== NAV.length) {
+          problems.push(`${f}: desktop nav has ${r.navItems} items, expected ${NAV.length}`);
+        }
         const shot = path.join(SHOTS, f.replace(".html", ".png"));
         await page.screenshot({ path: shot, clip: { x: 0, y: 0, width: 1440, height: 1100 } });
         shots.push({ f, shot: path.basename(shot), height: r.height });

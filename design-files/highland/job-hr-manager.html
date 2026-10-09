@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>HR Manager — Careers at Edge Comm-Tech</title>
+  <meta name="description" content="The HR Manager will lead the human-resources and administrative practices that help Edge Comm-Tech attract capable people, build accountable teams and maintain a professional working environment. The role connects workforce planning, recruitment, onboarding, performance management, employee relations, learning, records and policy implementation with the company's strategic and operational priorities." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { DEFAULT: "#1c2430", 2: "#2a3544" },
+            paper: { DEFAULT: "#eef6f4", 2: "#ffffff" },
+            gold: { DEFAULT: "#0888c5", 2: "#056a9a" },
+            lamp: "#c48a5a",
+            steel: "#5c6b76",
+            rule: "#0888c530",
+          },
+          fontFamily: {
+            display: ["Geologica", "Segoe UI", "sans-serif"],
+            sans: ["Atkinson Hyperlegible", "Segoe UI", "sans-serif"],
+            mono: ["Fragment Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #eef6f4; color: #1c2430; font-family: "Atkinson Hyperlegible", sans-serif; }
+    .font-display { letter-spacing: -0.03em; font-weight: 700; }
+    .sun-disk {
+      position: absolute;
+      right: -6rem;
+      top: -5rem;
+      width: 22rem;
+      height: 22rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, #fff8 0%, #0888c5 42%, transparent 70%);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
+      pointer-events: none;
+    }
+    .hop-line {
+      flex: 1;
+      height: 1px;
+      margin-top: 0.55rem;
+      background-image: repeating-linear-gradient(90deg, #0888c5 0 6px, transparent 6px 12px);
+    }
+    .ph {
+      border-bottom: 1px dashed #0888c5;
+    }
+    .ph::after {
+      content: "▪";
+      font-size: 0.45em;
+      vertical-align: super;
+      margin-left: 0.15em;
+      color: #c48a5a;
+    }
+    :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
+  </style>
+  <style>
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+      <a href="index.html" class="shrink-0 leading-none">
+        <img src="edge-logo.png" alt="Edge Communication Technologies"
+             width="391" height="176" class="h-14 w-auto" decoding="async">
+      </a>
+      <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
+        <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
+        <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
+        <a href="clients.html" class="text-ink/70 hover:text-gold">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
+        <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+        <a href="careers.html" class="text-ink/70 hover:text-gold">Careers</a>
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
+      </nav>
+      <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
+      <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
+      <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
+      <a href="clients.html" class="whitespace-nowrap text-ink/70">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
+      <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-ink/70">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
+      <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="relative overflow-hidden border-b" style="border-color:#0888c52e;background:linear-gradient(140deg,#0888c512,#0888c504)">
+      <span class="pointer-events-none absolute inset-x-0 bottom-0 h-px" style="background:linear-gradient(90deg,#0888c5,transparent)" aria-hidden="true"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        <nav class="font-mono text-[10px] uppercase tracking-widest text-steel" aria-label="Breadcrumb">
+          <a href="careers.html" class="hover:text-gold">Careers</a><span class="mx-2">/</span><a href="careers-open-positions.html" class="hover:text-gold">Open positions</a><span class="mx-2">/</span>HR Manager
+        </nav>
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#0888c5">Open position &middot; HR and Administration</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">HR Manager</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Build the people systems that support delivery</p>
+        
+        
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-6xl px-6">
+      <dl class="eg-rise -mt-9 grid gap-px overflow-hidden rounded-2xl border border-rule bg-rule shadow-[0_20px_50px_-40px_rgb(28_36_48/0.6)] sm:grid-cols-3 lg:grid-cols-6">
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Department</dt>
+          <dd class="mt-1.5 text-sm leading-snug">HR and Administration</dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Career level</dt>
+          <dd class="mt-1.5 text-sm leading-snug">Manager</dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Reports to</dt>
+          <dd class="mt-1.5 text-sm leading-snug">Chief Strategy Officer</dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Employment type</dt>
+          <dd class="mt-1.5 text-sm leading-snug">Full time</dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Status</dt>
+          <dd class="mt-1.5 text-sm leading-snug">Open</dd>
+        </div>
+        <div class="bg-paper-2 px-5 py-4">
+          <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">Deadline</dt>
+          <dd class="mt-1.5 text-sm leading-snug"><span class="inline-flex items-center gap-1.5 rounded-full border border-lamp/40 bg-lamp/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-lamp">
+    <svg viewBox="0 0 8 8" class="h-1.5 w-1.5" aria-hidden="true"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>To be confirmed</span></dd>
+        </div>
+      </dl>
+      <p class="mt-4 text-xs text-steel">Edge Comm-Tech Headquarters, Addis Ababa, with work at other approved locations when required</p>
+    </div>
+
+    <div class="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[1fr_17rem]">
+      <article class="min-w-0">
+        <section>
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Role purpose</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Build the people systems that support delivery</h2>
+      
+          <p class="mt-5 text-lg leading-relaxed text-ink/80">The HR Manager will lead the human-resources and administrative practices that help Edge Comm-Tech attract capable people, build accountable teams and maintain a professional working environment. The role connects workforce planning, recruitment, onboarding, performance management, employee relations, learning, records and policy implementation with the company's strategic and operational priorities.</p>
+          
+        </section>
+
+        <section class="mt-14">
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Responsibilities</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">What the role owns</h2>
+      
+          <ul class="mt-5 space-y-2.5">
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Translate company and departmental workforce plans into structured recruitment, selection and onboarding activities.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Manage the full recruitment process, including vacancy preparation, candidate screening, interview coordination, reference checks, offers and onboarding documentation.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Coordinate the company performance-management cycle and support the cascade of company, executive, departmental, team and individual objectives and key results.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Maintain accurate employee files, contracts, attendance, leave, training, performance and disciplinary records with appropriate confidentiality and access control.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Implement HR policies and procedures consistently and keep them aligned with applicable Ethiopian employment requirements and approved company decisions.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Guide managers on workforce planning, role clarity, employee relations, performance improvement, recognition and professional development.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Plan orientation, coaching, training and succession-development activities in coordination with department managers and executive leadership.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Prepare reliable HR reports and workforce indicators for management review without exposing personal information unnecessarily.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Coordinate administrative services that support a safe, organized and productive office environment.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Promote Edge Comm-Tech's values of Integrity, Reliability, Passion, Accountability, Team Unity, Adaptability and Sustainability.</span>
+          </li>
+        </ul>
+        </section>
+
+        <section class="mt-14">
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Required</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Qualifications and experience</h2>
+      
+          <ul class="mt-5 space-y-2.5">
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Bachelor's degree in Human Resource Management, Management, Business Administration or a closely related field.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>More than five years of progressive human-resources experience, including responsibility for recruitment, employee records, performance management and policy implementation.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Practical knowledge of Ethiopian employment practices and the ability to apply approved policies fairly and consistently.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Experience coordinating multiple vacancies, onboarding activities and performance-review cycles across different departments.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Strong judgment, confidentiality, organization, documentation, communication and conflict-resolution skills.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Ability to work with managers, technical professionals and executive leaders in a deadline-driven project environment.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Working proficiency with office productivity tools; ability to use an HR information or applicant-tracking system.</span>
+          </li>
+        </ul>
+        </section>
+
+        <section class="mt-14">
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Preferred</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">What strengthens an application</h2>
+      
+          <ul class="mt-5 space-y-2.5">
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Postgraduate qualification or recognized professional certification in human resources, management or organizational development.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Experience in a technology, engineering, systems-integration or project-based organization.</span>
+          </li>
+          <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+            <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:#0888c5"></span><span>Practical knowledge of OKR-based planning, performance discussions, coaching and structured reporting.</span>
+          </li>
+        </ul>
+        </section>
+
+        <section class="mt-14 rounded-3xl p-8" style="background:#0888c50e">
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Success in the role</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">How performance will be judged</h2>
+      
+          <p class="mt-4 leading-relaxed text-ink/80">Success will be demonstrated through disciplined recruitment and onboarding, accurate and confidential records, timely performance cycles, consistent policy application, useful management reporting and stronger coordination between people requirements and business delivery.</p>
+        </section>
+
+        <section class="mt-14" id="apply">
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Apply</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Apply for HR Manager</h2>
+      
+          <form class="mt-7 grid gap-5 sm:grid-cols-2">
+            <div class="">
+            <label for="full-legal-name" class="font-mono text-[10px] uppercase tracking-widest text-steel">Full legal name <span class="text-lamp">*</span></label>
+            <input id="full-legal-name" type="text" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled>
+            
+          </div>
+            <div class="">
+            <label for="email-address" class="font-mono text-[10px] uppercase tracking-widest text-steel">Email address <span class="text-lamp">*</span></label>
+            <input id="email-address" type="email" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled>
+            
+          </div>
+            <div class="">
+            <label for="mobile-number" class="font-mono text-[10px] uppercase tracking-widest text-steel">Mobile number <span class="text-lamp">*</span></label>
+            <input id="mobile-number" type="text" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled>
+            
+          </div>
+            <div class="">
+            <label for="city-and-country-of-residence" class="font-mono text-[10px] uppercase tracking-widest text-steel">City and country of residence <span class="text-lamp">*</span></label>
+            <input id="city-and-country-of-residence" type="text" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled>
+            
+          </div>
+            <div class="">
+            <label for="current-or-most-recent-position" class="font-mono text-[10px] uppercase tracking-widest text-steel">Current or most recent position <span class="text-lamp">*</span></label>
+            <input id="current-or-most-recent-position" type="text" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled>
+            
+          </div>
+            <div class="">
+            <label for="years-of-relevant-experience" class="font-mono text-[10px] uppercase tracking-widest text-steel">Years of relevant experience</label>
+            <select id="years-of-relevant-experience" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled><option>Select</option><option>0–2</option><option>3–5</option><option>6–10</option><option>More than 10</option></select>
+            
+          </div>
+            <div class="">
+            <label for="highest-education" class="font-mono text-[10px] uppercase tracking-widest text-steel">Highest education</label>
+            <select id="highest-education" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled><option>Select</option><option>Diploma</option><option>Bachelor's degree</option><option>Postgraduate</option></select>
+            
+          </div>
+            <div class="">
+            <label for="field-of-study" class="font-mono text-[10px] uppercase tracking-widest text-steel">Field of study <span class="text-lamp">*</span></label>
+            <input id="field-of-study" type="text" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled>
+            
+          </div>
+            <div class="">
+            <label for="university-or-institution" class="font-mono text-[10px] uppercase tracking-widest text-steel">University or institution <span class="text-lamp">*</span></label>
+            <input id="university-or-institution" type="text" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled>
+            
+          </div>
+            <div class="">
+            <label for="linkedin-or-portfolio-url" class="font-mono text-[10px] uppercase tracking-widest text-steel">LinkedIn or portfolio URL</label>
+            <input id="linkedin-or-portfolio-url" type="url" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled>
+            
+          </div>
+            <div class="sm:col-span-2">
+            <label for="cv-upload" class="font-mono text-[10px] uppercase tracking-widest text-steel">CV upload <span class="text-lamp">*</span></label>
+            <input id="cv-upload" type="file" class="mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none" disabled>
+            <p class="mt-1 text-[11px] text-steel">PDF or DOCX</p>
+          </div>
+            <div class="sm:col-span-2">
+              <label class="flex items-start gap-3 text-xs text-steel">
+                <input type="checkbox" class="mt-0.5" disabled>
+                <span>I confirm the information provided is accurate and accept the privacy notice and consent to recruitment processing.</span>
+              </label>
+            </div>
+            <div class="sm:col-span-2">
+              <button type="button" class="rounded-full px-6 py-3 text-sm font-semibold text-white opacity-60" style="background:#0888c5" disabled>Submit application</button>
+            </div>
+          </form>
+          <p class="mt-5 flex items-start gap-2 rounded-2xl bg-paper-2 px-5 py-4 text-xs text-steel">
+      <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8"
+           stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+      <span>Form shown for layout review. Fields, validation, consent capture, secure upload and routing are built against the CMS at implementation.</span>
+    </p>
+          <p class="mt-4 text-xs text-steel">
+            Applications are acknowledged with a reference number and routed to
+            <a href="mailto:hr@edgecomm-tech.com" class="underline decoration-rule underline-offset-2 hover:text-gold">hr@edgecomm-tech.com</a>.
+            Our HR team contacts candidates selected for the next stage.
+          </p>
+        </section>
+      </article>
+
+      <aside class="self-start lg:sticky lg:top-32">
+        <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Documents required</p>
+        <ul class="mt-3 space-y-1.5">
+          <li class="rounded-xl bg-paper-2 px-4 py-2.5 text-sm text-ink/75">CV</li>
+          <li class="rounded-xl bg-paper-2 px-4 py-2.5 text-sm text-ink/75">Cover letter</li>
+          <li class="rounded-xl bg-paper-2 px-4 py-2.5 text-sm text-ink/75">Education documents</li>
+          <li class="rounded-xl bg-paper-2 px-4 py-2.5 text-sm text-ink/75">Experience documents</li>
+          <li class="rounded-xl bg-paper-2 px-4 py-2.5 text-sm text-ink/75">Relevant certifications</li>
+        </ul>
+        <a href="#apply" class="mt-6 block rounded-full px-5 py-3 text-center text-sm font-semibold text-white" style="background:#0888c5">Apply now</a>
+        <p class="mt-8 font-mono text-[10px] uppercase tracking-widest text-steel">Also open</p>
+        <a href="job-chief-technology-officer.html" class="mt-3 block rounded-2xl bg-paper-2 p-4 transition hover:text-gold">
+          <span class="block font-display text-base">Chief Technology Officer</span>
+          <span class="mt-1 block text-xs text-steel">Executive Management and Technology Leadership</span>
+        </a>
+        <a href="careers.html" class="mt-4 block rounded-2xl border border-rule p-4 text-sm transition hover:border-gold hover:text-gold">
+          Not the right role? Join the talent community
+        </a>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="border-t border-rule bg-paper-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Solutions</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Company</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Get in touch</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Careers at Edge Comm-Tech — Build Africa's Digital Future</title>
+  <meta name="description" content="Join Edge Comm-Tech. Explore engineering, project delivery and corporate careers, graduate internships and E-Academy training programs in Addis Ababa." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { DEFAULT: "#1c2430", 2: "#2a3544" },
+            paper: { DEFAULT: "#eef6f4", 2: "#ffffff" },
+            gold: { DEFAULT: "#0888c5", 2: "#056a9a" },
+            lamp: "#c48a5a",
+            steel: "#5c6b76",
+            rule: "#0888c530",
+          },
+          fontFamily: {
+            display: ["Geologica", "Segoe UI", "sans-serif"],
+            sans: ["Atkinson Hyperlegible", "Segoe UI", "sans-serif"],
+            mono: ["Fragment Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #eef6f4; color: #1c2430; font-family: "Atkinson Hyperlegible", sans-serif; }
+    .font-display { letter-spacing: -0.03em; font-weight: 700; }
+    .sun-disk {
+      position: absolute;
+      right: -6rem;
+      top: -5rem;
+      width: 22rem;
+      height: 22rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, #fff8 0%, #0888c5 42%, transparent 70%);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
+      pointer-events: none;
+    }
+    .hop-line {
+      flex: 1;
+      height: 1px;
+      margin-top: 0.55rem;
+      background-image: repeating-linear-gradient(90deg, #0888c5 0 6px, transparent 6px 12px);
+    }
+    .ph {
+      border-bottom: 1px dashed #0888c5;
+    }
+    .ph::after {
+      content: "▪";
+      font-size: 0.45em;
+      vertical-align: super;
+      margin-left: 0.15em;
+      color: #c48a5a;
+    }
+    :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
+  </style>
+  <style>
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
+@keyframes eg-draw{to{stroke-dashoffset:0}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
+
+.eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
+.eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
+.eg-draw{stroke-dasharray:var(--len,320);stroke-dashoffset:var(--len,320);
+  animation:eg-draw 1s ease-out both;animation-delay:var(--d,0s)}
+.eg-breathe{animation:eg-breathe 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+.eg-spin-slow{animation:eg-spin 120s linear infinite;transform-origin:center;transform-box:fill-box}
+
+/* Below the fold, play on scroll rather than on load, so nothing animates
+   where nobody is looking. Unsupported browsers just show the element. */
+@supports (animation-timeline: view()){
+  .eg-inview{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;
+    animation-timeline:view();animation-range:entry 0% entry 50%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .eg-rise,.eg-pop,.eg-draw,.eg-breathe,.eg-spin-slow,.eg-inview{animation:none!important}
+  .eg-draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+  <header class="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
+      <a href="index.html" class="shrink-0 leading-none">
+        <img src="edge-logo.png" alt="Edge Communication Technologies"
+             width="391" height="176" class="h-14 w-auto" decoding="async">
+      </a>
+      <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
+        <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
+        <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
+        <a href="clients.html" class="text-ink/70 hover:text-gold">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
+        <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+        <a href="careers.html" class="text-gold" aria-current="page">Careers</a>
+        <a href="about.html" class="text-ink/70 hover:text-gold">About</a>
+      </nav>
+      <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
+    </div>
+    <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
+      <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
+      <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
+      <a href="clients.html" class="whitespace-nowrap text-ink/70">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
+      <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-gold">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-ink/70">About</a>
+      <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="relative overflow-hidden border-b" style="border-color:#0888c52e;background:linear-gradient(140deg,#0888c512,#0888c504)">
+      <span class="pointer-events-none absolute inset-0 opacity-[0.35]" aria-hidden="true"
+             style="background-image:linear-gradient(#0888c514 1px,transparent 1px),linear-gradient(90deg,#0888c514 1px,transparent 1px);background-size:56px 56px"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#0888c5">Careers</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">Build the infrastructure a continent runs on</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Edge Comm-Tech engineers work on the systems Ethiopian banks, universities and ministries depend on. The work is real, the standards are high, and what you learn here compounds.</p>
+        
+        <div class="eg-rise mt-8 flex flex-wrap gap-3" style="--d:.24s">
+          <a href="careers-open-positions.html" class="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">See open positions</a>
+          <a href="careers-internships.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Graduate internships</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Three routes in -->
+    <section class="border-b border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-14">
+        <ul class="grid gap-3 sm:grid-cols-3">
+          <li><a href="careers-open-positions.html" class="eg-inview group flex h-full flex-col rounded-3xl bg-paper p-7 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Experienced professionals</span>
+            <span class="mt-2 font-display text-xl leading-snug group-hover:text-gold">Open positions</span>
+            <span class="mt-2.5 flex-1 text-sm leading-relaxed text-ink/70">Current vacancies across engineering, project delivery, commercial and corporate functions.</span>
+            <span class="mt-5 flex items-center justify-between gap-3 border-t border-rule pt-4 font-mono text-[10px] uppercase tracking-widest">
+              <span class="text-steel">2 roles open</span><span class="text-gold" aria-hidden="true">&rarr;</span>
+            </span>
+          </a></li>
+          <li><a href="careers-internships.html" class="eg-inview group flex h-full flex-col rounded-3xl bg-paper p-7 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">Students and graduates</span>
+            <span class="mt-2 font-display text-xl leading-snug group-hover:text-gold">Internship program</span>
+            <span class="mt-2.5 flex-1 text-sm leading-relaxed text-ink/70">The Edge Comm-Tech Internship Program gives selected learners and early-career candidates supervised exposure to real professional environments.</span>
+            <span class="mt-5 flex items-center justify-between gap-3 border-t border-rule pt-4 font-mono text-[10px] uppercase tracking-widest">
+              <span class="text-steel">2 tracks</span><span class="text-gold" aria-hidden="true">&rarr;</span>
+            </span>
+          </a></li>
+          <li><a href="careers-e-academy.html" class="eg-inview group flex h-full flex-col rounded-3xl bg-paper p-7 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#056a9a">Learning and certification</span>
+            <span class="mt-2 font-display text-xl leading-snug group-hover:text-gold">Edge E-Academy</span>
+            <span class="mt-2.5 flex-1 text-sm leading-relaxed text-ink/70">Structured technology training for individuals, institutions and corporate teams.</span>
+            <span class="mt-5 flex items-center justify-between gap-3 border-t border-rule pt-4 font-mono text-[10px] uppercase tracking-widest">
+              <span class="text-steel">Courses and workshops</span><span class="text-gold" aria-hidden="true">&rarr;</span>
+            </span>
+          </a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Why work here -->
+    <section class="mx-auto max-w-6xl px-6 py-20">
+      
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">The experience</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">What working at Edge Comm-Tech is actually like</h2>
+      
+      <ul class="mt-9 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+        <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm leading-relaxed text-ink/80">
+          <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
+          <span>Meaningful work connected to Ethiopia's and Africa's digital transformation.</span>
+        </li>
+        <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm leading-relaxed text-ink/80">
+          <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
+          <span>Exposure to multiple technology domains, client environments and delivery stages.</span>
+        </li>
+        <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm leading-relaxed text-ink/80">
+          <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
+          <span>Collaboration among engineering, presales, project, commercial and operational teams.</span>
+        </li>
+        <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm leading-relaxed text-ink/80">
+          <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
+          <span>Structured goals and clear accountability from company priorities to individual action plans.</span>
+        </li>
+        <li class="eg-inview flex items-start gap-3 rounded-2xl bg-paper-2 px-5 py-4 text-sm leading-relaxed text-ink/80">
+          <svg viewBox="0 0 24 24" class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="#0888c5" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>
+          <span>Continuous learning through technical practice, professional development, training and certification pathways.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Career pathways -->
+    <section class="border-t border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Career pathways</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Where people build a career here</h2>
+      <p class="mt-4 max-w-2xl text-ink/75">Six broad pathways, each with its own progression from early-career contribution through specialist and leadership roles.</p>
+        <div class="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">01</span>
+            <h3 class="mt-1.5 font-display text-lg leading-snug">Engineering and Technology</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Enterprise networks, cybersecurity, systems, cloud, datacenter facilities, IT infrastructure, power, broadcast and satellite.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">02</span>
+            <h3 class="mt-1.5 font-display text-lg leading-snug">Software, AI and Digital</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Software applications, AI-powered knowledge assistants, private RAG, automation, local-language AI and digital platforms.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">03</span>
+            <h3 class="mt-1.5 font-display text-lg leading-snug">Presales and Solution Design</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Requirement discovery, architecture, technical proposals, demonstrations, bills of materials and solution positioning.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">04</span>
+            <h3 class="mt-1.5 font-display text-lg leading-snug">Project and Service Delivery</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Project planning, coordination, implementation governance, documentation, handover and client support.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">05</span>
+            <h3 class="mt-1.5 font-display text-lg leading-snug">Marketing and Business Development</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Sector engagement, account development, campaigns, events, partnerships and opportunity development.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">06</span>
+            <h3 class="mt-1.5 font-display text-lg leading-snug">Corporate and Operational Functions</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">Human resources, administration, finance, supply chain, strategy, performance and business operations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Culture: the seven values, as they apply to working here -->
+    <section class="mx-auto max-w-6xl px-6 py-20">
+      
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Culture</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Seven things we hold each other to</h2>
+      <p class="mt-4 max-w-2xl text-ink/75">The same values that govern how we deliver for clients govern how we work together.</p>
+      <dl class="mt-10 grid gap-px overflow-hidden rounded-3xl bg-rule sm:grid-cols-2 lg:grid-cols-4">
+        <div class="eg-inview bg-paper-2 p-6">
+          <dt class="font-display text-lg">Integrity</dt>
+          <dd class="mt-2 text-sm leading-relaxed text-ink/70">We act honestly, protect trust and communicate clearly.</dd>
+        </div>
+        <div class="eg-inview bg-paper-2 p-6">
+          <dt class="font-display text-lg">Reliability</dt>
+          <dd class="mt-2 text-sm leading-relaxed text-ink/70">We take commitments seriously and deliver dependable work.</dd>
+        </div>
+        <div class="eg-inview bg-paper-2 p-6">
+          <dt class="font-display text-lg">Passion</dt>
+          <dd class="mt-2 text-sm leading-relaxed text-ink/70">We bring energy, curiosity and pride to technology and service.</dd>
+        </div>
+        <div class="eg-inview bg-paper-2 p-6">
+          <dt class="font-display text-lg">Accountability</dt>
+          <dd class="mt-2 text-sm leading-relaxed text-ink/70">We own our decisions, deadlines, quality and outcomes.</dd>
+        </div>
+        <div class="eg-inview bg-paper-2 p-6">
+          <dt class="font-display text-lg">Team Unity</dt>
+          <dd class="mt-2 text-sm leading-relaxed text-ink/70">We collaborate across roles and succeed as one team.</dd>
+        </div>
+        <div class="eg-inview bg-paper-2 p-6">
+          <dt class="font-display text-lg">Adaptability</dt>
+          <dd class="mt-2 text-sm leading-relaxed text-ink/70">We learn quickly and respond constructively to change.</dd>
+        </div>
+        <div class="eg-inview bg-paper-2 p-6">
+          <dt class="font-display text-lg">Sustainability</dt>
+          <dd class="mt-2 text-sm leading-relaxed text-ink/70">We consider long-term value, responsible resource use and lasting impact.</dd>
+        </div>
+      </dl>
+      <p class="mt-6 text-xs text-steel">
+        These are Edge Comm-Tech's company values. <a href="about.html" class="underline decoration-rule underline-offset-2 hover:text-gold">Read how they shape our delivery</a>.
+      </p>
+    </section>
+
+    <!-- Development -->
+    <section class="border-t border-rule">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        <div class="grid gap-12 lg:grid-cols-[1fr_1fr]">
+          <div>
+            
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Growth</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">How people develop here</h2>
+      
+            <ul class="mt-7 space-y-3">
+              <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+                <span class="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-gold"></span><span>Role onboarding and clear performance expectations.</span>
+              </li>
+              <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+                <span class="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-gold"></span><span>Coaching from managers, team leaders and experienced specialists.</span>
+              </li>
+              <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+                <span class="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-gold"></span><span>Project-based learning supported by documentation and review.</span>
+              </li>
+              <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+                <span class="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-gold"></span><span>Internal workshops, technical sessions and professional-learning opportunities.</span>
+              </li>
+              <li class="eg-inview flex items-start gap-3 text-sm leading-relaxed text-ink/80">
+                <span class="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-gold"></span><span>Leadership and succession development as employees take on broader responsibility.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="rounded-3xl bg-paper-2 p-8">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Before you apply</p>
+            <h3 class="mt-2 font-display text-xl">Have these ready</h3>
+            <p class="mt-3 text-sm leading-relaxed text-ink/70">
+              Every vacancy and internship application asks for the same documents. Preparing them first makes the
+              form a five-minute job.
+            </p>
+            <ul class="mt-5 space-y-1.5">
+              <li class="flex items-start gap-3 rounded-xl bg-paper px-4 py-2.5 text-sm text-ink/75">
+                <span class="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-gold"></span><span>CV</span>
+              </li>
+              <li class="flex items-start gap-3 rounded-xl bg-paper px-4 py-2.5 text-sm text-ink/75">
+                <span class="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-gold"></span><span>Cover letter</span>
+              </li>
+              <li class="flex items-start gap-3 rounded-xl bg-paper px-4 py-2.5 text-sm text-ink/75">
+                <span class="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-gold"></span><span>Education documents</span>
+              </li>
+              <li class="flex items-start gap-3 rounded-xl bg-paper px-4 py-2.5 text-sm text-ink/75">
+                <span class="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-gold"></span><span>Experience documents</span>
+              </li>
+              <li class="flex items-start gap-3 rounded-xl bg-paper px-4 py-2.5 text-sm text-ink/75">
+                <span class="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-gold"></span><span>Relevant certifications</span>
+              </li>
+            </ul>
+            <p class="mt-5 text-xs text-steel">
+              Applications are acknowledged with a reference number. Our HR team contacts candidates selected for the
+              next stage.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Talent community -->
+    <section class="border-t border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-4xl px-6 py-20 text-center">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Nothing open that fits?</p>
+        <h2 class="mt-3 font-display text-[clamp(1.6rem,3vw,2.4rem)] leading-tight">Introduce yourself anyway</h2>
+        <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink/75">
+          We keep speculative applications on file and review them when a relevant role opens. Send your CV with a
+          short note about the work you want to do.
+        </p>
+        <p class="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <a href="mailto:hr@edgecomm-tech.com" class="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">hr@edgecomm-tech.com</a>
+          <a href="careers-open-positions.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Check open roles first</a>
+        </p>
+        <p class="mt-5 flex justify-center"><span class="inline-flex items-center gap-1.5 rounded-full border border-lamp/40 bg-lamp/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-lamp">
+    <svg viewBox="0 0 8 8" class="h-1.5 w-1.5" aria-hidden="true"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>Internship intake dates to be confirmed</span></p>
+      </div>
+    </section>
+
+    
+    <section class="relative overflow-hidden border-t border-rule">
+      <span class="pointer-events-none absolute inset-0" aria-hidden="true"
+            style="background:linear-gradient(120deg,#0888c516,transparent 60%)"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <h2 class="eg-inview max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.8rem)] leading-tight">Ready to apply?</h2>
+        <p class="eg-inview mt-4 max-w-2xl text-ink/75">2 positions are open now, and the graduate internship program accepts applications between intakes.</p>
+        
+  <div class="eg-rise mt-8 flex flex-wrap items-center gap-3" style="--d:.24s">
+    <a href="careers-open-positions.html" class="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+       style="background:#0888c5">See open positions</a>
+    <a href="careers-e-academy.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Explore E-Academy</a>
+  </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-rule bg-paper-2">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Solutions</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Company</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display text-sm">Get in touch</h4>
+        <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
+  </footer>
+</body>
+</html>

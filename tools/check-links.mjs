@@ -11,10 +11,25 @@ import path from "path";
 const dir = process.argv[2];
 if (!dir) throw new Error("usage: node check-links.mjs <dir>");
 
-const EXPECTED_NAV = ["About", "Partners", "Solutions", "Projects", "Academy", "Career", "Blog"];
+/* Mirrors NAV in design-src/highland/content.mjs. Kept as a literal on
+   purpose: if someone reorders or drops a nav item, this list is what notices. */
+const EXPECTED_NAV = [
+  "Solutions", "Projects", "Clients", "Partners", "Resources", "Blog", "Careers", "About",
+];
 
 const files = readdirSync(dir).filter((f) => f.endsWith(".html"));
 const problems = [];
+
+/* Every page's ids, gathered up front. A link like blog.html -> that lets us
+   check "solution-x.html#private-rag" the same way we check "#private-rag" --
+   a cross-page fragment that points at nothing is just as broken, and it is
+   the kind that survives review because nobody clicks all of them. */
+const idsByFile = new Map(
+  files.map((f) => [
+    f,
+    new Set([...readFileSync(path.join(dir, f), "utf8").matchAll(/id="([^"]+)"/g)].map((m) => m[1])),
+  ]),
+);
 
 if (!files.includes("index.html")) problems.push("no index.html emitted");
 
@@ -34,7 +49,19 @@ for (const f of files) {
     if (!target) continue;
     if (!existsSync(path.join(dir, target))) {
       problems.push(`${f}: link to missing file "${target}"`);
+      continue;
     }
+    const frag = href.split("#")[1];
+    if (frag && !idsByFile.get(target)?.has(frag)) {
+      problems.push(`${f}: dead cross-page fragment "${target}#${frag}"`);
+    }
+  }
+
+  // Images must point at files that exist, or the mark is an empty box.
+  for (const m of html.matchAll(/<img[^>]+src="([^"]+)"/g)) {
+    const src = m[1];
+    if (/^(https?:|data:)/.test(src)) continue;
+    if (!existsSync(path.join(dir, src))) problems.push(`${f}: image missing "${src}"`);
   }
 
   // A fragment link that points at no id on this page is a dead link.
@@ -43,7 +70,7 @@ for (const f of files) {
     if (!ids.has(m[1])) problems.push(`${f}: dead fragment "#${m[1]}"`);
   }
 
-  // The desktop nav must carry all seven items.
+  // The desktop nav must carry every item, in order.
   const nav = html.match(/<nav class="hidden[^>]*>([\s\S]*?)<\/nav>/);
   if (!nav) {
     problems.push(`${f}: no desktop nav`);
@@ -69,4 +96,4 @@ if (problems.length) {
   problems.forEach((p) => console.error("  " + p));
   process.exit(1);
 }
-console.log(`PASS — ${files.length} file(s), all links resolve, nav intact`);
+console.log(`PASS — ${files.length} file(s), all links, fragments and images resolve, nav intact`);

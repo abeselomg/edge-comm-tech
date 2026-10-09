@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>About — Edge COMM-TECH</title>
-  <meta name="description" content="The company behind the build: an ICT systems integrator in Addis Ababa." />
+  <title>About Edge Comm-Tech — Technology Solutions Company in Ethiopia</title>
+  <meta name="description" content="Learn how Edge Comm-Tech delivers enterprise networks, cloud, datacenters, cybersecurity, software, AI, power, and broadcast solutions across Ethiopia and beyond." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fragment+Mono&family=Geologica:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -73,11 +73,22 @@
     :focus-visible { outline: 2px solid #0888c5; outline-offset: 3px; }
   </style>
   <style>
-@keyframes eg-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@keyframes eg-pop{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:none}}
+/* These animate the independent translate, scale and rotate properties
+   rather than transform, and the difference is load-bearing.
+
+   Animating transform with "both" fill mode means the animation's resting
+   value wins the cascade over any transform an element also carries. That
+   silently killed every hover:-translate-y lift on an .eg-inview card, and it
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
+   nodes and hub, pushing a node past the viewport edge.
+
+   translate/scale/rotate compose with transform instead of replacing it, so
+   Tailwind's utilities and the motion can coexist. */
+@keyframes eg-rise{from{opacity:0;translate:0 16px}to{opacity:1;translate:none}}
+@keyframes eg-pop{from{opacity:0;scale:.82}to{opacity:1;scale:none}}
 @keyframes eg-draw{to{stroke-dashoffset:0}}
-@keyframes eg-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
-@keyframes eg-spin{to{transform:rotate(360deg)}}
+@keyframes eg-breathe{0%,100%{scale:1}50%{scale:1.035}}
+@keyframes eg-spin{to{rotate:360deg}}
 
 .eg-rise{animation:eg-rise .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:var(--d,0s)}
 .eg-pop{animation:eg-pop .55s cubic-bezier(.2,.9,.3,1.25) both;animation-delay:var(--d,0s)}
@@ -107,233 +118,467 @@
              width="391" height="176" class="h-14 w-auto" decoding="async">
       </a>
       <nav class="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
-        <a href="about.html" class="text-gold" aria-current="page">About</a>
-        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
         <a href="solutions.html" class="text-ink/70 hover:text-gold">Solutions</a>
         <a href="projects.html" class="text-ink/70 hover:text-gold">Projects</a>
-        <a href="academy.html" class="text-ink/70 hover:text-gold">Academy</a>
-        <a href="career.html" class="text-ink/70 hover:text-gold">Career</a>
+        <a href="clients.html" class="text-ink/70 hover:text-gold">Clients</a>
+        <a href="partners.html" class="text-ink/70 hover:text-gold">Partners</a>
+        <a href="resources.html" class="text-ink/70 hover:text-gold">Resources</a>
         <a href="blog.html" class="text-ink/70 hover:text-gold">Blog</a>
+        <a href="careers.html" class="text-ink/70 hover:text-gold">Careers</a>
+        <a href="about.html" class="text-gold" aria-current="page">About</a>
       </nav>
       <a href="contact.html" class="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block">Contact us</a>
     </div>
     <nav class="flex gap-4 overflow-x-auto border-t border-rule px-6 py-2.5 text-xs lg:hidden">
-      <a href="about.html" class="whitespace-nowrap text-gold">About</a>
-      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
       <a href="solutions.html" class="whitespace-nowrap text-ink/70">Solutions</a>
       <a href="projects.html" class="whitespace-nowrap text-ink/70">Projects</a>
-      <a href="academy.html" class="whitespace-nowrap text-ink/70">Academy</a>
-      <a href="career.html" class="whitespace-nowrap text-ink/70">Career</a>
+      <a href="clients.html" class="whitespace-nowrap text-ink/70">Clients</a>
+      <a href="partners.html" class="whitespace-nowrap text-ink/70">Partners</a>
+      <a href="resources.html" class="whitespace-nowrap text-ink/70">Resources</a>
       <a href="blog.html" class="whitespace-nowrap text-ink/70">Blog</a>
+      <a href="careers.html" class="whitespace-nowrap text-ink/70">Careers</a>
+      <a href="about.html" class="whitespace-nowrap text-gold">About</a>
       <a href="contact.html" class="whitespace-nowrap text-gold">Contact</a>
     </nav>
   </header>
 
   <main>
-    <section class="relative overflow-hidden border-b border-rule bg-paper-2">
-      <!-- Concentric arcs, not the homepage's solid sun disk: the same warm light,
-           a different instrument. Blue-black panels read as a different brand. -->
-      <svg class="pointer-events-none absolute -right-40 -top-56 h-[44rem] w-[44rem] opacity-70"
-           viewBox="0 0 400 400" fill="none" aria-hidden="true">
-        <defs>
-          <radialGradient id="ab-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#0888c5" stop-opacity="0.20" />
-            <stop offset="60%" stop-color="#0888c5" stop-opacity="0.05" />
-            <stop offset="100%" stop-color="#0888c5" stop-opacity="0" />
-          </radialGradient>
-        </defs>
-        <circle cx="200" cy="200" r="200" fill="url(#ab-glow)" />
-        <circle cx="200" cy="200" r="70" stroke="#0888c5" stroke-opacity="0.35" />
-        <circle cx="200" cy="200" r="110" stroke="#0888c5" stroke-opacity="0.26" />
-        <circle cx="200" cy="200" r="152" stroke="#0888c5" stroke-opacity="0.18" />
-        <circle cx="200" cy="200" r="196" stroke="#0888c5" stroke-opacity="0.12" />
-        <circle cx="200" cy="200" r="7" fill="#c48a5a" />
-      </svg>
-      <span class="pointer-events-none absolute inset-x-0 top-[78%] h-px
-                   bg-gradient-to-r from-transparent via-gold/50 to-transparent" aria-hidden="true"></span>
+    <header class="relative overflow-hidden border-b" style="border-color:#0888c52e;background:linear-gradient(140deg,#0888c512,#0888c504)">
+      <span class="pointer-events-none absolute -right-32 -top-40 h-[34rem] w-[34rem] rounded-full"
+             style="background:radial-gradient(circle,#0888c526,transparent 70%)" aria-hidden="true"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16">
+        
+        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]" style="color:#0888c5">About Edge Comm-Tech</p>
+        <h1 class="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]" style="--d:.06s">Engineering technology, enabling progress</h1>
+        <p class="eg-rise mt-5 max-w-2xl text-lg text-ink/75" style="--d:.14s">Edge Comm-Tech is Ethiopia's trusted end-to-end technology solutions and systems-integration partner, delivering secure, scalable, intelligent, and future-ready solutions across Ethiopia and beyond.</p>
+        
+        <div class="eg-rise mt-8 flex flex-wrap gap-3" style="--d:.24s">
+          <a href="solutions.html" class="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">Explore our solutions</a>
+          <a href="contact.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Talk to our experts</a>
+        </div>
+      </div>
+    </header>
 
-      <div class="relative mx-auto max-w-6xl px-6 py-28">
-        <p class="eg-rise font-mono text-[11px] uppercase tracking-[0.28em] text-gold">The company</p>
-        <h1 class="eg-rise mt-4 max-w-4xl font-display text-[clamp(2.2rem,5.5vw,4rem)] leading-[1.0]" style="--d:.06s">
-          An ICT systems integrator for the institutions that
-          <span class="text-gold">cannot afford to be offline</span>
-        </h1>
-        <p class="eg-rise mt-8 max-w-2xl text-lg leading-relaxed text-ink/75" style="--d:.14s">
-          Edge designs, builds and runs communication and IT infrastructure from an office in
-          Bole, Addis Ababa. Universities, hospitals and enterprises across Ethiopia, delivered
-          by certified engineers who stay with a system after it is commissioned.
-        </p>
-        <dl class="eg-rise mt-10 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-4" style="--d:.22s">
-          <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold">9</dt>
-            <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">Services</dd></div>
-          <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold">8</dt>
-            <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">Partners</dd></div>
-          <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold">5</dt>
-            <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">Named clients</dd></div>
-          <div class="bg-paper-2 px-5 py-5"><dt class="font-display text-2xl text-gold"><span class="ph">40</span></dt>
-            <dd class="mt-1 font-mono text-[9px] uppercase tracking-widest text-steel">People</dd></div>
+    <section class="mx-auto max-w-6xl px-6 py-20">
+      <div class="grid gap-12 lg:grid-cols-[1.15fr_1fr]">
+        <div>
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Who we are</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Local expertise connected to global technology</h2>
+      
+          <p class="mt-6 leading-relaxed text-ink/75">
+            Since 2018, we have helped financial institutions, government organizations, educational institutions,
+            and enterprises modernize infrastructure, secure operations, strengthen resilience, automate services,
+            and create sustainable foundations for digital growth.
+          </p>
+          <p class="mt-4 leading-relaxed text-ink/75">
+            We bring together professional expertise, engineering capability, strategic consulting, project
+            management, and technologies from respected global vendors and original equipment manufacturers.
+            This combination allows us to address complex organizational requirements through solutions designed
+            for local operating conditions and aligned with international standards.
+          </p>
+          <p class="mt-4 leading-relaxed text-ink/75">
+            From assessment and architecture design to procurement, implementation, integration, testing,
+            training, support, and continuous improvement, we provide one accountable partner throughout the
+            solution lifecycle.
+          </p>
+        </div>
+        <dl class="grid content-start gap-px self-start overflow-hidden rounded-2xl bg-rule sm:grid-cols-2">
+          <div class="bg-paper-2 px-6 py-6">
+            <dt class="font-display text-3xl leading-none text-gold">8+</dt>
+            <dd class="mt-2 text-xs leading-snug text-ink/70">years of technology delivery and trusted execution</dd>
+          </div>
+          <div class="bg-paper-2 px-6 py-6">
+            <dt class="font-display text-3xl leading-none text-gold">67+</dt>
+            <dd class="mt-2 text-xs leading-snug text-ink/70">projects executed and delivered across critical sectors</dd>
+          </div>
+          <div class="bg-paper-2 px-6 py-6">
+            <dt class="font-display text-3xl leading-none text-gold">40+</dt>
+            <dd class="mt-2 text-xs leading-snug text-ink/70">partnerships with global vendors and original equipment manufacturers</dd>
+          </div>
+          <div class="bg-paper-2 px-6 py-6">
+            <dt class="font-display text-3xl leading-none text-gold">100%</dt>
+            <dd class="mt-2 text-xs leading-snug text-ink/70">completion against agreed project scope</dd>
+          </div>
         </dl>
       </div>
     </section>
 
-    <section class="border-b border-rule">
+    <!-- The journey ------------------------------------------------------- -->
+    <section class="border-y border-rule bg-paper-2/40">
       <div class="mx-auto max-w-6xl px-6 py-20">
-        <div class="grid gap-5 md:grid-cols-2">
-          <div class="eg-inview overflow-hidden rounded-3xl p-8 text-paper"
-               style="background:linear-gradient(135deg,#056a9a,#0888c5 70%)">
-            <p class="font-mono text-[10px] uppercase tracking-widest text-paper/70">Mission</p>
-            <p class="mt-4 font-display text-[clamp(1.15rem,1.9vw,1.6rem)] leading-snug">To design, build and keep running the communication and IT infrastructure that Ethiopia's universities, hospitals and enterprises depend on — to international standards, and with the same team from the first assessment to the after-sales contract.</p>
-          </div>
-          <div class="eg-inview overflow-hidden rounded-3xl border border-rule bg-paper-2 p-8">
-            <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">Vision</p>
-            <p class="mt-4 font-display text-[clamp(1.15rem,1.9vw,1.6rem)] leading-snug">That an institution in Ethiopia should never have to choose between infrastructure it can trust and infrastructure it can support locally.</p>
-          </div>
-        </div>
-
-        <p class="mt-16 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Core values</p>
-        <h2 class="mt-2 font-display text-3xl md:text-4xl">What we hold to</h2>
-        <ol class="mt-8 grid gap-4 md:grid-cols-2">
-          <li class="eg-inview rounded-2xl bg-paper-2 p-6 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)]">
-            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">01</p>
-            <h3 class="mt-2 font-display text-xl">Advise before we sell</h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink/75">The right recommendation is sometimes a smaller one, or a platform we do not carry. We say so, because the alternative is a system nobody can afford to run.</p>
-          </li><li class="eg-inview rounded-2xl bg-paper-2 p-6 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)]">
-            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">02</p>
-            <h3 class="mt-2 font-display text-xl">One team, end to end</h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink/75">The engineers who assess the estate design the build, commission it, and are still reachable afterwards. Most failures we are called to fix happen at the seam between two suppliers.</p>
-          </li><li class="eg-inview rounded-2xl bg-paper-2 p-6 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)]">
-            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">03</p>
-            <h3 class="mt-2 font-display text-xl">Built to standards, not to fit</h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink/75">Tier-rated rooms, documented addressing, labelled cabling, tested restores. The parts nobody sees are the parts that decide whether it lasts.</p>
-          </li><li class="eg-inview rounded-2xl bg-paper-2 p-6 shadow-[0_16px_36px_-32px_rgb(28_36_48/0.6)]">
-            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">04</p>
-            <h3 class="mt-2 font-display text-xl">Answerable after handover</h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink/75">An engineer replies, not a sales queue. The contract that builds a system is the contract that keeps it running.</p>
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Our journey</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">From a focused technology company to an integrated solutions partner</h2>
+      <p class="mt-4 max-w-2xl text-ink/75">Edge Comm-Tech was established to help organizations access, integrate, and sustain world-class technology through dependable local expertise. The milestones below reflect continuous capability development and sector expansion.</p>
+        <ol class="relative mt-12 border-l border-rule pl-8">
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold/40"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">March 2018</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Company established in Addis Ababa, Ethiopia.</p>
+          </li>
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold/40"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">June 2018</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Delivered the first major technology project and entered the cybersecurity-solutions market.</p>
+          </li>
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold/40"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">December 2018</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Completed the first university-sector project.</p>
+          </li>
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold/40"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">January 2019</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Entered financial services through the first banking technology project.</p>
+          </li>
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold/40"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">February 2019</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Delivered the first smart-classroom project.</p>
+          </li>
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold/40"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">January 2020</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Entered datacenter solutions, expanding across facilities, computing, storage, power continuity, and environmental systems.</p>
+          </li>
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold/40"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">May 2021</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Introduced power and generator solutions for operational continuity and mission-critical systems.</p>
+          </li>
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold/40"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">June 2024</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Expanded into broadcast and satellite solutions.</p>
+          </li>
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold/40"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">May 2025</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Expanded into enterprise software, automation, digital platforms, analytics, AI knowledge assistants, private RAG, intelligent voice automation, education AI, local-language AI, and industry-specific agentic AI.</p>
+          </li>
+          <li class="eg-inview relative pb-9 last:pb-0">
+            <span class="absolute -left-[2.3rem] top-1 grid h-4 w-4 place-items-center rounded-full border-2 border-paper bg-gold"></span>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Today</p>
+            <p class="mt-1.5 max-w-2xl leading-relaxed text-ink/80">Operates as an end-to-end systems-integration partner spanning the network edge, core, cloud, intelligent digital platforms, physical infrastructure, and power.</p>
           </li>
         </ol>
       </div>
     </section>
 
-    <section class="mx-auto max-w-6xl px-6 py-24">
-      <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">How we work</p>
-      <ol class="relative mt-14 space-y-20 pl-8 md:pl-0">
-        <span class="absolute left-0 top-0 h-full w-px bg-gradient-to-b from-transparent via-gold to-transparent md:left-1/2"></span>
-        
-      <li class="relative md:grid md:grid-cols-2 md:gap-12">
-        <span class="absolute left-[-2.15rem] top-2 h-3 w-3 rounded-full bg-gold ring-4 ring-paper md:left-1/2 md:-translate-x-1/2"></span>
-        <div class="md:text-right">
-          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">Station 1</p>
-          <h3 class="mt-2 font-display text-3xl">Advise</h3>
-          <p class="mt-3 text-sm leading-relaxed text-ink/75 md:ml-auto max-w-sm">We start from what you actually have and what it costs you to run it, then say plainly what should change and in what order.</p>
-        </div>
-      </li>
-      <li class="relative md:grid md:grid-cols-2 md:gap-12">
-        <span class="absolute left-[-2.15rem] top-2 h-3 w-3 rounded-full bg-gold ring-4 ring-paper md:left-1/2 md:-translate-x-1/2"></span>
-        <div class="md:col-start-2">
-          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">Station 2</p>
-          <h3 class="mt-2 font-display text-3xl">Implement</h3>
-          <p class="mt-3 text-sm leading-relaxed text-ink/75  max-w-sm">Certified network and system engineers do the design, the configuration and the commissioning — to international standards, not to whatever fits.</p>
-        </div>
-      </li>
-      <li class="relative md:grid md:grid-cols-2 md:gap-12">
-        <span class="absolute left-[-2.15rem] top-2 h-3 w-3 rounded-full bg-gold ring-4 ring-paper md:left-1/2 md:-translate-x-1/2"></span>
-        <div class="md:text-right">
-          <p class="font-mono text-[10px] uppercase tracking-widest text-lamp">Station 3</p>
-          <h3 class="mt-2 font-display text-3xl">Manage</h3>
-          <p class="mt-3 text-sm leading-relaxed text-ink/75 md:ml-auto max-w-sm">Continuous follow-up and optimised after-sales service. The contract that builds it is the contract that keeps it running.</p>
-        </div>
-      </li>
-      </ol>
-    </section>
-
-    <section class="border-t border-rule bg-paper-2">
-      <div class="mx-auto max-w-6xl px-6 py-20">
-        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Our people</p>
-        <h2 class="mt-2 font-display text-4xl md:text-5xl">Certified engineers, not resellers</h2>
-        <p class="mt-5 max-w-2xl text-ink/75">
-          Four disciplines, working on the same estate. Headcount is
-          <span class="ph">40</span>, for Edge to confirm.
-        </p>
-        <dl class="mt-12 divide-y divide-rule border-y border-rule">
-          
-          <div class="grid gap-2 py-6 md:grid-cols-[16rem_1fr] md:gap-10">
-            <dt class="font-display text-xl">Network engineers</dt>
-            <dd class="text-sm leading-relaxed text-ink/75">Certified across Cisco, Huawei and Dell for campus, wireless and wide-area design.</dd>
-          </div>
-          <div class="grid gap-2 py-6 md:grid-cols-[16rem_1fr] md:gap-10">
-            <dt class="font-display text-xl">Security professionals</dt>
-            <dd class="text-sm leading-relaxed text-ink/75">The staff behind the NOC and SOC portfolio, from perimeter policy through to incident response.</dd>
-          </div>
-          <div class="grid gap-2 py-6 md:grid-cols-[16rem_1fr] md:gap-10">
-            <dt class="font-display text-xl">Facilities engineers</dt>
-            <dd class="text-sm leading-relaxed text-ink/75">Power, cooling, containment and structured cabling for Tier-rated rooms.</dd>
-          </div>
-          <div class="grid gap-2 py-6 md:grid-cols-[16rem_1fr] md:gap-10">
-            <dt class="font-display text-xl">Support engineers</dt>
-            <dd class="text-sm leading-relaxed text-ink/75">Remote and on-site helpdesk across servers, software and systems.</dd>
-          </div>
-        </dl>
+    <!-- Mission and vision ------------------------------------------------- -->
+    <section class="mx-auto max-w-6xl px-6 py-20">
+      <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Our direction</p>
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <article class="eg-inview rounded-3xl p-8" style="background:#0888c50e">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-gold">Mission</p>
+          <h2 class="mt-3 font-display text-[clamp(1.5rem,2.6vw,2.1rem)] leading-tight">Accelerate Africa's Digital Transformation.</h2>
+          <p class="mt-4 leading-relaxed text-ink/75">We help organizations become more connected, secure, resilient, intelligent, efficient, and prepared for the future.</p>
+        </article>
+        <article class="eg-inview rounded-3xl p-8" style="background:#056a9a0e">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-gold-2">Vision</p>
+          <h2 class="mt-3 font-display text-[clamp(1.5rem,2.6vw,2.1rem)] leading-tight">Become the most trusted partner for organizations by delivering cutting-edge and scalable technology solutions that empower progress.</h2>
+          <p class="mt-4 leading-relaxed text-ink/75">We aim to earn long-term trust through engineering excellence, dependable execution, responsible innovation, and measurable client value.</p>
+        </article>
       </div>
     </section>
 
-    <section class="mx-auto max-w-6xl px-6 py-20">
-      <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Executive management</p>
-      <h2 class="mt-2 font-display text-4xl">Who runs Edge</h2>
-      <ul class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-        
-        <li>
-          <div class="aspect-[4/5] rounded-2xl border border-rule bg-paper-2"></div>
-          <p class="mt-4 font-display text-lg">Name to confirm</p>
-          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Managing Director</p>
-        </li>
-        <li>
-          <div class="aspect-[4/5] rounded-2xl border border-rule bg-paper-2"></div>
-          <p class="mt-4 font-display text-lg">Name to confirm</p>
-          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Technical Director</p>
-        </li>
-        <li>
-          <div class="aspect-[4/5] rounded-2xl border border-rule bg-paper-2"></div>
-          <p class="mt-4 font-display text-lg">Name to confirm</p>
-          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Operations Manager</p>
-        </li>
-        <li>
-          <div class="aspect-[4/5] rounded-2xl border border-rule bg-paper-2"></div>
-          <p class="mt-4 font-display text-lg">Name to confirm</p>
-          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">Head of Service Delivery</p>
-        </li>
-      </ul>
-    </section>
-
-    <section id="clients" class="border-t border-rule">
+    <!-- Values ------------------------------------------------------------- -->
+    <section class="border-t border-rule">
       <div class="mx-auto max-w-6xl px-6 py-20">
-        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Who we serve</p>
-        <h2 class="mt-2 max-w-3xl font-display text-4xl md:text-5xl">Where an outage stops teaching or treatment</h2>
-        <p class="mt-5 max-w-2xl text-ink/75">
-          Higher education and public health are Edge's proven base: campuses where four hundred
-          devices associate in ninety seconds, and hospitals where the network is clinical
-          infrastructure. The same standards carry into enterprise and industrial sites.
-        </p>
-
-        <div class="mt-10 grid gap-3 sm:grid-cols-3">
-          <div class="eg-inview rounded-2xl bg-paper-2 p-6">
-            <span class="block h-1 w-10 rounded-full" style="background:#0888c5"></span>
-            <h3 class="mt-4 font-display text-xl">Higher education</h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink/75">Campus networks, datacenter rooms, structured cabling and access control across university estates.</p>
-          </div><div class="eg-inview rounded-2xl bg-paper-2 p-6">
-            <span class="block h-1 w-10 rounded-full" style="background:#c48a5a"></span>
-            <h3 class="mt-4 font-display text-xl">Public health</h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink/75">Hospitals where surveillance, telephony and the network are treated as clinical infrastructure.</p>
-          </div><div class="eg-inview rounded-2xl bg-paper-2 p-6">
-            <span class="block h-1 w-10 rounded-full" style="background:#056a9a"></span>
-            <h3 class="mt-4 font-display text-xl">Enterprise and industry</h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink/75">Offices, factories and residential compounds where the network and physical security are one system.</p>
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">What guides us</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Values that shape every decision and delivery</h2>
+      
+        <div class="mt-10 grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">01</span>
+            <h3 class="mt-1.5 font-display text-xl">Integrity</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">We act with honesty, transparency, and ethical conviction in every client, partner, and team relationship.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">02</span>
+            <h3 class="mt-1.5 font-display text-xl">Reliability</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">We provide dependable solutions and follow through on our responsibilities from commitment to completion.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">03</span>
+            <h3 class="mt-1.5 font-display text-xl">Passion</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">We approach every challenge with energy, curiosity, innovation, and a determination to achieve excellence.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">04</span>
+            <h3 class="mt-1.5 font-display text-xl">Accountability</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">We take ownership of decisions and outcomes, celebrate achievements, and learn continuously from experience.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">05</span>
+            <h3 class="mt-1.5 font-display text-xl">Team Unity</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">We collaborate across professions, departments, organizations, and borders to achieve stronger results.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">06</span>
+            <h3 class="mt-1.5 font-display text-xl">Adaptability</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">We respond to change with agility and transform emerging challenges into opportunities for improvement.</p>
+          </div>
+          <div class="eg-inview border-t border-rule pt-5">
+            <span class="font-mono text-[10px] text-gold">07</span>
+            <h3 class="mt-1.5 font-display text-xl">Sustainability</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink/70">We pursue solutions that create lasting value for organizations, communities, people, and the environment.</p>
           </div>
         </div>
+      </div>
+    </section>
 
-        <p class="mt-12 font-mono text-[10px] uppercase tracking-widest text-steel">Named publicly</p>
-        <ul class="mt-4 flex flex-wrap gap-2">
-          <li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Bonga University</li><li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Bahir Dar University</li><li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Haramaya University</li><li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Mizan-Tepi University</li><li class="rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">Yekatit 12 Hospital</li>
+    <!-- Capabilities --------------------------------------------------------- -->
+    <section class="border-t border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Our capabilities</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Integrated solutions across the technology lifecycle</h2>
+      <p class="mt-4 max-w-2xl text-ink/75">Modern environments depend on successful integration of connectivity, computing, data, security, software, artificial intelligence, facilities, and power. Edge Comm-Tech brings these capabilities together within one coordinated delivery framework.</p>
+        <ul class="mt-10 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+          <li><a href="solution-software-ai-digital.html" class="eg-inview block h-full rounded-2xl bg-paper-2 p-5 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">01</span>
+            <span class="mt-1.5 block font-display text-lg leading-snug">Software, AI &amp; Digital</span>
+          </a></li>
+          <li><a href="solution-enterprise-network.html" class="eg-inview block h-full rounded-2xl bg-paper-2 p-5 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#2ba8de">02</span>
+            <span class="mt-1.5 block font-display text-lg leading-snug">Enterprise Network</span>
+          </a></li>
+          <li><a href="solution-system-cloud.html" class="eg-inview block h-full rounded-2xl bg-paper-2 p-5 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#056a9a">03</span>
+            <span class="mt-1.5 block font-display text-lg leading-snug">System &amp; Cloud</span>
+          </a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="eg-inview block h-full rounded-2xl bg-paper-2 p-5 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#0b6fa8">04</span>
+            <span class="mt-1.5 block font-display text-lg leading-snug">Datacenter &amp; Infrastructure</span>
+          </a></li>
+          <li><a href="solution-cybersecurity.html" class="eg-inview block h-full rounded-2xl bg-paper-2 p-5 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#1c6ea4">05</span>
+            <span class="mt-1.5 block font-display text-lg leading-snug">Cybersecurity</span>
+          </a></li>
+          <li><a href="solution-power-technology.html" class="eg-inview block h-full rounded-2xl bg-paper-2 p-5 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#c48a5a">06</span>
+            <span class="mt-1.5 block font-display text-lg leading-snug">Power Technology</span>
+          </a></li>
+          <li><a href="solution-broadcast-satellite.html" class="eg-inview block h-full rounded-2xl bg-paper-2 p-5 transition hover:-translate-y-1">
+            <span class="font-mono text-[10px] uppercase tracking-widest" style="color:#3d8fb8">07</span>
+            <span class="mt-1.5 block font-display text-lg leading-snug">Broadcast &amp; Satellite</span>
+          </a></li>
+          <li><a href="services.html" class="eg-inview block h-full rounded-2xl border border-dashed border-gold/40 p-5 transition hover:-translate-y-1 hover:border-gold">
+            <span class="font-mono text-[10px] uppercase tracking-widest text-gold">+06</span>
+            <span class="mt-1.5 block font-display text-lg leading-snug">Professional services</span>
+          </a></li>
         </ul>
+      </div>
+    </section>
+
+    <!-- Sector experience and delivery ------------------------------------------ -->
+    <section class="mx-auto max-w-6xl px-6 py-20">
+      <div class="grid gap-14 lg:grid-cols-2">
+        <div>
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Sector experience</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Technology aligned with institutional priorities</h2>
+      
+          <dl class="mt-7 divide-y divide-rule border-y border-rule">
+            <div class="eg-inview py-5">
+              <dt class="font-display text-lg">Financial Services</dt>
+              <dd class="mt-1.5 text-sm leading-relaxed text-ink/70">Secure banking infrastructure, resilient datacenters, enterprise compute and storage, databases, digital platforms, AI-enabled service automation, cybersecurity, business continuity, and payment solutions.</dd>
+            </div>
+            <div class="eg-inview py-5">
+              <dt class="font-display text-lg">Education</dt>
+              <dd class="mt-1.5 text-sm leading-relaxed text-ink/70">Smart classrooms, AI learning resources, campus networks, VDI, interactive displays, collaboration, computing infrastructure, surveillance, and smart meeting facilities.</dd>
+            </div>
+            <div class="eg-inview py-5">
+              <dt class="font-display text-lg">Government &amp; Public Sector</dt>
+              <dd class="mt-1.5 text-sm leading-relaxed text-ink/70">Secure digital infrastructure, modernization platforms, institutional knowledge assistants, datacenters, enterprise systems, connectivity, cybersecurity, collaboration, and citizen-service technologies.</dd>
+            </div>
+            <div class="eg-inview py-5">
+              <dt class="font-display text-lg">Enterprise &amp; Industry</dt>
+              <dd class="mt-1.5 text-sm leading-relaxed text-ink/70">Business applications, cloud modernization, networks, cybersecurity, intelligent automation, agentic AI, power continuity, collaboration, and data-driven operational tools.</dd>
+            </div>
+          </dl>
+        </div>
+        <div>
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">How we work</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">One accountable partner from strategy to support</h2>
+      
+          <ol class="mt-7 space-y-2.5">
+            <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4">
+              <span class="pt-0.5 font-mono text-[10px] text-gold">01</span>
+              <span><span class="block font-display text-base">Discover</span>
+              <span class="mt-1 block text-sm text-ink/70">Assess business priorities, existing environments, risks, technical requirements, and expected outcomes.</span></span>
+            </li>
+            <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4">
+              <span class="pt-0.5 font-mono text-[10px] text-gold">02</span>
+              <span><span class="block font-display text-base">Design</span>
+              <span class="mt-1 block text-sm text-ink/70">Develop an integrated, scalable, secure, and standards-aligned solution architecture.</span></span>
+            </li>
+            <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4">
+              <span class="pt-0.5 font-mono text-[10px] text-gold">03</span>
+              <span><span class="block font-display text-base">Deliver</span>
+              <span class="mt-1 block text-sm text-ink/70">Manage sourcing, logistics, installation, configuration, integration, testing, documentation, and stakeholder coordination.</span></span>
+            </li>
+            <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4">
+              <span class="pt-0.5 font-mono text-[10px] text-gold">04</span>
+              <span><span class="block font-display text-base">Enable</span>
+              <span class="mt-1 block text-sm text-ink/70">Provide training, knowledge transfer, handover documentation, and operational guidance.</span></span>
+            </li>
+            <li class="eg-inview flex gap-4 rounded-2xl bg-paper-2 px-5 py-4">
+              <span class="pt-0.5 font-mono text-[10px] text-gold">05</span>
+              <span><span class="block font-display text-base">Support &amp; Optimize</span>
+              <span class="mt-1 block text-sm text-ink/70">Maintain availability, strengthen performance, manage change, and prepare the environment for future growth.</span></span>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leadership ------------------------------------------------------------ -->
+    <section class="border-t border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-20">
+        
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Professional capability</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Specialized teams, unified execution</h2>
+      <p class="mt-4 max-w-2xl text-ink/75">Our organizational model connects strategy, engineering, presales, project management, supply chain, finance, human resources, marketing, and business development. Technical capabilities are supported by professionals with technology, project, and vendor certifications.</p>
+        <div class="mt-9">
+          <p class="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-steel">
+            Executive management <span class="inline-flex items-center gap-1.5 rounded-full border border-lamp/40 bg-lamp/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-lamp">
+    <svg viewBox="0 0 8 8" class="h-1.5 w-1.5" aria-hidden="true"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>Biographies and portraits pending from Edge</span>
+          </p>
+          <ul class="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-5">
+            <li class="eg-inview rounded-2xl bg-paper-2 p-5">
+              <span class="grid h-11 w-11 place-items-center rounded-full bg-gold/10 font-display text-gold" aria-hidden="true">&mdash;</span>
+              <span class="mt-3 block font-display text-base leading-snug">Founder and Chief Executive Officer</span>
+              <span class="mt-1 block text-xs text-steel">Name to be confirmed</span>
+            </li>
+            <li class="eg-inview rounded-2xl bg-paper-2 p-5">
+              <span class="grid h-11 w-11 place-items-center rounded-full bg-gold/10 font-display text-gold" aria-hidden="true">&mdash;</span>
+              <span class="mt-3 block font-display text-base leading-snug">Chief Strategy Officer</span>
+              <span class="mt-1 block text-xs text-steel">Name to be confirmed</span>
+            </li>
+            <li class="eg-inview rounded-2xl bg-paper-2 p-5">
+              <span class="grid h-11 w-11 place-items-center rounded-full bg-gold/10 font-display text-gold" aria-hidden="true">&mdash;</span>
+              <span class="mt-3 block font-display text-base leading-snug">Chief Technology Officer</span>
+              <span class="mt-1 block text-xs text-steel">Name to be confirmed</span>
+            </li>
+            <li class="eg-inview rounded-2xl bg-paper-2 p-5">
+              <span class="grid h-11 w-11 place-items-center rounded-full bg-gold/10 font-display text-gold" aria-hidden="true">&mdash;</span>
+              <span class="mt-3 block font-display text-base leading-snug">Chief Operating Officer</span>
+              <span class="mt-1 block text-xs text-steel">Name to be confirmed</span>
+            </li>
+            <li class="eg-inview rounded-2xl bg-paper-2 p-5">
+              <span class="grid h-11 w-11 place-items-center rounded-full bg-gold/10 font-display text-gold" aria-hidden="true">&mdash;</span>
+              <span class="mt-3 block font-display text-base leading-snug">Chief Financial Officer</span>
+              <span class="mt-1 block text-xs text-steel">Name to be confirmed</span>
+            </li>
+          </ul>
+          <p class="mt-4 text-xs text-steel">
+            The content master lists the five executive profiles as Pending. Roles are shown; names, biographies
+            and portraits are added when Edge supplies them.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sustainability --------------------------------------------------------- -->
+    <section class="mx-auto max-w-6xl px-6 py-20">
+      
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Sustainable progress</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Building technology with long-term purpose</h2>
+      <p class="mt-4 max-w-2xl text-ink/75">Digital transformation should improve organizational performance while contributing positively to communities and the environment. We consider efficiency, durability, responsible sourcing, and lifecycle value in the solutions we recommend and deliver.</p>
+      <div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <article class="eg-inview rounded-2xl border border-rule p-6">
+          <h3 class="font-display text-lg">Solar and Hybrid Energy</h3>
+          <p class="mt-2 text-sm leading-relaxed text-ink/70">Supporting cleaner and more flexible power options for technology environments and institutional operations.</p>
+        </article>
+        <article class="eg-inview rounded-2xl border border-rule p-6">
+          <h3 class="font-display text-lg">Energy-Efficient Datacenters</h3>
+          <p class="mt-2 text-sm leading-relaxed text-ink/70">Promoting efficient power, cooling, containment, monitoring, and infrastructure-management practices.</p>
+        </article>
+        <article class="eg-inview rounded-2xl border border-rule p-6">
+          <h3 class="font-display text-lg">Electronic-Waste Management</h3>
+          <p class="mt-2 text-sm leading-relaxed text-ink/70">Encouraging responsible handling, reuse, recycling, and disposal of end-of-life equipment.</p>
+        </article>
+        <article class="eg-inview rounded-2xl border border-rule p-6">
+          <h3 class="font-display text-lg">Environmentally Responsible Procurement</h3>
+          <p class="mt-2 text-sm leading-relaxed text-ink/70">Considering product efficiency, durability, maintainability, packaging, transportation, and lifecycle impact.</p>
+        </article>
+        <article class="eg-inview rounded-2xl border border-rule p-6">
+          <h3 class="font-display text-lg">Community and Educational Initiatives</h3>
+          <p class="mt-2 text-sm leading-relaxed text-ink/70">Supporting skills development, internships, technology exposure, and learning opportunities for Ethiopia's future technology workforce.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Clients and home ------------------------------------------------------- -->
+    <section id="clients" class="border-t border-rule bg-paper-2/40">
+      <div class="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-[1.1fr_1fr]">
+        <div>
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Trusted experience</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Supporting institutions that drive national progress</h2>
+      
+          <p class="mt-6 leading-relaxed text-ink/75">
+            Through more than 67 executed and delivered projects, we have developed practical experience managing
+            complex requirements, global supply chains, multidisciplinary implementation, institutional
+            stakeholders, documentation, training, and operational handover.
+          </p>
+          <ul class="mt-6 flex flex-wrap gap-2">
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">Bahir Dar University</li>
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">Arba Minch University</li>
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">Ministry of Education</li>
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">Gadaa Bank</li>
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">National Bank of Ethiopia</li>
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">Siinqee Bank</li>
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">Zemen Bank</li>
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">Ethiopian Securities Exchange</li>
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">Ministry of Urban and Infrastructure</li>
+            <li class="rounded-full bg-paper-2 px-3.5 py-1.5 text-xs text-ink/75">Ministry of Health</li>
+          </ul>
+          <a href="clients.html" class="mt-7 inline-block rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold">Meet our clients</a>
+        </div>
+        <div>
+          
+      <p class="font-mono text-[10px] uppercase tracking-widest" style="color:#0888c5">Our home</p>
+      <h2 class="mt-3 max-w-3xl font-display text-[clamp(1.6rem,3vw,2.5rem)] leading-tight">Headquartered in Addis Ababa</h2>
+      
+          <address class="mt-6 not-italic leading-relaxed text-ink/80">
+            Edge Communication Technologies PLC<br>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia
+          </address>
+          <p class="mt-4 text-sm leading-relaxed text-ink/70">
+            From our headquarters in Addis Ababa, our teams coordinate consulting, engineering, procurement,
+            project delivery, client support, and partnership activities across Ethiopia and beyond.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="contact.html" class="rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5">Contact us</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=BMA+Plaza+Gerji+Addis+Ababa" class="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold">Get directions</a>
+          </div>
+          <p class="mt-6 rounded-2xl bg-paper-2 px-5 py-4 text-xs leading-relaxed text-steel">
+            Edge Communication Technologies PLC operates with the applicable professional licences and government
+            registrations required for its business activities. Company-held certifications are distinguished from
+            certifications held by individual employees.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="relative overflow-hidden border-t border-rule">
+      <span class="pointer-events-none absolute inset-0" aria-hidden="true"
+            style="background:linear-gradient(120deg,#0888c516,transparent 60%)"></span>
+      <div class="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <h2 class="eg-inview max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.8rem)] leading-tight">Let's build the next stage of your digital transformation</h2>
+        <p class="eg-inview mt-4 max-w-2xl text-ink/75">Whether you are modernizing critical infrastructure, strengthening cybersecurity, introducing AI and automation, improving business continuity, enabling intelligent learning, digitizing operations, or planning a new technology investment.</p>
+        
+  <div class="eg-rise mt-8 flex flex-wrap items-center gap-3" style="--d:.24s">
+    <a href="contact.html" class="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+       style="background:#0888c5">Talk to our experts</a>
+    <a href="solutions.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">Explore our solutions</a>
+  </div>
       </div>
     </section>
   </main>
@@ -341,43 +586,63 @@
   <footer class="border-t border-rule bg-paper-2">
     <div class="mx-auto grid max-w-6xl gap-10 px-6 py-16 md:grid-cols-2 lg:grid-cols-5">
       <div class="lg:col-span-2">
-        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176" class="h-16 w-auto" decoding="async">
-        
-        <p class="mt-3 max-w-sm text-sm text-ink/70">An ICT systems integration company in Addis Ababa, delivering datacenter, network, security, communications and support to the institutions that depend on them.</p>
-        <p class="mt-3 text-sm font-semibold text-gold">Built to international standards.</p>
+        <img src="edge-logo.png" alt="Edge Communication Technologies" width="391" height="176"
+             class="h-16 w-auto" decoding="async">
+        <p class="mt-3 max-w-sm text-sm text-ink/70">
+          An integrated technology company in Addis Ababa, delivering the infrastructure, security, software and
+          support that Ethiopian banks, universities and public institutions depend on.
+        </p>
+        <p class="mt-4 flex flex-wrap gap-2">
+          <a href="https://wa.me/251955695565" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">WhatsApp</a>
+          <a href="subscribe.html" class="rounded-full border border-rule px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink/70 transition hover:border-gold hover:text-gold">Subscribe</a>
+        </p>
       </div>
+
       <div>
         <h4 class="font-display text-sm">Solutions</h4>
         <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
-          <li><a href="solutions.html">Datacenter Facility</a></li>
-          <li><a href="solutions.html">Networks (LAN/WLAN)</a></li>
-          <li><a href="solutions.html">Cybersecurity</a></li>
-          <li><a href="solutions.html">NOC and SOC services</a></li>
-          <li><a href="solutions.html">Unified Communications</a></li>
+          <li><a href="solution-software-ai-digital.html" class="hover:text-gold">Software, AI &amp; Digital</a></li>
+          <li><a href="solution-enterprise-network.html" class="hover:text-gold">Enterprise Network</a></li>
+          <li><a href="solution-system-cloud.html" class="hover:text-gold">System &amp; Cloud</a></li>
+          <li><a href="solution-datacenter-facility-it-infrastructure.html" class="hover:text-gold">Datacenter &amp; Infrastructure</a></li>
+          <li><a href="solution-cybersecurity.html" class="hover:text-gold">Cybersecurity</a></li>
+          <li><a href="solution-power-technology.html" class="hover:text-gold">Power Technology</a></li>
+          <li><a href="solution-broadcast-satellite.html" class="hover:text-gold">Broadcast &amp; Satellite</a></li>
+          <li><a href="services.html" class="hover:text-gold">Professional services</a></li>
         </ul>
       </div>
+
       <div>
         <h4 class="font-display text-sm">Company</h4>
         <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
-          <li><a href="about.html">About us</a></li>
-          <li><a href="partners.html">Partners</a></li>
-          <li><a href="about.html#clients">Our clients</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="projects.html" class="hover:text-gold">Projects</a></li>
+          <li><a href="clients.html" class="hover:text-gold">Clients</a></li>
+          <li><a href="partners.html" class="hover:text-gold">Partners</a></li>
+          <li><a href="resources.html" class="hover:text-gold">Resources</a></li>
+          <li><a href="blog.html" class="hover:text-gold">Blog</a></li>
+          <li><a href="careers.html" class="hover:text-gold">Careers</a></li>
+          <li><a href="about.html" class="hover:text-gold">About</a></li>
+          <li><a href="contact.html" class="hover:text-gold">Contact</a></li>
         </ul>
       </div>
+
       <div>
         <h4 class="font-display text-sm">Get in touch</h4>
         <ul class="mt-3 space-y-1.5 text-sm text-ink/70">
-          <li>Bole, Lubaba Building, 3rd Floor<br />Addis Ababa, Ethiopia</li>
-          <li><a href="mailto:info@edgecomm-tech.com">info@edgecomm-tech.com</a></li>
-          <li><a href="tel:+251922555055">+251 92 255 5055</a></li>
-          <li><a href="https://edgecomm-tech.com">edgecomm-tech.com</a></li>
+          <li>BMA Plaza, 9th Floor<br>Gerji Imperial, Bole Sub-City<br>Addis Ababa, Ethiopia</li>
+          <li><a href="mailto:sales@edgecomm-tech.com" class="hover:text-gold">sales@edgecomm-tech.com</a></li>
+          <li><a href="mailto:support@edgecomm-tech.com" class="hover:text-gold">support@edgecomm-tech.com</a></li>
+          <li><a href="mailto:hr@edgecomm-tech.com" class="hover:text-gold">hr@edgecomm-tech.com</a></li>
+          <li><a href="tel:+251955695565" class="hover:text-gold">+251 95 569 5565</a></li>
+          <li><a href="tel:+251911538809" class="hover:text-gold">+251 911 538 809</a></li>
         </ul>
       </div>
     </div>
+
     <div class="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
-      <p>© 2026 Edge Communication Technologies. Advise, implement, manage.</p>
-    </div>
+      <p>&copy; 2026 Edge Communication Technologies PLC. All rights reserved.</p>
+      <p class="text-ink/50">Design review build &mdash; content pending final approval.</p>
+    </div>
   </footer>
 </body>
 </html>

@@ -1,128 +1,149 @@
-import { PROJECTS } from "../content.mjs";
+import { PROJECTS, CLIENT_SECTORS, SOLUTIONS, IMPACT, ACCENT } from "../content.mjs";
+import { pageHead, sectionHead, closingCta, pending, esc } from "../ui.mjs";
 
 /*
- * Still a register — one project per full-width row — but each row now
- * carries a generated plate instead of reading as a table of text.
+ * Project index.
  *
- * The plates are drawn, not photographed: Edge has supplied no project
- * imagery, and a stock photo would be a lie about a real client's site. Each
- * is keyed off the project's own services, so the pattern differs per row
- * without anyone choosing it.
+ * Eight documented engagements, grouped by the same three sectors the clients
+ * page uses. No filter UI here -- eight records across three sectors read
+ * better as a grouped index, and the partners page is where filtering earns
+ * its keep.
+ *
+ * The 67+ figure and the eight detailed records are different claims and are
+ * presented as such: the counter says how many projects Edge has delivered,
+ * the index says which ones are documented for publication.
  */
 
-const SECTORS = [...new Set(PROJECTS.map((p) => p.sector))];
-const key = (s) => s.toLowerCase().replace(/[^a-z]+/g, "-");
+const SECTOR_OF = { Education: "education", Banking: "banking", Government: "government" };
+const short = (slug) => SOLUTIONS.find((s) => s.slug === slug)?.short ?? slug;
 
-const SECTOR_COLOUR = {
-  "higher-education": "#0888c5",
-  "public-health": "#c48a5a",
+/* One index row. The year is rendered as given -- one project's year is still
+   to be confirmed and says so rather than guessing. */
+const row = (p) => {
+  const c = ACCENT[p.solutions[0]];
+  const unknownYear = /confirm/i.test(p.year);
+  return `<li><a href="project-${p.slug}.html"
+          class="eg-inview group grid gap-x-10 gap-y-4 border-t border-rule py-9 lg:grid-cols-[13rem_1fr]">
+          <div class="shrink-0">
+            <span class="block font-mono text-[10px] uppercase tracking-widest" style="color:${c}">${esc(p.client)}</span>
+            <span class="mt-1.5 block text-xs text-steel">${unknownYear ? pending("Year to confirm") : esc(p.year)}</span>
+            <span class="mt-1 block text-xs text-steel">${esc(p.location)}</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-display text-[clamp(1.25rem,2.1vw,1.7rem)] leading-snug group-hover:text-gold">${esc(p.title)}</h3>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink/70">${esc(p.summary)}</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              ${p.solutions.map((s) => `<span class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest" style="background:${ACCENT[s]}16;color:${ACCENT[s]}">${esc(short(s))}</span>`).join("\n              ")}
+              ${p.tech.length ? `<span class="font-mono text-[9px] uppercase tracking-widest text-steel">${p.tech.map(esc).join(" &middot; ")}</span>` : ""}
+            </div>
+          </div>
+        </a></li>`;
 };
-const colour = (p) => SECTOR_COLOUR[key(p.sector)] ?? "#0888c5";
 
-/* A plate per project: concentric arcs over a tinted field, rotated by index
-   so no two rows look alike. */
-const plate = (p, i) => `
-        <span class="relative block h-24 w-full overflow-hidden rounded-2xl transition-transform duration-500 group-hover:scale-[1.04] md:h-20 md:w-36"
-              style="background:linear-gradient(135deg,${colour(p)}1f,${colour(p)}08)" aria-hidden="true">
-          <svg viewBox="0 0 160 90" class="absolute inset-0 h-full w-full" fill="none"
-               stroke="${colour(p)}" stroke-opacity="0.55" stroke-width="1.2">
-            <g transform="rotate(${i * 27} 80 45)">
-              <circle cx="${28 + i * 18}" cy="45" r="16" />
-              <circle cx="${28 + i * 18}" cy="45" r="30" stroke-opacity="0.3" />
-              <path d="M0 ${20 + i * 9}h160M0 ${64 - i * 6}h160" stroke-opacity="0.22" />
-            </g>
-          </svg>
-          <span class="absolute bottom-2 right-2.5 font-mono text-[9px] uppercase tracking-widest"
-                style="color:${colour(p)}">${String(i + 1).padStart(2, "0")}</span>
-        </span>`;
-
-const filterCss = `
-${["all", ...SECTORS.map(key)].map((k) => `#p-${k}:checked~.pbar label[for=p-${k}]`).join(",")}{background:#0888c5;color:#fff;border-color:#0888c5}
-${SECTORS.map((s) => `#p-${key(s)}:checked~.reg li:not(.k-${key(s)}){display:none}`).join("\n")}
-`;
+const hero = PROJECTS.find((p) => p.featured === 1) ?? PROJECTS[0];
 
 export default {
-  title: "Projects — Edge COMM-TECH",
-  desc: "Work Edge has delivered for Ethiopian institutions.",
+  title: "Technology Projects and Case Studies — Edge Comm-Tech",
+  desc: "Delivered technology projects across Ethiopian banks, universities and government institutions — smart classrooms, computing infrastructure, backup, CCTV, datacenter and power solutions.",
   body: `  <main>
-    <section class="relative overflow-hidden border-b border-rule bg-paper-2">
-      <span class="pointer-events-none absolute -left-32 -top-40 h-[34rem] w-[34rem] rounded-full"
-            style="background:radial-gradient(circle,#0888c51f,transparent 70%)" aria-hidden="true"></span>
-      <div class="relative mx-auto max-w-6xl px-6 pb-12 pt-16">
-        <p class="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">Projects</p>
-        <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
-            <h1 class="eg-rise mt-3 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.02]" style="--d:.06s">
-              Work delivered, <span class="text-gold">by sector</span>
-            </h1>
-            <p class="eg-rise mt-4 max-w-xl text-ink/75" style="--d:.12s">
-              Campus networks, datacenter rooms, cabling and physical security for
-              institutions across Ethiopia. Filter by sector, or open a project for the
-              scope and the technologies behind it.
-            </p>
-          </div>
+    ${pageHead({
+      eyebrow: "Projects",
+      title: "Delivered in environments that cannot afford downtime",
+      intro: "Edge Comm-Tech has executed and delivered more than 67 projects for banks, universities, ministries and major enterprises. The engagements documented below show how our solutions and services work in practice.",
+      accent: "#0b6fa8",
+      variant: "wash",
+      ctas: `<div class="eg-rise mt-8 flex flex-wrap gap-3" style="--d:.24s">
+          <a href="contact.html" class="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">Discuss a similar project</a>
+          <a href="clients.html" class="rounded-full border border-rule px-6 py-3 text-sm font-semibold transition hover:border-gold hover:text-gold">See who we work with</a>
+        </div>`,
+    })}
 
-        <dl class="eg-rise grid w-full grid-cols-3 gap-px overflow-hidden rounded-2xl bg-rule lg:w-[26rem]" style="--d:.2s">
-          <div class="bg-paper-2 px-5 py-6">
-            <dt class="font-display text-3xl text-gold">${PROJECTS.length}</dt>
-            <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Named engagements</dd>
-          </div>
-          <div class="bg-paper-2 px-5 py-6">
-            <dt class="font-display text-3xl text-gold">${SECTORS.length}</dt>
-            <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Sectors served</dd>
-          </div>
-          <div class="bg-paper-2 px-5 py-6">
-            <dt class="font-display text-3xl text-gold"><span class="ph">120</span></dt>
-            <dd class="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">Delivered overall</dd>
-          </div>
+    <!-- Counters, then the featured engagement pulled out as the one wide card
+         on the page. Everything after this is the grouped index. -->
+    <section class="border-b border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-12">
+        <dl class="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+          ${IMPACT.map(
+            (m) => `<div class="eg-inview">
+            <dt class="font-display text-[clamp(2rem,4vw,2.9rem)] leading-none text-gold">${esc(m.figure)}</dt>
+            <dd class="mt-2 font-mono text-[10px] uppercase tracking-widest text-steel">${esc(m.unit)}</dd>
+            <dd class="mt-1 text-[13px] leading-snug text-ink/65">${esc(m.line)}</dd>
+          </div>`,
+          ).join("\n          ")}
         </dl>
-        </div>
       </div>
     </section>
 
-    <div class="mx-auto max-w-6xl px-6 py-16">
-      <style>${filterCss}</style>
+    <section class="mx-auto max-w-6xl px-6 py-16">
+      ${sectionHead({ eyebrow: "Featured engagement", title: esc(hero.title), accent: ACCENT[hero.solutions[0]] })}
+      <a href="project-${hero.slug}.html" class="eg-inview group mt-8 grid overflow-hidden rounded-3xl border border-rule transition hover:border-gold lg:grid-cols-[1.15fr_1fr]">
+        <div class="p-9">
+          <p class="font-mono text-[10px] uppercase tracking-widest" style="color:${ACCENT[hero.solutions[0]]}">${esc(hero.client)} &middot; ${esc(hero.sectorFull)}</p>
+          <p class="mt-4 text-lg leading-relaxed text-ink/80">${esc(hero.summary)}</p>
+          <div class="mt-6 flex flex-wrap gap-2">${hero.solutions.map((s) => `<span class="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest" style="background:${ACCENT[s]}16;color:${ACCENT[s]}">${esc(short(s))}</span>`).join("")}</div>
+          <span class="mt-7 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-gold">Read the project <span aria-hidden="true">&rarr;</span></span>
+        </div>
+        <dl class="grid grid-cols-2 gap-px bg-rule">
+          ${[
+            ["Client", esc(hero.client)],
+            ["Sector", esc(hero.sectorFull)],
+            ["Period", esc(hero.year)],
+            ["Location", esc(hero.location)],
+            ["Focus", esc(hero.primary)],
+            ["Technologies", hero.tech.map(esc).join(", ")],
+          ]
+            .map(
+              ([k, v]) => `<div class="bg-paper-2 px-6 py-5">
+            <dt class="font-mono text-[9px] uppercase tracking-widest text-steel">${k}</dt>
+            <dd class="mt-1.5 text-sm leading-snug">${v}</dd>
+          </div>`,
+            )
+            .join("\n          ")}
+        </dl>
+      </a>
+    </section>
 
-      ${["all", ...SECTORS.map(key)]
-        .map((k, i) => `<input class="sr-only" type="radio" name="sector" id="p-${k}"${i === 0 ? " checked" : ""}>`)
-        .join("\n      ")}
-
-      <div class="pbar flex flex-wrap gap-2">
-        <label for="p-all" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">All <span class="font-mono text-[10px] text-steel">${PROJECTS.length}</span></label>
-        ${SECTORS.map(
-          (s) =>
-            `<label for="p-${key(s)}" class="cursor-pointer rounded-full border border-rule bg-paper-2 px-4 py-2 text-sm">${s} <span class="font-mono text-[10px] text-steel">${PROJECTS.filter((p) => p.sector === s).length}</span></label>`,
-        ).join("\n        ")}
+    <!-- Grouped index, one section per sector -->
+    ${CLIENT_SECTORS.map(([key, label]) => {
+      const list = PROJECTS.filter((p) => SECTOR_OF[p.sector] === key);
+      if (!list.length) return "";
+      return `<section class="border-t border-rule">
+      <div class="mx-auto max-w-6xl px-6 py-16">
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+          <h2 class="font-display text-[clamp(1.5rem,2.8vw,2.1rem)]">${esc(label)}</h2>
+          <p class="font-mono text-[10px] uppercase tracking-widest text-steel">${list.length} project${list.length > 1 ? "s" : ""}</p>
+        </div>
+        <ul class="mt-8">
+          ${list.map(row).join("\n          ")}
+        </ul>
       </div>
+    </section>`;
+    }).join("\n    ")}
 
-      <ul class="reg mt-10 space-y-3">
-        ${PROJECTS.map(
-          (p, i) => `
-        <li class="eg-inview k-${key(p.sector)}">
-          <a href="${p.slug === "bonga" ? "project-bonga.html" : "#"}"
-             class="group flex flex-col gap-5 rounded-3xl bg-paper-2 p-5 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_54px_-26px_rgb(8_136_197/0.5)] md:flex-row md:items-center">
-            ${plate(p, i)}
-            <span class="min-w-0 flex-1">
-              <span class="inline-block rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest"
-                    style="background:${colour(p)}1a;color:${colour(p)}">${p.sector}</span>
-              <span class="mt-2 block font-display text-2xl leading-tight group-hover:text-gold">${p.scope}</span>
-              <span class="mt-1 block text-sm text-steel">${p.client}</span>
-            </span>
-            <span class="flex shrink-0 items-center gap-6">
-              <span class="hidden flex-wrap justify-end gap-1.5 md:flex md:max-w-[12rem]">
-                ${p.tech.map((t) => `<span class="rounded-full bg-paper px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-steel">${t}</span>`).join("\n                ")}
-              </span>
-              <span class="font-display text-xl text-steel">${p.year}</span>
-            </span>
-          </a>
-        </li>`,
-        ).join("")}
-      </ul>
+    <section class="border-t border-rule bg-paper-2/40">
+      <div class="mx-auto max-w-6xl px-6 py-16">
+        ${sectionHead({
+          eyebrow: "By solution family",
+          title: "Find the experience closest to your requirement",
+        })}
+        <ul class="mt-8 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          ${SOLUTIONS.map((s) => {
+            const n = PROJECTS.filter((p) => p.solutions.includes(s.slug)).length;
+            return `<li><a href="solution-${s.slug}.html" class="eg-inview flex items-center justify-between gap-4 rounded-2xl bg-paper px-5 py-4 transition hover:text-gold">
+            <span class="text-sm">${esc(s.short)}</span>
+            <span class="shrink-0 font-mono text-[10px] uppercase tracking-widest" style="color:${ACCENT[s.slug]}">${n ? `${n} project${n > 1 ? "s" : ""}` : "Explore"}</span>
+          </a></li>`;
+          }).join("\n          ")}
+        </ul>
+      </div>
+    </section>
 
-      <p class="mt-8 text-xs text-steel">
-        The five above are the institutions Edge names publicly. Plates are drawn rather than
-        photographed — Edge has supplied no project imagery.
-      </p>
-    </div>
+    ${closingCta({
+      title: "Your project could be the next one here",
+      body: "Share your requirement and constraints. We will tell you honestly what the work involves and how we would deliver it.",
+      primary: { href: "contact.html", label: "Start a conversation" },
+      secondary: { href: "solutions.html", label: "Explore solutions" },
+      accent: "#0b6fa8",
+    })}
   </main>`,
 };
