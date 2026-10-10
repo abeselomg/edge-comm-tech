@@ -136,3 +136,29 @@ describe("requiresScopeQualifier", () => {
     expect(requiresScopeQualifier("anything", {})).toBe(true);
   });
 });
+
+describe("forbidsPhrases fix round 1", () => {
+  const validate = forbidsPhrases();
+
+  it("blocks the British spelling of authorised reseller", () => {
+    expect(validate("An authorised reseller of HPE.")).not.toBe(true);
+  });
+
+  it("blocks Tier IV certified", () => {
+    expect(validate("A Tier IV certified facility.")).not.toBe(true);
+  });
+
+  // These sentences are Edge's approved compliance copy. Their whole purpose is
+  // to say Edge does NOT claim certification. A rule that blocks them is a bug,
+  // not a stricter guardrail: do not widen "certified" to match "certification",
+  // and do not widen the authorization rule beyond reseller/partner/distributor.
+  describe("permits Edge's own compliance disclaimers", () => {
+    it.each([
+      "Tier III certification is stated separately only if awarded.",
+      "Tier claims and certification status are stated only when independently verified.",
+      "Sensitive decisions remain subject to authorized human review.",
+    ])("passes: %s", (sentence) => {
+      expect(validate(sentence)).toBe(true);
+    });
+  });
+});

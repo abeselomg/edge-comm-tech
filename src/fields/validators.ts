@@ -20,7 +20,7 @@ export type Rule = { pattern: RegExp; message: string };
 
 export const BASE_RULES: Rule[] = [
   {
-    pattern: /tier\s*(?:iii|3)\W{0,3}certified/i,
+    pattern: /tier\s*(?:iii|iv|3|4)\W{0,3}certified/i,
     message:
       'The content master allows "Tier III-aligned" and never "Tier III-certified". Edge has not certified a facility.',
   },
@@ -30,7 +30,7 @@ export const BASE_RULES: Rule[] = [
       "Partnership tiers may not be published. Remove the tier and describe what the technology does instead.",
   },
   {
-    pattern: /\bauthoriz(?:ed|sed)\s+(?:reseller|partner|distributor)\b/i,
+    pattern: /\bauthori[sz]ed\s+(?:reseller|partner|distributor)\b/i,
     message:
       "Authorization status may not be published. It changes over time and is governed by each manufacturer's agreement.",
   },
