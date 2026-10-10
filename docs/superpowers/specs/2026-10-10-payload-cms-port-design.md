@@ -443,4 +443,15 @@ landed, so later plans can account for what the earlier ones actually found.
   marks and 9 of 10 client marks; project photography; documentary,
   press-release and media-coverage items; download approvals; internship intake
   dates; and the Bahir Dar CCTV completion year.
-- **The form-builder upload field** is unverified. Phase 0 answers it.
+- **The form-builder upload field is resolved.** `formBuilderPlugin`
+  accepts a custom block in its `fields` map at runtime (unknown keys are
+  returned as the block verbatim), but its `FieldConfig` type is
+  `Partial<Field>` and rejects a block's `slug`, so a hand-rolled block fails
+  `tsc`. That is moot: `@payloadcms/plugin-form-builder` 3.88.0 ships a
+  built-in `upload` field (`fields: { upload: true }` plus
+  `uploadCollections: ["media"]`, which type-checks), whose submission hook
+  stores the files as `media` documents. Phase 6 therefore uses one form
+  system, extended with the built-in upload field. Checked by reading the
+  plugin source and types and by `tsc`; the admin block picker and a real
+  multipart submission were not exercised. Phase 6 should confirm both, and
+  that CV uploads into `media` are not publicly readable.
