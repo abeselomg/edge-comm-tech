@@ -17,3 +17,7 @@ payload.db
 
 # Highland render-check screenshots (written by a later task)
 shots-highland/
+
+# Subagent-driven development scratch: ledgers, briefs, review packages.
+# Per-plan workspaces under .superpowers/sdd/. Git history is the real record.
+.superpowers/
