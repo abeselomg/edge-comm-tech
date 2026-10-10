@@ -30,23 +30,56 @@ const dirname = path.dirname(filename);
  * disk handling, which is right for development and wrong for serverless.
  * Setting the five S3_* variables switches to any S3-compatible bucket.
  */
-const storagePlugins = process.env.S3_BUCKET
-  ? [
-      s3Storage({
-        collections: { media: true },
-        bucket: process.env.S3_BUCKET,
-        config: {
-          region: process.env.S3_REGION,
-          endpoint: process.env.S3_ENDPOINT,
-          forcePathStyle: Boolean(process.env.S3_ENDPOINT),
-          credentials: {
-            accessKeyId: process.env.S3_ACCESS_KEY_ID ?? "",
-            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY ?? "",
-          },
-        },
-      }),
-    ]
-  : [];
+function buildStoragePlugins() {
+  const bucket = process.env.S3_BUCKET || undefined;
+  if (!bucket) return [];
+
+  const region = process.env.S3_REGION || undefined;
+  const endpoint = process.env.S3_ENDPOINT || undefined;
+  const accessKeyId = process.env.S3_ACCESS_KEY_ID || undefined;
+  const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY || undefined;
+
+  if (!region) {
+    throw new Error(
+      "S3_REGION is required because S3_BUCKET is set. Every S3-compatible backend needs a region (Cloudflare R2 uses the literal value 'auto').",
+    );
+  }
+  if (accessKeyId && !secretAccessKey) {
+    throw new Error(
+      "S3_SECRET_ACCESS_KEY is required because S3_BUCKET and S3_ACCESS_KEY_ID are set. Set both keys, or neither to use the SDK's default credential chain.",
+    );
+  }
+  if (secretAccessKey && !accessKeyId) {
+    throw new Error(
+      "S3_ACCESS_KEY_ID is required because S3_BUCKET and S3_SECRET_ACCESS_KEY are set. Set both keys, or neither to use the SDK's default credential chain.",
+    );
+  }
+
+  /*
+   * With neither key set we omit `credentials` entirely rather than passing
+   * empty strings. Any credentials object, even a blank one, blocks the AWS
+   * SDK's default chain (IAM role, AWS_* environment), which is the correct
+   * and more secure setup on AWS. Do not "simplify" this into `?? ""`.
+   */
+  const credentials =
+    accessKeyId && secretAccessKey ? { accessKeyId, secretAccessKey } : undefined;
+
+  return [
+    s3Storage({
+      collections: { media: true },
+      bucket,
+      config: {
+        region,
+        endpoint,
+        // A custom endpoint stands in for "not AWS"; R2, B2 and MinIO all need path-style.
+        forcePathStyle: Boolean(endpoint),
+        ...(credentials ? { credentials } : {}),
+      },
+    }),
+  ];
+}
+
+const storagePlugins = buildStoragePlugins();
 
 export default buildConfig({
   admin: {
