@@ -117,7 +117,8 @@ Confirm with `docker compose ps`. If `DATABASE_URI` or `PAYLOAD_SECRET` is unset
 Throwaway investigation. Its output is an answer recorded in the spec, not code we keep.
 
 **Files:**
-- Create: `docs/superpowers/specs/2026-10-10-payload-cms-port-design.md` (append findings to *Open items*)
+- Modify: `docs/superpowers/specs/2026-10-10-payload-cms-port-design.md` (append findings to *Open items*)
+- Modify: `src/payload.config.ts` (temporarily, reverted in Step 4)
 
 **Interfaces:**
 - Consumes: nothing
@@ -1388,6 +1389,7 @@ This task carries the spec's one departure from fixed templates: `solutions.deta
 **Files:**
 - Modify: `src/collections/Solutions.ts`
 - Create: `src/collections/Services.ts`
+- Modify: `src/payload.config.ts` (register `Services`)
 
 **Interfaces:**
 - Consumes: `forbidsPhrases` from `src/fields/validators.ts` (Task 3); `slugField`, `orderField` from `src/fields/slug.ts`
@@ -1895,6 +1897,7 @@ Four organisations that appeared in the earlier draft model — Bonga, Haramaya,
 - Create: `src/fields/sectors.ts`
 - Create: `src/collections/Clients.ts`
 - Modify: `src/collections/Projects.ts`
+- Modify: `src/payload.config.ts` (register `Clients`)
 
 **Interfaces:**
 - Consumes: `forbidsPhrases`, `PROJECT_RULES` (Task 3); `confirmable` (Task 4); `media.approved` (Task 8); `solutions` (Task 9)
@@ -2267,6 +2270,7 @@ Ten capability groups and thirty-two brands. `partnerCategories` is new; `partne
 **Files:**
 - Create: `src/collections/PartnerCategories.ts`
 - Modify: `src/collections/Partners.ts`
+- Modify: `src/payload.config.ts` (register `PartnerCategories`)
 
 **Interfaces:**
 - Consumes: `forbidsPhrases` (Task 3); `media.approved` (Task 8); `solutions` (Task 9); `projects` (Task 10)
@@ -2515,6 +2519,7 @@ Highland stores a single `iso` per event, which is wrong for a range. GITEX runs
 - Create: `src/lib/events.ts`
 - Create: `src/lib/events.test.ts`
 - Create: `src/collections/Events.ts`
+- Modify: `src/payload.config.ts` (register `Events`)
 
 **Interfaces:**
 - Consumes: `forbidsPhrases` (Task 3)
@@ -2847,6 +2852,7 @@ Ten posts across ten categories, three news records, four documents.
 - Create: `src/collections/Posts.ts`
 - Create: `src/collections/Downloads.ts`
 - Modify: `src/collections/News.ts`
+- Modify: `src/payload.config.ts` (register the four)
 
 **Interfaces:**
 - Consumes: `forbidsPhrases` (Task 3); `confirmable` (Task 4); `media.approved` (Task 8); `solutions` (Task 9)
@@ -3236,6 +3242,7 @@ Two published vacancies and six E-Academy tracks.
 **Files:**
 - Modify: `src/collections/Jobs.ts`
 - Create: `src/collections/AcademyTracks.ts`
+- Modify: `src/payload.config.ts` (register `AcademyTracks`)
 
 **Interfaces:**
 - Consumes: `forbidsPhrases` (Task 3); `confirmable` (Task 4); `solutions` (Task 9)
@@ -3521,6 +3528,7 @@ This task also deletes the collections and globals the new model replaces. Nothi
 - Modify: `src/payload.config.ts`
 - Delete: `src/collections/Sectors.ts`, `src/collections/Courses.ts`, `src/globals/HomePage.ts`, `src/globals/CompanyPage.ts`
 - Delete: `src/seed/data/{solutions,sectors,courses,partners,globals}.ts`, `src/seed/index.ts`
+- Note: `package.json` is deliberately left untouched — its `seed` script points at the file this task deletes, and Task 18 restores it
 
 **Interfaces:**
 - Consumes: `forbidsPhrases`, `requiresScopeQualifier` (Task 3); `confirmable` (Task 4); `media` (Task 8)
