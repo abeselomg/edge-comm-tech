@@ -5,6 +5,7 @@ import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { seoPlugin } from "@payloadcms/plugin-seo";
 import { formBuilderPlugin } from "@payloadcms/plugin-form-builder";
+import { s3Storage } from "@payloadcms/storage-s3";
 import sharp from "sharp";
 
 import { Users } from "./collections/Users";
@@ -22,6 +23,30 @@ import { SiteSettings } from "./globals/SiteSettings";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+
+/*
+ * Hosting is deliberately undecided, so media goes behind an adapter rather
+ * than onto a disk. With no S3_BUCKET set we fall through to Payload's local
+ * disk handling, which is right for development and wrong for serverless.
+ * Setting the five S3_* variables switches to any S3-compatible bucket.
+ */
+const storagePlugins = process.env.S3_BUCKET
+  ? [
+      s3Storage({
+        collections: { media: true },
+        bucket: process.env.S3_BUCKET,
+        config: {
+          region: process.env.S3_REGION,
+          endpoint: process.env.S3_ENDPOINT,
+          forcePathStyle: Boolean(process.env.S3_ENDPOINT),
+          credentials: {
+            accessKeyId: process.env.S3_ACCESS_KEY_ID ?? "",
+            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY ?? "",
+          },
+        },
+      }),
+    ]
+  : [];
 
 export default buildConfig({
   admin: {
@@ -56,5 +81,6 @@ export default buildConfig({
         admin: { group: "Site" },
       },
     }),
+    ...storagePlugins,
   ],
 });
