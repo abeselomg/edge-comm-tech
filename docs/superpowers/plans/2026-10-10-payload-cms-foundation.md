@@ -75,7 +75,6 @@ Five failure modes the spec implies that no task's happy-path tests would exerci
 | `package.json` | Add vitest, `@payloadcms/storage-s3@3.88.0`; add `test` and `seed:fresh` scripts |
 | `src/app/(frontend)/globals.css` | Highland's `@theme` tokens and `eg-*` animation CSS replace the teal/brass system |
 | `src/app/(frontend)/layout.tsx` | Geologica / Atkinson Hyperlegible / Fragment Mono replace Syne / IBM Plex |
-| `src/app/(frontend)/design/layout.tsx` | Scope the A–E exploration's own tokens so Highland's replacement does not break it |
 | `src/collections/Media.ts` | Add `source`, `retrievedAt`, `reviewedBy`, `approved` |
 | `src/collections/Solutions.ts` | Re-model to the 7 approved families with typed detail sections |
 | `src/collections/Projects.ts` | Re-model; `client` becomes a relationship |
@@ -846,7 +845,7 @@ API is used either way."
 **Why it is safe.** The Next app is not deployed: there is no `vercel.json`, `DATABASE_URI` points at `127.0.0.1:5434`, and the root layout awaits `getSiteSettings()` so `next build` cannot complete without a local database. The client reviews the Highland GitHub Pages build, which this plan does not touch. There is no uptime to protect.
 
 **Files:**
-- Delete: `src/app/(frontend)/{about,academy,careers,clients,contact,news,partners,projects,solutions}/`
+- Delete: `src/app/(frontend)/{about,academy,careers,clients,contact,design,news,partners,projects,solutions}/`
 - Modify: `src/app/(frontend)/page.tsx`
 - Modify: `src/lib/content.ts:1-263`
 
@@ -874,10 +873,17 @@ git rm -r "src/app/(frontend)/about" "src/app/(frontend)/academy" \
           "src/app/(frontend)/careers" "src/app/(frontend)/clients" \
           "src/app/(frontend)/contact" "src/app/(frontend)/news" \
           "src/app/(frontend)/partners" "src/app/(frontend)/projects" \
-          "src/app/(frontend)/solutions"
+          "src/app/(frontend)/solutions" "src/app/(frontend)/design"
 ```
 
-`src/app/(frontend)/design/` stays — Task 7 makes it self-contained.
+`src/app/(frontend)/design/` goes with them. It is a route built on the old
+model like the rest: `design/_shared.tsx` imports `getCourses`, `getHomePage`,
+`getSectors` and `getSolutions`, and `design/{a,b,c,d,e}/page.tsx` each import
+`domainCode` — none of which survive Step 4, and the first three of which read
+collections Task 15 deletes. Its own `layout.tsx` says *"Delete this folder
+once a direction is picked"*; Highland was picked. The folder's uncommitted
+state is preserved on branch `design-directions-wip` (commit `2f332df`), so
+this deletion loses nothing.
 
 - [ ] **Step 3: Replace the home page with a placeholder**
 
@@ -969,7 +975,7 @@ npx tsc --noEmit
 npx next build
 ```
 
-Expected: `tsc` clean; the build completes with routes `/`, `/design`, `/design/a`–`/design/e`, and the Payload admin and API routes. No `about`, `solutions`, `projects` and so on.
+Expected: `tsc` clean; the build completes with route `/` plus the Payload admin and API routes, and nothing else. No `about`, `solutions`, `projects` and so on — and no `/design` either, since Step 2 deleted it.
 
 - [ ] **Step 6: Commit**
 
@@ -994,12 +1000,11 @@ rebuilds the rest against the new model."
 
 ### Task 7: Install Highland's theme
 
-Highland's look replaces the frontend's teal-and-brass design system. `design.css` currently overrides `globals.css` classes and consumes its tokens, so it has to become self-contained first or the A–E exploration breaks.
+Highland's look replaces the frontend's teal-and-brass design system wholesale. The one file that consumed those tokens, `design.css`, went with the A–E exploration in Task 6, so this task replaces the theme and the typefaces without having to preserve anything.
 
-**Decision taken:** the teal/brass system is vendored into `design.css` rather than deleted. `design/layout.tsx` says *"Delete this folder once a direction is picked"* and a direction has been picked — but that folder is uncommitted work, so this plan preserves it. If you would rather drop it, delete `src/app/(frontend)/design/` instead of doing Step 1 and the rest of this task is unchanged.
+**Decision taken (amended 2026-10-11):** the folder is deleted, not vendored. The original plan preserved it because it was uncommitted work; that work is now committed to branch `design-directions-wip` (`2f332df`), and Task 6 Step 2 deletes the folder. The teal/brass system therefore has no remaining consumer and is simply replaced. The two steps that existed only to keep `/design/*` alive — vendoring the old tokens into `design.css`, and verifying the exploration still rendered — are struck from this task, and the surviving steps are renumbered 1–4.
 
 **Files:**
-- Modify: `src/app/(frontend)/design/design.css`
 - Modify: `src/app/(frontend)/globals.css`
 - Modify: `src/app/(frontend)/layout.tsx`
 
@@ -1007,52 +1012,7 @@ Highland's look replaces the frontend's teal-and-brass design system. `design.cs
 - Consumes: nothing
 - Produces: Tailwind tokens `ink`, `ink-2`, `paper`, `paper-2`, `gold`, `gold-2`, `lamp`, `steel`, `rule`; font families `display`, `sans`, `mono`; and the classes `eg-rise`, `eg-pop`, `eg-draw`, `eg-breathe`, `eg-spin-slow`, `eg-inview`, `sun-disk`, `horizon`. Every component in Phases 4–5 uses these names, which are the same names Highland's markup already uses — so ported markup needs no class rewriting.
 
-- [ ] **Step 1: Make the A–E exploration self-contained**
-
-Prepend to `src/app/(frontend)/design/design.css`, before its existing rules:
-
-```css
-/*
- * Vendored from globals.css, which now carries Highland's theme instead.
- *
- * These routes are the typography comparison that chose a direction. They are
- * built on the teal-and-brass system and 51 production pages are not, so the
- * system lives here with its only remaining consumer rather than in the
- * global stylesheet. Delete this block with the folder.
- */
-.design-scope {
-  --color-deep: #06231f;
-  --color-deep-2: #0a322c;
-  --color-deep-3: #10443c;
-  --color-teal: #14675c;
-  --color-brass: #c8963e;
-  --color-brass-soft: #e0b665;
-  --color-signal: #4fd1b9;
-  --color-paper: #ebf0ed;
-  --color-paper-2: #f7faf8;
-  --color-ink: #08201c;
-  --color-ink-soft: #3f5551;
-  --color-rule: #08201c1f;
-  --color-rule-dark: #ebf0ed26;
-
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-size: 1.0625rem;
-  line-height: 1.65;
-}
-```
-
-Then move the whole of the current `globals.css` from the `.display {` rule through the end of the `.prose-edge`/`.dark-surface` rules into `design.css`, prefixing each selector with `.design-scope `. For example `.wrap {` becomes `.design-scope .wrap {`, and `a.register-row:hover` becomes `.design-scope a.register-row:hover`.
-
-Apply the scope class in `src/app/(frontend)/design/layout.tsx` on the element that already wraps the children — add `design-scope` to its `className`.
-
-- [ ] **Step 2: Verify the exploration still renders before touching globals.css**
-
-Run: `npm run dev`
-
-Open `/design`, `/design/a` through `/design/e`. Expected: unchanged from before this task. Confirm this *now* — once Step 3 lands, a regression here is harder to attribute.
-
-- [ ] **Step 3: Replace the global theme with Highland's**
+- [ ] **Step 1: Replace the global theme with Highland's**
 
 Replace everything in `src/app/(frontend)/globals.css` from `@import "tailwindcss";` through the end of the `.prose-edge`/`.dark-surface` block with:
 
@@ -1068,8 +1028,10 @@ Replace everything in `src/app/(frontend)/globals.css` from `@import "tailwindcs
  * rewriting. "gold" is Edge's blue; the name is inherited from the original
  * palette and kept because 1,100+ ported class names use it.
  *
- * The previous teal-and-brass system now lives in design/design.css with its
- * only remaining consumer.
+ * The previous teal-and-brass system is gone. Its only consumer was the A-E
+ * typography comparison under /design, which chose this direction and was
+ * deleted once it had; that exploration is preserved on the branch
+ * design-directions-wip if anyone needs to read it again.
  */
 
 @theme {
@@ -1209,7 +1171,7 @@ body {
 
 Highland's `hop-line` and `.ph` rules are deliberately not ported: both have zero uses in the current 51-page build.
 
-- [ ] **Step 4: Swap the typefaces**
+- [ ] **Step 2: Swap the typefaces**
 
 In `src/app/(frontend)/layout.tsx`, replace the three font imports and declarations:
 
@@ -1241,23 +1203,22 @@ const fragmentMono = Fragment_Mono({
 
 Update the `<html>` className to `` `${geologica.variable} ${atkinson.variable} ${fragmentMono.variable}` ``, and change the skip link's colours from `focus:bg-brass focus:text-deep` to `focus:bg-gold focus:text-white`, since `brass` and `deep` no longer exist.
 
-- [ ] **Step 5: Verify both themes render and nothing references dead tokens**
+- [ ] **Step 3: Verify the theme renders and nothing references dead tokens**
 
 Run:
 
 ```bash
-grep -rn "brass\|deep-2\|color-teal\|signal\|prose-edge\|register-row" src/app src/components --include=*.tsx | grep -v "/design/"
+grep -rn "brass\|deep-2\|color-teal\|signal\|prose-edge\|register-row" src/app src/components --include=*.tsx
 npx tsc --noEmit
 npm run dev
 ```
 
-Expected: the grep returns nothing outside `/design/` — any hit is a component still reaching for a deleted token. `tsc` clean. `/` renders the placeholder in Highland's blue on tinted paper with Geologica headings; `/design/a` still renders in teal and brass.
+Expected: the grep returns **nothing at all**. With `/design/` deleted in Task 6 the teal/brass system has no legitimate consumer left, so this check needs no exclusion and any hit is a component still reaching for a deleted token. `tsc` clean. `/` renders the placeholder in Highland's blue on tinted paper with Geologica headings.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
-git add "src/app/(frontend)/globals.css" "src/app/(frontend)/layout.tsx" \
-        "src/app/(frontend)/design/design.css" "src/app/(frontend)/design/layout.tsx"
+git add "src/app/(frontend)/globals.css" "src/app/(frontend)/layout.tsx"
 git commit -m "Port Highland's theme and motion into the Next app
 
 Token names match Highland's Tailwind config exactly, so the markup ported in
@@ -1269,9 +1230,11 @@ than transform. Animating transform with 'both' fill mode makes the resting
 value outrank any transform the element also carries, which killed every hover
 lift and broke the partners diagram's centring. Do not simplify these back.
 
-The teal-and-brass system moves into design/design.css, scoped under
-.design-scope, with the A-E typography comparison that is its only remaining
-consumer. hop-line and .ph are not ported: zero uses in the current build."
+The teal-and-brass system is dropped rather than scoped. Its only consumer
+was the A-E typography comparison, which picked this direction and was
+deleted with the other retired routes; it is preserved on the branch
+design-directions-wip. hop-line and .ph are not ported: zero uses in the
+current build."
 ```
 
 ---
@@ -6104,7 +6067,6 @@ cost the server rendering of the chrome on every page."
 - `npx tsc --noEmit` is clean and `npx next build` completes.
 - `/admin` shows 13 content collections and 5 globals, grouped Content / Resources / People / Company / Site / Library / Admin.
 - `/` renders the placeholder in Highland's palette with Highland's header and footer, and the footer carries Edge's real address, phones and emails.
-- `/design/a` still renders in teal and brass.
 - No field anywhere accepts a partnership tier, an authorization level, a certification tier, a salary or a benefit.
 
 Phase 4 (static pages) begins from here, against a working data layer.
