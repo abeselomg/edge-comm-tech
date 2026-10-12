@@ -4253,6 +4253,7 @@ generateDescription: ({ doc }) =>
 ```
 
   `blurb` first, since it is what the new model uses; the other two stay as fallbacks for any collection that still carries them.
+- Leave the `fields: guardSeoMetaFields` option in that call ALONE. It was added during Task 9 (commit `3b38561`) and attaches the forbidden-phrase validator to the plugin's own `meta.title` and `meta.description`, which the validators inside the collection files cannot reach. Do not duplicate it and do not remove it: adding `"services"` to the list above is what brings the new collection under that guard.
 
 Then delete the retired files and the old seed, which references every collection being removed:
 
