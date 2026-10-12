@@ -14,8 +14,8 @@ const paths = (doc: { slug?: string | null }) => [
  * Webinars, briefings and exhibitions.
  *
  * There is deliberately no `status` field. See src/lib/events.ts: it is
- * derived from endsOn ?? startsOn so it cannot go stale, and storing it would
- * give an editor a value to forget to change.
+ * derived from the later of startsOn and endsOn so it cannot go stale, and
+ * storing it would give an editor a value to forget to change.
  *
  * displayDate carries the human string because it cannot be formatted back out
  * of two dates reliably -- "7-11 December 2026" is an editorial choice about
