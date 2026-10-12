@@ -70,6 +70,7 @@ export interface Config {
     solutions: Solution;
     services: Service;
     sectors: Sector;
+    clients: Client;
     projects: Project;
     partners: Partner;
     courses: Course;
@@ -89,6 +90,7 @@ export interface Config {
     solutions: SolutionsSelect<false> | SolutionsSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     sectors: SectorsSelect<false> | SectorsSelect<true>;
+    clients: ClientsSelect<false> | ClientsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
@@ -204,6 +206,9 @@ export interface Solution {
             blockType: 'capabilities';
           }
         | {
+            /**
+             * Two or more named groups instead of one flat list. Used where a family covers distinct areas, like datacenter facility and IT infrastructure.
+             */
             items?:
               | {
                   title: string;
@@ -222,6 +227,9 @@ export interface Solution {
           }
         | {
             title?: string | null;
+            /**
+             * A stack, rendered top to bottom in this order.
+             */
             items?:
               | {
                   title: string;
@@ -235,6 +243,9 @@ export interface Solution {
           }
         | {
             title?: string | null;
+            /**
+             * How this family applies per sector. Three of the seven families carry this; the rest do not.
+             */
             items?:
               | {
                   title: string;
@@ -248,6 +259,9 @@ export interface Solution {
           }
         | {
             title: string;
+            /**
+             * How a client judges whether this delivered value.
+             */
             items?:
               | {
                   item: string;
@@ -260,6 +274,9 @@ export interface Solution {
           }
         | {
             title?: string | null;
+            /**
+             * An approach, lifecycle or delivery sequence. Numbered automatically.
+             */
             items?:
               | {
                   title: string;
@@ -273,6 +290,9 @@ export interface Solution {
           }
         | {
             title: string;
+            /**
+             * Considerations, controls or principles, as a titled list.
+             */
             items?:
               | {
                   item: string;
@@ -289,6 +309,9 @@ export interface Solution {
           }
         | {
             title: string;
+            /**
+             * Named engagement or support models.
+             */
             items?:
               | {
                   title: string;
@@ -584,7 +607,41 @@ export interface Sector {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Delivered work. Keep a project as a draft until the client has agreed to be named publicly.
+ * Institutions Edge works with. Only organisations in the approved client directory belong here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: number;
+  name: string;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
+  sector: 'education' | 'banking' | 'government';
+  /**
+   * Only approved assets can be selected. With no logo, the site sets the institution's name in the same frame the mark would occupy — which is the intended behaviour, not a gap.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Two or three sentences on what Edge has delivered for them.
+   */
+  summary: string;
+  /**
+   * Published project records for this client. Leave empty where engagement details are not published.
+   */
+  engagements?: (number | Project)[] | null;
+  /**
+   * The solution families this relationship spans.
+   */
+  solutions?: (number | Solution)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Delivered engagements, written as case records rather than marketing.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects".
@@ -597,37 +654,102 @@ export interface Project {
    */
   slug: string;
   /**
-   * Only name a client Edge has written permission to name.
+   * Must be an institution in the approved client directory.
    */
-  client: string;
-  year?: number | null;
-  sector?: (number | null) | Sector;
-  solutions?: (number | Solution)[] | null;
+  client: number | Client;
   /**
-   * What Edge was engaged to do.
-   */
-  scope: string;
-  outcome?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  cover?: (number | null) | Media;
-  gallery?: (number | Media)[] | null;
-  /**
-   * Show on the homepage and sector pages.
+   * The featured engagement leads the projects index. Tick one.
    */
   featured?: boolean | null;
+  sector: 'education' | 'banking' | 'government';
+  /**
+   * The longer sector description shown on the project page, e.g. 'Higher Education'.
+   */
+  sectorFull?: string | null;
+  /**
+   * Where the work happened, e.g. 'Bahir Dar — university campuses'.
+   */
+  location: string;
+  /**
+   * When the work ran, e.g. '2024/2025'. Leave the value empty and the status pending where Edge has not confirmed it.
+   */
+  year: {
+    /**
+     * Leave empty while this is still unconfirmed.
+     */
+    value?: string | null;
+    /**
+     * While this is pending, the site shows a visible marker instead of the value.
+     */
+    status: 'confirmed' | 'pending';
+    /**
+     * What the marker says, e.g. 'Year to confirm'.
+     */
+    pendingLabel?: string | null;
+  };
+  /**
+   * The focus in a few words, e.g. 'Smart learning and collaboration'.
+   */
+  primary: string;
+  /**
+   * The promise at the top of the project page, where the approved copy has one distinct from the title.
+   */
+  headline?: string | null;
+  /**
+   * Two or three sentences. Used on the index and in search results.
+   */
+  summary: string;
+  /**
+   * The families this engagement drew on. CCTV, access control and barriers belong to Datacenter and IT Infrastructure, not Cybersecurity.
+   */
+  solutions: (number | Solution)[];
+  /**
+   * Named platforms, e.g. PeopleLink, IQBoard, NEARITY.
+   */
+  tech?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * What the client needed, before any mention of what Edge did.
+   */
+  need: string;
+  /**
+   * What the engagement covered.
+   */
+  scope: string;
+  delivered?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  outcomes?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  technology?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * A qualification on the technology list, if the approved copy has one.
+   */
+  technologyNote?: string | null;
+  /**
+   * Knowledge transfer and training delivered at handover.
+   */
+  training?: string | null;
+  /**
+   * Any privacy or data-handling note the client requires alongside this record.
+   */
+  privacy?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -1080,6 +1202,10 @@ export interface PayloadLockedDocument {
         value: number | Sector;
       } | null)
     | ({
+        relationTo: 'clients';
+        value: number | Client;
+      } | null)
+    | ({
         relationTo: 'projects';
         value: number | Project;
       } | null)
@@ -1384,20 +1510,72 @@ export interface SectorsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients_select".
+ */
+export interface ClientsSelect<T extends boolean = true> {
+  name?: T;
+  order?: T;
+  sector?: T;
+  logo?: T;
+  summary?: T;
+  engagements?: T;
+  solutions?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects_select".
  */
 export interface ProjectsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   client?: T;
-  year?: T;
-  sector?: T;
-  solutions?: T;
-  scope?: T;
-  outcome?: T;
-  cover?: T;
-  gallery?: T;
   featured?: T;
+  sector?: T;
+  sectorFull?: T;
+  location?: T;
+  year?:
+    | T
+    | {
+        value?: T;
+        status?: T;
+        pendingLabel?: T;
+      };
+  primary?: T;
+  headline?: T;
+  summary?: T;
+  solutions?: T;
+  tech?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  need?: T;
+  scope?: T;
+  delivered?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  outcomes?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  technology?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  technologyNote?: T;
+  training?: T;
+  privacy?: T;
   meta?:
     | T
     | {
