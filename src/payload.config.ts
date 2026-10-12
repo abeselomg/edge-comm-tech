@@ -11,6 +11,7 @@ import sharp from "sharp";
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Solutions } from "./collections/Solutions";
+import { Services } from "./collections/Services";
 import { Partners } from "./collections/Partners";
 import { Sectors } from "./collections/Sectors";
 import { Projects } from "./collections/Projects";
@@ -89,7 +90,7 @@ export default buildConfig({
       titleSuffix: " · Edge COMM-TECH",
     },
   },
-  collections: [Solutions, Sectors, Projects, Partners, Courses, Jobs, News, Media, Users],
+  collections: [Solutions, Services, Sectors, Projects, Partners, Courses, Jobs, News, Media, Users],
   globals: [HomePage, CompanyPage, SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",

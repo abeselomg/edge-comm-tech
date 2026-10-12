@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     solutions: Solution;
+    services: Service;
     sectors: Sector;
     projects: Project;
     partners: Partner;
@@ -86,6 +87,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     solutions: SolutionsSelect<false> | SolutionsSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
     sectors: SectorsSelect<false> | SectorsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
@@ -144,7 +146,7 @@ export interface UserAuthOperations {
   };
 }
 /**
- * The core technology domains. These are the main pages buyers land on from search.
+ * The seven integrated solution families. These are the main pages buyers land on from search.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "solutions".
@@ -161,67 +163,174 @@ export interface Solution {
    */
   order: number;
   /**
-   * Short promise, shown under the title. One line.
+   * The abbreviated name used in navigation, tags and footers.
+   */
+  short: string;
+  /**
+   * One or two sentences. Used on cards and in the solutions ledger.
+   */
+  blurb: string;
+  /**
+   * Hex colour for this family, e.g. #0888c5. Used for numerals, tags and rules.
+   */
+  accent: string;
+  /**
+   * The promise at the top of the page. One line.
    */
   headline: string;
   /**
-   * Two or three sentences describing the domain. Used on cards and in search results.
+   * The paragraph under the headline.
    */
-  summary: string;
+  intro: string;
   /**
-   * The main body of the page.
+   * A longer opening passage before the body, where the approved copy has one. Two of the seven families do.
    */
-  overview?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  lead?: string | null;
   /**
-   * What this domain actually delivers. Name the industry term (HCI, NAC, rPDU) and say what it does for the client — buyers search these terms.
+   * The body of the page, in order. Pick the section types this family needs — most use a single capability list.
    */
-  capabilities?:
-    | {
-        name: string;
-        /**
-         * Optional. The industry abbreviation, e.g. NAC.
-         */
-        acronym?: string | null;
-        valueLine: string;
-        id?: string | null;
-      }[]
+  detail?:
+    | (
+        | {
+            items?:
+              | {
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'capabilities';
+          }
+        | {
+            items?:
+              | {
+                  title: string;
+                  entries?:
+                    | {
+                        item: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'bands';
+          }
+        | {
+            title?: string | null;
+            items?:
+              | {
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'layers';
+          }
+        | {
+            title?: string | null;
+            items?:
+              | {
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'sectors';
+          }
+        | {
+            title: string;
+            items?:
+              | {
+                  item: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'measures';
+          }
+        | {
+            title?: string | null;
+            items?:
+              | {
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'steps';
+          }
+        | {
+            title: string;
+            items?:
+              | {
+                  item: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * A qualification under the list, where the approved copy has one.
+             */
+            note?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'checklist';
+          }
+        | {
+            title: string;
+            items?:
+              | {
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'models';
+          }
+      )[]
     | null;
   /**
-   * What a typical engagement in this domain includes.
+   * Heading for the outcomes below, where the approved copy has one.
    */
-  scopeOfWork?:
+  outcomesTitle?: string | null;
+  /**
+   * What the client gets, in business terms rather than technical ones.
+   */
+  outcomes?:
     | {
         item: string;
         id?: string | null;
       }[]
     | null;
   /**
-   * What the client is handed at the end.
+   * A qualification on the whole page. The datacenter family uses this to state that Tier claims are only made when independently verified, and that CCTV and access control are IT infrastructure here rather than cybersecurity.
    */
-  deliverables?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
+  note?: string | null;
   /**
-   * Vendors and platforms used in this domain.
+   * The platforms this family is delivered on. All seven families list these, and they are a relationship rather than typed names so a brand cannot appear here under a name it does not use elsewhere.
    */
-  technologies?: (number | Partner)[] | null;
+  partners?: (number | Partner)[] | null;
+  /**
+   * The approved related-experience paragraph. Name only engagements in the approved client directory.
+   */
+  experience?: string | null;
+  /**
+   * Families a reader of this page should see next.
+   */
+  related?: (number | Solution)[] | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -333,6 +442,84 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * The six services spanning the technology lifecycle, from advisory through managed support.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  /**
+   * Page URL: /services/<slug>
+   */
+  slug: string;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
+  /**
+   * The abbreviated name used in navigation and cards.
+   */
+  short: string;
+  /**
+   * One or two sentences, used on cards.
+   */
+  blurb: string;
+  /**
+   * Hex colour for this service, e.g. #056a9a.
+   */
+  accent: string;
+  /**
+   * The promise at the top of the page. One line.
+   */
+  headline: string;
+  intro: string;
+  capabilities?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Heading for the checklist below, if this service has one.
+   */
+  checklistTitle?: string | null;
+  checklist?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Heading for the engagement or support models below, if any.
+   */
+  modelsTitle?: string | null;
+  models?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * When this service applies. Shown as a pulled-out line on the overview and the page.
+   */
+  fit?: string | null;
+  /**
+   * A qualification or caveat, if the approved copy carries one.
+   */
+  note?: string | null;
+  /**
+   * Services a reader of this page should see next.
+   */
+  related?: (number | Service)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * The industries Edge serves.
@@ -885,6 +1072,10 @@ export interface PayloadLockedDocument {
         value: number | Solution;
       } | null)
     | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
         relationTo: 'sectors';
         value: number | Sector;
       } | null)
@@ -974,30 +1165,141 @@ export interface SolutionsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   order?: T;
+  short?: T;
+  blurb?: T;
+  accent?: T;
   headline?: T;
-  summary?: T;
-  overview?: T;
-  capabilities?:
+  intro?: T;
+  lead?: T;
+  detail?:
     | T
     | {
-        name?: T;
-        acronym?: T;
-        valueLine?: T;
-        id?: T;
+        capabilities?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        bands?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    title?: T;
+                    entries?:
+                      | T
+                      | {
+                          item?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        layers?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        sectors?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        measures?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    item?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        steps?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        checklist?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    item?: T;
+                    id?: T;
+                  };
+              note?: T;
+              id?: T;
+              blockName?: T;
+            };
+        models?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
       };
-  scopeOfWork?:
+  outcomesTitle?: T;
+  outcomes?:
     | T
     | {
         item?: T;
         id?: T;
       };
-  deliverables?:
-    | T
-    | {
-        item?: T;
-        id?: T;
-      };
-  technologies?: T;
+  note?: T;
+  partners?: T;
+  experience?: T;
+  related?: T;
   meta?:
     | T
     | {
@@ -1005,6 +1307,48 @@ export interface SolutionsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  order?: T;
+  short?: T;
+  blurb?: T;
+  accent?: T;
+  headline?: T;
+  intro?: T;
+  capabilities?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  checklistTitle?: T;
+  checklist?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  modelsTitle?: T;
+  models?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  fit?: T;
+  note?: T;
+  related?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
