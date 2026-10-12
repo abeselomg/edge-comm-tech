@@ -4924,6 +4924,50 @@ empty heading."
 
 ### Task 18: The seed script and its verification
 
+> **Read this before Step 1: the database schema is not created by anything in
+> this plan, and this task is the first that needs it.**
+>
+> Verified on 2026-10-12, at Task 11, against the live database: after Tasks
+> 8-11 defined `clients`, `services`, `partnerCategories` and the re-modelled
+> `solutions`, NONE of their tables existed. The database still held the
+> September schema -- `solutions_capabilities`, `sectors`, `courses`,
+> `home_page` and the rest of the retired model -- 74 tables, none of them new.
+> Neither `npx next build` (which exits 0) nor booting `npm run dev` created
+> them.
+>
+> What is known:
+>   - `payload_migrations` holds exactly one row: name `dev`, batch `-1`, dated
+>     2026-09-04. That is Payload's dev-push marker, so push is what built the
+>     original schema.
+>   - There is no `migrations/` directory anywhere in the repo and no migrate
+>     script in `package.json`.
+>   - The plan never mentions migrations, `push`, or schema creation at any
+>     point. That is the gap, and it is mine.
+>
+> So the seed in this task will fail against a database whose tables do not
+> match the model, and `seed:verify` cannot pass. Settle the schema FIRST, and
+> record in your report which route you took and what it did:
+>
+> 1. Try `npm run dev` once and re-check
+>    (`select table_name from information_schema.tables where
+>    table_schema='public'`). Payload's dev push runs on init and may simply
+>    not have completed on the loaded machine where this was observed -- the
+>    homepage request timed out at 300s without ever rendering.
+> 2. If push does not run, the adapter takes it explicitly:
+>    `postgresAdapter({ pool: {...}, push: true })` for development.
+> 3. If neither works, generate real migrations:
+>    `npx payload migrate:create` then `npx payload migrate`, and add a
+>    `migrate` script to `package.json`.
+>
+> Whichever route you take, note that the old schema carries stale rows -- 26
+> partners and 6 solutions in the retired shape. Dropping those tables and
+> their data is intended: Task 15 retires those collections, and this task's
+> `--fresh` mode deletes everything before creating. Do not try to preserve
+> them.
+>
+> Do NOT pick a route and leave the plan silent about it. Say in your report
+> which one worked, so the deployment story is written down somewhere.
+
 Dependency-ordered writes, then assertions that the database holds what the master says it should.
 
 **Two ordering problems this has to solve.** `solutions.related` and `services.related` point at their own collection, and `clients.engagements` points at projects while `projects.client` points back at clients. Neither can be satisfied in one pass, so both are written in a second patch pass once every id exists.
