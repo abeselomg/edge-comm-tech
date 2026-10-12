@@ -30,7 +30,7 @@ export const Services: CollectionConfig = {
       "The six services spanning the technology lifecycle, from advisory through managed support.",
   },
   access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
-  versions: { drafts: true },
+  versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths)],
     afterDelete: [revalidateAfterDelete(paths)],

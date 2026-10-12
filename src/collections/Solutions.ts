@@ -175,7 +175,7 @@ export const Solutions: CollectionConfig = {
       "The seven integrated solution families. These are the main pages buyers land on from search.",
   },
   access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
-  versions: { drafts: true },
+  versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths)],
     afterDelete: [revalidateAfterDelete(paths)],
