@@ -23,6 +23,27 @@ describe("confirmable", () => {
     expect(field.admin?.description).toBe("The year the project completed.");
   });
 
+  it("guards both text fields against forbidden claims", () => {
+    // A confirmable fact is where an unverified claim gets typed -- that is
+    // what the field is for -- so leaving it unguarded is the worst case, not
+    // a safe one.
+    for (const name of ["value", "pendingLabel"]) {
+      const sub = subfield(field, name) as { validate?: (v: unknown, o?: unknown) => unknown };
+      expect(sub?.validate, `${name} should be guarded`).toBeTypeOf("function");
+      expect(sub.validate!("Tier III certified facility", {})).not.toBe(true);
+      expect(sub.validate!("An authorized reseller", {})).not.toBe(true);
+    }
+  });
+
+  it("still accepts approved copy and empty values in both text fields", () => {
+    for (const name of ["value", "pendingLabel"]) {
+      const sub = subfield(field, name) as { validate?: (v: unknown, o?: unknown) => unknown };
+      expect(sub.validate!("2024", {})).toBe(true);
+      expect(sub.validate!("Tier III-aligned", {})).toBe(true);
+      expect(sub.validate!("", {})).toBe(true);
+    }
+  });
+
   it("holds exactly value, status and pendingLabel", () => {
     const names = field.fields.flatMap((f) => ("name" in f && f.name ? [f.name] : []));
     expect(names).toEqual(["value", "status", "pendingLabel"]);

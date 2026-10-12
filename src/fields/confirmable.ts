@@ -1,4 +1,5 @@
 import type { Field } from "payload";
+import { forbidsPhrases } from "./validators";
 
 /*
  * A fact Edge may not have confirmed yet.
@@ -30,7 +31,13 @@ export const confirmable = (
   fields: [
     {
       name: "value",
+      // Both text fields here are editor-entered prose that reaches the page,
+      // so both carry the forbidden-phrase validator. A confirmable fact is
+      // exactly the kind of field where an unverified claim gets typed -- that
+      // is what it is for -- which makes leaving it unguarded the worst case
+      // rather than a safe one.
       type: "text",
+      validate: forbidsPhrases(),
       admin: { description: "Leave empty while this is still unconfirmed." },
     },
     {
@@ -50,6 +57,7 @@ export const confirmable = (
     {
       name: "pendingLabel",
       type: "text",
+      validate: forbidsPhrases(),
       ...(opts.defaultPendingLabel ? { defaultValue: opts.defaultPendingLabel } : {}),
       admin: {
         description: "What the marker says, e.g. 'Year to confirm'.",

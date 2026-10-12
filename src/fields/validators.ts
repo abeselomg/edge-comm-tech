@@ -18,31 +18,50 @@
 
 export type Rule = { pattern: RegExp; message: string };
 
+/*
+ * Separator between the words of a forbidden phrase.
+ *
+ * Every rule below originally required whitespace here, which let the most
+ * natural marketing spelling through untouched: "Tier-III-certified" and
+ * "authorised-reseller" both passed while their spaced forms were blocked.
+ * Hyphenating a compound modifier is normal English and arguably the likelier
+ * way someone writes these, so whitespace alone was guarding the wrong half of
+ * the problem.
+ *
+ * Note what this deliberately does NOT widen, because two earlier decisions
+ * depend on it: "certified" still never matches "certification", and the
+ * authorization rule still only covers reseller, partner and distributor.
+ * Edge's own compliance disclaimers say it holds no certification and that
+ * decisions stay "subject to authorized human review" -- a rule that blocks
+ * those is a bug, not a stricter guardrail. See the disclaimer tests.
+ */
+const SEP = String.raw`[\s\-‐-―_.]`;
+
+const rule = (source: string, message: string): Rule => ({
+  pattern: new RegExp(source.replaceAll("{SEP}", SEP), "i"),
+  message,
+});
+
 export const BASE_RULES: Rule[] = [
-  {
-    pattern: /tier\s*(?:iii|iv|3|4)\W{0,3}certified/i,
-    message:
-      'The content master allows "Tier III-aligned" and never "Tier III-certified". Edge has not certified a facility.',
-  },
-  {
-    pattern: /\b(?:gold|silver|platinum|elite|premier)\s+partner\b/i,
-    message:
-      "Partnership tiers may not be published. Remove the tier and describe what the technology does instead.",
-  },
-  {
-    pattern: /\bauthori[sz]ed\s+(?:reseller|partner|distributor)\b/i,
-    message:
-      "Authorization status may not be published. It changes over time and is governed by each manufacturer's agreement.",
-  },
-  {
-    pattern: /\bcertified\s+partner\b/i,
-    message: "Certification tiers may not be published.",
-  },
-  {
-    pattern: /\b(?:100%|fully|completely|totally)\s+secure\b/i,
-    message:
-      "Absolute security claims are forbidden. Describe the controls rather than promising an outcome.",
-  },
+  rule(
+    // `[\W_]` rather than `\W` for the second gap: `\W` is [^A-Za-z0-9_], so it
+    // excludes the underscore and let "Tier_III_certified" through.
+    String.raw`tier{SEP}*(?:iii|iv|3|4)[\W_]{0,3}certified`,
+    'The content master allows "Tier III-aligned" and never "Tier III-certified". Edge has not certified a facility.',
+  ),
+  rule(
+    String.raw`\b(?:gold|silver|platinum|elite|premier){SEP}+partner\b`,
+    "Partnership tiers may not be published. Remove the tier and describe what the technology does instead.",
+  ),
+  rule(
+    String.raw`\bauthori[sz]ed{SEP}+(?:reseller|partner|distributor)\b`,
+    "Authorization status may not be published. It changes over time and is governed by each manufacturer's agreement.",
+  ),
+  rule(String.raw`\bcertified{SEP}+partner\b`, "Certification tiers may not be published."),
+  rule(
+    String.raw`\b(?:100%|fully|completely|totally){SEP}+secure\b`,
+    "Absolute security claims are forbidden. Describe the controls rather than promising an outcome.",
+  ),
 ];
 
 /** Base rules plus the project-only wording rule. */

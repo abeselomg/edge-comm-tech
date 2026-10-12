@@ -162,3 +162,51 @@ describe("forbidsPhrases fix round 1", () => {
     });
   });
 });
+
+/*
+ * Every rule used to require whitespace between the words of its phrase, which
+ * let the most natural spelling straight through: "Tier-III-certified" passed
+ * while "Tier III certified" was blocked. Hyphenating a compound modifier is
+ * normal English, so the hyphenated form was arguably the likelier one to be
+ * typed -- the guardrail was watching the wrong half of the problem.
+ */
+describe("forbidsPhrases ignores how the words are joined", () => {
+  const validate = forbidsPhrases();
+  const blocked = (s: string) => expect(validate(s), `should block: ${s}`).not.toBe(true);
+
+  it("blocks the tier claim however it is punctuated", () => {
+    for (const s of [
+      "Tier III certified",
+      "Tier III-certified",
+      "Tier-III-certified",
+      "tier-iii-certified",
+      "Tier_III_certified",
+      "Tier.III.certified",
+      "Tier–III–certified", // en dash, what a word processor produces
+      "a tier-4-certified facility",
+    ])
+      blocked(s);
+  });
+
+  it("blocks authorization status however it is joined", () => {
+    for (const s of ["authorized reseller", "authorised-reseller", "authorized_partner"])
+      blocked(s);
+  });
+
+  it("blocks partnership and certification tiers however they are joined", () => {
+    for (const s of ["gold-partner", "Platinum_Partner", "certified-partner"]) blocked(s);
+  });
+
+  it("blocks absolute security claims however they are joined", () => {
+    for (const s of ["fully-secure", "100%-secure", "completely_secure"]) blocked(s);
+  });
+
+  it("still permits the disclaimers, which is what limits this widening", () => {
+    // The separator widened; "certified" vs "certification" and the
+    // reseller/partner/distributor list did NOT. These three sentences are why.
+    expect(validate("Tier III certification is stated separately only if awarded.")).toBe(true);
+    expect(validate("Sensitive decisions remain subject to authorized human review.")).toBe(true);
+    expect(validate("Tier III-aligned data centre design.")).toBe(true);
+    expect(validate("Our authorized-human review process.")).toBe(true);
+  });
+});
