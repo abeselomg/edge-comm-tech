@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Field } from "payload";
 import { confirmable } from "./confirmable";
+import { PROJECT_RULES } from "./validators";
 
 type GroupField = Extract<Field, { type: "group"; name: string }>;
 
@@ -33,6 +34,21 @@ describe("confirmable", () => {
       expect(sub.validate!("Tier III certified facility", {})).not.toBe(true);
       expect(sub.validate!("An authorized reseller", {})).not.toBe(true);
     }
+  });
+
+  it("honours a caller's rule set, so a project's SOC rule reaches it", () => {
+    // Without this, these two fields would be the only prose in Projects that
+    // the SOC rule does not cover.
+    const onProject = confirmable("year", { rules: PROJECT_RULES }) as GroupField;
+    const base = subfield(field, "value") as { validate?: (v: unknown, o?: unknown) => unknown };
+    const scoped = subfield(onProject, "value") as {
+      validate?: (v: unknown, o?: unknown) => unknown;
+    };
+
+    expect(scoped.validate!("Built the SOC in 2024", {})).not.toBe(true);
+    // The default set deliberately permits SOC: it is correct copy on the
+    // cybersecurity solution page, and only projects must say "control room".
+    expect(base.validate!("Built the SOC in 2024", {})).toBe(true);
   });
 
   it("still accepts approved copy and empty values in both text fields", () => {

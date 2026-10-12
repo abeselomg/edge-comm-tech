@@ -28,14 +28,25 @@ export type Rule = { pattern: RegExp; message: string };
  * way someone writes these, so whitespace alone was guarding the wrong half of
  * the problem.
  *
- * Note what this deliberately does NOT widen, because two earlier decisions
- * depend on it: "certified" still never matches "certification", and the
- * authorization rule still only covers reseller, partner and distributor.
- * Edge's own compliance disclaimers say it holds no certification and that
- * decisions stay "subject to authorized human review" -- a rule that blocks
- * those is a bug, not a stricter guardrail. See the disclaimer tests.
+ * What this must NOT do is bridge a sentence boundary. An earlier version of
+ * this class included the full stop, which made every rule match across two
+ * sentences: "labelled fully. Secure racks follow" tripped the absolute-
+ * security rule, and "limited to authorized. Partner institutions apply"
+ * tripped the authorization rule. The editor then gets told off for a claim
+ * they never made and cannot publish -- and as the note above says, a
+ * guardrail that fires on correct copy gets switched off. So the class holds
+ * joiners only, and excludes every character that can END a sentence: . ! ? ;
+ * and :. The sole thing the full stop bought was "Tier.III.certified", the
+ * least plausible spelling of the lot.
+ *
+ * Note what this also does NOT widen, because two earlier decisions depend on
+ * it: "certified" still never matches "certification", and the authorization
+ * rule still only covers reseller, partner and distributor. Edge's own
+ * compliance disclaimers say it holds no certification and that decisions stay
+ * "subject to authorized human review" -- a rule that blocks those is a bug,
+ * not a stricter guardrail. See the disclaimer tests.
  */
-const SEP = String.raw`[\s\-‐-―_.]`;
+const SEP = String.raw`[\s\-‐-―_/()"']`;
 
 const rule = (source: string, message: string): Rule => ({
   pattern: new RegExp(source.replaceAll("{SEP}", SEP), "i"),
@@ -44,9 +55,12 @@ const rule = (source: string, message: string): Rule => ({
 
 export const BASE_RULES: Rule[] = [
   rule(
-    // `[\W_]` rather than `\W` for the second gap: `\W` is [^A-Za-z0-9_], so it
-    // excludes the underscore and let "Tier_III_certified" through.
-    String.raw`tier{SEP}*(?:iii|iv|3|4)[\W_]{0,3}certified`,
+    // Both gaps use the joiner class. The second one used to be `\W{0,3}`,
+    // which had two bugs at once: `\W` is [^A-Za-z0-9_] so it EXCLUDED the
+    // underscore and let "Tier_III_certified" through, while it INCLUDED the
+    // full stop and blocked "The facility is Tier III. Certified engineers
+    // maintain it." -- a sentence Edge could reasonably publish.
+    String.raw`tier{SEP}*(?:iii|iv|3|4){SEP}{0,3}certified`,
     'The content master allows "Tier III-aligned" and never "Tier III-certified". Edge has not certified a facility.',
   ),
   rule(

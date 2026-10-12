@@ -181,8 +181,8 @@ describe("forbidsPhrases ignores how the words are joined", () => {
       "Tier-III-certified",
       "tier-iii-certified",
       "Tier_III_certified",
-      "Tier.III.certified",
       "Tier–III–certified", // en dash, what a word processor produces
+      "Tier III (certified)",
       "a tier-4-certified facility",
     ])
       blocked(s);
@@ -208,5 +208,23 @@ describe("forbidsPhrases ignores how the words are joined", () => {
     expect(validate("Sensitive decisions remain subject to authorized human review.")).toBe(true);
     expect(validate("Tier III-aligned data centre design.")).toBe(true);
     expect(validate("Our authorized-human review process.")).toBe(true);
+  });
+
+  /*
+   * The joiner class must not bridge a sentence boundary. When it included the
+   * full stop, every rule matched across two sentences and told an editor off
+   * for a claim they never made. These four sentences are the regression: each
+   * one is copy Edge could legitimately publish, and each was blocked.
+   */
+  it("does not match across a sentence boundary", () => {
+    const fine = (s: string) => expect(validate(s), `should pass: ${s}`).toBe(true);
+    fine("Cabling is tested and labelled fully. Secure racks and containment follow.");
+    fine("Access is limited to authorized. Partner institutions apply separately.");
+    fine("Delivered to a premier. Partner agencies were consulted.");
+    fine("The facility is Tier III. Certified engineers maintain it.");
+    // The other sentence-enders are excluded for the same reason.
+    fine("Is the cabling labelled fully? Secure racks follow.");
+    fine("Everything is labelled fully; secure racks follow.");
+    fine("One thing remains: partner agencies must be premier. Partner lists follow.");
   });
 });

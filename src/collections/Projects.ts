@@ -88,6 +88,9 @@ export const Projects: CollectionConfig = {
       description:
         "When the work ran, e.g. '2024/2025'. Leave the value empty and the status pending where Edge has not confirmed it.",
       defaultPendingLabel: "Year to confirm",
+      // PROJECT_RULES, not the default base set: without this, these two text
+      // fields would be the only prose in this collection the SOC rule misses.
+      rules: PROJECT_RULES,
     }),
     {
       name: "primary",

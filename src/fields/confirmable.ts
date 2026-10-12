@@ -1,5 +1,5 @@
 import type { Field } from "payload";
-import { forbidsPhrases } from "./validators";
+import { forbidsPhrases, type Rule } from "./validators";
 
 /*
  * A fact Edge may not have confirmed yet.
@@ -22,7 +22,19 @@ export type ConfirmableValue = {
 
 export const confirmable = (
   name: string,
-  opts: { label?: string; description?: string; defaultPendingLabel?: string } = {},
+  opts: {
+    label?: string;
+    description?: string;
+    defaultPendingLabel?: string;
+    /**
+     * Which phrase rules apply. Defaults to the base set. Pass PROJECT_RULES on
+     * a project, where the approved wording for Bahir Dar's campus spaces is
+     * "security control room" and never "SOC" -- otherwise a confirmable fact
+     * on a project would be the one prose field in that collection the SOC rule
+     * does not reach.
+     */
+    rules?: Rule[];
+  } = {},
 ): Field => ({
   name,
   type: "group",
@@ -37,7 +49,7 @@ export const confirmable = (
       // is what it is for -- which makes leaving it unguarded the worst case
       // rather than a safe one.
       type: "text",
-      validate: forbidsPhrases(),
+      validate: forbidsPhrases(opts.rules),
       admin: { description: "Leave empty while this is still unconfirmed." },
     },
     {
@@ -57,7 +69,7 @@ export const confirmable = (
     {
       name: "pendingLabel",
       type: "text",
-      validate: forbidsPhrases(),
+      validate: forbidsPhrases(opts.rules),
       ...(opts.defaultPendingLabel ? { defaultValue: opts.defaultPendingLabel } : {}),
       admin: {
         description: "What the marker says, e.g. 'Year to confirm'.",
