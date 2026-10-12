@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { Field } from "payload";
 import { Media } from "./Media";
 
 /*
@@ -68,5 +69,35 @@ describe("media approval gate", () => {
     const message = approve(true, {});
     expect(message).toContain("Where this came from");
     expect(message).toContain("before approving");
+  });
+});
+
+/*
+ * Media itself is world-readable, because the site serves its files straight
+ * from their URLs. The provenance group is not: `reviewedBy` is a colleague's
+ * name and `source` can be an internal handover location, and neither belongs
+ * in a public API response. An access rule attached to the wrong field fails
+ * silently, so pin where it sits.
+ */
+describe("provenance is not public", () => {
+  const provenance = (Media.fields as Field[]).find(
+    (f): f is Extract<Field, { type: "group"; name: string }> =>
+      f.type === "group" && "name" in f && f.name === "provenance",
+  );
+
+  it("restricts reads to signed-in staff", () => {
+    expect(provenance).toBeDefined();
+    expect(provenance?.access?.read).toBeTypeOf("function");
+    expect(provenance?.access?.read?.({ req: { user: null } } as never)).toBe(false);
+    expect(provenance?.access?.read?.({ req: { user: { id: 1 } } } as never)).toBe(true);
+  });
+
+  it("covers all three recorded facts, since they live inside the group", () => {
+    const names = (provenance?.fields ?? []).flatMap((f) => ("name" in f && f.name ? [f.name] : []));
+    expect(names).toEqual(["source", "retrievedAt", "reviewedBy"]);
+  });
+
+  it("leaves the collection itself readable, so file URLs keep working", () => {
+    expect(Media.access?.read?.({ req: { user: null } } as never)).toBe(true);
   });
 });

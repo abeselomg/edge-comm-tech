@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { signedIn } from "../access";
+import { signedIn, signedInField } from "../access";
 
 export const Media: CollectionConfig = {
   slug: "media",
@@ -36,6 +36,11 @@ export const Media: CollectionConfig = {
       name: "provenance",
       type: "group",
       label: "Where this came from",
+      // `reviewedBy` is a colleague's name and `source` can be an internal
+      // handover location. The collection itself is world-readable because the
+      // site serves media files from their URLs, so the restriction goes here
+      // rather than on the collection. Server-side reads are unaffected.
+      access: { read: signedInField },
       admin: {
         description:
           "The content master allows publishing only assets whose source, retrieval date and internal reviewer are recorded. Fill these in before ticking Approved.",
