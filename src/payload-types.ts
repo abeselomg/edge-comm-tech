@@ -72,6 +72,7 @@ export interface Config {
     sectors: Sector;
     clients: Client;
     projects: Project;
+    events: Event;
     partnerCategories: PartnerCategory;
     partners: Partner;
     courses: Course;
@@ -93,6 +94,7 @@ export interface Config {
     sectors: SectorsSelect<false> | SectorsSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
     partnerCategories: PartnerCategoriesSelect<false> | PartnerCategoriesSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
@@ -812,6 +814,67 @@ export interface Sector {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Sessions Edge runs or attends. Upcoming and past are worked out from the dates — there is nothing to switch over afterwards.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  /**
+   * Page URL: /events/<slug>
+   */
+  slug: string;
+  /**
+   * First day of the session.
+   */
+  startsOn: string;
+  /**
+   * Last day, for sessions running more than one day. Leave empty for a single-day event — the site then uses the start date.
+   */
+  endsOn?: string | null;
+  /**
+   * How the date reads on the page, e.g. '7–11 December 2026' or '23 October 2026'.
+   */
+  displayDate: string;
+  /**
+   * e.g. 'Webinar and online event', 'International exhibition'.
+   */
+  category: string;
+  format: 'Online' | 'In person' | 'Hybrid';
+  /**
+   * The platform for an online session or the venue for an in-person one. 'Platform to be confirmed' is an acceptable value.
+   */
+  venue: string;
+  /**
+   * The promise at the top of the page. One line.
+   */
+  headline: string;
+  intro: string;
+  /**
+   * Who the session is for.
+   */
+  audience: string;
+  program?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The registration button's wording, e.g. 'Register Online'.
+   */
+  action: string;
+  /**
+   * Shown as a visible marker where something about the session is not yet confirmed.
+   */
+  pendingNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * Public courses. Modules and lessons are edited inside each course.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1259,6 +1322,10 @@ export interface PayloadLockedDocument {
         value: number | Project;
       } | null)
     | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
         relationTo: 'partnerCategories';
         value: number | PartnerCategory;
       } | null)
@@ -1636,6 +1703,34 @@ export interface ProjectsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  startsOn?: T;
+  endsOn?: T;
+  displayDate?: T;
+  category?: T;
+  format?: T;
+  venue?: T;
+  headline?: T;
+  intro?: T;
+  audience?: T;
+  program?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  action?: T;
+  pendingNote?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
