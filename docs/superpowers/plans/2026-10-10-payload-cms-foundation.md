@@ -1386,7 +1386,7 @@ This task carries the spec's one departure from fixed templates: `solutions.deta
 
 **Interfaces:**
 - Consumes: `forbidsPhrases` from `src/fields/validators.ts` (Task 3); `slugField`, `orderField` from `src/fields/slug.ts`
-- Produces: collections `solutions` and `services`. Tasks 10–13 relate to `solutions`; Task 14's Page Copy global does not. Task 16's transforms target these exact field names. The `detail` blocks are `capabilities`, `bands`, `layers`, `steps`, `checklist`, `models`.
+- Produces: collections `solutions` and `services`. Tasks 10–13 relate to `solutions`; Task 14's Page Copy global does not. Task 16's transforms target these exact field names. The `detail` blocks are `capabilities`, `bands`, `layers`, `sectors`, `measures`, `steps`, `checklist`, `models` — EIGHT, not six. An earlier draft of this line listed six; `sectors` and `measures` were added to the task's code during the plan's own self-review, because three of the seven families carry per-sector copy and several state how a client judges the outcome, and the Interfaces line was not updated to match. Task 16's transforms target the six named in that earlier draft; the other two carry no transform and are rendered directly.
 
 - [ ] **Step 1: Write the detail blocks and the solutions collection**
 
@@ -3520,8 +3520,9 @@ This task also deletes the collections and globals the new model replaces. Nothi
 - Modify: `src/globals/SiteSettings.ts`
 - Modify: `src/payload.config.ts`
 - Delete: `src/collections/Sectors.ts`, `src/collections/Courses.ts`, `src/globals/HomePage.ts`, `src/globals/CompanyPage.ts`
-- Delete: `src/seed/data/{solutions,sectors,courses,partners,globals}.ts`, `src/seed/index.ts`
-- Note: `package.json` is deliberately left untouched — its `seed` script points at the file this task deletes, and Task 18 restores it
+- Delete: `src/seed/data/{solutions,sectors,courses,partners,globals}.ts`
+- Note: `src/seed/index.ts` is NOT listed here. It was deleted during Task 9 (commit `bb0ad41`), because re-modelling Solutions broke its `payload.create` call and leaving it would have held `tsc` red from Task 9 through Task 14. The `git rm` below no longer names it.
+- Note: `package.json` is deliberately left untouched — its `seed` script points at a file that no longer exists, and Task 18 restores it
 
 **Interfaces:**
 - Consumes: `forbidsPhrases`, `requiresScopeQualifier` (Task 3); `confirmable` (Task 4); `media` (Task 8)
@@ -4243,19 +4244,28 @@ In `src/payload.config.ts`:
 - Add `import { Company } from "./globals/Company";`, `import { ContactDetails } from "./globals/ContactDetails";`, `import { Careers } from "./globals/Careers";`, `import { PageCopy } from "./globals/PageCopy";`.
 - Set `globals: [SiteSettings, Company, ContactDetails, Careers, PageCopy],`.
 - Update the `seoPlugin` collections list to `["solutions", "services", "projects", "news", "events", "jobs", "posts"]`.
+- Fix `generateDescription` in the same call. It currently reads
+  `({ doc }) => doc?.summary ?? doc?.line ?? doc?.excerpt ?? ""`, and NONE of `summary`, `line` or `excerpt` exists on any collection this plan creates — they all carry `blurb`. Left as it is, every solution, service, project and news page ships an empty meta description. Replace it with:
+
+```ts
+generateDescription: ({ doc }) =>
+  doc?.blurb ?? doc?.summary ?? doc?.excerpt ?? "",
+```
+
+  `blurb` first, since it is what the new model uses; the other two stay as fallbacks for any collection that still carries them.
 
 Then delete the retired files and the old seed, which references every collection being removed:
 
 ```bash
 git rm src/collections/Sectors.ts src/collections/Courses.ts \
        src/globals/HomePage.ts src/globals/CompanyPage.ts \
-       src/seed/index.ts src/seed/data/solutions.ts src/seed/data/sectors.ts \
+       src/seed/data/solutions.ts src/seed/data/sectors.ts \
        src/seed/data/courses.ts src/seed/data/partners.ts src/seed/data/globals.ts
 ```
 
 `src/seed/lexical.ts` stays — Task 17 reuses its helpers.
 
-The `seed` script in `package.json` now points at a deleted file. Leave it: Task 18 restores `src/seed/index.ts`. Note in the commit that `npm run seed` is temporarily broken.
+`src/seed/index.ts` is already gone — Task 9 deleted it. The `seed` script in `package.json` still points at it. Leave the script: Task 18 restores the file. `npm run seed` has been broken since Task 9 and stays broken until then.
 
 - [ ] **Step 7: Generate types and verify the whole model loads**
 
