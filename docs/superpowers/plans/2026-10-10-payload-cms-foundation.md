@@ -1007,12 +1007,37 @@ Highland's look replaces the frontend's teal-and-brass design system wholesale. 
 **Files:**
 - Modify: `src/app/(frontend)/globals.css`
 - Modify: `src/app/(frontend)/layout.tsx`
+- Delete: `src/components/{contact-form,partner-network,rich-text}.tsx`
 
 **Interfaces:**
 - Consumes: nothing
 - Produces: Tailwind tokens `ink`, `ink-2`, `paper`, `paper-2`, `gold`, `gold-2`, `lamp`, `steel`, `rule`; font families `display`, `sans`, `mono`; and the classes `eg-rise`, `eg-pop`, `eg-draw`, `eg-breathe`, `eg-spin-slow`, `eg-inview`, `sun-disk`, `horizon`. Every component in Phases 4–5 uses these names, which are the same names Highland's markup already uses — so ported markup needs no class rewriting.
 
-- [ ] **Step 1: Replace the global theme with Highland's**
+- [ ] **Step 1: Delete the components the retired routes left behind**
+
+```bash
+git rm src/components/contact-form.tsx src/components/partner-network.tsx \
+       src/components/rich-text.tsx
+```
+
+Task 6 deleted the routes but not the components only those routes rendered.
+Nothing imports these three — verify with
+`grep -rn "contact-form\|partner-network\|rich-text" src/ --include=*.tsx`,
+which should return only their own definitions. They are also styled entirely
+against the teal/brass system that Step 2 deletes, so they cannot be kept
+working: `contact-form` and `partner-network` use `btn-brass`, `bg-brass`,
+`bg-deep-2` and `border-rule-dark`, and `rich-text` renders nothing but a
+`prose-edge` wrapper. Phase 4 rebuilds a rich-text renderer against Highland's
+prose styles and Phase 6 rebuilds the forms on `plugin-form-builder`; both are
+outside this plan. If either wants to crib from these files they are in git
+history at `20daf05`.
+
+`src/components/mobile-nav.tsx` is NOT deleted here. `chrome.tsx` still imports
+it, so removing it now breaks the build. It becomes an orphan in Task 20, which
+replaces `chrome.tsx` with a version importing `nav-links` instead, and Task 20
+deletes it there.
+
+- [ ] **Step 2: Replace the global theme with Highland's**
 
 Replace everything in `src/app/(frontend)/globals.css` from `@import "tailwindcss";` through the end of the `.prose-edge`/`.dark-surface` block with:
 
@@ -1171,7 +1196,7 @@ body {
 
 Highland's `hop-line` and `.ph` rules are deliberately not ported: both have zero uses in the current 51-page build.
 
-- [ ] **Step 2: Swap the typefaces**
+- [ ] **Step 3: Swap the typefaces**
 
 In `src/app/(frontend)/layout.tsx`, replace the three font imports and declarations:
 
@@ -1203,22 +1228,27 @@ const fragmentMono = Fragment_Mono({
 
 Update the `<html>` className to `` `${geologica.variable} ${atkinson.variable} ${fragmentMono.variable}` ``, and change the skip link's colours from `focus:bg-brass focus:text-deep` to `focus:bg-gold focus:text-white`, since `brass` and `deep` no longer exist.
 
-- [ ] **Step 3: Verify the theme renders and nothing references dead tokens**
+- [ ] **Step 4: Verify the theme renders and nothing references dead tokens**
 
 Run:
 
 ```bash
-grep -rn "brass\|deep-2\|color-teal\|signal\|prose-edge\|register-row" src/app src/components --include=*.tsx
+grep -rnE "brass|deep-2|color-teal|signal|prose-edge|register-row" src/app src/components --include=*.tsx \
+  | grep -vE "^src/components/(chrome|mobile-nav)\.tsx:"
 npx tsc --noEmit
 npm run dev
 ```
 
-Expected: the grep returns **nothing at all**. With `/design/` deleted in Task 6 the teal/brass system has no legitimate consumer left, so this check needs no exclusion and any hit is a component still reaching for a deleted token. `tsc` clean. `/` renders the placeholder in Highland's blue on tinted paper with Geologica headings.
+Expected: the filtered grep returns **nothing**. `tsc` clean. `/` renders the placeholder in Highland's blue on tinted paper with Geologica headings.
 
-- [ ] **Step 4: Commit**
+The two excluded files are the last legitimate consumers of the old tokens and both are resolved in Task 20: it replaces `chrome.tsx` wholesale with a version using `text-gold`, and deletes `mobile-nav.tsx` once that replacement imports `nav-links` instead. Repainting either one here would be work Task 20 throws away. Until then the header and footer render their accents in body ink rather than blue, on a site serving one placeholder page and not deployed. Everything outside those two files must be clean, so this check still has teeth: if a hit appears in any other file, a component is reaching for a token that no longer exists.
+
+- [ ] **Step 5: Commit**
 
 ```bash
-git add "src/app/(frontend)/globals.css" "src/app/(frontend)/layout.tsx"
+git add "src/app/(frontend)/globals.css" "src/app/(frontend)/layout.tsx" \
+        src/components/contact-form.tsx src/components/partner-network.tsx \
+        src/components/rich-text.tsx
 git commit -m "Port Highland's theme and motion into the Next app
 
 Token names match Highland's Tailwind config exactly, so the markup ported in
@@ -5744,6 +5774,7 @@ Highland's chrome, reading from the CMS. The footer is the reason `contact-detai
 - Create: `src/components/nav-links.tsx`
 - Modify: `src/components/chrome.tsx`
 - Modify: `src/app/(frontend)/layout.tsx`
+- Delete: `src/components/mobile-nav.tsx`
 
 **Interfaces:**
 - Consumes: `getSiteSettings`, `getContactDetails`, `getSolutions`, `getCompany` (Task 19)
@@ -5808,6 +5839,11 @@ export function NavLinks({
 ```
 
 - [ ] **Step 3: Write the header and footer**
+
+The replacement imports `./nav-links` and does not import `mobile-nav`, so
+`src/components/mobile-nav.tsx` becomes unreachable the moment this lands. It is
+the last file carrying `bg-brass` and `btn-brass`, tokens deleted in Task 7, and
+Step 6 removes it. Do not port it; `nav-links` is its replacement.
 
 Replace the whole of `src/components/chrome.tsx`:
 
@@ -6039,6 +6075,7 @@ Then check the nav fits: at 1024px the eight desktop items must not wrap. Highla
 - [ ] **Step 6: Commit**
 
 ```bash
+git rm src/components/mobile-nav.tsx
 git add public/edge-logo.png src/components/nav-links.tsx src/components/chrome.tsx \
         "src/app/(frontend)/layout.tsx"
 git commit -m "Port Highland's header and footer, reading every fact from the CMS
