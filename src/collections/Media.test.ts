@@ -61,6 +61,25 @@ describe("media approval gate", () => {
     expect(approve(true, { ...complete, reviewedBy: "" })).toMatch(/reviewedBy/);
   });
 
+  it("does not accept whitespace as a recorded fact", () => {
+    // Three spaces in Source is not a licence. Neither field is `required` and
+    // Payload's text validator does not trim, so this closure is the only
+    // thing standing between a space bar and an approved asset.
+    expect(approve(true, { ...complete, source: "   " })).toMatch(/source/);
+    expect(approve(true, { ...complete, reviewedBy: "\t" })).toMatch(/reviewedBy/);
+    expect(approve(true, { source: "   ", retrievedAt: " ", reviewedBy: "  " })).toMatch(
+      /source, retrievedAt, reviewedBy/,
+    );
+    // A non-breaking space arrives whenever someone pastes from a web page.
+    expect(approve(true, { ...complete, source: " " })).toMatch(/source/);
+  });
+
+  it("still accepts a legitimate value that merely has padding", () => {
+    expect(approve(true, { ...complete, source: "  https://brand.example/press-kit  " })).toBe(
+      true,
+    );
+  });
+
   it("allows approval once all three are recorded", () => {
     expect(approve(true, complete)).toBe(true);
   });

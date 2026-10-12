@@ -80,7 +80,16 @@ export const Media: CollectionConfig = {
       validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
         if (!value) return true;
         const p = (siblingData?.provenance ?? {}) as Record<string, unknown>;
-        const missing = (["source", "retrievedAt", "reviewedBy"] as const).filter((k) => !p[k]);
+        // Trim before testing. A plain truthiness check counts "   " as a
+        // recorded source, which would let an editor approve an asset with
+        // three spaces where its licence should be. Neither field is
+        // `required` and Payload's text validator does not trim, so nothing
+        // else catches it.
+        const recorded = (v: unknown) =>
+          typeof v === "string" ? v.trim().length > 0 : Boolean(v);
+        const missing = (["source", "retrievedAt", "reviewedBy"] as const).filter(
+          (k) => !recorded(p[k]),
+        );
         if (missing.length === 0) return true;
         return `Record ${missing.join(", ")} under "Where this came from" before approving this asset.`;
       },
