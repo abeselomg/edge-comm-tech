@@ -8,6 +8,7 @@ import { formBuilderPlugin } from "@payloadcms/plugin-form-builder";
 import { s3Storage } from "@payloadcms/storage-s3";
 import sharp from "sharp";
 
+import { guardSeoMetaFields } from "./fields/seo";
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Solutions } from "./collections/Solutions";
@@ -105,6 +106,9 @@ export default buildConfig({
       uploadsCollection: "media",
       generateTitle: ({ doc }) => `${doc?.title ?? "Edge COMM-TECH"} · Edge COMM-TECH`,
       generateDescription: ({ doc }) => doc?.summary ?? doc?.line ?? doc?.excerpt ?? "",
+      // The plugin creates its own meta.title and meta.description, which the
+      // validators in the collection files cannot reach. See src/fields/seo.ts.
+      fields: guardSeoMetaFields,
     }),
     formBuilderPlugin({
       fields: { payment: false },

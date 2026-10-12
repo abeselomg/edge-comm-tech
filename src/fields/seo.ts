@@ -1,0 +1,33 @@
+import type { Field } from "payload";
+import { forbidsPhrases } from "./validators";
+
+/**
+ * Attach the forbidden-phrase validator to the SEO plugin's own meta fields.
+ *
+ * `@payloadcms/plugin-seo` injects a `meta` group — title, description, image
+ * and its preview components — into every collection it is given. Those fields
+ * are created by the plugin, so the validators attached in the collection files
+ * cannot reach them, and nothing else guards them.
+ *
+ * That matters more than it sounds. The meta description is the search-result
+ * snippet and the Open Graph description: it is the text a buyer reads before
+ * they ever load the page. An editor typing "Tier III certified facility" there
+ * publishes exactly the claim the content master forbids, in the place it
+ * travels furthest.
+ *
+ * Pass this as the plugin's `fields` option. It preserves every default field
+ * and changes nothing but the two prose ones.
+ */
+export const guardSeoMetaFields = ({ defaultFields }: { defaultFields: Field[] }): Field[] =>
+  defaultFields.map((field): Field => {
+    // Narrow to the two prose fields before spreading. Spreading the whole
+    // Field union loses the discriminant, and TypeScript then tries to match
+    // the result against every field variant in it.
+    if (
+      (field.type === "text" || field.type === "textarea") &&
+      (field.name === "title" || field.name === "description")
+    ) {
+      return { ...field, validate: forbidsPhrases() };
+    }
+    return field;
+  });
