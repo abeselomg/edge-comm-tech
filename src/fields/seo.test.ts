@@ -78,4 +78,44 @@ describe("guardSeoMetaFields", () => {
     };
     expect(original.validate).toBeUndefined();
   });
+
+  it("guards a prose field the plugin might add later under another name", () => {
+    // Matching on `title` and `description` by name would cover today's plugin
+    // exactly and miss anything a future version introduces. Guarding by type
+    // means a new prose field arrives already covered.
+    const withExtra = guardSeoMetaFields({
+      defaultFields: [
+        ...defaultFields,
+        { name: "ogDescription", type: "textarea", label: "OG description" },
+        { name: "twitterTitle", type: "text", label: "Twitter title" },
+      ],
+    });
+    for (const name of ["ogDescription", "twitterTitle"]) {
+      const f = withExtra.find((x) => "name" in x && x.name === name) as Field & {
+        validate?: (v: unknown, o?: unknown) => unknown;
+      };
+      expect(f.validate, `${name} should be guarded`).toBeTypeOf("function");
+      expect(f.validate!("Tier III certified", {})).not.toBe(true);
+    }
+  });
+});
+
+/*
+ * The guard is only worth anything if the config actually passes it. Importing
+ * payload.config.ts here is not an option — it boots the whole config and
+ * times out well past any sane test timeout, which is why vitest.config.ts
+ * says there is no Payload instance to boot.
+ *
+ * So this asserts on the source text. It is a crude check and it verifies
+ * exactly one thing: that nobody has quietly disconnected the guard. Without
+ * it, deleting the `fields:` line from the seoPlugin call leaves every other
+ * test in this file green while both meta fields go back to being unguarded.
+ */
+describe("the config wires the guard", () => {
+  it("passes guardSeoMetaFields to seoPlugin", async () => {
+    const { readFile } = await import("node:fs/promises");
+    const source = await readFile(new URL("../payload.config.ts", import.meta.url), "utf8");
+    expect(source).toContain('from "./fields/seo"');
+    expect(source).toMatch(/fields:\s*guardSeoMetaFields/);
+  });
 });

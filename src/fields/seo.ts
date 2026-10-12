@@ -20,13 +20,17 @@ import { forbidsPhrases } from "./validators";
  */
 export const guardSeoMetaFields = ({ defaultFields }: { defaultFields: Field[] }): Field[] =>
   defaultFields.map((field): Field => {
-    // Narrow to the two prose fields before spreading. Spreading the whole
-    // Field union loses the discriminant, and TypeScript then tries to match
-    // the result against every field variant in it.
-    if (
-      (field.type === "text" || field.type === "textarea") &&
-      (field.name === "title" || field.name === "description")
-    ) {
+    // Guard by TYPE, not by name. Matching `title` and `description` by name
+    // would cover today's plugin exactly and silently miss any prose field a
+    // future version adds under another name. Every text and textarea the
+    // plugin supplies is editor-entered prose that reaches a public page, so
+    // every one of them wants the validator; the upload and `ui` fields have
+    // no prose to check and are returned untouched.
+    //
+    // Narrow before spreading: spreading the whole Field union loses the
+    // discriminant, and TypeScript then tries to match the result against
+    // every field variant in it and asks for `relationTo`.
+    if (field.type === "text" || field.type === "textarea") {
       return { ...field, validate: forbidsPhrases() };
     }
     return field;
