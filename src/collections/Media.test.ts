@@ -72,6 +72,10 @@ describe("media approval gate", () => {
     );
     // A non-breaking space arrives whenever someone pastes from a web page.
     expect(approve(true, { ...complete, source: " " })).toMatch(/source/);
+    // Zero-width characters survive trim() and are wholly invisible, so an
+    // editor could not see why the field looked filled in.
+    expect(approve(true, { ...complete, source: "​" })).toMatch(/source/);
+    expect(approve(true, { ...complete, reviewedBy: "﻿ ‍" })).toMatch(/reviewedBy/);
   });
 
   it("still accepts a legitimate value that merely has padding", () => {

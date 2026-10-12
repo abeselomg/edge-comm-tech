@@ -80,13 +80,17 @@ export const Media: CollectionConfig = {
       validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
         if (!value) return true;
         const p = (siblingData?.provenance ?? {}) as Record<string, unknown>;
-        // Trim before testing. A plain truthiness check counts "   " as a
-        // recorded source, which would let an editor approve an asset with
-        // three spaces where its licence should be. Neither field is
-        // `required` and Payload's text validator does not trim, so nothing
-        // else catches it.
+        // Strip invisibles before testing. A plain truthiness check counts
+        // "   " as a recorded source, which would let an editor approve an
+        // asset with three spaces where its licence should be. Neither field
+        // is `required` and Payload's text validator does not trim, so nothing
+        // else catches it. trim() alone is not enough: a non-breaking space
+        // arrives whenever someone pastes from a web page, and zero-width
+        // characters survive trim() entirely while being wholly invisible.
         const recorded = (v: unknown) =>
-          typeof v === "string" ? v.trim().length > 0 : Boolean(v);
+          typeof v === "string"
+            ? v.replace(/[​-‍⁠﻿]/g, "").trim().length > 0
+            : Boolean(v);
         const missing = (["source", "retrievedAt", "reviewedBy"] as const).filter(
           (k) => !recorded(p[k]),
         );
