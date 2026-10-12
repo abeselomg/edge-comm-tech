@@ -197,6 +197,35 @@ describe("forbidsPhrases ignores how the words are joined", () => {
     for (const s of ["gold-partner", "Platinum_Partner", "certified-partner"]) blocked(s);
   });
 
+  /*
+   * The plural is how these are actually written, and a partner CATEGORY is
+   * plural by nature. "Platinum Partners" as a category label was the natural
+   * spelling and the one the singular-only rules let through -- it would have
+   * published a partnership tier as a filter group and a ring on the partner
+   * diagram, with no validator firing.
+   */
+  it("blocks the plural, which is how a category would be named", () => {
+    for (const s of [
+      "Gold Partners",
+      "Platinum Partners",
+      "Elite Partners",
+      "premier partners",
+      "authorized resellers",
+      "authorised distributors",
+      "authorized partners",
+      "certified partners",
+      "Platinum-Partners",
+    ])
+      blocked(s);
+  });
+
+  it("does not block ordinary plural words that merely end in s", () => {
+    const fine = (s: string) => expect(validate(s), `should pass: ${s}`).toBe(true);
+    fine("Our technology partners are listed below.");
+    fine("We work with distributors across the region.");
+    fine("Partners and clients can both request a review.");
+  });
+
   it("blocks absolute security claims however they are joined", () => {
     for (const s of ["fully-secure", "100%-secure", "completely_secure"]) blocked(s);
   });

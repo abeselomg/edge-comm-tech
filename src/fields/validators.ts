@@ -64,14 +64,17 @@ export const BASE_RULES: Rule[] = [
     'The content master allows "Tier III-aligned" and never "Tier III-certified". Edge has not certified a facility.',
   ),
   rule(
-    String.raw`\b(?:gold|silver|platinum|elite|premier){SEP}+partner\b`,
+    // `partners?` -- the plural is how these are actually written. A partner
+    // CATEGORY is named in the plural by nature, so "Platinum Partners" as a
+    // category label was the natural spelling and the one that slipped through.
+    String.raw`\b(?:gold|silver|platinum|elite|premier){SEP}+partners?\b`,
     "Partnership tiers may not be published. Remove the tier and describe what the technology does instead.",
   ),
   rule(
-    String.raw`\bauthori[sz]ed{SEP}+(?:reseller|partner|distributor)\b`,
+    String.raw`\bauthori[sz]ed{SEP}+(?:reseller|partner|distributor)s?\b`,
     "Authorization status may not be published. It changes over time and is governed by each manufacturer's agreement.",
   ),
-  rule(String.raw`\bcertified{SEP}+partner\b`, "Certification tiers may not be published."),
+  rule(String.raw`\bcertified{SEP}+partners?\b`, "Certification tiers may not be published."),
   rule(
     String.raw`\b(?:100%|fully|completely|totally){SEP}+secure\b`,
     "Absolute security claims are forbidden. Describe the controls rather than promising an outcome.",
