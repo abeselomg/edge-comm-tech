@@ -72,6 +72,7 @@ export interface Config {
     sectors: Sector;
     clients: Client;
     projects: Project;
+    partnerCategories: PartnerCategory;
     partners: Partner;
     courses: Course;
     jobs: Job;
@@ -92,6 +93,7 @@ export interface Config {
     sectors: SectorsSelect<false> | SectorsSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    partnerCategories: PartnerCategoriesSelect<false> | PartnerCategoriesSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     jobs: JobsSelect<false> | JobsSelect<true>;
@@ -367,6 +369,8 @@ export interface Solution {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Manufacturers and distributors. Partnership tiers and authorization levels are never published — do not add fields for them.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "partners".
  */
@@ -374,20 +378,33 @@ export interface Partner {
   id: number;
   name: string;
   /**
-   * What we use them for, in two or three words. Shown under the name.
+   * Lower numbers appear first.
    */
-  label: string;
-  category: 'data-center' | 'cloud' | 'network' | 'cyber' | 'applications';
+  order: number;
   /**
-   * Position in the partner diagram on /partners.
+   * Only approved assets can be selected. With no logo, the site sets the brand's name in the same frame the mark would occupy — intended behaviour, not a gap. Dropping an approved file in here is the whole swap.
    */
-  ring: '0' | '1';
   logo?: (number | null) | Media;
-  website?: string | null;
   /**
-   * Optional. One or two sentences on the relationship.
+   * Every group this brand belongs to. Most belong to one or two.
    */
-  blurb?: string | null;
+  categories: (number | PartnerCategory)[];
+  /**
+   * Featured brands lead the partner network.
+   */
+  featured?: boolean | null;
+  /**
+   * What Edge delivers with this technology, in the client's terms. Describe the capability, never the relationship.
+   */
+  capability: string;
+  /**
+   * The Edge solution page this brand links to. Brand cards never link to the brand's own site.
+   */
+  solution: number | Solution;
+  /**
+   * Delivered engagements where this technology was used, if published.
+   */
+  projects?: (number | Project)[] | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -465,6 +482,194 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * Capability groups used to organise and filter the partner network.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partnerCategories".
+ */
+export interface PartnerCategory {
+  id: number;
+  /**
+   * Stable identifier used by the filter, e.g. system-cloud. Do not change it.
+   */
+  key: string;
+  /**
+   * The full name, e.g. 'System, Computing and Cloud'.
+   */
+  label: string;
+  /**
+   * A short form that fits on the partner diagram, e.g. 'Compute & Cloud'. Two or three words.
+   */
+  ringLabel: string;
+  /**
+   * What this group covers. Shown when the group is selected.
+   */
+  description: string;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Delivered engagements, written as case records rather than marketing.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  title: string;
+  /**
+   * Page URL: /projects/<slug>
+   */
+  slug: string;
+  /**
+   * Must be an institution in the approved client directory.
+   */
+  client: number | Client;
+  /**
+   * The featured engagement leads the projects index. Tick one.
+   */
+  featured?: boolean | null;
+  sector: 'education' | 'banking' | 'government';
+  /**
+   * The longer sector description shown on the project page, e.g. 'Higher Education'.
+   */
+  sectorFull?: string | null;
+  /**
+   * Where the work happened, e.g. 'Bahir Dar — university campuses'.
+   */
+  location: string;
+  /**
+   * When the work ran, e.g. '2024/2025'. Leave the value empty and the status pending where Edge has not confirmed it.
+   */
+  year: {
+    /**
+     * Leave empty while this is still unconfirmed.
+     */
+    value?: string | null;
+    /**
+     * While this is pending, the site shows a visible marker instead of the value.
+     */
+    status: 'confirmed' | 'pending';
+    /**
+     * What the marker says, e.g. 'Year to confirm'.
+     */
+    pendingLabel?: string | null;
+  };
+  /**
+   * The focus in a few words, e.g. 'Smart learning and collaboration'.
+   */
+  primary: string;
+  /**
+   * The promise at the top of the project page, where the approved copy has one distinct from the title.
+   */
+  headline?: string | null;
+  /**
+   * Two or three sentences. Used on the index and in search results.
+   */
+  summary: string;
+  /**
+   * The families this engagement drew on. CCTV, access control and barriers belong to Datacenter and IT Infrastructure, not Cybersecurity.
+   */
+  solutions: (number | Solution)[];
+  /**
+   * Named platforms, e.g. PeopleLink, IQBoard, NEARITY.
+   */
+  tech?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * What the client needed, before any mention of what Edge did.
+   */
+  need: string;
+  /**
+   * What the engagement covered.
+   */
+  scope: string;
+  delivered?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  outcomes?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  technology?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * A qualification on the technology list, if the approved copy has one.
+   */
+  technologyNote?: string | null;
+  /**
+   * Knowledge transfer and training delivered at handover.
+   */
+  training?: string | null;
+  /**
+   * Any privacy or data-handling note the client requires alongside this record.
+   */
+  privacy?: string | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Institutions Edge works with. Only organisations in the approved client directory belong here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: number;
+  name: string;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
+  sector: 'education' | 'banking' | 'government';
+  /**
+   * Only approved assets can be selected. With no logo, the site sets the institution's name in the same frame the mark would occupy — which is the intended behaviour, not a gap.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Two or three sentences on what Edge has delivered for them.
+   */
+  summary: string;
+  /**
+   * Published project records for this client. Leave empty where engagement details are not published.
+   */
+  engagements?: (number | Project)[] | null;
+  /**
+   * The solution families this relationship spans.
+   */
+  solutions?: (number | Solution)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * The six services spanning the technology lifecycle, from advisory through managed support.
@@ -594,162 +799,6 @@ export interface Sector {
    * Domains most often engaged by this sector.
    */
   solutions?: (number | Solution)[] | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-  };
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Institutions Edge works with. Only organisations in the approved client directory belong here.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "clients".
- */
-export interface Client {
-  id: number;
-  name: string;
-  /**
-   * Lower numbers appear first.
-   */
-  order: number;
-  sector: 'education' | 'banking' | 'government';
-  /**
-   * Only approved assets can be selected. With no logo, the site sets the institution's name in the same frame the mark would occupy — which is the intended behaviour, not a gap.
-   */
-  logo?: (number | null) | Media;
-  /**
-   * Two or three sentences on what Edge has delivered for them.
-   */
-  summary: string;
-  /**
-   * Published project records for this client. Leave empty where engagement details are not published.
-   */
-  engagements?: (number | Project)[] | null;
-  /**
-   * The solution families this relationship spans.
-   */
-  solutions?: (number | Solution)[] | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Delivered engagements, written as case records rather than marketing.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "projects".
- */
-export interface Project {
-  id: number;
-  title: string;
-  /**
-   * Page URL: /projects/<slug>
-   */
-  slug: string;
-  /**
-   * Must be an institution in the approved client directory.
-   */
-  client: number | Client;
-  /**
-   * The featured engagement leads the projects index. Tick one.
-   */
-  featured?: boolean | null;
-  sector: 'education' | 'banking' | 'government';
-  /**
-   * The longer sector description shown on the project page, e.g. 'Higher Education'.
-   */
-  sectorFull?: string | null;
-  /**
-   * Where the work happened, e.g. 'Bahir Dar — university campuses'.
-   */
-  location: string;
-  /**
-   * When the work ran, e.g. '2024/2025'. Leave the value empty and the status pending where Edge has not confirmed it.
-   */
-  year: {
-    /**
-     * Leave empty while this is still unconfirmed.
-     */
-    value?: string | null;
-    /**
-     * While this is pending, the site shows a visible marker instead of the value.
-     */
-    status: 'confirmed' | 'pending';
-    /**
-     * What the marker says, e.g. 'Year to confirm'.
-     */
-    pendingLabel?: string | null;
-  };
-  /**
-   * The focus in a few words, e.g. 'Smart learning and collaboration'.
-   */
-  primary: string;
-  /**
-   * The promise at the top of the project page, where the approved copy has one distinct from the title.
-   */
-  headline?: string | null;
-  /**
-   * Two or three sentences. Used on the index and in search results.
-   */
-  summary: string;
-  /**
-   * The families this engagement drew on. CCTV, access control and barriers belong to Datacenter and IT Infrastructure, not Cybersecurity.
-   */
-  solutions: (number | Solution)[];
-  /**
-   * Named platforms, e.g. PeopleLink, IQBoard, NEARITY.
-   */
-  tech?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * What the client needed, before any mention of what Edge did.
-   */
-  need: string;
-  /**
-   * What the engagement covered.
-   */
-  scope: string;
-  delivered?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
-  outcomes?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
-  technology?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * A qualification on the technology list, if the approved copy has one.
-   */
-  technologyNote?: string | null;
-  /**
-   * Knowledge transfer and training delivered at handover.
-   */
-  training?: string | null;
-  /**
-   * Any privacy or data-handling note the client requires alongside this record.
-   */
-  privacy?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -1210,6 +1259,10 @@ export interface PayloadLockedDocument {
         value: number | Project;
       } | null)
     | ({
+        relationTo: 'partnerCategories';
+        value: number | PartnerCategory;
+      } | null)
+    | ({
         relationTo: 'partners';
         value: number | Partner;
       } | null)
@@ -1589,16 +1642,31 @@ export interface ProjectsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partnerCategories_select".
+ */
+export interface PartnerCategoriesSelect<T extends boolean = true> {
+  key?: T;
+  label?: T;
+  ringLabel?: T;
+  description?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "partners_select".
  */
 export interface PartnersSelect<T extends boolean = true> {
   name?: T;
-  label?: T;
-  category?: T;
-  ring?: T;
+  order?: T;
   logo?: T;
-  website?: T;
-  blurb?: T;
+  categories?: T;
+  featured?: T;
+  capability?: T;
+  solution?: T;
+  projects?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
