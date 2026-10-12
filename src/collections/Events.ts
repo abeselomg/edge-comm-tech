@@ -27,7 +27,7 @@ export const Events: CollectionConfig = {
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "displayDate", "format", "_status"],
-    group: "Content",
+    group: "Resources",
     description:
       "Sessions Edge runs or attends. Upcoming and past are worked out from the dates — there is nothing to switch over afterwards.",
   },
