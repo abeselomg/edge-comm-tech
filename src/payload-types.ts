@@ -275,6 +275,27 @@ export interface Media {
    * Photographer or source, if attribution is required.
    */
   credit?: string | null;
+  /**
+   * The content master allows publishing only assets whose source, retrieval date and internal reviewer are recorded. Fill these in before ticking Approved.
+   */
+  provenance?: {
+    /**
+     * Where the file came from — a brand's own press kit URL, the client's handover pack, or the name of the Edge photographer.
+     */
+    source?: string | null;
+    /**
+     * The day it was obtained.
+     */
+    retrievedAt?: string | null;
+    /**
+     * Who at Edge checked that publishing this is permitted.
+     */
+    reviewedBy?: string | null;
+  };
+  /**
+   * Until this is ticked, the file cannot be selected as a logo anywhere on the site. The brand's name is shown instead.
+   */
+  approved?: boolean | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1174,6 +1195,14 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
   credit?: T;
+  provenance?:
+    | T
+    | {
+        source?: T;
+        retrievedAt?: T;
+        reviewedBy?: T;
+      };
+  approved?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

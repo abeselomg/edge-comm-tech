@@ -32,5 +32,53 @@ export const Media: CollectionConfig = {
       type: "text",
       admin: { description: "Photographer or source, if attribution is required." },
     },
+    {
+      name: "provenance",
+      type: "group",
+      label: "Where this came from",
+      admin: {
+        description:
+          "The content master allows publishing only assets whose source, retrieval date and internal reviewer are recorded. Fill these in before ticking Approved.",
+      },
+      fields: [
+        {
+          name: "source",
+          type: "text",
+          admin: {
+            description:
+              "Where the file came from — a brand's own press kit URL, the client's handover pack, or the name of the Edge photographer.",
+          },
+        },
+        {
+          name: "retrievedAt",
+          type: "date",
+          admin: { description: "The day it was obtained." },
+        },
+        {
+          name: "reviewedBy",
+          type: "text",
+          admin: {
+            description: "Who at Edge checked that publishing this is permitted.",
+          },
+        },
+      ],
+    },
+    {
+      name: "approved",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        position: "sidebar",
+        description:
+          "Until this is ticked, the file cannot be selected as a logo anywhere on the site. The brand's name is shown instead.",
+      },
+      validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
+        if (!value) return true;
+        const p = (siblingData?.provenance ?? {}) as Record<string, unknown>;
+        const missing = (["source", "retrievedAt", "reviewedBy"] as const).filter((k) => !p[k]);
+        if (missing.length === 0) return true;
+        return `Record ${missing.join(", ")} under "Where this came from" before approving this asset.`;
+      },
+    },
   ],
 };
