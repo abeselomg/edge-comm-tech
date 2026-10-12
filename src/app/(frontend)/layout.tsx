@@ -1,30 +1,28 @@
 import type { Metadata } from "next";
-import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Atkinson_Hyperlegible, Fragment_Mono, Geologica } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/chrome";
 import { getSiteSettings } from "@/lib/content";
 import "./globals.css";
 
-/* Display face carries a width axis; headlines run expanded. */
-const archivo = Archivo({
+const geologica = Geologica({
   subsets: ["latin"],
-  // Loaded as a variable font so the width axis is available; declaring a
-  // static weight list here would disable it.
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  weight: ["400", "600", "700"],
+  variable: "--font-geologica",
   display: "swap",
 });
 
-const plexSans = IBM_Plex_Sans({
+const atkinson = Atkinson_Hyperlegible({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex-sans",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-atkinson",
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
+const fragmentMono = Fragment_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-plex-mono",
+  weight: ["400"],
+  variable: "--font-fragment",
   display: "swap",
 });
 
@@ -41,11 +39,11 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   const settings = await getSiteSettings();
 
   return (
-    <html lang="en" className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${geologica.variable} ${atkinson.variable} ${fragmentMono.variable}`}>
       <body className="min-h-screen">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-brass focus:px-4 focus:py-2 focus:text-deep"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-gold focus:px-4 focus:py-2 focus:text-white"
         >
           Skip to content
         </a>
