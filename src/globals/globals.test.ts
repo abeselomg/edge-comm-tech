@@ -30,6 +30,31 @@ const all = (fields: AnyField[]) => {
 const globals = { Company, ContactDetails, Careers, PageCopy, SiteSettings };
 
 describe("globals", () => {
+  /*
+   * Assert the traversal found something before asserting what it found.
+   * Globals nest fields inside tabs, inside groups inside tabs, and inside
+   * array rows inside tabs -- a walk that stopped at any of those boundaries
+   * would report an empty list of unguarded fields and pass while covering
+   * nothing. This plan has already shipped two guards that looked wired and
+   * did not fire, both of them green in tests, so the count is checked first.
+   */
+  it("actually reaches the fields it claims to check", () => {
+    for (const [name, g] of Object.entries(globals)) {
+      const prose = all(g.fields as AnyField[]).filter(
+        (f) => f.type === "text" || f.type === "textarea",
+      );
+      expect(prose.length, `${name} should have prose fields to check`).toBeGreaterThan(0);
+    }
+
+    // And specifically that it descends past each nesting boundary, named so a
+    // regression says which level broke.
+    const careers = all(Careers.fields as AnyField[]).map((f) => f.name);
+    expect(careers, "a field inside a tab").toContain("pathways");
+    expect(careers, "a field inside a group inside a tab").toContain("internship");
+    const settings = all(SiteSettings.fields as AnyField[]).map((f) => f.name);
+    expect(settings, "a field inside an array row").toContain("line");
+  });
+
   it("guards every text and textarea field, at any depth", () => {
     for (const [name, g] of Object.entries(globals)) {
       const bad = all(g.fields as AnyField[])
