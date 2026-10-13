@@ -61,6 +61,10 @@ export const Posts: CollectionConfig = {
       type: "relationship",
       relationTo: "solutions",
       required: true,
+      // Only published solutions. Solutions read as publishedOrSignedIn, so a
+      // draft target gives the public a 404 behind a Read More link that an
+      // editor sees working, because they are signed in.
+      filterOptions: { _status: { equals: "published" } },
       admin: { description: "The solution family this article's Read More goes to." },
     },
     {
@@ -70,7 +74,34 @@ export const Posts: CollectionConfig = {
         description:
           "Optional. The capability heading on that solution page to jump to. Leave empty to link to the top of the page — one article has no single matching capability and does exactly that.",
       },
-      validate: forbidsPhrases(),
+      // The description invites typing a heading, and a heading is not a URL
+      // fragment: "Private RAG" would build /solutions/x#Private RAG. Normalise
+      // to the form a heading id actually takes, then reject anything the
+      // normaliser could not rescue so the editor is told rather than left with
+      // a link that silently goes nowhere.
+      hooks: {
+        beforeValidate: [
+          ({ value }) =>
+            typeof value === "string"
+              ? value
+                  .trim()
+                  .toLowerCase()
+                  .replace(/^#+/, "")
+                  .replace(/[\s_]+/g, "-")
+                  .replace(/[^a-z0-9-]/g, "")
+                  .replace(/-{2,}/g, "-")
+                  .replace(/^-|-$/g, "")
+              : value,
+        ],
+      },
+      validate: (value: unknown, options?: { required?: boolean }) => {
+        const phrases = forbidsPhrases()(value, options);
+        if (phrases !== true) return phrases;
+        if (typeof value !== "string" || value === "") return true;
+        return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
+          ? true
+          : "An anchor can only contain lowercase letters, numbers and single hyphens, because it becomes the #fragment in the link.";
+      },
     },
     {
       name: "readMoreLabel",

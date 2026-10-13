@@ -42,3 +42,54 @@ describe("Resources collections", () => {
     expect(get(News, "date").type).toBe("group");
   });
 });
+
+/*
+ * posts.target + posts.anchor are the Read More destination, and Phase 5 builds
+ * /solutions/<target>#<anchor> from them. Both could previously publish a
+ * broken link: target accepted a draft solution, which the public sees as a
+ * 404 while a signed-in editor sees it working, and anchor was free text whose
+ * own description invites typing a heading rather than a fragment.
+ */
+describe("the Read More destination", () => {
+  const field = (name: string) =>
+    (Posts.fields as AnyField[]).find((f) => f.name === name) as AnyField & {
+      filterOptions?: unknown;
+      hooks?: { beforeValidate?: ((a: { value: unknown }) => unknown)[] };
+      validate?: (v: unknown, o?: unknown) => unknown;
+    };
+
+  it("only offers published solutions as a target", () => {
+    expect(field("target").filterOptions).toEqual({ _status: { equals: "published" } });
+  });
+
+  it("normalises a typed heading into a usable fragment", () => {
+    const normalise = field("anchor").hooks!.beforeValidate![0];
+    expect(normalise({ value: "Private RAG" })).toBe("private-rag");
+    expect(normalise({ value: "  #Capabilities  " })).toBe("capabilities");
+    expect(normalise({ value: "Zero_Trust  Access" })).toBe("zero-trust-access");
+    expect(normalise({ value: "Tier III — aligned" })).toBe("tier-iii-aligned");
+  });
+
+  it("leaves an empty anchor empty, since it is optional", () => {
+    const normalise = field("anchor").hooks!.beforeValidate![0];
+    expect(normalise({ value: "" })).toBe("");
+    expect(normalise({ value: "   " })).toBe("");
+    expect(field("anchor").validate!("", {})).toBe(true);
+  });
+
+  it("accepts a well-formed fragment", () => {
+    for (const ok of ["capabilities", "zero-trust", "tier-3-design", "a1"]) {
+      expect(field("anchor").validate!(ok, {}), ok).toBe(true);
+    }
+  });
+
+  it("refuses a fragment the normaliser could not rescue", () => {
+    for (const bad of ["Private RAG", "#capabilities", "a b", "double--hyphen", "-leading"]) {
+      expect(field("anchor").validate!(bad, {}), bad).not.toBe(true);
+    }
+  });
+
+  it("still blocks a forbidden claim in the anchor", () => {
+    expect(field("anchor").validate!("tier-iii-certified", {})).not.toBe(true);
+  });
+});
