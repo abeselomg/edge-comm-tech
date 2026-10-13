@@ -16,19 +16,19 @@ import { Services } from "./collections/Services";
 import { PartnerCategories } from "./collections/PartnerCategories";
 import { Events } from "./collections/Events";
 import { Partners } from "./collections/Partners";
-import { Sectors } from "./collections/Sectors";
 import { Clients } from "./collections/Clients";
 import { Projects } from "./collections/Projects";
-import { Courses } from "./collections/Courses";
 import { Jobs } from "./collections/Jobs";
 import { AcademyTracks } from "./collections/AcademyTracks";
 import { News } from "./collections/News";
 import { PostCategories } from "./collections/PostCategories";
 import { Posts } from "./collections/Posts";
 import { Downloads } from "./collections/Downloads";
-import { HomePage } from "./globals/HomePage";
-import { CompanyPage } from "./globals/CompanyPage";
 import { SiteSettings } from "./globals/SiteSettings";
+import { Company } from "./globals/Company";
+import { ContactDetails } from "./globals/ContactDetails";
+import { Careers } from "./globals/Careers";
+import { PageCopy } from "./globals/PageCopy";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -98,8 +98,8 @@ export default buildConfig({
       titleSuffix: " · Edge COMM-TECH",
     },
   },
-  collections: [Solutions, Services, Sectors, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Courses, Jobs, AcademyTracks, Media, Users],
-  globals: [HomePage, CompanyPage, SiteSettings],
+  collections: [Solutions, Services, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Jobs, AcademyTracks, Media, Users],
+  globals: [SiteSettings, Company, ContactDetails, Careers, PageCopy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
@@ -109,10 +109,11 @@ export default buildConfig({
   sharp,
   plugins: [
     seoPlugin({
-      collections: ["solutions", "sectors", "projects", "courses", "jobs", "news"],
+      collections: ["solutions", "services", "projects", "news", "events", "jobs", "posts"],
       uploadsCollection: "media",
       generateTitle: ({ doc }) => `${doc?.title ?? "Edge COMM-TECH"} · Edge COMM-TECH`,
-      generateDescription: ({ doc }) => doc?.summary ?? doc?.line ?? doc?.excerpt ?? "",
+      generateDescription: ({ doc }) =>
+        doc?.blurb ?? doc?.summary ?? doc?.excerpt ?? "",
       // The plugin creates its own meta.title and meta.description, which the
       // validators in the collection files cannot reach. See src/fields/seo.ts.
       fields: guardSeoMetaFields,

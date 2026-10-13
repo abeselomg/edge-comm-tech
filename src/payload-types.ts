@@ -69,7 +69,6 @@ export interface Config {
   collections: {
     solutions: Solution;
     services: Service;
-    sectors: Sector;
     clients: Client;
     projects: Project;
     events: Event;
@@ -79,7 +78,6 @@ export interface Config {
     downloads: Download;
     partnerCategories: PartnerCategory;
     partners: Partner;
-    courses: Course;
     jobs: Job;
     academyTracks: AcademyTrack;
     media: Media;
@@ -95,7 +93,6 @@ export interface Config {
   collectionsSelect: {
     solutions: SolutionsSelect<false> | SolutionsSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
-    sectors: SectorsSelect<false> | SectorsSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
@@ -105,7 +102,6 @@ export interface Config {
     downloads: DownloadsSelect<false> | DownloadsSelect<true>;
     partnerCategories: PartnerCategoriesSelect<false> | PartnerCategoriesSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
-    courses: CoursesSelect<false> | CoursesSelect<true>;
     jobs: JobsSelect<false> | JobsSelect<true>;
     academyTracks: AcademyTracksSelect<false> | AcademyTracksSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -122,14 +118,18 @@ export interface Config {
   };
   fallbackLocale: null;
   globals: {
-    'home-page': HomePage;
-    'company-page': CompanyPage;
     'site-settings': SiteSetting;
+    company: Company;
+    'contact-details': ContactDetail;
+    'careers-content': CareersContent;
+    'page-copy': PageCopy;
   };
   globalsSelect: {
-    'home-page': HomePageSelect<false> | HomePageSelect<true>;
-    'company-page': CompanyPageSelect<false> | CompanyPageSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    company: CompanySelect<false> | CompanySelect<true>;
+    'contact-details': ContactDetailsSelect<false> | ContactDetailsSelect<true>;
+    'careers-content': CareersContentSelect<false> | CareersContentSelect<true>;
+    'page-copy': PageCopySelect<false> | PageCopySelect<true>;
   };
   locale: null;
   widgets: {
@@ -755,60 +755,6 @@ export interface Service {
    * Services a reader of this page should see next.
    */
   related?: (number | Service)[] | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * The industries Edge serves.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sectors".
- */
-export interface Sector {
-  id: number;
-  title: string;
-  /**
-   * Page URL: /clients/<slug>
-   */
-  slug: string;
-  /**
-   * Lower numbers appear first.
-   */
-  order: number;
-  /**
-   * One sentence on what technology reliability means in this sector.
-   */
-  line: string;
-  body?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Regulatory, uptime, or audit pressures specific to this sector.
-   */
-  pressures?:
-    | {
-        title: string;
-        detail: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Domains most often engaged by this sector.
-   */
-  solutions?: (number | Solution)[] | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -878,6 +824,14 @@ export interface Event {
    * Shown as a visible marker where something about the session is not yet confirmed.
    */
   pendingNote?: string | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -951,6 +905,14 @@ export interface Post {
    * The link's wording, e.g. 'Read more about Private RAG…'.
    */
   readMoreLabel: string;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1061,96 +1023,6 @@ export interface Download {
    * Tick only when the document has been checked against the current solution taxonomy. Until then the site offers to send it on request.
    */
   approved?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Public courses. Modules and lessons are edited inside each course.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "courses".
- */
-export interface Course {
-  id: number;
-  title: string;
-  /**
-   * Page URL: /academy/<slug>
-   */
-  slug: string;
-  /**
-   * Lower numbers appear first.
-   */
-  order: number;
-  /**
-   * Who this is for, e.g. 'Candidates for network and security roles'.
-   */
-  audience: string;
-  /**
-   * Plain language, e.g. 'About 1 week of watching'.
-   */
-  duration: string;
-  level: 'all' | 'beginner' | 'intermediate' | 'advanced';
-  summary: string;
-  outcomes?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
-  modules?:
-    | {
-        title: string;
-        summary: string;
-        lessons?:
-          | {
-              title: string;
-              /**
-               * URL segment: /academy/<course>/<slug>. Must be unique within this course.
-               */
-              slug: string;
-              /**
-               * e.g. '12 min'
-               */
-              duration: string;
-              /**
-               * YouTube watch or youtu.be link. Leave blank for a reading-only lesson.
-               */
-              videoUrl?: string | null;
-              body?: {
-                root: {
-                  type: string;
-                  children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              } | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  relatedSolutions?: (number | Solution)[] | null;
-  /**
-   * Roles this course prepares candidates for.
-   */
-  relatedJobs?: (number | Job)[] | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1520,10 +1392,6 @@ export interface PayloadLockedDocument {
         value: number | Service;
       } | null)
     | ({
-        relationTo: 'sectors';
-        value: number | Sector;
-      } | null)
-    | ({
         relationTo: 'clients';
         value: number | Client;
       } | null)
@@ -1558,10 +1426,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'partners';
         value: number | Partner;
-      } | null)
-    | ({
-        relationTo: 'courses';
-        value: number | Course;
       } | null)
     | ({
         relationTo: 'jobs';
@@ -1821,28 +1685,6 @@ export interface ServicesSelect<T extends boolean = true> {
   fit?: T;
   note?: T;
   related?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sectors_select".
- */
-export interface SectorsSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  order?: T;
-  line?: T;
-  body?: T;
-  pressures?:
-    | T
-    | {
-        title?: T;
-        detail?: T;
-        id?: T;
-      };
-  solutions?: T;
   meta?:
     | T
     | {
@@ -1957,6 +1799,13 @@ export interface EventsSelect<T extends boolean = true> {
       };
   action?: T;
   pendingNote?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1986,6 +1835,13 @@ export interface PostsSelect<T extends boolean = true> {
   target?: T;
   anchor?: T;
   readMoreLabel?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -2063,54 +1919,6 @@ export interface PartnersSelect<T extends boolean = true> {
   capability?: T;
   solution?: T;
   projects?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "courses_select".
- */
-export interface CoursesSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  order?: T;
-  audience?: T;
-  duration?: T;
-  level?: T;
-  summary?: T;
-  outcomes?:
-    | T
-    | {
-        item?: T;
-        id?: T;
-      };
-  modules?:
-    | T
-    | {
-        title?: T;
-        summary?: T;
-        lessons?:
-          | T
-          | {
-              title?: T;
-              slug?: T;
-              duration?: T;
-              videoUrl?: T;
-              body?: T;
-              id?: T;
-            };
-        id?: T;
-      };
-  relatedSolutions?: T;
-  relatedJobs?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -2458,113 +2266,6 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * The hero, the proof strip, and how Edge describes the way it works.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "home-page".
- */
-export interface HomePage {
-  id: number;
-  /**
-   * Edge's own line, in Edge's own words. Short enough to repeat. Do not use a competitor's slogan.
-   */
-  tagline: string;
-  /**
-   * The large sentence under the tagline. What Edge is, plainly.
-   */
-  heroStatement: string;
-  primaryCta: {
-    label: string;
-    href: string;
-  };
-  secondaryCta: {
-    label: string;
-    href: string;
-  };
-  /**
-   * Years operating, headcount, projects delivered. A statistic is hidden from the public site until someone at Edge ticks 'Verified'.
-   */
-  proofStats?:
-    | {
-        value: string;
-        label: string;
-        /**
-         * Tick only when this number is accurate and Edge can evidence it.
-         */
-        verified?: boolean | null;
-        id?: string | null;
-      }[]
-    | null;
-  methodTitle: string;
-  /**
-   * Edge's own delivery steps. Plain named stages — do not build an acronym out of the company name.
-   */
-  method?:
-    | {
-        title: string;
-        body: string;
-        id?: string | null;
-      }[]
-    | null;
-  solutionsIntro: string;
-  sectorsIntro: string;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * The /about page: who Edge is and what it stands for.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "company-page".
- */
-export interface CompanyPage {
-  id: number;
-  heading: string;
-  intro: string;
-  commitment: string;
-  body?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Edge's own values, written by Edge. Not borrowed from another company's about page.
-   */
-  values?:
-    | {
-        title: string;
-        body: string;
-        id?: string | null;
-      }[]
-    | null;
-  outcomes?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Hidden from the public site until marked verified.
-   */
-  founded?: {
-    year?: string | null;
-    detail?: string | null;
-    verified?: boolean | null;
-  };
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
  * Navigation, contact details, and footer.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2605,82 +2306,457 @@ export interface SiteSetting {
       }[]
     | null;
   footerNote: string;
+  /**
+   * The four figures across the site. A percentage figure must carry its qualifier — the master requires 'against agreed project scope' wherever the completion figure appears.
+   */
+  impact?:
+    | {
+        /**
+         * e.g. '67+', '100%'.
+         */
+        figure: string;
+        /**
+         * e.g. 'projects', 'completion'.
+         */
+        unit: string;
+        /**
+         * The qualifying sentence under the figure.
+         */
+        line: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The line under the counters.
+   */
+  impactSupport?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
+ * Profile, mission, values, history and leadership.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "home-page_select".
+ * via the `definition` "company".
  */
-export interface HomePageSelect<T extends boolean = true> {
-  tagline?: T;
-  heroStatement?: T;
-  primaryCta?:
-    | T
+export interface Company {
+  id: number;
+  legalName: string;
+  shortName: string;
+  domain: string;
+  /**
+   * e.g. 'March 2018'.
+   */
+  established: string;
+  /**
+   * One sentence describing what Edge is.
+   */
+  positioning: string;
+  mission: string;
+  missionBody: string;
+  vision: string;
+  visionBody: string;
+  values?:
     | {
-        label?: T;
-        href?: T;
-      };
-  secondaryCta?:
-    | T
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * In order, oldest first. The last one renders as current.
+   */
+  journey?:
     | {
-        label?: T;
-        href?: T;
-      };
-  proofStats?:
-    | T
+        /**
+         * e.g. 'March 2018', '2024/2025'.
+         */
+        when: string;
+        what: string;
+        id?: string | null;
+      }[]
+    | null;
+  differentiators?:
     | {
-        value?: T;
-        label?: T;
-        verified?: T;
-        id?: T;
-      };
-  methodTitle?: T;
-  method?:
-    | T
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The lifecycle Edge works across, in order.
+   */
+  delivery?:
     | {
-        title?: T;
-        body?: T;
-        id?: T;
-      };
-  solutionsIntro?: T;
-  sectorsIntro?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  industries?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  sustainability?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The master publishes role titles only. Leave each name pending until Edge approves it for release — the site then shows the role with a visible marker rather than a blank.
+   */
+  executiveRoles?:
+    | {
+        title: string;
+        holder: {
+          /**
+           * Leave empty while this is still unconfirmed.
+           */
+          value?: string | null;
+          /**
+           * While this is pending, the site shows a visible marker instead of the value.
+           */
+          status: 'confirmed' | 'pending';
+          /**
+           * What the marker says, e.g. 'Year to confirm'.
+           */
+          pendingLabel?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 /**
+ * Address, phones, emails, hours and enquiry routing. Admin-only: these appear in the footer of every page.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "company-page_select".
+ * via the `definition` "contact-details".
  */
-export interface CompanyPageSelect<T extends boolean = true> {
-  heading?: T;
-  intro?: T;
-  commitment?: T;
-  body?: T;
-  values?:
-    | T
+export interface ContactDetail {
+  id: number;
+  /**
+   * One line each, starting with the legal entity name.
+   */
+  office?:
     | {
-        title?: T;
-        body?: T;
-        id?: T;
-      };
-  outcomes?:
-    | T
+        line: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * A link that opens the office location in a map.
+   */
+  mapUrl?: string | null;
+  phones?:
     | {
-        item?: T;
-        id?: T;
-      };
-  founded?:
-    | T
+        label: string;
+        /**
+         * As displayed, e.g. '+251 95 569 5565'.
+         */
+        value: string;
+        /**
+         * Digits only with country code, for the tel: link.
+         */
+        tel: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Full wa.me link.
+   */
+  whatsapp?: string | null;
+  emails?:
     | {
-        year?: T;
-        detail?: T;
-        verified?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The number to call for a live incident.
+   */
+  emergency?: string | null;
+  /**
+   * e.g. 'Within one business day'.
+   */
+  response: string;
+  hours?:
+    | {
+        days: string;
+        hours: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Each kind of enquiry, what to include, and the address it reaches. Careers deliberately routes through the careers application process rather than the contact form.
+   */
+  inquiryCategories?:
+    | {
+        /**
+         * Stable identifier, e.g. consultation.
+         */
+        key: string;
+        title: string;
+        /**
+         * What to include so the enquiry can be answered properly.
+         */
+        prompt: string;
+        route: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Pathways, culture, the internship programme and E-Academy settings.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers-content".
+ */
+export interface CareersContent {
+  id: number;
+  pathways?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  culture?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  development?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  experiencePoints?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  applicationDocs?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  internship: {
+    title: string;
+    type: string;
+    location: string;
+    schedule: {
+      /**
+       * Leave empty while this is still unconfirmed.
+       */
+      value?: string | null;
+      /**
+       * While this is pending, the site shows a visible marker instead of the value.
+       */
+      status: 'confirmed' | 'pending';
+      /**
+       * What the marker says, e.g. 'Year to confirm'.
+       */
+      pendingLabel?: string | null;
+    };
+    deadline: {
+      /**
+       * Leave empty while this is still unconfirmed.
+       */
+      value?: string | null;
+      /**
+       * While this is pending, the site shows a visible marker instead of the value.
+       */
+      status: 'confirmed' | 'pending';
+      /**
+       * What the marker says, e.g. 'Year to confirm'.
+       */
+      pendingLabel?: string | null;
+    };
+    intro: string;
+    /**
+     * Published in full, before the form. The master requires applicants to be told that applying does not guarantee placement — do not soften or shorten this.
+     */
+    caveat: string;
+    tracks?:
+      | {
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+    eligibility?:
+      | {
+          item: string;
+          id?: string | null;
+        }[]
+      | null;
+    documents?:
+      | {
+          item: string;
+          id?: string | null;
+        }[]
+      | null;
+    structure?:
+      | {
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+    selection?:
+      | {
+          n: number;
+          title: string;
+          body: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  academyAudiences?:
+    | {
+        title: string;
+        body: string;
+        /**
+         * The call to action for this audience.
+         */
+        action: string;
+        id?: string | null;
+      }[]
+    | null;
+  academyLevels?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  academyDelivery?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The sections every published course listing carries, so programmes can be compared properly.
+   */
+  courseSections?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Headings and intros for the pages built from several collections.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-copy".
+ */
+export interface PageCopy {
+  id: number;
+  homeHero: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  /**
+   * The home page's own list. The solutions overview has a separate, differently worded list — do not merge them.
+   */
+  homePriorities?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  solutionsHero: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  /**
+   * The solutions overview's own list. Not the home page's.
+   */
+  solutionsPriorities?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The six-step framework on this page. The Company global's five-stage delivery list is a different thing.
+   */
+  solutionsFramework?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  aboutHero: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  servicesHero: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  clientsHero: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  partnersHero: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  resourcesHero: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  /**
+   * The paragraph describing how Edge coordinates delivery, shown on every project page. One copy here rather than repeated on all eight records, so correcting it is one edit.
+   */
+  projectImplementationNote?: string | null;
+  /**
+   * The six sections of the resource centre, in order.
+   */
+  resourceSections?:
+    | {
+        key: string;
+        title: string;
+        /**
+         * Route, e.g. /news or /resources/media/documentaries.
+         */
+        href: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2718,6 +2794,352 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         id?: T;
       };
   footerNote?: T;
+  impact?:
+    | T
+    | {
+        figure?: T;
+        unit?: T;
+        line?: T;
+        id?: T;
+      };
+  impactSupport?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "company_select".
+ */
+export interface CompanySelect<T extends boolean = true> {
+  legalName?: T;
+  shortName?: T;
+  domain?: T;
+  established?: T;
+  positioning?: T;
+  mission?: T;
+  missionBody?: T;
+  vision?: T;
+  visionBody?: T;
+  values?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  journey?:
+    | T
+    | {
+        when?: T;
+        what?: T;
+        id?: T;
+      };
+  differentiators?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  delivery?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  industries?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  sustainability?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  executiveRoles?:
+    | T
+    | {
+        title?: T;
+        holder?:
+          | T
+          | {
+              value?: T;
+              status?: T;
+              pendingLabel?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-details_select".
+ */
+export interface ContactDetailsSelect<T extends boolean = true> {
+  office?:
+    | T
+    | {
+        line?: T;
+        id?: T;
+      };
+  mapUrl?: T;
+  phones?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        tel?: T;
+        id?: T;
+      };
+  whatsapp?: T;
+  emails?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  emergency?: T;
+  response?: T;
+  hours?:
+    | T
+    | {
+        days?: T;
+        hours?: T;
+        id?: T;
+      };
+  inquiryCategories?:
+    | T
+    | {
+        key?: T;
+        title?: T;
+        prompt?: T;
+        route?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers-content_select".
+ */
+export interface CareersContentSelect<T extends boolean = true> {
+  pathways?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  culture?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  development?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  experiencePoints?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  applicationDocs?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  internship?:
+    | T
+    | {
+        title?: T;
+        type?: T;
+        location?: T;
+        schedule?:
+          | T
+          | {
+              value?: T;
+              status?: T;
+              pendingLabel?: T;
+            };
+        deadline?:
+          | T
+          | {
+              value?: T;
+              status?: T;
+              pendingLabel?: T;
+            };
+        intro?: T;
+        caveat?: T;
+        tracks?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+        eligibility?:
+          | T
+          | {
+              item?: T;
+              id?: T;
+            };
+        documents?:
+          | T
+          | {
+              item?: T;
+              id?: T;
+            };
+        structure?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+        selection?:
+          | T
+          | {
+              n?: T;
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+      };
+  academyAudiences?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        action?: T;
+        id?: T;
+      };
+  academyLevels?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  academyDelivery?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  courseSections?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-copy_select".
+ */
+export interface PageCopySelect<T extends boolean = true> {
+  homeHero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  homePriorities?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  solutionsHero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  solutionsPriorities?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  solutionsFramework?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  aboutHero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  servicesHero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  clientsHero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  partnersHero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  resourcesHero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+      };
+  projectImplementationNote?: T;
+  resourceSections?:
+    | T
+    | {
+        key?: T;
+        title?: T;
+        href?: T;
+        body?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
