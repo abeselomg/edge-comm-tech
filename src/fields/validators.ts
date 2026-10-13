@@ -250,6 +250,10 @@ export function richTextGuard(rules: Rule[] = BASE_RULES): RichTextFieldValidati
       limit: ids.length,
       depth: 0,
       overrideAccess: true,
+      // Pass the request so the lookup joins the save's transaction. Without
+      // it the read happens outside, and could answer from a snapshot that
+      // does not match what is being written.
+      req: options.req,
     });
 
     const unapproved = docs.filter((doc) => !doc.approved);
