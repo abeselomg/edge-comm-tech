@@ -266,13 +266,35 @@ export function richTextGuard(rules: Rule[] = BASE_RULES): RichTextFieldValidati
 /**
  * The master requires the 100% completion figure to carry its qualifier
  * everywhere it appears. Applied to the impact counter's `line` field.
+ *
+ * A factory, like its siblings, and for a reason worth recording. This was
+ * previously a bare `(value, siblingData)` function, and the plan wired it as
+ * `validate: requiresScopeQualifier`. Payload passes `(value, options)`, where
+ * the sibling data sits at `options.siblingData` -- so the function read
+ * `figure` off the options object, found nothing, and PASSED EVERY VALUE. The
+ * guard on a legal requirement was a no-op, and its unit tests did not catch it
+ * because they called it with `{ figure }` directly, a shape Payload never
+ * uses.
+ *
+ * Taking the whole options object the way `forbidsPhrases` does removes that
+ * trap: there is no longer a second argument whose shape a caller can get
+ * wrong. It also folds in the phrase rules and the required check, because a
+ * custom `validate` replaces Payload's default and anything less would switch
+ * `required` off on the field it is attached to.
  */
-export function requiresScopeQualifier(
-  value: unknown,
-  siblingData: { figure?: string | null },
-): true | string {
-  const figure = siblingData?.figure ?? "";
-  if (!figure.includes("%")) return true;
-  if (/against agreed project scope/i.test(extractText(value))) return true;
-  return 'A percentage completion figure must carry "against agreed project scope".';
+export function requiresScopeQualifier(rules: Rule[] = BASE_RULES) {
+  const phrases = forbidsPhrases(rules);
+
+  return (
+    value: unknown,
+    options?: { required?: boolean; siblingData?: { figure?: unknown } },
+  ): true | string => {
+    const base = phrases(value, options);
+    if (base !== true) return base;
+
+    const figure = options?.siblingData?.figure;
+    if (typeof figure !== "string" || !figure.includes("%")) return true;
+    if (/against agreed project scope/i.test(extractText(value))) return true;
+    return 'A percentage completion figure must carry "against agreed project scope".';
+  };
 }

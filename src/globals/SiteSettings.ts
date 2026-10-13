@@ -3,27 +3,6 @@ import { adminOnly } from "../access";
 import { forbidsPhrases, requiresScopeQualifier } from "../fields/validators";
 import { revalidateGlobal } from "../hooks/revalidate";
 
-/*
- * Validator for an impact counter's `line`.
- *
- * `requiresScopeQualifier(value, siblingData)` cannot be attached directly.
- * Payload calls a field validator as `validate(value, options)`, where the
- * sibling values arrive as `options.siblingData` -- so passing the function
- * straight in hands it the whole options object as its second argument, finds
- * no `figure` on it, and passes every value. It would also replace Payload's
- * default validator and so switch `required` off, and skip the phrase rules.
- * This wrapper unpacks `siblingData` and runs the phrase/required check first.
- */
-const phrases = forbidsPhrases();
-export const impactLineValidator = (
-  value: unknown,
-  options?: { required?: boolean; siblingData?: { figure?: string | null } },
-): true | string => {
-  const base = phrases(value, options);
-  if (base !== true) return base;
-  return requiresScopeQualifier(value, options?.siblingData ?? {});
-};
-
 export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
   label: "Site settings",
@@ -122,7 +101,7 @@ export const SiteSettings: GlobalConfig = {
           type: "text",
           required: true,
           admin: { description: "The qualifying sentence under the figure." },
-          validate: impactLineValidator,
+          validate: requiresScopeQualifier(),
         },
       ],
     },

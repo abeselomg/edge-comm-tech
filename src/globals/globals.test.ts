@@ -3,7 +3,7 @@ import { Company } from "./Company";
 import { ContactDetails } from "./ContactDetails";
 import { Careers } from "./Careers";
 import { PageCopy } from "./PageCopy";
-import { SiteSettings, impactLineValidator } from "./SiteSettings";
+import { SiteSettings } from "./SiteSettings";
 
 type AnyField = {
   name?: string;
@@ -102,7 +102,7 @@ describe("impact counter line", () => {
 
   it("accepts the qualified line", () => {
     expect(
-      impactLineValidator("against agreed project scope", {
+      line().validate!("against agreed project scope", {
         required: true,
         siblingData: { figure: "100%" },
       }),
@@ -111,16 +111,16 @@ describe("impact counter line", () => {
 
   it("does not demand the qualifier on a non-percentage figure", () => {
     expect(
-      impactLineValidator("projects delivered", { required: true, siblingData: { figure: "67+" } }),
+      line().validate!("projects delivered", { required: true, siblingData: { figure: "67+" } }),
     ).toBe(true);
   });
 
   it("still enforces required and the phrase rules", () => {
-    expect(impactLineValidator("", { required: true, siblingData: { figure: "67+" } })).toBe(
+    expect(line().validate!("", { required: true, siblingData: { figure: "67+" } })).toBe(
       "This field is required.",
     );
     expect(
-      impactLineValidator("Tier III certified", { required: true, siblingData: { figure: "67+" } }),
+      line().validate!("Tier III certified", { required: true, siblingData: { figure: "67+" } }),
     ).not.toBe(true);
   });
 });

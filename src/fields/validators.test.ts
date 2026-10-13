@@ -115,27 +115,63 @@ describe("forbidsPhrases", () => {
   });
 });
 
+/*
+ * These tests used to call the validator as `(value, { figure })`, which is a
+ * shape Payload never passes. It passes `(value, options)` with the siblings at
+ * `options.siblingData`, so the real field read `figure` off the options
+ * object, found nothing, and passed every value: the guard on a legal
+ * requirement was a no-op while its tests were green. Every call here now goes
+ * through the same options shape Payload uses.
+ */
 describe("requiresScopeQualifier", () => {
+  const validate = requiresScopeQualifier();
+  const withFigure = (figure: unknown) => ({ siblingData: { figure } });
+
   it("requires the qualifier when the figure is a percentage", () => {
-    const result = requiresScopeQualifier("of everything", { figure: "100%" });
+    const result = validate("of everything", withFigure("100%"));
     expect(result).not.toBe(true);
     expect(String(result)).toContain("against agreed project scope");
   });
 
   it("accepts the approved qualifier", () => {
-    expect(requiresScopeQualifier("against agreed project scope", { figure: "100%" })).toBe(true);
+    expect(validate("against agreed project scope", withFigure("100%"))).toBe(true);
   });
 
   it("matches the qualifier case-insensitively", () => {
-    expect(requiresScopeQualifier("Against Agreed Project Scope", { figure: "100%" })).toBe(true);
+    expect(validate("Against Agreed Project Scope", withFigure("100%"))).toBe(true);
   });
 
   it("ignores non-percentage figures", () => {
-    expect(requiresScopeQualifier("projects delivered", { figure: "67+" })).toBe(true);
+    expect(validate("projects delivered", withFigure("67+"))).toBe(true);
   });
 
   it("ignores an absent figure", () => {
-    expect(requiresScopeQualifier("anything", {})).toBe(true);
+    expect(validate("anything", { siblingData: {} })).toBe(true);
+    expect(validate("anything", {})).toBe(true);
+    expect(validate("anything")).toBe(true);
+  });
+
+  it("ignores a non-string figure rather than throwing", () => {
+    // The old version called .includes on whatever it found.
+    expect(validate("anything", withFigure(100))).toBe(true);
+    expect(validate("anything", withFigure(null))).toBe(true);
+  });
+
+  it("also applies the phrase rules, since it replaces Payload's validator", () => {
+    expect(validate("A Tier III certified facility", withFigure("67+"))).toMatch(
+      /Tier III-aligned/,
+    );
+  });
+
+  it("also enforces required, for the same reason", () => {
+    expect(validate("", { required: true, siblingData: {} })).toBe("This field is required.");
+    expect(validate("", { siblingData: {} })).toBe(true);
+  });
+
+  it("reports the missing qualifier even on a required field with content", () => {
+    expect(validate("of everything", { required: true, ...withFigure("100%") })).toMatch(
+      /against agreed project scope/,
+    );
   });
 });
 
