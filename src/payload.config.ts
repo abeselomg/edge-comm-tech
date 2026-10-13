@@ -22,6 +22,9 @@ import { Projects } from "./collections/Projects";
 import { Courses } from "./collections/Courses";
 import { Jobs } from "./collections/Jobs";
 import { News } from "./collections/News";
+import { PostCategories } from "./collections/PostCategories";
+import { Posts } from "./collections/Posts";
+import { Downloads } from "./collections/Downloads";
 import { HomePage } from "./globals/HomePage";
 import { CompanyPage } from "./globals/CompanyPage";
 import { SiteSettings } from "./globals/SiteSettings";
@@ -94,7 +97,7 @@ export default buildConfig({
       titleSuffix: " · Edge COMM-TECH",
     },
   },
-  collections: [Solutions, Services, Sectors, Clients, Projects, Events, PartnerCategories, Partners, Courses, Jobs, News, Media, Users],
+  collections: [Solutions, Services, Sectors, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Courses, Jobs, Media, Users],
   globals: [HomePage, CompanyPage, SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",

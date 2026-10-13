@@ -73,11 +73,14 @@ export interface Config {
     clients: Client;
     projects: Project;
     events: Event;
+    postCategories: PostCategory;
+    posts: Post;
+    news: News;
+    downloads: Download;
     partnerCategories: PartnerCategory;
     partners: Partner;
     courses: Course;
     jobs: Job;
-    news: News;
     media: Media;
     users: User;
     forms: Form;
@@ -95,11 +98,14 @@ export interface Config {
     clients: ClientsSelect<false> | ClientsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    postCategories: PostCategoriesSelect<false> | PostCategoriesSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
+    news: NewsSelect<false> | NewsSelect<true>;
+    downloads: DownloadsSelect<false> | DownloadsSelect<true>;
     partnerCategories: PartnerCategoriesSelect<false> | PartnerCategoriesSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     jobs: JobsSelect<false> | JobsSelect<true>;
-    news: NewsSelect<false> | NewsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -875,6 +881,189 @@ export interface Event {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Topics used to group the insights page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "postCategories".
+ */
+export interface PostCategory {
+  id: number;
+  /**
+   * Stable identifier. Do not change it.
+   */
+  key: string;
+  label: string;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Short articles, published in full on the insights page. They have no separate pages — each one links through to the solution it introduces.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  /**
+   * Anchor on the insights page: /blog#post-<slug>. Not a page of its own.
+   */
+  slug: string;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
+  category: number | PostCategory;
+  /**
+   * Two or three paragraphs. Short is the point — the solution page carries the depth.
+   */
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * The solution family this article's Read More goes to.
+   */
+  target: number | Solution;
+  /**
+   * Optional. The capability heading on that solution page to jump to. Leave empty to link to the top of the page — one article has no single matching capability and does exactly that.
+   */
+  anchor?: string | null;
+  /**
+   * The link's wording, e.g. 'Read more about Private RAG…'.
+   */
+  readMoreLabel: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Milestones, partnership and project announcements, and company updates.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news".
+ */
+export interface News {
+  id: number;
+  title: string;
+  /**
+   * Page URL: /news/<slug>
+   */
+  slug: string;
+  /**
+   * e.g. 'Company milestone', 'Company news', 'Insight'.
+   */
+  kind: string;
+  /**
+   * How the date reads, e.g. '2018' or 'Evergreen'. Leave the value empty and the status pending where Edge has not confirmed it.
+   */
+  date: {
+    /**
+     * Leave empty while this is still unconfirmed.
+     */
+    value?: string | null;
+    /**
+     * While this is pending, the site shows a visible marker instead of the value.
+     */
+    status: 'confirmed' | 'pending';
+    /**
+     * What the marker says, e.g. 'Year to confirm'.
+     */
+    pendingLabel?: string | null;
+  };
+  /**
+   * Ticked items move to the archive band instead of the current feed. Use for older milestones.
+   */
+  archive?: boolean | null;
+  /**
+   * The opening paragraph, shown on the index and under the headline.
+   */
+  standfirst: string;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Company profile, brochures, datasheets and vendor catalogues. Until Approved is ticked, the site lists the document and routes the request to the team instead of serving the file.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "downloads".
+ */
+export interface Download {
+  id: number;
+  title: string;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
+  /**
+   * e.g. 'Company profile', 'Solution brochure', 'Datasheet'.
+   */
+  category: string;
+  /**
+   * Who owns the document, e.g. 'Edge Comm-Tech'.
+   */
+  owner: string;
+  /**
+   * Format and version, e.g. 'PDF · English · Version 13'.
+   */
+  meta: string;
+  /**
+   * The reviewer's note on what still needs checking before this is offered.
+   */
+  note?: string | null;
+  /**
+   * The document itself. Only approved assets can be selected. Can be empty while it is still being prepared.
+   */
+  file?: (number | null) | Media;
+  /**
+   * Tick only when the document has been checked against the current solution taxonomy. Until then the site offers to send it on request.
+   */
+  approved?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * Public courses. Modules and lessons are edited inside each course.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1006,53 +1195,6 @@ export interface Job {
    * E-Academy material candidates should watch first.
    */
   relatedCourses?: (number | Course)[] | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-  };
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "news".
- */
-export interface News {
-  id: number;
-  title: string;
-  /**
-   * Page URL: /news/<slug>
-   */
-  slug: string;
-  date: string;
-  excerpt: string;
-  cover?: (number | null) | Media;
-  body?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  tags?:
-    | {
-        tag: string;
-        id?: string | null;
-      }[]
-    | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -1326,6 +1468,22 @@ export interface PayloadLockedDocument {
         value: number | Event;
       } | null)
     | ({
+        relationTo: 'postCategories';
+        value: number | PostCategory;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'news';
+        value: number | News;
+      } | null)
+    | ({
+        relationTo: 'downloads';
+        value: number | Download;
+      } | null)
+    | ({
         relationTo: 'partnerCategories';
         value: number | PartnerCategory;
       } | null)
@@ -1340,10 +1498,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'jobs';
         value: number | Job;
-      } | null)
-    | ({
-        relationTo: 'news';
-        value: number | News;
       } | null)
     | ({
         relationTo: 'media';
@@ -1737,6 +1891,81 @@ export interface EventsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "postCategories_select".
+ */
+export interface PostCategoriesSelect<T extends boolean = true> {
+  key?: T;
+  label?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  order?: T;
+  category?: T;
+  body?: T;
+  target?: T;
+  anchor?: T;
+  readMoreLabel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news_select".
+ */
+export interface NewsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  kind?: T;
+  date?:
+    | T
+    | {
+        value?: T;
+        status?: T;
+        pendingLabel?: T;
+      };
+  archive?: T;
+  standfirst?: T;
+  body?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "downloads_select".
+ */
+export interface DownloadsSelect<T extends boolean = true> {
+  title?: T;
+  order?: T;
+  category?: T;
+  owner?: T;
+  meta?: T;
+  note?: T;
+  file?: T;
+  approved?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "partnerCategories_select".
  */
 export interface PartnerCategoriesSelect<T extends boolean = true> {
@@ -1833,34 +2062,6 @@ export interface JobsSelect<T extends boolean = true> {
         id?: T;
       };
   relatedCourses?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "news_select".
- */
-export interface NewsSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  date?: T;
-  excerpt?: T;
-  cover?: T;
-  body?: T;
-  tags?:
-    | T
-    | {
-        tag?: T;
-        id?: T;
-      };
   meta?:
     | T
     | {
