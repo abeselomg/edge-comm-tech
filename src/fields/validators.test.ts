@@ -257,3 +257,72 @@ describe("forbidsPhrases ignores how the words are joined", () => {
     fine("One thing remains: partner agencies must be premier. Partner lists follow.");
   });
 });
+
+/*
+ * A custom `validate` REPLACES Payload's default one, and the default is what
+ * enforces `required`. Attaching forbidsPhrases to a field therefore switched
+ * its `required` off -- silently, on 63 fields across 11 collections. These
+ * tests pin that it now does that job itself, and that it does not overreach
+ * into fields which are genuinely optional or genuinely full.
+ */
+describe("forbidsPhrases enforces required, because nothing else will", () => {
+  const validate = forbidsPhrases();
+  const req = { required: true };
+
+  it("refuses an empty required field", () => {
+    for (const empty of [undefined, null, "", "   ", "\t\n"]) {
+      expect(validate(empty, req), JSON.stringify(empty)).toBe("This field is required.");
+    }
+  });
+
+  it("still lets an empty OPTIONAL field through", () => {
+    for (const empty of [undefined, null, "", "   "]) {
+      expect(validate(empty, {}), JSON.stringify(empty)).toBe(true);
+      expect(validate(empty), JSON.stringify(empty)).toBe(true);
+    }
+  });
+
+  it("accepts a required field that has content", () => {
+    expect(validate("Data centre design and build.", req)).toBe(true);
+  });
+
+  it("still blocks a forbidden claim in a required field", () => {
+    // The required check must not short-circuit past the phrase rules.
+    expect(validate("A Tier III certified facility.", req)).not.toBe(true);
+    expect(validate("A Tier III certified facility.", req)).toMatch(/Tier III-aligned/);
+  });
+
+  it("treats an empty rich-text body as empty", () => {
+    const emptyEditor = {
+      root: { type: "root", children: [{ type: "paragraph", children: [] }] },
+    };
+    expect(validate(emptyEditor, req)).toBe("This field is required.");
+  });
+
+  it("does NOT treat a rich-text body holding only an image as empty", () => {
+    // A diagram with no caption is a legitimate body. Judging emptiness on the
+    // extracted text alone would refuse it.
+    const imageOnly = {
+      root: {
+        type: "root",
+        children: [{ type: "upload", relationTo: "media", value: 7 }],
+      },
+    };
+    expect(validate(imageOnly, req)).toBe(true);
+  });
+
+  it("reads text inside a rich-text body as content", () => {
+    const withText = {
+      root: {
+        type: "root",
+        children: [{ type: "paragraph", children: [{ type: "text", text: "Hello" }] }],
+      },
+    };
+    expect(validate(withText, req)).toBe(true);
+  });
+
+  it("does not mistake zero or false for empty", () => {
+    expect(validate(0, req)).toBe(true);
+    expect(validate(false, req)).toBe(true);
+  });
+});

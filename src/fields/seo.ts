@@ -33,5 +33,16 @@ export const guardSeoMetaFields = ({ defaultFields }: { defaultFields: Field[] }
     if (field.type === "text" || field.type === "textarea") {
       return { ...field, validate: forbidsPhrases() };
     }
+
+    // The plugin's `meta.image` is the Open Graph and search thumbnail -- the
+    // single most widely redistributed image on the site, since every share
+    // and every result card copies it. It is an upload to `media` with no
+    // filter, so without this an editor could set it to an asset whose source,
+    // retrieval date and reviewer were never recorded, defeating Task 8's gate
+    // on exactly the image that travels furthest.
+    if (field.type === "upload") {
+      return { ...field, filterOptions: { approved: { equals: true } } };
+    }
+
     return field;
   });

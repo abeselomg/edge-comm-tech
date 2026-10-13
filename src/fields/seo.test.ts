@@ -64,12 +64,27 @@ describe("guardSeoMetaFields", () => {
     expect(validate("", {})).toBe(true);
   });
 
-  it("leaves the image and the UI components untouched", () => {
+  it("leaves the image and the UI components without a prose validator", () => {
     // An upload field has no business carrying a prose validator, and a `ui`
     // field has no value to validate at all.
     expect(byName("image")?.validate).toBeUndefined();
     expect(byName("overview")?.validate).toBeUndefined();
     expect(byName("preview")?.validate).toBeUndefined();
+  });
+
+  it("filters the Open Graph image to approved assets", () => {
+    // meta.image is the most widely redistributed image on the site: every
+    // share and every search result copies it. Unfiltered, an editor could
+    // point it at an asset with no recorded source, retrieval date or
+    // reviewer.
+    const image = byName("image") as { filterOptions?: unknown };
+    expect(image?.filterOptions).toEqual({ approved: { equals: true } });
+  });
+
+  it("does not put a media filter on fields that are not uploads", () => {
+    for (const name of ["title", "description", "overview", "preview"]) {
+      expect((byName(name) as { filterOptions?: unknown })?.filterOptions, name).toBeUndefined();
+    }
   });
 
   it("does not mutate the fields it was handed", () => {

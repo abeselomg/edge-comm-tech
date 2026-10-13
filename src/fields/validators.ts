@@ -116,12 +116,71 @@ export function extractText(value: unknown): string {
   return parts.join(" ");
 }
 
+/*
+ * Node types that carry no content of their own. Anything else in a Lexical
+ * tree -- an upload, a relationship, a list, a block -- means the field holds
+ * something even when it yields no text.
+ */
+const STRUCTURAL_NODES = new Set(["root", "paragraph", "text", "linebreak", "tab"]);
+
+/**
+ * Does this field hold nothing an editor would recognise as content?
+ *
+ * Rich text needs the care here: a body containing only an uploaded diagram
+ * yields no text at all, and calling that empty would refuse a legitimate
+ * document. So emptiness is judged on the node tree, not on the extracted
+ * string.
+ */
+function isBlank(value: unknown): boolean {
+  if (value === null || value === undefined) return true;
+  if (typeof value === "string") return value.trim().length === 0;
+  if (Array.isArray(value)) return value.length === 0;
+  if (typeof value !== "object") return false;
+
+  if (extractText(value).trim().length > 0) return false;
+
+  let hasContentNode = false;
+  const walk = (node: unknown): void => {
+    if (hasContentNode || !node || typeof node !== "object") return;
+    if (Array.isArray(node)) {
+      node.forEach(walk);
+      return;
+    }
+    const record = node as Record<string, unknown>;
+    if (typeof record.type === "string" && !STRUCTURAL_NODES.has(record.type)) {
+      hasContentNode = true;
+      return;
+    }
+    if (record.root) walk(record.root);
+    if (Array.isArray(record.children)) record.children.forEach(walk);
+  };
+  walk(value);
+  return !hasContentNode;
+}
+
 /**
  * Field validator. Returns true, or the message of the first rule that fires.
- * Empty values pass: whether a field is required is the field's own business.
+ *
+ * It also enforces `required`, which looks like someone else's job and is not.
+ * Payload installs its default validator -- the one that checks `required` --
+ * only when a field has no `validate` of its own:
+ *
+ *     // payload/dist/fields/config/sanitize.js
+ *     if (typeof field.validate === 'undefined') { ... install default ... }
+ *
+ * So attaching this validator to a field SILENTLY DISABLES its `required`.
+ * Before this was fixed, 63 fields across 11 collections carried both
+ * `required: true` and this validator, and every one of them would have
+ * accepted an empty value at publish: a solution with no title, an insight
+ * with no body, a Read More link with no label. Payload passes the field's own
+ * config into the options object (`{ ...field, ... }` at the call site in
+ * beforeChange/promise.js), which is how `options.required` gets here.
  */
 export function forbidsPhrases(rules: Rule[] = BASE_RULES) {
-  return (value: unknown): true | string => {
+  return (value: unknown, options?: { required?: boolean }): true | string => {
+    if (isBlank(value)) {
+      return options?.required ? "This field is required." : true;
+    }
     const text = extractText(value);
     if (!text.trim()) return true;
     for (const rule of rules) {
