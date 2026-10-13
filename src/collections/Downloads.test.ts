@@ -33,9 +33,13 @@ describe("Resources collections", () => {
     }
   });
 
-  it("guards the post anchor and body against forbidden phrases", () => {
+  it("guards the post anchor and body against forbidden phrases", async () => {
     expect(get(Posts, "anchor").validate!("Tier III certified", {})).toMatch(/Tier III/);
-    expect(get(Posts, "body").validate!("Authorised reseller", {})).toMatch(/Authorization/);
+    // body is async now: it also checks that embedded images are approved, so
+    // its validator returns a promise.
+    await expect(get(Posts, "body").validate!("Authorised reseller", {})).resolves.toMatch(
+      /Authorization/,
+    );
   });
 
   it("news date is a confirmable group", () => {

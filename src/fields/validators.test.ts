@@ -5,6 +5,8 @@ import {
   extractText,
   forbidsPhrases,
   requiresScopeQualifier,
+  richTextGuard,
+  uploadedMediaIds,
 } from "./validators";
 
 describe("extractText", () => {
@@ -324,5 +326,117 @@ describe("forbidsPhrases enforces required, because nothing else will", () => {
   it("does not mistake zero or false for empty", () => {
     expect(validate(0, req)).toBe(true);
     expect(validate(false, req)).toBe(true);
+  });
+});
+
+/*
+ * Every other path to an image is gated by `filterOptions`, which Payload
+ * enforces on upload and relationship FIELDS. A Lexical body is neither: its
+ * upload picker offers the whole media collection and the feature's options
+ * (enabledCollections, per-collection node fields) give no way to narrow which
+ * documents appear. So the one place an editor would most naturally drop a
+ * picture was the one place the provenance gate did not reach.
+ */
+describe("uploadedMediaIds", () => {
+  const body = (children: unknown[]) => ({ root: { type: "root", children } });
+
+  it("finds an upload node's id", () => {
+    expect(uploadedMediaIds(body([{ type: "upload", relationTo: "media", value: 7 }]))).toEqual([7]);
+  });
+
+  it("finds ids nested inside paragraphs", () => {
+    const nested = body([
+      { type: "paragraph", children: [{ type: "text", text: "see" }] },
+      { type: "paragraph", children: [{ type: "upload", relationTo: "media", value: 3 }] },
+    ]);
+    expect(uploadedMediaIds(nested)).toEqual([3]);
+  });
+
+  it("reads the id out of a populated upload node", () => {
+    expect(
+      uploadedMediaIds(body([{ type: "upload", relationTo: "media", value: { id: 11, alt: "x" } }])),
+    ).toEqual([11]);
+  });
+
+  it("de-duplicates and ignores other collections", () => {
+    const mixed = body([
+      { type: "upload", relationTo: "media", value: 5 },
+      { type: "upload", relationTo: "media", value: 5 },
+      { type: "upload", relationTo: "documents", value: 9 },
+      { type: "relationship", relationTo: "media", value: 12 },
+    ]);
+    expect(uploadedMediaIds(mixed)).toEqual([5]);
+  });
+
+  it("returns nothing for text-only or empty bodies", () => {
+    expect(uploadedMediaIds(body([{ type: "paragraph", children: [] }]))).toEqual([]);
+    expect(uploadedMediaIds(null)).toEqual([]);
+    expect(uploadedMediaIds("just a string")).toEqual([]);
+  });
+});
+
+describe("richTextGuard", () => {
+  const body = (children: unknown[]) => ({ root: { type: "root", children } });
+  const withText = body([{ type: "paragraph", children: [{ type: "text", text: "Fine copy." }] }]);
+
+  /** A payload stand-in returning whatever approval state the test wants. */
+  const fakeReq = (docs: { id: number; approved: boolean }[]) =>
+    ({ req: { payload: { find: async () => ({ docs }) } } }) as never;
+
+  it("still applies the phrase rules", async () => {
+    const claim = body([
+      { type: "paragraph", children: [{ type: "text", text: "A Tier III certified site." }] },
+    ]);
+    await expect(richTextGuard()(claim, {} as never)).resolves.toMatch(/Tier III-aligned/);
+  });
+
+  it("still enforces required", async () => {
+    await expect(richTextGuard()(null, { required: true } as never)).resolves.toBe(
+      "This field is required.",
+    );
+  });
+
+  it("passes a body with no images without touching the database", async () => {
+    let called = false;
+    const req = { req: { payload: { find: async () => { called = true; return { docs: [] }; } } } };
+    await expect(richTextGuard()(withText, req as never)).resolves.toBe(true);
+    expect(called, "should not query for a body with no uploads").toBe(false);
+  });
+
+  it("refuses a body embedding an unapproved image", async () => {
+    const withImage = body([{ type: "upload", relationTo: "media", value: 7 }]);
+    const result = await richTextGuard()(withImage, fakeReq([{ id: 7, approved: false }]));
+    expect(result).toMatch(/has not been approved/);
+    expect(result).toMatch(/record where it came from/);
+  });
+
+  it("allows a body embedding an approved image", async () => {
+    const withImage = body([{ type: "upload", relationTo: "media", value: 7 }]);
+    await expect(richTextGuard()(withImage, fakeReq([{ id: 7, approved: true }]))).resolves.toBe(
+      true,
+    );
+  });
+
+  it("counts the unapproved images in the message", async () => {
+    const two = body([
+      { type: "upload", relationTo: "media", value: 1 },
+      { type: "upload", relationTo: "media", value: 2 },
+    ]);
+    const result = await richTextGuard()(
+      two,
+      fakeReq([
+        { id: 1, approved: false },
+        { id: 2, approved: false },
+      ]),
+    );
+    expect(result).toMatch(/2 images/);
+    expect(result).toMatch(/have not been approved/);
+  });
+
+  it("fails open when there is no payload instance to ask", async () => {
+    // Blocking here would refuse every save in a context without a request,
+    // which is worse than the miss. Payload always supplies req on a real save.
+    const withImage = body([{ type: "upload", relationTo: "media", value: 7 }]);
+    await expect(richTextGuard()(withImage, {} as never)).resolves.toBe(true);
   });
 });

@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
-import { forbidsPhrases } from "../fields/validators";
+import { forbidsPhrases, richTextGuard } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
 /*
@@ -54,7 +54,9 @@ export const Posts: CollectionConfig = {
         description:
           "Two or three paragraphs. Short is the point — the solution page carries the depth.",
       },
-      validate: forbidsPhrases(),
+      // richTextGuard, not forbidsPhrases: a Lexical body can embed an image,
+      // and the editor's upload picker cannot be narrowed to approved assets.
+      validate: richTextGuard(),
     },
     {
       name: "target",

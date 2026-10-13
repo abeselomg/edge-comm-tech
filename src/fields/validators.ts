@@ -1,3 +1,4 @@
+import type { RichTextFieldValidation } from "payload";
 /*
  * The content master forbids specific claims. The people editing this site
  * will not have read its 207 pages, so guidance in a field description is not
@@ -187,6 +188,74 @@ export function forbidsPhrases(rules: Rule[] = BASE_RULES) {
       if (rule.pattern.test(text)) return rule.message;
     }
     return true;
+  };
+}
+
+/** Media ids referenced by upload nodes anywhere in a Lexical tree. */
+export function uploadedMediaIds(value: unknown): (string | number)[] {
+  const ids: (string | number)[] = [];
+  const walk = (node: unknown): void => {
+    if (!node || typeof node !== "object") return;
+    if (Array.isArray(node)) {
+      node.forEach(walk);
+      return;
+    }
+    const record = node as Record<string, unknown>;
+    if (record.type === "upload" && record.relationTo === "media") {
+      const raw = record.value;
+      const id =
+        raw && typeof raw === "object" ? (raw as Record<string, unknown>).id : raw;
+      if (typeof id === "string" || typeof id === "number") ids.push(id);
+    }
+    if (record.root) walk(record.root);
+    if (Array.isArray(record.children)) record.children.forEach(walk);
+  };
+  walk(value);
+  return [...new Set(ids)];
+}
+
+/**
+ * The rich-text counterpart to `forbidsPhrases`: the same phrase rules, plus a
+ * check that every image embedded in the body is an approved asset.
+ *
+ * Every other path to an image is gated by `filterOptions`, which Payload
+ * enforces on relationship and upload FIELDS. A Lexical body is neither: the
+ * editor's upload feature picks from the whole media collection, and its
+ * options (`enabledCollections`, per-collection node `fields`) offer no way to
+ * narrow WHICH documents are offered. So the one place an editor would most
+ * naturally drop a picture was the one place the provenance gate did not
+ * reach.
+ *
+ * It fails OPEN when it cannot check -- no `req`, no payload instance -- rather
+ * than blocking every save in a context that has neither. Payload always
+ * supplies `req` on a real save, so in practice the check runs whenever it
+ * matters.
+ */
+export function richTextGuard(rules: Rule[] = BASE_RULES): RichTextFieldValidation {
+  const phrases = forbidsPhrases(rules);
+
+  return async (value, options) => {
+    const phraseResult = phrases(value, options);
+    if (phraseResult !== true) return phraseResult;
+
+    const ids = uploadedMediaIds(value);
+    if (ids.length === 0) return true;
+
+    const payload = options?.req?.payload;
+    if (!payload) return true;
+
+    const { docs } = await payload.find({
+      collection: "media",
+      where: { id: { in: ids } },
+      limit: ids.length,
+      depth: 0,
+      overrideAccess: true,
+    });
+
+    const unapproved = docs.filter((doc) => !doc.approved);
+    if (unapproved.length === 0) return true;
+
+    return `This body embeds ${unapproved.length === 1 ? "an image" : `${unapproved.length} images`} that ${unapproved.length === 1 ? "has" : "have"} not been approved for publication. Open each one in the Library, record where it came from and who checked it, then tick Approved.`;
   };
 }
 

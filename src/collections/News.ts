@@ -2,7 +2,7 @@ import type { CollectionConfig } from "payload";
 import { publishedOrSignedIn, signedIn } from "../access";
 import { slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
-import { forbidsPhrases } from "../fields/validators";
+import { forbidsPhrases, richTextGuard } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
 const paths = (doc: { slug?: string | null }) => [
@@ -72,7 +72,9 @@ export const News: CollectionConfig = {
       name: "body",
       type: "richText",
       required: true,
-      validate: forbidsPhrases(),
+      // richTextGuard, not forbidsPhrases: a Lexical body can embed an image,
+      // and the editor's upload picker cannot be narrowed to approved assets.
+      validate: richTextGuard(),
     },
   ],
 };
