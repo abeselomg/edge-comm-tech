@@ -70,6 +70,19 @@ export function makeResolver<T>(
     if (normalised === "") {
       throw new Error(`Cannot build the ${label} resolver: an entry has an empty name.`);
     }
+    // Reject a missing id at construction. The lookup below tests `has`, not
+    // the value, so an entry registered with no id would "resolve" and hand
+    // back undefined -- a dangling relationship written with nothing thrown,
+    // which is the exact fault this resolver exists to prevent. The seed builds
+    // entries as `{ key: name, id: created.id }`, so a create that returns no
+    // id is how this arrives.
+    if (entry.id === undefined || entry.id === null) {
+      throw new Error(
+        `Cannot build the ${label} resolver: "${entry.key}" was registered with no id. ` +
+          `The ${label} was probably not created successfully, so nothing can reference it. ` +
+          `Check the ${label} step's output before seeding what depends on it.`,
+      );
+    }
     if (index.has(normalised)) {
       throw new Error(
         `Cannot build the ${label} resolver: two ${label}s are named "${entry.key}" ` +

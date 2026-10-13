@@ -86,7 +86,11 @@ describe("makeResolver", () => {
   });
 
   it("suggests the closest known name, to catch a typo", () => {
-    expect(() => resolve("Gadaa Bnak")).toThrow(/Gadaa Bank/);
+    // Asserting only /Gadaa Bank/ would pass even with the hint disabled,
+    // because the fallback lists every known name and that list contains it.
+    // Assert the hint's own wording, and that the fallback did NOT fire.
+    expect(() => resolve("Gadaa Bnak")).toThrow(/Did you mean "Gadaa Bank"\?/);
+    expect(() => resolve("Gadaa Bnak")).not.toThrow(/Known clients:/);
   });
 
   it("lists the known names when nothing is close", () => {
@@ -131,5 +135,48 @@ describe("makeResolver", () => {
   it("uses the label it was given in every message", () => {
     const partners = makeResolver("partner", [{ key: "Acme", id: 1 }]);
     expect(() => partners("Zed")).toThrow(/No partner matches "Zed"/);
+  });
+});
+
+/*
+ * The lookup tests whether the key is present, not whether its id is usable.
+ * An entry registered with no id would therefore "resolve" and hand back
+ * undefined, writing a dangling relationship with nothing thrown — the exact
+ * fault this resolver exists to prevent. The seed builds entries as
+ * `{ key: name, id: created.id }`, so a create that returns no id is how this
+ * arrives in practice.
+ */
+describe("makeResolver rejects an unusable id at construction", () => {
+  it("throws when an entry has an undefined id", () => {
+    expect(() =>
+      makeResolver("client", [{ key: "Gadaa Bank", id: undefined as unknown as number }]),
+    ).toThrow(/registered with no id/);
+  });
+
+  it("throws when an entry has a null id", () => {
+    expect(() =>
+      makeResolver("client", [{ key: "Gadaa Bank", id: null as unknown as number }]),
+    ).toThrow(/registered with no id/);
+  });
+
+  it("names the entry and points at the step that failed", () => {
+    let message = "";
+    try {
+      makeResolver("partner", [{ key: "Cisco", id: undefined as unknown as number }]);
+    } catch (error) {
+      message = (error as Error).message;
+    }
+    expect(message).toMatch(/"Cisco"/);
+    expect(message).toMatch(/partner step/);
+  });
+
+  it("still accepts an id of 0, which is falsy but valid", () => {
+    const resolve = makeResolver("client", [{ key: "Gadaa Bank", id: 0 }]);
+    expect(resolve("Gadaa Bank")).toBe(0);
+  });
+
+  it("still accepts an empty-string id", () => {
+    const resolve = makeResolver("client", [{ key: "Gadaa Bank", id: "" }]);
+    expect(resolve("Gadaa Bank")).toBe("");
   });
 });
