@@ -81,6 +81,7 @@ export interface Config {
     partners: Partner;
     courses: Course;
     jobs: Job;
+    academyTracks: AcademyTrack;
     media: Media;
     users: User;
     forms: Form;
@@ -106,6 +107,7 @@ export interface Config {
     partners: PartnersSelect<false> | PartnersSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     jobs: JobsSelect<false> | JobsSelect<true>;
+    academyTracks: AcademyTracksSelect<false> | AcademyTracksSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -1154,7 +1156,7 @@ export interface Course {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Unpublish a role as soon as it is filled.
+ * Published vacancies. Salary and benefits are never published — do not add fields for them.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobs".
@@ -1166,35 +1168,72 @@ export interface Job {
    * Page URL: /careers/jobs/<slug>
    */
   slug: string;
-  team: string;
+  department: string;
+  level: 'Executive' | 'Senior' | 'Mid-level' | 'Junior';
+  /**
+   * Who the role reports to.
+   */
+  reports: string;
+  /**
+   * e.g. 'Full-time'.
+   */
+  type: string;
+  status: string;
   location: string;
-  type: 'full-time' | 'contract' | 'internship';
-  summary: string;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  requirements?:
+  /**
+   * Leave the value empty and the status pending until Edge sets a date — the site then shows a visible marker rather than implying there is time.
+   */
+  deadline: {
+    /**
+     * Leave empty while this is still unconfirmed.
+     */
+    value?: string | null;
+    /**
+     * While this is pending, the site shows a visible marker instead of the value.
+     */
+    status: 'confirmed' | 'pending';
+    /**
+     * What the marker says, e.g. 'Year to confirm'.
+     */
+    pendingLabel?: string | null;
+  };
+  /**
+   * A one-line statement of what the role is for.
+   */
+  purposeTitle: string;
+  purpose: string;
+  /**
+   * The breadth of the role, where the approved copy describes it.
+   */
+  scope?: string | null;
+  responsibilities?:
     | {
         item: string;
         id?: string | null;
       }[]
     | null;
   /**
-   * E-Academy material candidates should watch first.
+   * Genuine requirements only. Anything desirable belongs in Preferred.
    */
-  relatedCourses?: (number | Course)[] | null;
+  required?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * What strengthens an application without being a barrier to applying.
+   */
+  preferred?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * How performance in the role will be judged.
+   */
+  success: string;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -1203,6 +1242,35 @@ export interface Job {
      */
     image?: (number | null) | Media;
   };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Training tracks, each mapped to a solution family Edge delivers.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "academyTracks".
+ */
+export interface AcademyTrack {
+  id: number;
+  title: string;
+  /**
+   * Anchor on the E-Academy page. Not a page of its own.
+   */
+  slug: string;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
+  /**
+   * What the track covers.
+   */
+  body: string;
+  /**
+   * The family this track teaches. Required — a track with no solution behind it is a course Edge does not deliver.
+   */
+  solution: number | Solution;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1498,6 +1566,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'jobs';
         value: number | Job;
+      } | null)
+    | ({
+        relationTo: 'academyTracks';
+        value: number | AcademyTrack;
       } | null)
     | ({
         relationTo: 'media';
@@ -2050,18 +2122,41 @@ export interface CoursesSelect<T extends boolean = true> {
 export interface JobsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
-  team?: T;
-  location?: T;
+  department?: T;
+  level?: T;
+  reports?: T;
   type?: T;
-  summary?: T;
-  description?: T;
-  requirements?:
+  status?: T;
+  location?: T;
+  deadline?:
+    | T
+    | {
+        value?: T;
+        status?: T;
+        pendingLabel?: T;
+      };
+  purposeTitle?: T;
+  purpose?: T;
+  scope?: T;
+  responsibilities?:
     | T
     | {
         item?: T;
         id?: T;
       };
-  relatedCourses?: T;
+  required?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  preferred?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  success?: T;
   meta?:
     | T
     | {
@@ -2069,6 +2164,20 @@ export interface JobsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "academyTracks_select".
+ */
+export interface AcademyTracksSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  order?: T;
+  body?: T;
+  solution?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
