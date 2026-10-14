@@ -106,8 +106,15 @@ describe("toDetailBlocks", () => {
     const blocks = toDetailBlocks({
       capabilities: [],
       bands: [
-        { label: "Facility", title: "Datacenter facility", items: ["Racks", "Cooling"] },
-        { label: "IT", title: "IT infrastructure", items: ["CCTV"] },
+        {
+          label: "Facility",
+          title: "Datacenter facility",
+          items: [
+            { title: "Racks", body: "Rack systems." },
+            { title: "Cooling", body: "Precision cooling." },
+          ],
+        },
+        { label: "IT", title: "IT infrastructure", items: [{ title: "CCTV", body: "Cameras." }] },
       ],
     });
     expect(blocks).toHaveLength(1);
@@ -117,10 +124,9 @@ describe("toDetailBlocks", () => {
       title: string;
       entries: { title: string; body: string }[];
     }[];
-    // A plain-string entry becomes a title with no body rather than being lost.
     expect(items[0].entries).toEqual([
-      { title: "Racks", body: "" },
-      { title: "Cooling", body: "" },
+      { title: "Racks", body: "Rack systems." },
+      { title: "Cooling", body: "Precision cooling." },
     ]);
     expect(items[0].label).toBe("Facility");
     expect(items[1].label).toBe("IT");
@@ -128,7 +134,9 @@ describe("toDetailBlocks", () => {
 
   it("falls back to the title when a band has no label", () => {
     // The eyebrow is required by the block, so it cannot be left empty.
-    const blocks = toDetailBlocks({ bands: [{ title: "Only a title", items: ["x"] }] });
+    const blocks = toDetailBlocks({
+      bands: [{ title: "Only a title", items: [{ title: "x", body: "y" }] }],
+    });
     const items = blocks[0].items as { label: string; title: string }[];
     expect(items[0].label).toBe("Only a title");
   });
@@ -323,5 +331,69 @@ describe("toDetailBlocks against Highland's real content", () => {
     const statuses = PROJECTS.map((x) => toConfirmable(x.year, "Year to confirm").status);
     expect(statuses.filter((s) => s === "pending")).toHaveLength(1);
     expect(statuses.filter((s) => s === "confirmed")).toHaveLength(7);
+  });
+});
+
+/*
+ * The review mutated `titledBodies` to `({ title }) => ({ title, body: title })`
+ * and all 29 tests still passed — so roughly sixty approved capability, layer
+ * and step bodies could have been seeded as copies of their own headings with
+ * the suite green. The existing tests only checked that strings were
+ * non-empty, and only the band path compared against the source.
+ *
+ * These compare every titled body in the real content against what is emitted.
+ */
+describe("every titled body survives the transform", () => {
+  const BLOCKS_WITH_BODIES = ["capabilities", "layers", "steps", "sectors", "models"] as const;
+
+  it("matches the source title and body for every entry, in every record", async () => {
+    const { SOLUTION_DETAIL, SERVICE_DETAIL } = (await import(
+      "../../design-src/highland/detail.mjs"
+    )) as {
+      SOLUTION_DETAIL: Record<string, Record<string, unknown>>;
+      SERVICE_DETAIL: Record<string, Record<string, unknown>>;
+    };
+
+    let compared = 0;
+    for (const record of [
+      ...Object.values(SOLUTION_DETAIL),
+      ...Object.values(SERVICE_DETAIL),
+    ]) {
+      const emitted = toDetailBlocks(record);
+      for (const key of BLOCKS_WITH_BODIES) {
+        const source = (record[key] ?? []) as { title: string; body: string }[];
+        if (!source.length) continue;
+        const block = emitted.find((b) => b.blockType === key);
+        expect(block, `a record with ${key} should emit a ${key} block`).toBeDefined();
+        const items = block!.items as { title: string; body: string }[];
+        expect(items, key).toHaveLength(source.length);
+        source.forEach((entry, i) => {
+          expect(items[i].title, `${key}[${i}].title`).toBe(entry.title);
+          expect(items[i].body, `${key}[${i}].body`).toBe(entry.body);
+          compared += 1;
+        });
+      }
+    }
+
+    // Without this the loop could pass by comparing nothing at all.
+    expect(compared, "should have compared many bodies").toBeGreaterThan(40);
+  });
+
+  it("does not let a body be a copy of its own title", async () => {
+    // The specific substitution the review used to defeat the old tests.
+    const { SOLUTION_DETAIL } = (await import("../../design-src/highland/detail.mjs")) as {
+      SOLUTION_DETAIL: Record<string, Record<string, unknown>>;
+    };
+    let checked = 0;
+    for (const record of Object.values(SOLUTION_DETAIL)) {
+      const caps = (record.capabilities ?? []) as { title: string; body: string }[];
+      if (!caps.length) continue;
+      const block = toDetailBlocks(record).find((b) => b.blockType === "capabilities");
+      for (const item of block!.items as { title: string; body: string }[]) {
+        expect(item.body, item.title).not.toBe(item.title);
+        checked += 1;
+      }
+    }
+    expect(checked).toBeGreaterThan(10);
   });
 });

@@ -101,9 +101,22 @@ export function toDetailBlocks(
         // entry is promoted to a title with no body rather than being dropped.
         label: b.label ?? b.title,
         title: b.title,
-        entries: (b.items ?? []).map((e) =>
-          typeof e === "string" ? { title: e, body: "" } : { title: e.title, body: e.body },
-        ),
+        entries: (b.items ?? []).map((e) => {
+          // A bare string has no body, and the block requires one -- emitting
+          // `body: ""` would build a document the collection refuses, failing
+          // the seed with a validation error pointing at the field rather than
+          // at the content that caused it. The real data has no string band
+          // entries; if one ever appears, say so here instead.
+          if (typeof e === "string") {
+            throw new Error(
+              `Band "${b.label ?? b.title}" has the plain-string entry "${e}". ` +
+                `Band entries need a title and a body, because the approved design ` +
+                `renders each as a heading with a paragraph beneath it. Give it a body ` +
+                `in design-src/highland/detail.mjs, or move it to a capability list.`,
+            );
+          }
+          return { title: e.title, body: e.body };
+        }),
       })),
     });
   }
