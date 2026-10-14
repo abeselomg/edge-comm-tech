@@ -223,10 +223,15 @@ export interface Solution {
              */
             items?:
               | {
+                  /**
+                   * The small line above the band's heading, e.g. 'Datacenter facility'. The approved design renders it as the section eyebrow.
+                   */
+                  label: string;
                   title: string;
                   entries?:
                     | {
-                        item: string;
+                        title: string;
+                        body: string;
                         id?: string | null;
                       }[]
                     | null;
@@ -1529,11 +1534,13 @@ export interface SolutionsSelect<T extends boolean = true> {
               items?:
                 | T
                 | {
+                    label?: T;
                     title?: T;
                     entries?:
                       | T
                       | {
-                          item?: T;
+                          title?: T;
+                          body?: T;
                           id?: T;
                         };
                     id?: T;

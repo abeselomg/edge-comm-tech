@@ -106,14 +106,31 @@ describe("toDetailBlocks", () => {
     const blocks = toDetailBlocks({
       capabilities: [],
       bands: [
-        { title: "Datacenter facility", items: ["Racks", "Cooling"] },
-        { title: "IT infrastructure", items: ["CCTV"] },
+        { label: "Facility", title: "Datacenter facility", items: ["Racks", "Cooling"] },
+        { label: "IT", title: "IT infrastructure", items: ["CCTV"] },
       ],
     });
     expect(blocks).toHaveLength(1);
     expect(blocks[0].blockType).toBe("bands");
-    const items = blocks[0].items as { title: string; entries: { item: string }[] }[];
-    expect(items[0].entries).toEqual([{ item: "Racks" }, { item: "Cooling" }]);
+    const items = blocks[0].items as {
+      label: string;
+      title: string;
+      entries: { title: string; body: string }[];
+    }[];
+    // A plain-string entry becomes a title with no body rather than being lost.
+    expect(items[0].entries).toEqual([
+      { title: "Racks", body: "" },
+      { title: "Cooling", body: "" },
+    ]);
+    expect(items[0].label).toBe("Facility");
+    expect(items[1].label).toBe("IT");
+  });
+
+  it("falls back to the title when a band has no label", () => {
+    // The eyebrow is required by the block, so it cannot be left empty.
+    const blocks = toDetailBlocks({ bands: [{ title: "Only a title", items: ["x"] }] });
+    const items = blocks[0].items as { label: string; title: string }[];
+    expect(items[0].label).toBe("Only a title");
   });
 
   it("emits a checklist block only when there are items", () => {
@@ -191,14 +208,66 @@ describe("eventDates guards", () => {
 });
 
 describe("toDetailBlocks against Highland's real content", () => {
-  // Highland's bands carry { label, title, items: [{ title, body }] }.
-  it("flattens object band entries into strings the bands block accepts", () => {
+  /*
+   * Highland's bands carry { label, title, items: [{ title, body }] } and all
+   * three parts render: solution.mjs passes `label` as the section eyebrow and
+   * `title` as its heading, then sends each item through the same card
+   * renderer the capability list uses, which emits the item title as an h3
+   * with its body as a paragraph. Nothing may be dropped or merged.
+   */
+  it("carries the band label and keeps each entry's title and body apart", () => {
     const blocks = toDetailBlocks({
-      bands: [{ label: "L", title: "T", items: [{ title: "Racks", body: "Rack systems." }] }],
+      bands: [
+        {
+          label: "Datacenter facility",
+          title: "Tier-aligned modern datacenter facilities",
+          items: [{ title: "Racks", body: "Rack systems." }],
+        },
+      ],
     });
-    const items = blocks[0].items as { title: string; entries: { item: string }[] }[];
-    expect(items[0].entries).toEqual([{ item: "Racks: Rack systems." }]);
-    expect(JSON.stringify(blocks)).not.toContain('"label"');
+    const items = blocks[0].items as {
+      label: string;
+      title: string;
+      entries: { title: string; body: string }[];
+    }[];
+    expect(items[0].label).toBe("Datacenter facility");
+    expect(items[0].title).toBe("Tier-aligned modern datacenter facilities");
+    expect(items[0].entries).toEqual([{ title: "Racks", body: "Rack systems." }]);
+    // The old transform merged these into "Racks: Rack systems.".
+    expect(JSON.stringify(blocks)).not.toContain("Racks: Rack systems.");
+  });
+
+  it("preserves every band label and entry body in the real content", async () => {
+    const { SOLUTION_DETAIL } = (await import("../../design-src/highland/detail.mjs")) as {
+      SOLUTION_DETAIL: Record<string, Record<string, unknown>>;
+    };
+    let bandsSeen = 0;
+    for (const detail of Object.values(SOLUTION_DETAIL)) {
+      const source = (detail.bands ?? []) as {
+        label?: string;
+        title: string;
+        items: { title: string; body: string }[];
+      }[];
+      if (!source.length) continue;
+      const emitted = toDetailBlocks(detail).find((b) => b.blockType === "bands");
+      expect(emitted, "a solution with bands should emit a bands block").toBeDefined();
+      const items = emitted!.items as {
+        label: string;
+        entries: { title: string; body: string }[];
+      }[];
+      expect(items).toHaveLength(source.length);
+      source.forEach((band, i) => {
+        bandsSeen += 1;
+        expect(items[i].label).toBe(band.label ?? band.title);
+        expect(items[i].entries).toHaveLength(band.items.length);
+        band.items.forEach((entry, j) => {
+          expect(items[i].entries[j].title).toBe(entry.title);
+          expect(items[i].entries[j].body).toBe(entry.body);
+        });
+      });
+    }
+    // Without this the loop could pass by never running.
+    expect(bandsSeen, "the real content should contain bands").toBeGreaterThan(0);
   });
 
   it("draws every solution's content into schema-valid blocks", async () => {

@@ -54,13 +54,28 @@ const DETAIL_BLOCKS: Block[] = [
         minRows: 2,
         labels: { singular: "Band", plural: "Bands" },
         fields: [
+          {
+            name: "label",
+            type: "text",
+            required: true,
+            admin: {
+              description:
+                "The small line above the band's heading, e.g. 'Datacenter facility'. The approved design renders it as the section eyebrow.",
+            },
+            validate: forbidsPhrases(),
+          },
           { name: "title", type: "text", required: true, validate: forbidsPhrases() },
           {
             name: "entries",
             type: "array",
             minRows: 1,
             labels: { singular: "Entry", plural: "Entries" },
-            fields: [{ name: "item", type: "text", required: true, validate: forbidsPhrases() }],
+            // Title and body, like `capabilities`, because the approved design
+            // renders each entry as a heading with a paragraph under it. A
+            // single string here forced the seed to flatten them into
+            // "Title: body", which reads as one run-on line and loses the
+            // structure the client signed off.
+            fields: [...titledBody],
           },
         ],
       },

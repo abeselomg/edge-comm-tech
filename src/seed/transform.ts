@@ -69,10 +69,17 @@ export function eventDates(input: { iso: string; date: string }): {
  * `capabilities`, most use the reverse -- and an empty block in Payload
  * renders as an empty heading on the page.
  *
- * Highland's bands are { label, title, items: [{ title, body }] }; Payload's
- * bands block holds only a title and plain-string entries. Object entries are
- * flattened to "Title: body" and the band `label` is dropped. Plain-string
- * entries pass through unchanged.
+ * Highland's bands are { label, title, items: [{ title, body }] } and all three
+ * parts render: solution.mjs passes `label` as the section eyebrow and `title`
+ * as its heading, then sends each item through the same card renderer the
+ * capability list uses, which emits the item title as an h3 with its body as a
+ * paragraph beneath.
+ *
+ * An earlier version of this transform flattened each item to "Title: body" and
+ * dropped `label`, because the bands block could hold neither. The block was
+ * changed instead: losing the eyebrow and collapsing a heading-plus-paragraph
+ * card into one run-on line would have made the ported page differ from the
+ * design the client approved, which is the only thing this port is for.
  */
 const titledBodies = (list: TitledBody[]) => list.map(({ title, body }) => ({ title, body }));
 
@@ -84,14 +91,18 @@ export function toDetailBlocks(
   const blocks: { blockType: string; [k: string]: unknown }[] = [];
   const list = <T>(key: string) => (detail[key] as T[] | undefined) ?? [];
 
-  const bands = list<{ title: string; items: (string | TitledBody)[] }>("bands");
+  const bands = list<{ label?: string; title: string; items: (string | TitledBody)[] }>("bands");
   if (bands.length) {
     blocks.push({
       blockType: "bands",
       items: bands.map((b) => ({
+        // `label` is the section eyebrow in the approved design and `title` the
+        // heading under it; both render, so both are carried. A plain-string
+        // entry is promoted to a title with no body rather than being dropped.
+        label: b.label ?? b.title,
         title: b.title,
-        entries: toItems(
-          (b.items ?? []).map((e) => (typeof e === "string" ? e : `${e.title}: ${e.body}`)),
+        entries: (b.items ?? []).map((e) =>
+          typeof e === "string" ? { title: e, body: "" } : { title: e.title, body: e.body },
         ),
       })),
     });
