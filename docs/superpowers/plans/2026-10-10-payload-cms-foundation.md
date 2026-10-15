@@ -4924,49 +4924,34 @@ empty heading."
 
 ### Task 18: The seed script and its verification
 
-> **Read this before Step 1: the database schema is not created by anything in
-> this plan, and this task is the first that needs it.**
+> **The schema question raised here is settled. Read this and move on.**
 >
-> Verified on 2026-10-12, at Task 11, against the live database: after Tasks
-> 8-11 defined `clients`, `services`, `partnerCategories` and the re-modelled
-> `solutions`, NONE of their tables existed. The database still held the
-> September schema -- `solutions_capabilities`, `sectors`, `courses`,
-> `home_page` and the rest of the retired model -- 74 tables, none of them new.
-> Neither `npx next build` (which exits 0) nor booting `npm run dev` created
-> them.
+> The note that used to sit here told you to resolve how the database schema
+> gets created, because the plan never said. That is done, at commit
+> `051a066`, and the database is ready: 189 tables, all 14 model tables
+> present, 21 collections and 5 globals registered.
 >
-> What is known:
->   - `payload_migrations` holds exactly one row: name `dev`, batch `-1`, dated
->     2026-09-04. That is Payload's dev-push marker, so push is what built the
->     original schema.
->   - There is no `migrations/` directory anywhere in the repo and no migrate
->     script in `package.json`.
->   - The plan never mentions migrations, `push`, or schema creation at any
->     point. That is the gap, and it is mine.
+> What it turned out to be, in case it recurs: Payload's push is INTERACTIVE.
+> With the retired collections' enums still present, drizzle-kit asks
+> *"Is enum_services_status enum created or renamed from another enum?"*,
+> lists a dozen candidates, and waits on stdin. No build and no dev server
+> supplies stdin, so it hangs rather than failing — which is why nothing in the
+> logs ever said so. The stale schema was dropped and the push then built
+> everything cleanly.
 >
-> So the seed in this task will fail against a database whose tables do not
-> match the model, and `seed:verify` cannot pass. Settle the schema FIRST, and
-> record in your report which route you took and what it did:
+> Two things follow for you:
 >
-> 1. Try `npm run dev` once and re-check
->    (`select table_name from information_schema.tables where
->    table_schema='public'`). Payload's dev push runs on init and may simply
->    not have completed on the loaded machine where this was observed -- the
->    homepage request timed out at 300s without ever rendering.
-> 2. If push does not run, the adapter takes it explicitly:
->    `postgresAdapter({ pool: {...}, push: true })` for development.
-> 3. If neither works, generate real migrations:
->    `npx payload migrate:create` then `npx payload migrate`, and add a
->    `migrate` script to `package.json`.
+> 1. `src/payload.config.ts` now sets `push: process.env.NODE_ENV !==
+>    "production"` explicitly. Leave it alone. The default is
+>    environment-dependent and a production build silently does not push, which
+>    is how four earlier tasks landed with no tables.
+> 2. If you change a collection's enums and a payload command hangs with no
+>    output, it is waiting for an answer to that prompt, not working. Say so
+>    rather than waiting it out.
 >
-> Whichever route you take, note that the old schema carries stale rows -- 26
-> partners and 6 solutions in the retired shape. Dropping those tables and
-> their data is intended: Task 15 retires those collections, and this task's
-> `--fresh` mode deletes everything before creating. Do not try to preserve
-> them.
->
-> Do NOT pick a route and leave the plan silent about it. Say in your report
-> which one worked, so the deployment story is written down somewhere.
+> Production deployment still needs real migrations (`payload migrate:create`,
+> then `payload migrate` on deploy). That is out of this plan's scope and is
+> recorded in the config beside the setting.
 
 Dependency-ordered writes, then assertions that the database holds what the master says it should.
 
