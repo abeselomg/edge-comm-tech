@@ -105,6 +105,26 @@ export default buildConfig({
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URI || "" },
+    /*
+     * Sync the schema from the collection definitions on boot, in development.
+     *
+     * Nothing else in this project creates tables: there is no migrations
+     * directory and no migrate script, and `payload_migrations` holds a single
+     * `dev` row with batch -1, which is the marker Payload writes when the
+     * schema came from a push rather than a migration. So push is how this
+     * database was built, and it has to stay switched on for the local
+     * development database to track the model.
+     *
+     * Explicit rather than relying on the default, because the default is
+     * environment-dependent and a production build silently does not push --
+     * which is how four tasks of collection work landed with none of their
+     * tables created.
+     *
+     * Production deployment needs real migrations (`payload migrate:create`,
+     * then `payload migrate` on deploy). That is a deployment decision, not a
+     * local one, and it is out of this plan's scope.
+     */
+    push: process.env.NODE_ENV !== "production",
   }),
   sharp,
   plugins: [
