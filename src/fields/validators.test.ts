@@ -226,8 +226,16 @@ describe("forbidsPhrases ignores how the words are joined", () => {
       blocked(s);
   });
 
-  it("blocks authorization status however it is joined", () => {
-    for (const s of ["authorized reseller", "authorised-reseller", "authorized_partner"])
+  it("blocks an authorization CLAIM however it is joined", () => {
+    // The rule now requires a determiner, a possessive, a form of "to be", or
+    // "as" before the phrase, because the bare words also appear in approved
+    // copy describing third parties. The joiner class still applies inside.
+    for (const s of [
+      "an authorized reseller",
+      "an authorised-reseller",
+      "the authorized_partner",
+      "Edge is an authorized distributor",
+    ])
       blocked(s);
   });
 
@@ -248,9 +256,9 @@ describe("forbidsPhrases ignores how the words are joined", () => {
       "Platinum Partners",
       "Elite Partners",
       "premier partners",
-      "authorized resellers",
-      "authorised distributors",
-      "authorized partners",
+      "we are authorized resellers",
+      "Edge is an authorised distributor",
+      "our authorized partners",
       "certified partners",
       "Platinum-Partners",
     ])
@@ -474,5 +482,48 @@ describe("richTextGuard", () => {
     // which is worse than the miss. Payload always supplies req on a real save.
     const withImage = body([{ type: "upload", relationTo: "media", value: 7 }]);
     await expect(richTextGuard()(withImage, {} as never)).resolves.toBe(true);
+  });
+});
+
+/*
+ * The rule used to match the bare phrase, which refused client-approved copy:
+ * the Procurement & Supply service says Edge will "Engage relevant
+ * manufacturers, authorized distributors, and technology partners", which
+ * publishes no status of Edge's at all. The rule's own message explains the
+ * prohibition — Edge's authorization "changes over time and is governed by
+ * each manufacturer's agreement" — so it is about Edge, and the rule now only
+ * catches the shapes a claim about Edge takes.
+ *
+ * Both halves matter. Blocking too little publishes a claim; blocking too much
+ * stops the seed and stops an editor saving a paragraph the client signed off.
+ */
+describe("the authorization rule catches claims, not references", () => {
+  const validate = forbidsPhrases();
+  const blocked = (s: string) => expect(validate(s), `should block: ${s}`).not.toBe(true);
+  const fine = (s: string) => expect(validate(s), `should pass: ${s}`).toBe(true);
+
+  it("blocks Edge claiming the status, in the shapes a claim takes", () => {
+    blocked("An authorised reseller of HPE.");
+    blocked("Edge is an authorized partner.");
+    blocked("We are authorized resellers.");
+    blocked("Edge became an authorized distributor in 2024.");
+    blocked("Edge remains an authorised reseller.");
+    blocked("Certified by the vendor as an authorized distributor.");
+    blocked("our authorized partner for the region");
+    blocked("the authorized reseller for Ethiopia");
+    blocked("Edge is an authorized-reseller.");
+  });
+
+  it("permits the approved sentence about third-party distributors", () => {
+    fine(
+      "Engage relevant manufacturers, authorized distributors, and technology partners " +
+        "based on product, territory, availability, commercial terms, and support requirements.",
+    );
+  });
+
+  it("permits other legitimate uses of the word", () => {
+    fine("Sensitive decisions remain subject to authorized human review.");
+    fine("Only named staff are authorized to approve changes.");
+    fine("We work with distributors across the region.");
   });
 });

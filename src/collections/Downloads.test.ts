@@ -37,7 +37,10 @@ describe("Resources collections", () => {
     expect(get(Posts, "anchor").validate!("Tier III certified", {})).toMatch(/Tier III/);
     // body is async now: it also checks that embedded images are approved, so
     // its validator returns a promise.
-    await expect(get(Posts, "body").validate!("Authorised reseller", {})).resolves.toMatch(
+    // "An authorised reseller" rather than the bare phrase: the rule now only
+    // catches a claim, because the bare words appear in approved copy about
+    // third-party distributors.
+    await expect(get(Posts, "body").validate!("An authorised reseller", {})).resolves.toMatch(
       /Authorization/,
     );
   });

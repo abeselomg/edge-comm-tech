@@ -72,7 +72,27 @@ export const BASE_RULES: Rule[] = [
     "Partnership tiers may not be published. Remove the tier and describe what the technology does instead.",
   ),
   rule(
-    String.raw`\bauthori[sz]ed{SEP}+(?:reseller|partner|distributor)s?\b`,
+    // Only a CLAIM about Edge, not a factual reference to someone else's
+    // status. The rule's own message explains why it exists -- Edge's
+    // authorization "changes over time and is governed by each manufacturer's
+    // agreement" -- which is about Edge. Matching the bare phrase also caught
+    // approved copy describing third parties: the Procurement service says
+    // Edge will "Engage relevant manufacturers, authorized distributors, and
+    // technology partners", which publishes no status of Edge's and was
+    // refused. So the phrase now has to follow a determiner, a possessive, a
+    // form of "to be", or "as" -- the shapes a claim takes.
+    //
+    // Blocks: "An authorised reseller of HPE", "Edge is an authorized
+    // partner", "we are authorized resellers", "as an authorized distributor",
+    // "our authorized partner".
+    // Permits: "manufacturers, authorized distributors, and technology
+    // partners", and "decisions remain subject to authorized human review".
+    //
+    // Residual, accepted: a bare hyphenated form with no determiner, such as a
+    // slug "authorised-reseller", is not caught. The absence of any field for
+    // authorization status remains the structural guard; this is the prose one.
+    String.raw`\b(?:an?|the|our|its|their|your|as|is|are|was|were|am|be|been|becomes?|became|remains?|remained)` +
+      String.raw`(?:{SEP}+(?:an?|the))?{SEP}+authori[sz]ed{SEP}+(?:reseller|partner|distributor)s?\b`,
     "Authorization status may not be published. It changes over time and is governed by each manufacturer's agreement.",
   ),
   rule(String.raw`\bcertified{SEP}+partners?\b`, "Certification tiers may not be published."),
