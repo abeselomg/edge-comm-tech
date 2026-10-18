@@ -16,7 +16,10 @@
     "check:links": "node tools/check-links.mjs design-files/highland",
     "check:render": "node tools/check-render.mjs design-files/highland",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed:force": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts --force",
+    "seed:fresh": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts --fresh",
+    "seed:verify": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/verify.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
