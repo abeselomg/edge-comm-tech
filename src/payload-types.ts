@@ -607,12 +607,18 @@ export interface Project {
    */
   need: string;
   /**
-   * What the engagement covered.
+   * What the engagement covered, one step per row, in order.
    */
-  scope: string;
-  delivered?:
+  scope?:
     | {
         item: string;
+        id?: string | null;
+      }[]
+    | null;
+  delivered?:
+    | {
+        title: string;
+        body: string;
         id?: string | null;
       }[]
     | null;
@@ -622,12 +628,10 @@ export interface Project {
         id?: string | null;
       }[]
     | null;
-  technology?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
+  /**
+   * One or two sentences on what was deployed. The named platforms go in Technologies used, above.
+   */
+  technology?: string | null;
   /**
    * A qualification on the technology list, if the approved copy has one.
    */
@@ -1046,7 +1050,7 @@ export interface Job {
    */
   slug: string;
   department: string;
-  level: 'Executive' | 'Senior' | 'Mid-level' | 'Junior';
+  level: 'Executive' | 'Manager' | 'Senior' | 'Mid-level' | 'Junior';
   /**
    * Who the role reports to.
    */
@@ -1749,11 +1753,17 @@ export interface ProjectsSelect<T extends boolean = true> {
         id?: T;
       };
   need?: T;
-  scope?: T;
-  delivered?:
+  scope?:
     | T
     | {
         item?: T;
+        id?: T;
+      };
+  delivered?:
+    | T
+    | {
+        title?: T;
+        body?: T;
         id?: T;
       };
   outcomes?:
@@ -1762,12 +1772,7 @@ export interface ProjectsSelect<T extends boolean = true> {
         item?: T;
         id?: T;
       };
-  technology?:
-    | T
-    | {
-        item?: T;
-        id?: T;
-      };
+  technology?: T;
   technologyNote?: T;
   training?: T;
   privacy?: T;
@@ -2287,6 +2292,9 @@ export interface SiteSetting {
         id?: string | null;
       }[]
     | null;
+  /**
+   * The gold button in the header. The approved build says 'Contact us' and links to /contact.
+   */
   headerCta: {
     label: string;
     href: string;
@@ -2312,7 +2320,10 @@ export interface SiteSetting {
         id?: string | null;
       }[]
     | null;
-  footerNote: string;
+  /**
+   * An optional extra line in the footer, under the copyright. Leave empty unless there is something approved to say.
+   */
+  footerNote?: string | null;
   /**
    * The four figures across the site. A percentage figure must carry its qualifier — the master requires 'against agreed project scope' wherever the completion figure appears.
    */
@@ -2682,6 +2693,10 @@ export interface PageCopy {
     eyebrow: string;
     title: string;
     intro: string;
+    /**
+     * The smaller paragraph under the intro. The home hero shows both.
+     */
+    introSecondary: string;
   };
   /**
    * The home page's own list. The solutions overview has a separate, differently worded list — do not merge them.
@@ -3073,6 +3088,7 @@ export interface PageCopySelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         intro?: T;
+        introSecondary?: T;
       };
   homePriorities?:
     | T

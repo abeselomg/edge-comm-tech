@@ -142,17 +142,26 @@ export const Projects: CollectionConfig = {
     },
     {
       name: "scope",
-      type: "textarea",
-      required: true,
-      admin: { description: "What the engagement covered." },
-      validate: projectText,
+      // A list, not a paragraph: the approved project page renders these as a
+      // numbered sequence of what the engagement covered, one line per step.
+      type: "array",
+      minRows: 1,
+      labels: { singular: "Scope item", plural: "What the engagement covered" },
+      admin: { description: "What the engagement covered, one step per row, in order." },
+      fields: [{ name: "item", type: "text", required: true, validate: projectText }],
     },
     {
       name: "delivered",
       type: "array",
       labels: { singular: "Item", plural: "What was delivered" },
       minRows: 1,
-      fields: [{ name: "item", type: "text", required: true, validate: projectText }],
+      // A heading and a paragraph, not a bare line: the approved project page
+      // renders each of these as a card with its own title above the body.
+      // `outcomes` and `scope` below are genuinely flat lists of sentences.
+      fields: [
+        { name: "title", type: "text", required: true, validate: projectText },
+        { name: "body", type: "textarea", required: true, validate: projectText },
+      ],
     },
     {
       name: "outcomes",
@@ -162,9 +171,15 @@ export const Projects: CollectionConfig = {
     },
     {
       name: "technology",
-      type: "array",
-      labels: { singular: "Component", plural: "Technology detail" },
-      fields: [{ name: "item", type: "text", required: true, validate: projectText }],
+      // A sentence, not a list. `tech` above holds the named platforms that
+      // render as brand chips; this is the paragraph above them describing
+      // what was deployed. The two were modelled the wrong way round.
+      type: "textarea",
+      admin: {
+        description:
+          "One or two sentences on what was deployed. The named platforms go in Technologies used, above.",
+      },
+      validate: projectText,
     },
     {
       name: "technologyNote",

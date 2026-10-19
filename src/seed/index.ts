@@ -2,14 +2,72 @@ import { getPayload } from "payload";
 import type { Payload } from "payload";
 import config from "../payload.config";
 
-import { COMPANY, IMPACT, IMPACT_SUPPORT, VALUES, JOURNEY, DIFFERENTIATORS, DELIVERY, INDUSTRIES, SUSTAINABILITY, EXECUTIVE_ROLES, CONTACT, INQUIRY_CATEGORIES, NAV, SOLUTIONS, SERVICES, CLIENTS, CLIENT_SECTORS, PARTNERS, PARTNER_CATEGORIES, PROJECTS } from "../../design-src/highland/content.mjs";
-import { SOLUTION_DETAIL, SERVICE_DETAIL } from "../../design-src/highland/detail.mjs";
-import { IMPLEMENTATION, PROJECT_DETAIL } from "../../design-src/highland/project-detail.mjs";
-import { BLOG_CATEGORIES, POSTS, NEWS, EVENTS, DOWNLOADS, RESOURCE_SECTIONS } from "../../design-src/highland/editorial.mjs";
-import { CAREER_PATHWAYS, CULTURE, DEVELOPMENT, EXPERIENCE_POINTS, APPLICATION_DOCS, INTERNSHIP, ACADEMY_AUDIENCES, ACADEMY_TRACKS, ACADEMY_LEVELS, ACADEMY_DELIVERY, COURSE_SECTIONS, JOBS } from "../../design-src/highland/people.mjs";
+import {
+  COMPANY,
+  IMPACT,
+  IMPACT_SUPPORT,
+  VALUES,
+  JOURNEY,
+  DIFFERENTIATORS,
+  DELIVERY,
+  INDUSTRIES,
+  SUSTAINABILITY,
+  EXECUTIVE_ROLES,
+  CONTACT,
+  INQUIRY_CATEGORIES,
+  NAV,
+  PRIORITIES,
+  SOLUTIONS,
+  SERVICES,
+  CLIENTS,
+  CLIENT_SECTORS,
+  PARTNERS,
+  PARTNER_CATEGORIES,
+  PROJECTS,
+} from "../../design-src/highland/content.mjs";
+import {
+  SOLUTION_DETAIL,
+  SERVICE_DETAIL,
+} from "../../design-src/highland/detail.mjs";
+import {
+  IMPLEMENTATION,
+  PROJECT_DETAIL,
+} from "../../design-src/highland/project-detail.mjs";
+import {
+  BLOG_CATEGORIES,
+  POSTS,
+  NEWS,
+  EVENTS,
+  DOWNLOADS,
+  RESOURCE_SECTIONS,
+} from "../../design-src/highland/editorial.mjs";
+import {
+  CAREER_PATHWAYS,
+  CULTURE,
+  DEVELOPMENT,
+  EXPERIENCE_POINTS,
+  APPLICATION_DOCS,
+  INTERNSHIP,
+  ACADEMY_AUDIENCES,
+  ACADEMY_TRACKS,
+  ACADEMY_LEVELS,
+  ACADEMY_DELIVERY,
+  COURSE_SECTIONS,
+  JOBS,
+} from "../../design-src/highland/people.mjs";
 
-import { decideWrite, makeResolver, type SeedMode, type SeedReport } from "./upsert";
-import { eventDates, toConfirmable, toDetailBlocks, toItems, toRichParagraphs } from "./transform";
+import { decideWrite, makeResolver, seedMode, type SeedReport } from "./upsert";
+import {
+  eventDates,
+  titledBodies,
+  toConfirmable,
+  toDetailBlocks,
+  toItems,
+  toNewsBody,
+  toRichParagraphs,
+} from "./transform";
+import { sectorSlug } from "../fields/sectors";
+import { HEROES, SOLUTIONS_FRAMEWORK, SOLUTIONS_PRIORITIES } from "./page-copy";
 
 /*
  * Loads Edge's approved content into Payload from the Highland modules.
@@ -21,15 +79,27 @@ import { eventDates, toConfirmable, toDetailBlocks, toItems, toRichParagraphs } 
  *
  * Modes (see ./upsert.ts): fill creates what is missing and leaves the rest,
  * force overwrites in place, fresh deletes first. Default is fill, so a
- * re-run cannot destroy an editor's work.
+ * re-run cannot destroy an editor's work. Set the mode with the environment
+ * variable, not a flag -- `npm run seed:force`, `npm run seed:fresh`, or
+ * SEED_MODE=force directly; `payload run` does not forward flags to the
+ * script, and seedMode() explains why at length.
  */
 
-const MODE = (process.argv.find((a) => /^--(fill|force|fresh)$/.test(a))?.slice(2) ??
-  "fill") as SeedMode;
+const MODE = seedMode(process.env.SEED_MODE);
 
 const SEEDED = [
-  "partnerCategories", "postCategories", "solutions", "services", "clients",
-  "projects", "partners", "posts", "news", "events", "downloads", "jobs",
+  "partnerCategories",
+  "postCategories",
+  "solutions",
+  "services",
+  "clients",
+  "projects",
+  "partners",
+  "posts",
+  "news",
+  "events",
+  "downloads",
+  "jobs",
   "academyTracks",
 ] as const;
 
@@ -105,12 +175,87 @@ async function write(
    * `seed:verify`, which counts what landed and fails on a dangling
    * relationship.
    */
-  const doc = await payload.create({
-    collection,
-    data: { ...data, _status: "published" } as never,
-  });
-  report.created += 1;
-  return doc.id as number;
+  try {
+    const doc = await payload.create({
+      collection,
+      data: { ...data, _status: "published" } as never,
+    });
+    report.created += 1;
+    return doc.id as number;
+  } catch (error) {
+    /*
+     * Payload's ValidationError prints its field list as `[Object]`, which
+     * says a document was refused and nothing about why. Every refusal here
+     * means the content's shape and the collection's shape disagree, and the
+     * field name is the whole diagnosis — so unwrap it, name the document, and
+     * show what was actually passed for that field.
+     */
+    explain(error, `${collection} "${key.value}"`, data);
+    throw error;
+  }
+}
+
+/*
+ * Payload's ValidationError prints its field list as `[Object]`, which says a
+ * document was refused and nothing about why. Every refusal in this script
+ * means the content's shape and the collection's shape disagree, and the field
+ * name is the whole diagnosis -- so unwrap it, name the document, and show
+ * what was actually passed for that field.
+ *
+ * Globals report through here too. The first version wrapped only the
+ * collection writes, so a refused global printed one field label and no value
+ * -- for the half of the seed that is five large nested documents, where the
+ * path matters most.
+ */
+function explain(error: unknown, subject: string, data: unknown): void {
+  const errors = (
+    error as { data?: { errors?: { path?: string; message?: string }[] } }
+  )?.data?.errors;
+  if (!errors?.length) return;
+  console.error(`\nRefused: ${subject}`);
+  for (const e of errors) {
+    const at = e.path ?? "(unknown field)";
+    const got = at
+      .split(/[.[\]]+/)
+      .filter(Boolean)
+      .reduce<unknown>(
+        (v, k) =>
+          v && typeof v === "object"
+            ? (v as Record<string, unknown>)[k]
+            : undefined,
+        data,
+      );
+    console.error(`  ${at}: ${e.message}`);
+    console.error(
+      `     passed: ${JSON.stringify(got)?.slice(0, 300) ?? "undefined"}`,
+    );
+  }
+  console.error("");
+}
+
+/*
+ * A global write, with the same diagnosis on refusal that documents get --
+ * and, unlike a document, it does not stop the run.
+ *
+ * The five globals are independent documents, so a throw on the first one
+ * hides whatever is wrong with the other four: finding five gaps costs five
+ * full runs, each one reseeding thirteen collections to reach the end. Each
+ * failure is collected and the run stops after all five have been attempted,
+ * so one run reports everything that disagrees.
+ */
+const globalFailures: string[] = [];
+
+async function writeGlobal(
+  payload: Payload,
+  slug: Parameters<Payload["updateGlobal"]>[0]["slug"],
+  data: Record<string, unknown>,
+): Promise<void> {
+  try {
+    await payload.updateGlobal({ slug, data: data as never });
+  } catch (error) {
+    explain(error, `global "${slug}"`, data);
+    globalFailures.push(slug);
+  }
 }
 
 async function seed() {
@@ -131,8 +276,13 @@ async function seed() {
     const ringLabel = label.split(/\s+(?:and|&)\s+/)[0];
     categoryIds.push({
       key,
-      id: await write(payload, "partnerCategories", { field: "key", value: key },
-        { key, label, ringLabel, description, order: categoryIds.length + 1 }, report),
+      id: await write(
+        payload,
+        "partnerCategories",
+        { field: "key", value: key },
+        { key, label, ringLabel, description, order: categoryIds.length + 1 },
+        report,
+      ),
     });
   }
   const category = makeResolver("partner category", categoryIds);
@@ -141,8 +291,13 @@ async function seed() {
   for (const [key, label] of BLOG_CATEGORIES) {
     postCatIds.push({
       key,
-      id: await write(payload, "postCategories", { field: "key", value: key },
-        { key, label, order: postCatIds.length + 1 }, report),
+      id: await write(
+        payload,
+        "postCategories",
+        { field: "key", value: key },
+        { key, label, order: postCatIds.length + 1 },
+        report,
+      ),
     });
   }
   const postCategory = makeResolver("post category", postCatIds);
@@ -154,13 +309,28 @@ async function seed() {
     const d = detailFor(SOLUTION_DETAIL, s.slug);
     solutionIds.push({
       key: s.slug,
-      id: await write(payload, "solutions", { field: "slug", value: s.slug }, {
-        title: s.title, slug: s.slug, short: s.short, blurb: s.blurb, order: s.n,
-        accent: "#0888c5", headline: d.headline ?? s.title, intro: d.intro ?? s.blurb,
-        lead: d.lead ?? null, detail: toDetailBlocks(d),
-        outcomesTitle: d.outcomesTitle ?? null, outcomes: toItems(d.outcomes ?? []),
-        note: d.note ?? null, experience: d.experience ?? null,
-      }, report),
+      id: await write(
+        payload,
+        "solutions",
+        { field: "slug", value: s.slug },
+        {
+          title: s.title,
+          slug: s.slug,
+          short: s.short,
+          blurb: s.blurb,
+          order: s.n,
+          accent: "#0888c5",
+          headline: d.headline ?? s.title,
+          intro: d.intro ?? s.blurb,
+          lead: d.lead ?? null,
+          detail: toDetailBlocks(d),
+          outcomesTitle: d.outcomesTitle ?? null,
+          outcomes: toItems(d.outcomes ?? []),
+          note: d.note ?? null,
+          experience: d.experience ?? null,
+        },
+        report,
+      ),
     });
   }
   const solution = makeResolver("solution", solutionIds);
@@ -170,15 +340,33 @@ async function seed() {
     const d = detailFor(SERVICE_DETAIL, s.slug);
     serviceIds.push({
       key: s.slug,
-      id: await write(payload, "services", { field: "slug", value: s.slug }, {
-        title: s.title, slug: s.slug, short: s.short, blurb: s.blurb, order: s.n,
-        accent: "#056a9a", headline: d.headline ?? s.title, intro: d.intro ?? s.blurb,
-        capabilities: (d.capabilities ?? []).map((c: { title: string; body: string }) => ({ ...c })),
-        checklistTitle: d.checklistTitle ?? null, checklist: toItems(d.checklist ?? []),
-        modelsTitle: d.modelsTitle ?? null,
-        models: (d.models ?? []).map((m: { title: string; body: string }) => ({ ...m })),
-        fit: d.fit ?? null, note: d.note ?? null,
-      }, report),
+      id: await write(
+        payload,
+        "services",
+        { field: "slug", value: s.slug },
+        {
+          title: s.title,
+          slug: s.slug,
+          short: s.short,
+          blurb: s.blurb,
+          order: s.n,
+          accent: "#056a9a",
+          headline: d.headline ?? s.title,
+          intro: d.intro ?? s.blurb,
+          capabilities: (d.capabilities ?? []).map(
+            (c: { title: string; body: string }) => ({ ...c }),
+          ),
+          checklistTitle: d.checklistTitle ?? null,
+          checklist: toItems(d.checklist ?? []),
+          modelsTitle: d.modelsTitle ?? null,
+          models: (d.models ?? []).map(
+            (m: { title: string; body: string }) => ({ ...m }),
+          ),
+          fit: d.fit ?? null,
+          note: d.note ?? null,
+        },
+        report,
+      ),
     });
   }
   const service = makeResolver("service", serviceIds);
@@ -189,11 +377,19 @@ async function seed() {
   for (const c of CLIENTS) {
     clientIds.push({
       key: c.name,
-      id: await write(payload, "clients", { field: "name", value: c.name }, {
-        name: c.name, sector: c.sector, summary: c.summary,
-        order: clientIds.length + 1,
-        solutions: c.solutions.map(solution),
-      }, report),
+      id: await write(
+        payload,
+        "clients",
+        { field: "name", value: c.name },
+        {
+          name: c.name,
+          sector: sectorSlug(c.sector),
+          summary: c.summary,
+          order: clientIds.length + 1,
+          solutions: c.solutions.map(solution),
+        },
+        report,
+      ),
     });
   }
   const client = makeResolver("client", clientIds);
@@ -203,18 +399,35 @@ async function seed() {
     const d = detailFor(PROJECT_DETAIL, pr.slug);
     projectIds.push({
       key: pr.slug,
-      id: await write(payload, "projects", { field: "slug", value: pr.slug }, {
-        title: pr.title, slug: pr.slug, client: client(pr.client),
-        featured: pr.featured === 1, sector: pr.sector.toLowerCase(),
-        sectorFull: pr.sectorFull, location: pr.location,
-        year: toConfirmable(pr.year, "Year to confirm"),
-        primary: pr.primary, headline: d.headline ?? null, summary: pr.summary,
-        solutions: pr.solutions.map(solution), tech: toItems(pr.tech),
-        need: d.need ?? pr.summary, scope: d.scope ?? pr.summary,
-        delivered: toItems(d.delivered ?? []), outcomes: toItems(d.outcomes ?? []),
-        technology: toItems(d.technology ?? []), technologyNote: d.technologyNote ?? null,
-        training: d.training ?? null, privacy: d.privacy ?? null,
-      }, report),
+      id: await write(
+        payload,
+        "projects",
+        { field: "slug", value: pr.slug },
+        {
+          title: pr.title,
+          slug: pr.slug,
+          client: client(pr.client),
+          featured: pr.featured === 1,
+          sector: sectorSlug(pr.sector),
+          sectorFull: pr.sectorFull,
+          location: pr.location,
+          year: toConfirmable(pr.year, "Year to confirm"),
+          primary: pr.primary,
+          headline: d.headline ?? null,
+          summary: pr.summary,
+          solutions: pr.solutions.map(solution),
+          tech: toItems(pr.tech),
+          need: d.need ?? pr.summary,
+          scope: toItems(d.scope ?? []),
+          delivered: titledBodies(d.delivered ?? []),
+          outcomes: toItems(d.outcomes ?? []),
+          technology: d.technology ?? null,
+          technologyNote: d.technologyNote ?? null,
+          training: d.training ?? null,
+          privacy: d.privacy ?? null,
+        },
+        report,
+      ),
     });
   }
   const project = makeResolver("project", projectIds);
@@ -225,12 +438,21 @@ async function seed() {
   for (const pt of PARTNERS) {
     partnerIds.push({
       key: pt.name,
-      id: await write(payload, "partners", { field: "name", value: pt.name }, {
-        name: pt.name, order: PARTNERS.indexOf(pt) + 1,
-        categories: pt.cats.map(category), featured: Boolean(pt.featured),
-        capability: pt.cap, solution: solution(pt.solution),
-        projects: pt.projects.map(project),
-      }, report),
+      id: await write(
+        payload,
+        "partners",
+        { field: "name", value: pt.name },
+        {
+          name: pt.name,
+          order: PARTNERS.indexOf(pt) + 1,
+          categories: pt.cats.map(category),
+          featured: Boolean(pt.featured),
+          capability: pt.cap,
+          solution: solution(pt.solution),
+          projects: pt.projects.map(project),
+        },
+        report,
+      ),
     });
   }
   const partner = makeResolver("partner", partnerIds);
@@ -238,58 +460,129 @@ async function seed() {
   /* ----------------------------------------------------- 5. editorial */
 
   for (const post of POSTS) {
-    await write(payload, "posts", { field: "slug", value: post.slug }, {
-      title: post.title, slug: post.slug, order: POSTS.indexOf(post) + 1,
-      category: postCategory(post.cat), body: toRichParagraphs(post.paras),
-      target: solution(post.to), anchor: post.anchor ?? null,
-      readMoreLabel: post.label,
-    }, report);
+    await write(
+      payload,
+      "posts",
+      { field: "slug", value: post.slug },
+      {
+        title: post.title,
+        slug: post.slug,
+        order: POSTS.indexOf(post) + 1,
+        category: postCategory(post.cat),
+        body: toRichParagraphs(post.paras),
+        target: solution(post.to),
+        anchor: post.anchor ?? null,
+        readMoreLabel: post.label,
+      },
+      report,
+    );
   }
 
   for (const n of NEWS) {
-    await write(payload, "news", { field: "slug", value: n.slug }, {
-      title: n.title, slug: n.slug, kind: n.kind,
-      date: toConfirmable(n.date, "Date to confirm"),
-      archive: Boolean(n.archive), standfirst: n.standfirst,
-      body: toRichParagraphs(n.paras),
-    }, report);
+    await write(
+      payload,
+      "news",
+      { field: "slug", value: n.slug },
+      {
+        title: n.title,
+        slug: n.slug,
+        kind: n.kind,
+        date: toConfirmable(n.date, "Date to confirm"),
+        archive: Boolean(n.archive),
+        standfirst: n.standfirst,
+        body: toNewsBody(n),
+      },
+      report,
+    );
   }
 
   for (const e of EVENTS) {
     const { startsOn, endsOn } = eventDates({ iso: e.iso, date: e.date });
-    await write(payload, "events", { field: "slug", value: e.slug }, {
-      title: e.title, slug: e.slug, startsOn, endsOn, displayDate: e.date,
-      category: e.category, format: e.format, venue: e.venue,
-      headline: e.headline, intro: e.intro, audience: e.audience,
-      program: toItems(e.program), action: e.action, pendingNote: e.pending ?? null,
-    }, report);
+    await write(
+      payload,
+      "events",
+      { field: "slug", value: e.slug },
+      {
+        title: e.title,
+        slug: e.slug,
+        startsOn,
+        endsOn,
+        displayDate: e.date,
+        category: e.category,
+        format: e.format,
+        venue: e.venue,
+        headline: e.headline,
+        intro: e.intro,
+        audience: e.audience,
+        program: toItems(e.program),
+        action: e.action,
+        pendingNote: e.pending ?? null,
+      },
+      report,
+    );
   }
 
   for (const d of DOWNLOADS) {
-    await write(payload, "downloads", { field: "title", value: d.title }, {
-      title: d.title, order: DOWNLOADS.indexOf(d) + 1, category: d.category,
-      owner: d.owner, meta: d.meta, note: d.note ?? null, approved: false,
-    }, report);
+    await write(
+      payload,
+      "downloads",
+      { field: "title", value: d.title },
+      {
+        title: d.title,
+        order: DOWNLOADS.indexOf(d) + 1,
+        category: d.category,
+        owner: d.owner,
+        meta: d.meta,
+        note: d.note ?? null,
+        approved: false,
+      },
+      report,
+    );
   }
 
   /* -------------------------------------------------------- 6. people */
 
   for (const j of JOBS) {
-    await write(payload, "jobs", { field: "slug", value: j.slug }, {
-      title: j.title, slug: j.slug, department: j.department, level: j.level,
-      reports: j.reports, type: j.type, status: j.status, location: j.location,
-      deadline: toConfirmable(j.deadline, "Deadline to be confirmed"),
-      purposeTitle: j.purposeTitle, purpose: j.purpose, scope: j.scope ?? null,
-      responsibilities: toItems(j.responsibilities), required: toItems(j.required),
-      preferred: toItems(j.preferred), success: j.success,
-    }, report);
+    await write(
+      payload,
+      "jobs",
+      { field: "slug", value: j.slug },
+      {
+        title: j.title,
+        slug: j.slug,
+        department: j.department,
+        level: j.level,
+        reports: j.reports,
+        type: j.type,
+        status: j.status,
+        location: j.location,
+        deadline: toConfirmable(j.deadline, "Deadline to be confirmed"),
+        purposeTitle: j.purposeTitle,
+        purpose: j.purpose,
+        scope: j.scope ?? null,
+        responsibilities: toItems(j.responsibilities),
+        required: toItems(j.required),
+        preferred: toItems(j.preferred),
+        success: j.success,
+      },
+      report,
+    );
   }
 
   for (const t of ACADEMY_TRACKS) {
-    await write(payload, "academyTracks", { field: "slug", value: t.slug }, {
-      title: t.title, slug: t.slug, order: ACADEMY_TRACKS.indexOf(t) + 1,
-      body: t.body, solution: solution(t.solution),
-    }, report);
+    await write(
+      payload,
+      "academyTracks",
+      { field: "slug", value: t.slug },
+      {
+        title: t.title,
+        slug: t.slug,
+        order: ACADEMY_TRACKS.indexOf(t) + 1,
+        body: t.body,
+        solution: solution(t.solution),
+      },
+      report,
+    );
   }
 
   /* ------------------- 7. second pass: self and circular relations
@@ -307,25 +600,37 @@ async function seed() {
     const related = (d.links ?? []).filter((x: string) => x !== s.slug);
     const brands = d.partners ?? [];
     if (related.length || brands.length) {
-      await payload.update({ collection: "solutions", id: solution(s.slug), data: {
-        ...(related.length ? { related: related.map(solution) } : {}),
-        ...(brands.length ? { partners: brands.map(partner) } : {}),
-      }});
+      await payload.update({
+        collection: "solutions",
+        id: solution(s.slug),
+        data: {
+          ...(related.length ? { related: related.map(solution) } : {}),
+          ...(brands.length ? { partners: brands.map(partner) } : {}),
+        },
+      });
     }
   }
 
   for (const s of SERVICES) {
-    const related = (detailFor(SERVICE_DETAIL, s.slug).links ?? []).filter((x: string) => x !== s.slug);
+    const related = (detailFor(SERVICE_DETAIL, s.slug).links ?? []).filter(
+      (x: string) => x !== s.slug,
+    );
     if (related.length) {
-      await payload.update({ collection: "services", id: service(s.slug),
-        data: { related: related.map(service) } });
+      await payload.update({
+        collection: "services",
+        id: service(s.slug),
+        data: { related: related.map(service) },
+      });
     }
   }
 
   for (const c of CLIENTS) {
     if (c.engagements.length) {
-      await payload.update({ collection: "clients", id: client(c.name),
-        data: { engagements: c.engagements.map(project) } });
+      await payload.update({
+        collection: "clients",
+        id: client(c.name),
+        data: { engagements: c.engagements.map(project) },
+      });
     }
   }
 
@@ -333,17 +638,37 @@ async function seed() {
 
   payload.logger.info("seeding globals");
 
-  await payload.updateGlobal({ slug: "site-settings", data: {
-    nav: NAV.map(([label, href]) => ({ label, href: `/${href.replace(/\.html$/, "").replace(/^index$/, "")}` })),
-    impact: IMPACT.map((m) => ({ figure: m.figure, unit: m.unit, line: m.line })),
+  await writeGlobal(payload, "site-settings", {
+    /*
+     * The header's gold button, as the approved build has it
+     * (design-src/highland/gen.mjs:147). Seeded rather than left to the
+     * field's default: a default is what an editor gets when they create
+     * settings from nothing, and relying on one here would mean the approved
+     * label and the stored label were the same string only by coincidence.
+     */
+    headerCta: { label: "Contact us", href: "/contact" },
+    nav: NAV.map(([label, href]) => ({
+      label,
+      href: `/${href.replace(/\.html$/, "").replace(/^index$/, "")}`,
+    })),
+    impact: IMPACT.map((m) => ({
+      figure: m.figure,
+      unit: m.unit,
+      line: m.line,
+    })),
     impactSupport: IMPACT_SUPPORT,
-  }});
+  });
 
-  await payload.updateGlobal({ slug: "company", data: {
-    legalName: COMPANY.legal, shortName: COMPANY.short, domain: COMPANY.domain,
-    established: COMPANY.established, positioning: COMPANY.positioning,
-    mission: COMPANY.mission, missionBody: COMPANY.missionBody,
-    vision: COMPANY.vision, visionBody: COMPANY.visionBody,
+  await writeGlobal(payload, "company", {
+    legalName: COMPANY.legal,
+    shortName: COMPANY.short,
+    domain: COMPANY.domain,
+    established: COMPANY.established,
+    positioning: COMPANY.positioning,
+    mission: COMPANY.mission,
+    missionBody: COMPANY.missionBody,
+    vision: COMPANY.vision,
+    visionBody: COMPANY.visionBody,
     values: VALUES.map((v) => ({ ...v })),
     journey: JOURNEY.map((m) => ({ ...m })),
     differentiators: DIFFERENTIATORS.map((d) => ({ ...d })),
@@ -351,55 +676,97 @@ async function seed() {
     industries: INDUSTRIES.map((i) => ({ ...i })),
     sustainability: SUSTAINABILITY.map((s) => ({ ...s })),
     executiveRoles: EXECUTIVE_ROLES.map((title: string) => ({
-      title, holder: toConfirmable(undefined, "Name and biography pending"),
+      title,
+      holder: toConfirmable(undefined, "Name and biography pending"),
     })),
-  }});
+  });
 
-  await payload.updateGlobal({ slug: "contact-details", data: {
+  await writeGlobal(payload, "contact-details", {
     office: CONTACT.office.map((line: string) => ({ line })),
-    mapUrl: CONTACT.map, phones: CONTACT.phones.map((p) => ({ ...p })),
-    whatsapp: CONTACT.whatsapp, emails: CONTACT.emails.map((e) => ({ ...e })),
-    emergency: CONTACT.emergency, response: CONTACT.response,
+    mapUrl: CONTACT.map,
+    phones: CONTACT.phones.map((p) => ({ ...p })),
+    whatsapp: CONTACT.whatsapp,
+    emails: CONTACT.emails.map((e) => ({ ...e })),
+    emergency: CONTACT.emergency,
+    response: CONTACT.response,
     hours: pairs(CONTACT.hours).map(([days, hours]) => ({ days, hours })),
     inquiryCategories: INQUIRY_CATEGORIES.map((c) => ({
-      key: c.slug, title: c.title, prompt: c.prompt, route: c.route,
+      key: c.slug,
+      title: c.title,
+      prompt: c.prompt,
+      route: c.route,
     })),
-  }});
+  });
 
-  await payload.updateGlobal({ slug: "careers-content", data: {
+  await writeGlobal(payload, "careers-content", {
     pathways: CAREER_PATHWAYS.map((x) => ({ ...x })),
     culture: pairs(CULTURE).map(([title, body]) => ({ title, body })),
-    development: toItems(DEVELOPMENT), experiencePoints: toItems(EXPERIENCE_POINTS),
+    development: toItems(DEVELOPMENT),
+    experiencePoints: toItems(EXPERIENCE_POINTS),
     applicationDocs: toItems(APPLICATION_DOCS),
     internship: {
-      title: INTERNSHIP.title, type: INTERNSHIP.type, location: INTERNSHIP.location,
+      title: INTERNSHIP.title,
+      type: INTERNSHIP.type,
+      location: INTERNSHIP.location,
       schedule: toConfirmable(INTERNSHIP.schedule, "Dates to be confirmed"),
       deadline: toConfirmable(INTERNSHIP.deadline, "Deadline to be confirmed"),
-      intro: INTERNSHIP.intro, caveat: INTERNSHIP.caveat,
+      intro: INTERNSHIP.intro,
+      caveat: INTERNSHIP.caveat,
       tracks: INTERNSHIP.tracks.map((t) => ({ ...t })),
       eligibility: toItems(INTERNSHIP.eligibility),
       documents: toItems(INTERNSHIP.documents),
       structure: INTERNSHIP.structure.map((s) => ({ ...s })),
-      selection: INTERNSHIP.selection.map((s) => ({ n: s.n, title: s.title, body: s.body })),
+      selection: INTERNSHIP.selection.map((s) => ({
+        n: s.n,
+        title: s.title,
+        body: s.body,
+      })),
     },
     academyAudiences: ACADEMY_AUDIENCES.map((a) => ({ ...a })),
-    academyLevels: toItems(ACADEMY_LEVELS), academyDelivery: toItems(ACADEMY_DELIVERY),
+    academyLevels: toItems(ACADEMY_LEVELS),
+    academyDelivery: toItems(ACADEMY_DELIVERY),
     courseSections: COURSE_SECTIONS.map((s) => ({ ...s })),
-  }});
+  });
 
-  await payload.updateGlobal({ slug: "page-copy", data: {
+  await writeGlobal(payload, "page-copy", {
+    homeHero: HEROES.home,
+    solutionsHero: HEROES.solutions,
+    aboutHero: HEROES.about,
+    servicesHero: HEROES.services,
+    clientsHero: HEROES.clients,
+    partnersHero: HEROES.partners,
+    resourcesHero: HEROES.resources,
+    /*
+     * Two lists, deliberately not one. content.mjs's six-item PRIORITIES is
+     * the home page's; the solutions overview has its own five, worded
+     * differently, and the global keeps them apart for that reason.
+     */
+    homePriorities: titledBodies(PRIORITIES),
+    solutionsPriorities: titledBodies(SOLUTIONS_PRIORITIES),
+    solutionsFramework: titledBodies(SOLUTIONS_FRAMEWORK),
     projectImplementationNote: IMPLEMENTATION,
     resourceSections: RESOURCE_SECTIONS.map((s) => ({
-      key: s.slug, title: s.title, body: s.body,
+      key: s.slug,
+      title: s.title,
+      body: s.body,
       href: `/${s.file.replace(/\.html$/, "").replace(/^media-/, "resources/media/")}`,
     })),
-  }});
+  });
+
+  if (globalFailures.length) {
+    throw new Error(
+      `${globalFailures.length} global(s) refused: ${globalFailures.join(", ")}. ` +
+        "Each refusal is printed above with the field and the value passed.",
+    );
+  }
 
   payload.logger.info(
     `seed (${MODE}): ${report.created} created, ${report.updated} updated, ${report.skipped} left alone`,
   );
   if (MODE === "fill" && report.skipped > 0) {
-    payload.logger.info("skipped documents already existed. Use --force to overwrite them.");
+    payload.logger.info(
+      "skipped documents already existed. Use --force to overwrite them.",
+    );
   }
 }
 

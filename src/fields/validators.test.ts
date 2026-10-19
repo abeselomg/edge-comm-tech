@@ -527,3 +527,37 @@ describe("the authorization rule catches claims, not references", () => {
     fine("We work with distributors across the region.");
   });
 });
+
+/*
+ * The second false positive from the authorization rule, found by the seed
+ * refusing an approved download note rather than by anyone reading it:
+ * "Use current documents supplied or approved by HPE or an authorized
+ * distributor." The determiner heuristic matched "an authorized distributor"
+ * without regard to whom it referred.
+ */
+describe("the authorization rule ignores list and prepositional uses", () => {
+  const validate = forbidsPhrases();
+
+  it("permits the approved download note", () => {
+    expect(
+      validate("Use current documents supplied or approved by HPE or an authorized distributor."),
+    ).toBe(true);
+  });
+
+  it("permits the phrase as a list item", () => {
+    expect(validate("HPE, an authorized distributor, or a technology partner")).toBe(true);
+    expect(validate("supplied by a manufacturer and an authorized reseller")).toBe(true);
+  });
+
+  it("still blocks the claim forms, which is the point of the rule", () => {
+    for (const s of [
+      "An authorised reseller of HPE.",
+      "Edge is an authorized partner.",
+      "We are authorized resellers.",
+      "as an authorized distributor",
+      "our authorized partner",
+      "Edge became an authorized distributor in 2024.",
+    ])
+      expect(validate(s), `should block: ${s}`).not.toBe(true);
+  });
+});

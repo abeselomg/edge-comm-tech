@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decideWrite, makeResolver, type SeedMode } from "./upsert";
+import { decideWrite, makeResolver, seedMode, type SeedMode } from "./upsert";
 
 describe("decideWrite", () => {
   it("creates a document that does not exist, in every mode", () => {
@@ -31,7 +31,9 @@ describe("decideWrite", () => {
 
   it("is a total, stable truth table", () => {
     const modes: SeedMode[] = ["fill", "force", "fresh"];
-    const table = modes.flatMap((m) => [false, true].map((e) => `${m}/${e}=${decideWrite(e, m)}`));
+    const table = modes.flatMap((m) =>
+      [false, true].map((e) => `${m}/${e}=${decideWrite(e, m)}`),
+    );
     expect(table).toEqual([
       "fill/false=create",
       "fill/true=skip",
@@ -113,7 +115,9 @@ describe("makeResolver", () => {
   });
 
   it("does not let an empty key match an entry that also normalises to empty", () => {
-    expect(() => makeResolver("client", [{ key: "  ", id: 9 }])).toThrow(/empty name/);
+    expect(() => makeResolver("client", [{ key: "  ", id: 9 }])).toThrow(
+      /empty name/,
+    );
   });
 
   it("throws, naming the key, on an empty entries array", () => {
@@ -149,20 +153,26 @@ describe("makeResolver", () => {
 describe("makeResolver rejects an unusable id at construction", () => {
   it("throws when an entry has an undefined id", () => {
     expect(() =>
-      makeResolver("client", [{ key: "Gadaa Bank", id: undefined as unknown as number }]),
+      makeResolver("client", [
+        { key: "Gadaa Bank", id: undefined as unknown as number },
+      ]),
     ).toThrow(/registered with no id/);
   });
 
   it("throws when an entry has a null id", () => {
     expect(() =>
-      makeResolver("client", [{ key: "Gadaa Bank", id: null as unknown as number }]),
+      makeResolver("client", [
+        { key: "Gadaa Bank", id: null as unknown as number },
+      ]),
     ).toThrow(/registered with no id/);
   });
 
   it("names the entry and points at the step that failed", () => {
     let message = "";
     try {
-      makeResolver("partner", [{ key: "Cisco", id: undefined as unknown as number }]);
+      makeResolver("partner", [
+        { key: "Cisco", id: undefined as unknown as number },
+      ]);
     } catch (error) {
       message = (error as Error).message;
     }
@@ -178,5 +188,32 @@ describe("makeResolver rejects an unusable id at construction", () => {
   it("still accepts an empty-string id", () => {
     const resolve = makeResolver("client", [{ key: "Gadaa Bank", id: "" }]);
     expect(resolve("Gadaa Bank")).toBe("");
+  });
+});
+
+describe("the seed mode", () => {
+  it("defaults to fill when unset", () => {
+    expect(seedMode(undefined)).toBe("fill");
+    expect(seedMode("")).toBe("fill");
+  });
+
+  it("reads the three modes", () => {
+    expect(seedMode("fill")).toBe("fill");
+    expect(seedMode("force")).toBe("force");
+    expect(seedMode("fresh")).toBe("fresh");
+  });
+
+  /*
+   * This used to be read from process.argv, and `payload run` strips the
+   * script's arguments entirely -- so seed:force and seed:fresh both ran fill
+   * and said so, and the modes were unreachable rather than wrong. Nothing in
+   * a test can stop someone moving it back to argv, but a typo defaulting
+   * quietly to fill is the same silent failure in miniature, so it throws.
+   */
+  it("refuses an unrecognised mode rather than defaulting to fill", () => {
+    expect(() => seedMode("frsh")).toThrow(/SEED_MODE="frsh" is not a mode/);
+    expect(() => seedMode("FRESH")).toThrow(/not a mode/);
+    expect(() => seedMode("--fresh")).toThrow(/not a mode/);
+    expect(() => seedMode("true")).toThrow(/not a mode/);
   });
 });

@@ -1,6 +1,13 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { eventDates, toConfirmable, toDetailBlocks, toItems, toRichParagraphs } from "./transform";
+import {
+  eventDates,
+  toConfirmable,
+  toDetailBlocks,
+  toItems,
+  toNewsBody,
+  toRichParagraphs,
+} from "./transform";
 
 describe("toItems", () => {
   it("wraps strings for Payload's array-of-one-field shape", () => {
@@ -395,5 +402,72 @@ describe("every titled body survives the transform", () => {
       }
     }
     expect(checked).toBeGreaterThan(10);
+  });
+});
+
+/*
+ * One of the three approved news records carries `sections` of {title, body}
+ * instead of `paras`, because it is a longer Insight piece that
+ * news-article.mjs renders as an h2 with a paragraph beneath. Passing `paras`
+ * straight through gave it an empty body, and `body` is required, so the seed
+ * refused the document — correctly, but only at the database. Nothing before
+ * that point knew the shape varied.
+ */
+describe("toNewsBody handles both shapes Highland uses", () => {
+  const texts = (body: unknown): string[] => {
+    const out: string[] = [];
+    const walk = (n: unknown): void => {
+      if (!n || typeof n !== "object") return;
+      if (Array.isArray(n)) return void n.forEach(walk);
+      const r = n as Record<string, unknown>;
+      if (typeof r.text === "string" && r.text) out.push(r.text);
+      if (r.root) walk(r.root);
+      if (Array.isArray(r.children)) r.children.forEach(walk);
+    };
+    walk(body);
+    return out;
+  };
+  const tags = (body: unknown): string[] => {
+    const root = (body as { root: { children: { type: string; tag?: string }[] } }).root;
+    return root.children.map((c) => c.tag ?? c.type);
+  };
+
+  it("turns paras into plain paragraphs", () => {
+    const body = toNewsBody({ paras: ["First.", "Second."] });
+    expect(tags(body)).toEqual(["paragraph", "paragraph"]);
+    expect(texts(body)).toEqual(["First.", "Second."]);
+  });
+
+  it("turns sections into a heading and a paragraph each", () => {
+    const body = toNewsBody({
+      sections: [
+        { title: "Reliable foundations", body: "Networks first." },
+        { title: "Trusted data", body: "Then identity." },
+      ],
+    });
+    expect(tags(body)).toEqual(["h2", "paragraph", "h2", "paragraph"]);
+    expect(texts(body)).toEqual([
+      "Reliable foundations",
+      "Networks first.",
+      "Trusted data",
+      "Then identity.",
+    ]);
+  });
+
+  it("produces a body for every approved news record", async () => {
+    const { NEWS } = (await import("../../design-src/highland/editorial.mjs")) as {
+      NEWS: { slug: string; paras?: string[]; sections?: { title: string; body: string }[] }[];
+    };
+    expect(NEWS.length).toBeGreaterThan(0);
+    for (const n of NEWS) {
+      const body = toNewsBody(n);
+      // An empty body is refused by the required field, so every record must
+      // yield text from whichever shape it happens to carry.
+      expect(texts(body).length, `${n.slug} should have body text`).toBeGreaterThan(0);
+    }
+  });
+
+  it("yields nothing for a record carrying neither shape", () => {
+    expect(texts(toNewsBody({}))).toEqual([]);
   });
 });

@@ -43,16 +43,36 @@ const strings = (value: unknown, out: string[] = []): string[] => {
 
 describe("the rules permit all of the approved content", () => {
   it("passes every string, under the rules its field will carry", async () => {
+    /*
+     * EVERY content module, not a selection. The first version of this test
+     * covered content, detail and project-detail, and reported 1,400 strings
+     * all passing — while an approved sentence in editorial.mjs was being
+     * refused by the authorization rule. The seed found it, which is precisely
+     * the job this test exists to do first. A guard that checks most of the
+     * inputs gives the confidence of one that checks all of them.
+     *
+     * extract.mjs, gen.mjs and ui.mjs are deliberately absent: they are the
+     * build tooling, not content.
+     */
     const content = (await import("../../design-src/highland/content.mjs")) as Record<
       string,
       unknown
     >;
     const detail = await import("../../design-src/highland/detail.mjs");
+    const serviceDetail = await import("../../design-src/highland/service-detail.mjs");
+    const editorial = await import("../../design-src/highland/editorial.mjs");
+    const people = await import("../../design-src/highland/people.mjs");
     const projectDetail = await import("../../design-src/highland/project-detail.mjs");
 
     // Project records carry the extra SOC rule, because the approved wording
     // for Bahir Dar's campus spaces is "security control room" there.
-    const underBaseRules: unknown[] = [{ ...content, PROJECTS: undefined }, detail];
+    const underBaseRules: unknown[] = [
+      { ...content, PROJECTS: undefined },
+      detail,
+      serviceDetail,
+      editorial,
+      people,
+    ];
     const underProjectRules: unknown[] = [content.PROJECTS, projectDetail];
 
     const base = forbidsPhrases();
@@ -78,7 +98,7 @@ describe("the rules permit all of the approved content", () => {
     // Guard against the loop passing by reading nothing: the real content is
     // well over a thousand strings, so a collapse to a handful means the
     // imports changed shape rather than the content shrinking.
-    expect(checked, "should have read the whole content set").toBeGreaterThan(1000);
+    expect(checked, "should have read the whole content set").toBeGreaterThan(2000);
     expect(failures, `${failures.length} approved strings refused`).toEqual([]);
   });
 });

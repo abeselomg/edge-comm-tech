@@ -23,11 +23,38 @@ export type SeedMode = "fill" | "force" | "fresh";
 
 export type SeedReport = { created: number; updated: number; skipped: number };
 
-export function decideWrite(exists: boolean, mode: SeedMode): "create" | "update" | "skip" {
+export function decideWrite(
+  exists: boolean,
+  mode: SeedMode,
+): "create" | "update" | "skip" {
   if (!exists) return "create";
   if (mode === "fresh") return "create";
   if (mode === "force") return "update";
   return "skip";
+}
+
+/**
+ * The seed's mode, from the SEED_MODE environment variable.
+ *
+ * It is an environment variable and not a flag because a flag cannot work
+ * here: `payload run` parses its own arguments and hands the script a
+ * process.argv of exactly [node, payload/bin.js] -- no script path, no
+ * trailing flags. An earlier version read --fill/--force/--fresh from argv,
+ * which meant `npm run seed:fresh` and `npm run seed:force` both quietly ran
+ * fill and reported it, so the destructive mode nobody wanted by accident was
+ * also the mode nobody could actually reach. Do not move this back to argv.
+ *
+ * An unrecognised value throws rather than defaulting. SEED_MODE=force that
+ * silently became fill would leave an editor believing their overwrite ran.
+ */
+export function seedMode(value: string | undefined): SeedMode {
+  if (value === undefined || value === "") return "fill";
+  if (value === "fill" || value === "force" || value === "fresh") return value;
+  throw new Error(
+    `SEED_MODE=${JSON.stringify(value)} is not a mode. Use "fill" (the ` +
+      'default, which leaves existing documents alone), "force" (overwrite ' +
+      'them) or "fresh" (delete the seeded collections first).',
+  );
 }
 
 /** Case-, edge-whitespace- and inner-whitespace-insensitive comparison form. */
@@ -37,7 +64,10 @@ function normalise(key: string | undefined | null): string {
 
 /** Levenshtein distance, for suggesting the name the author probably meant. */
 function distance(a: string, b: string): number {
-  const rows = Array.from({ length: b.length + 1 }, (_, i) => [i, ...Array(a.length).fill(0)]);
+  const rows = Array.from({ length: b.length + 1 }, (_, i) => [
+    i,
+    ...Array(a.length).fill(0),
+  ]);
   for (let j = 1; j <= a.length; j += 1) rows[0][j] = j;
   for (let i = 1; i <= b.length; i += 1) {
     for (let j = 1; j <= a.length; j += 1) {
@@ -68,7 +98,9 @@ export function makeResolver<T>(
   for (const entry of entries) {
     const normalised = normalise(entry.key);
     if (normalised === "") {
-      throw new Error(`Cannot build the ${label} resolver: an entry has an empty name.`);
+      throw new Error(
+        `Cannot build the ${label} resolver: an entry has an empty name.`,
+      );
     }
     // Reject a missing id at construction. The lookup below tests `has`, not
     // the value, so an entry registered with no id would "resolve" and hand
@@ -96,7 +128,8 @@ export function makeResolver<T>(
 
   return (key: string): T => {
     const normalised = normalise(key);
-    if (normalised !== "" && index.has(normalised)) return index.get(normalised) as T;
+    if (normalised !== "" && index.has(normalised))
+      return index.get(normalised) as T;
 
     const shown = key === undefined || key === null ? String(key) : `"${key}"`;
     const fix =

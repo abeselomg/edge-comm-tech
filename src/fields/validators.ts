@@ -91,7 +91,14 @@ export const BASE_RULES: Rule[] = [
     // Residual, accepted: a bare hyphenated form with no determiner, such as a
     // slug "authorised-reseller", is not caught. The absence of any field for
     // authorization status remains the structural guard; this is the prose one.
-    String.raw`\b(?:an?|the|our|its|their|your|as|is|are|was|were|am|be|been|becomes?|became|remains?|remained)` +
+    // The two lookbehinds carry the rest of the distinction. Preceded by a
+    // coordinating conjunction or a comma, the phrase is an item in a list or
+    // the object of a preposition, which means it refers to somebody else:
+    // "documents supplied or approved by HPE or an authorized distributor" is
+    // approved copy, and so is "manufacturers, authorized distributors, and
+    // technology partners". The determiner alone refused both.
+    String.raw`(?<!\b(?:or|and)\s)(?<!,\s)` +
+      String.raw`\b(?:an?|the|our|its|their|your|as|is|are|was|were|am|be|been|becomes?|became|remains?|remained)` +
       String.raw`(?:{SEP}+(?:an?|the))?{SEP}+authori[sz]ed{SEP}+(?:reseller|partner|distributor)s?\b`,
     "Authorization status may not be published. It changes over time and is governed by each manufacturer's agreement.",
   ),

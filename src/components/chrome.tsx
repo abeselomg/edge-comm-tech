@@ -4,7 +4,10 @@ import { MobileNav } from "@/components/mobile-nav";
 
 function Wordmark({ className = "" }: { className?: string }) {
   return (
-    <span className={`display text-[1.0625rem] leading-none ${className}`} style={{ fontStretch: "112%" }}>
+    <span
+      className={`display text-[1.0625rem] leading-none ${className}`}
+      style={{ fontStretch: "112%" }}
+    >
       Edge<span className="font-normal"> COMM-TECH</span>
     </span>
   );
@@ -14,7 +17,7 @@ export function SiteHeader({ settings }: { settings: SiteSetting }) {
   const nav = settings.nav ?? [];
   const cta = settings.headerCta;
   const ctaHref = cta?.href ?? "/contact";
-  const ctaLabel = cta?.label ?? "Book a consultation";
+  const ctaLabel = cta?.label ?? "Contact us";
 
   return (
     <header
@@ -38,7 +41,10 @@ export function SiteHeader({ settings }: { settings: SiteSetting }) {
           ))}
         </nav>
 
-        <Link href={ctaHref} className="hidden text-[0.9375rem] text-brass link-quiet md:block">
+        <Link
+          href={ctaHref}
+          className="hidden text-[0.9375rem] text-brass link-quiet md:block"
+        >
           {ctaLabel}
         </Link>
 
@@ -60,13 +66,17 @@ export function SiteFooter({ settings }: { settings: SiteSetting }) {
         <div className="grid gap-12 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div>
             <Wordmark className="text-[1.25rem]" />
-            <p className="mt-4 max-w-sm text-[0.9375rem] leading-relaxed text-paper/60">
-              {settings.footerNote}
-            </p>
+            {settings.footerNote ? (
+              <p className="mt-4 max-w-sm text-[0.9375rem] leading-relaxed text-paper/60">
+                {settings.footerNote}
+              </p>
+            ) : null}
           </div>
 
           <nav aria-label="Footer">
-            <h2 className="text-[0.9375rem] font-semibold text-paper">Explore</h2>
+            <h2 className="text-[0.9375rem] font-semibold text-paper">
+              Explore
+            </h2>
             <ul className="mt-4 space-y-2.5">
               {nav.map((item) => (
                 <li key={item.id ?? item.href}>
@@ -82,24 +92,34 @@ export function SiteFooter({ settings }: { settings: SiteSetting }) {
           </nav>
 
           <div>
-            <h2 className="text-[0.9375rem] font-semibold text-paper">Contact</h2>
+            <h2 className="text-[0.9375rem] font-semibold text-paper">
+              Contact
+            </h2>
             {showContact ? (
               <ul className="mt-4 space-y-2.5 text-[0.9375rem] text-paper/60">
                 {contact?.phone ? (
                   <li>
-                    <a href={`tel:${contact.phone.replace(/\s+/g, "")}`} className="hover:text-brass">
+                    <a
+                      href={`tel:${contact.phone.replace(/\s+/g, "")}`}
+                      className="hover:text-brass"
+                    >
                       {contact.phone}
                     </a>
                   </li>
                 ) : null}
                 {contact?.email ? (
                   <li>
-                    <a href={`mailto:${contact.email}`} className="hover:text-brass">
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className="hover:text-brass"
+                    >
                       {contact.email}
                     </a>
                   </li>
                 ) : null}
-                {contact?.address ? <li className="whitespace-pre-line">{contact.address}</li> : null}
+                {contact?.address ? (
+                  <li className="whitespace-pre-line">{contact.address}</li>
+                ) : null}
               </ul>
             ) : (
               <p className="mt-4 text-[0.9375rem] text-paper/60">

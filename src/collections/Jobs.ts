@@ -3,7 +3,10 @@ import { publishedOrSignedIn, signedIn } from "../access";
 import { slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases } from "../fields/validators";
-import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import {
+  revalidateAfterChange,
+  revalidateAfterDelete,
+} from "../hooks/revalidate";
 
 const paths = (doc: { slug?: string | null }) => [
   "/careers",
@@ -31,7 +34,12 @@ export const Jobs: CollectionConfig = {
     description:
       "Published vacancies. Salary and benefits are never published — do not add fields for them.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
+  access: {
+    read: publishedOrSignedIn,
+    create: signedIn,
+    update: signedIn,
+    delete: signedIn,
+  },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths)],
@@ -53,6 +61,10 @@ export const Jobs: CollectionConfig = {
       required: true,
       options: [
         { label: "Executive", value: "Executive" },
+        // The approved content carries "Manager" for the HR role, and the page
+        // prints this value verbatim as the "Career level" row. The rest of the
+        // ladder is for roles Edge has yet to post.
+        { label: "Manager", value: "Manager" },
         { label: "Senior", value: "Senior" },
         { label: "Mid-level", value: "Mid-level" },
         { label: "Junior", value: "Junior" },
@@ -109,7 +121,10 @@ export const Jobs: CollectionConfig = {
     {
       name: "scope",
       type: "textarea",
-      admin: { description: "The breadth of the role, where the approved copy describes it." },
+      admin: {
+        description:
+          "The breadth of the role, where the approved copy describes it.",
+      },
       validate: forbidsPhrases(),
     },
     {
@@ -117,22 +132,49 @@ export const Jobs: CollectionConfig = {
       type: "array",
       minRows: 1,
       labels: { singular: "Responsibility", plural: "What the role owns" },
-      fields: [{ name: "item", type: "text", required: true, validate: forbidsPhrases() }],
+      fields: [
+        {
+          name: "item",
+          type: "text",
+          required: true,
+          validate: forbidsPhrases(),
+        },
+      ],
     },
     {
       name: "required",
       type: "array",
       minRows: 1,
       labels: { singular: "Requirement", plural: "Required qualifications" },
-      admin: { description: "Genuine requirements only. Anything desirable belongs in Preferred." },
-      fields: [{ name: "item", type: "text", required: true, validate: forbidsPhrases() }],
+      admin: {
+        description:
+          "Genuine requirements only. Anything desirable belongs in Preferred.",
+      },
+      fields: [
+        {
+          name: "item",
+          type: "text",
+          required: true,
+          validate: forbidsPhrases(),
+        },
+      ],
     },
     {
       name: "preferred",
       type: "array",
       labels: { singular: "Preference", plural: "Preferred qualifications" },
-      admin: { description: "What strengthens an application without being a barrier to applying." },
-      fields: [{ name: "item", type: "text", required: true, validate: forbidsPhrases() }],
+      admin: {
+        description:
+          "What strengthens an application without being a barrier to applying.",
+      },
+      fields: [
+        {
+          name: "item",
+          type: "text",
+          required: true,
+          validate: forbidsPhrases(),
+        },
+      ],
     },
     {
       name: "success",

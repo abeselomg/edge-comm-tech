@@ -1,5 +1,5 @@
 import type { ConfirmableValue } from "../fields/confirmable";
-import { p, rich } from "./lexical";
+import { h2, p, rich } from "./lexical";
 
 /*
  * Highland's content modules to Payload's field shapes.
@@ -34,6 +34,27 @@ export function toConfirmable(
 
 /** Highland stores bodies as string arrays; Payload rich text wants Lexical. */
 export const toRichParagraphs = (paras: string[] = []) => rich(...paras.map((text) => p(text)));
+
+/**
+ * A news body, from either shape Highland uses.
+ *
+ * Most records carry `paras`, a flat list of sentences. The longer "Insight"
+ * pieces instead carry `sections` of `{ title, body }`, which news-article.mjs
+ * renders as an h2 with a paragraph under it. Only one of the three approved
+ * records uses sections, which is exactly why it was missed: passing `paras`
+ * straight through produced an empty body, and `body` is required, so the seed
+ * refused the document rather than writing a blank one.
+ */
+export const toNewsBody = (record: {
+  paras?: string[];
+  sections?: { title: string; body: string }[];
+}) => {
+  const blocks = [
+    ...(record.paras ?? []).map((text) => p(text)),
+    ...(record.sections ?? []).flatMap((s) => [h2(s.title), p(s.body)]),
+  ];
+  return rich(...blocks);
+};
 
 /*
  * Highland keeps one `iso` per event plus a human date string, which is fine
@@ -81,7 +102,10 @@ export function eventDates(input: { iso: string; date: string }): {
  * card into one run-on line would have made the ported page differ from the
  * design the client approved, which is the only thing this port is for.
  */
-const titledBodies = (list: TitledBody[]) => list.map(({ title, body }) => ({ title, body }));
+/** Titled bodies, kept apart. Used by the detail blocks and by
+ *  projects.delivered, which the approved page renders the same way. */
+export const titledBodies = (list: TitledBody[] = []) =>
+  list.map(({ title, body }) => ({ title, body }));
 
 const str = (v: unknown): string | null => (typeof v === "string" && v ? v : null);
 

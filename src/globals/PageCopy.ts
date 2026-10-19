@@ -5,7 +5,12 @@ import { revalidateGlobal } from "../hooks/revalidate";
 
 const titledBody = [
   { name: "title", type: "text", required: true, validate: forbidsPhrases() },
-  { name: "body", type: "textarea", required: true, validate: forbidsPhrases() },
+  {
+    name: "body",
+    type: "textarea",
+    required: true,
+    validate: forbidsPhrases(),
+  },
 ] as const;
 
 const hero = (label: string) => ({
@@ -13,11 +18,28 @@ const hero = (label: string) => ({
   type: "group" as const,
   label,
   fields: [
-    { name: "eyebrow", type: "text" as const, required: true, validate: forbidsPhrases() },
-    { name: "title", type: "text" as const, required: true, validate: forbidsPhrases() },
-    { name: "intro", type: "textarea" as const, required: true, validate: forbidsPhrases() },
+    {
+      name: "eyebrow",
+      type: "text" as const,
+      required: true,
+      validate: forbidsPhrases(),
+    },
+    {
+      name: "title",
+      type: "text" as const,
+      required: true,
+      validate: forbidsPhrases(),
+    },
+    {
+      name: "intro",
+      type: "textarea" as const,
+      required: true,
+      validate: forbidsPhrases(),
+    },
   ],
 });
+
+const HOME_HERO = hero("Home hero");
 
 /*
  * Page-level copy that is not a collection document: the heroes and section
@@ -34,7 +56,8 @@ export const PageCopy: GlobalConfig = {
   label: "Page copy",
   admin: {
     group: "Site",
-    description: "Headings and intros for the pages built from several collections.",
+    description:
+      "Headings and intros for the pages built from several collections.",
   },
   access: { read: () => true, update: signedIn },
   versions: { drafts: false },
@@ -58,11 +81,37 @@ export const PageCopy: GlobalConfig = {
         {
           label: "Home",
           fields: [
-            { ...hero("Home hero"), name: "homeHero" },
+            {
+              /*
+               * The home hero carries two paragraphs, not one: the template
+               * renders the first at text-lg and the second a size down, as
+               * two distinct slots. One textarea holding both would either
+               * lose the second or set it at the wrong size, so the second
+               * gets its own field.
+               */
+              ...HOME_HERO,
+              name: "homeHero",
+              fields: [
+                ...HOME_HERO.fields,
+                {
+                  name: "introSecondary",
+                  type: "textarea",
+                  required: true,
+                  admin: {
+                    description:
+                      "The smaller paragraph under the intro. The home hero shows both.",
+                  },
+                  validate: forbidsPhrases(),
+                },
+              ],
+            },
             {
               name: "homePriorities",
               type: "array",
-              labels: { singular: "Priority", plural: "Technology priorities (home)" },
+              labels: {
+                singular: "Priority",
+                plural: "Technology priorities (home)",
+              },
               admin: {
                 description:
                   "The home page's own list. The solutions overview has a separate, differently worded list — do not merge them.",
@@ -78,8 +127,14 @@ export const PageCopy: GlobalConfig = {
             {
               name: "solutionsPriorities",
               type: "array",
-              labels: { singular: "Priority", plural: "Technology priorities (solutions)" },
-              admin: { description: "The solutions overview's own list. Not the home page's." },
+              labels: {
+                singular: "Priority",
+                plural: "Technology priorities (solutions)",
+              },
+              admin: {
+                description:
+                  "The solutions overview's own list. Not the home page's.",
+              },
               fields: [...titledBody],
             },
             {
@@ -126,18 +181,39 @@ export const PageCopy: GlobalConfig = {
               type: "array",
               minRows: 1,
               labels: { singular: "Section", plural: "Resource sections" },
-              admin: { description: "The six sections of the resource centre, in order." },
+              admin: {
+                description:
+                  "The six sections of the resource centre, in order.",
+              },
               fields: [
-                { name: "key", type: "text", required: true, validate: forbidsPhrases() },
-                { name: "title", type: "text", required: true, validate: forbidsPhrases() },
+                {
+                  name: "key",
+                  type: "text",
+                  required: true,
+                  validate: forbidsPhrases(),
+                },
+                {
+                  name: "title",
+                  type: "text",
+                  required: true,
+                  validate: forbidsPhrases(),
+                },
                 {
                   name: "href",
                   type: "text",
                   required: true,
-                  admin: { description: "Route, e.g. /news or /resources/media/documentaries." },
+                  admin: {
+                    description:
+                      "Route, e.g. /news or /resources/media/documentaries.",
+                  },
                   validate: forbidsPhrases(),
                 },
-                { name: "body", type: "textarea", required: true, validate: forbidsPhrases() },
+                {
+                  name: "body",
+                  type: "textarea",
+                  required: true,
+                  validate: forbidsPhrases(),
+                },
               ],
             },
           ],
