@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { publishedOrSignedIn, signedIn } from "../access";
-import { slugField } from "../fields/slug";
+import { orderField, slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases, richTextGuard } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
@@ -76,5 +76,6 @@ export const News: CollectionConfig = {
       // and the editor's upload picker cannot be narrowed to approved assets.
       validate: richTextGuard(),
     },
+    orderField,
   ],
 };

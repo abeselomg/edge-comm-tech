@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { publishedOrSignedIn, signedIn } from "../access";
-import { slugField } from "../fields/slug";
+import { orderField, slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases } from "../fields/validators";
 import {
@@ -183,5 +183,6 @@ export const Jobs: CollectionConfig = {
       admin: { description: "How performance in the role will be judged." },
       validate: forbidsPhrases(),
     },
+    orderField,
   ],
 };

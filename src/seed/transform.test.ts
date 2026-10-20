@@ -291,9 +291,18 @@ describe("toDetailBlocks against Highland's real content", () => {
     };
     const slugs = Object.keys(SOLUTION_DETAIL);
     expect(slugs).toHaveLength(7);
-    const solutionsSrc = readFileSync("src/collections/Solutions.ts", "utf8");
+    // A URL rather than a path relative to the cwd, so this does not depend on
+    // where the runner was started from.
+    const solutionsSrc = readFileSync(new URL("../collections/Solutions.ts", import.meta.url), "utf8");
     const blockRegion = solutionsSrc.slice(solutionsSrc.indexOf("const DETAIL_BLOCKS"), solutionsSrc.indexOf("export const Solutions"));
-    const known = [...blockRegion.matchAll(/slug: "([a-z]+)",\n\s+labels/g)].map((m) => m[1]);
+    /*
+     * \s+ rather than \n\s+: this repo is checked out with CRLF (core.autocrlf
+     * is true and there is no .gitattributes), so a literal \n cannot match
+     * the \r\n actually on disk. With it, the match found nothing on a clean
+     * checkout and the failure read as "the collection declares no blocks"
+     * rather than "the regex missed the line ending".
+     */
+    const known = [...blockRegion.matchAll(/slug: "([a-z]+)",\s+labels/g)].map((m) => m[1]);
     expect(known).toHaveLength(8);
     for (const slug of slugs) {
       const blocks = toDetailBlocks(SOLUTION_DETAIL[slug]);

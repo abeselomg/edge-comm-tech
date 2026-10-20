@@ -82,6 +82,52 @@ for (const sol of solutions) {
 }
 
 /*
+ * Order. Every list on this site is in an order the client approved, and
+ * almost none of it is alphabetical or chronological -- the three news items
+ * carry the dates "2018", "Evergreen" and "Date to confirm", which cannot be
+ * sorted at all. So the position is a field, and this checks it is a complete
+ * 1..n run with no repeats.
+ *
+ * It is checked because the field is `required` with a defaultValue of 99:
+ * four collections gained it while the seed was not writing it, and every
+ * document in them took the default. Nothing noticed. The counts were right,
+ * no relationship dangled, the required-field validator was satisfied by the
+ * default -- and every one of those lists would have come out of Postgres in
+ * whatever order it felt like, looking correct on one page load and shuffled
+ * on the next.
+ */
+for (const [collection, expected] of Object.entries(EXPECTED)) {
+  const { docs } = await payload.find({
+    collection: collection as never,
+    limit: 500,
+    depth: 0,
+    pagination: false,
+  });
+  const orders = docs.map((d) => (d as { order?: unknown }).order);
+  const missing = orders.filter((o) => typeof o !== "number").length;
+  if (missing) {
+    problems.push(
+      `${collection}: ${missing} document(s) have no numeric order`,
+    );
+    continue;
+  }
+  const sorted = (orders as number[]).slice().sort((a, b) => a - b);
+  const wanted = Array.from({ length: expected }, (_, i) => i + 1);
+  if (sorted.join(",") !== wanted.join(",")) {
+    problems.push(
+      `${collection}: order is not 1..${expected} — got ${sorted.join(",")}`,
+    );
+  }
+}
+
+/* Six featured projects lead the home page, in order. `featured` used to be
+   written as `rank === 1`, which made five of the six false. */
+const featured = projects.filter((p) => p.featured);
+if (featured.length !== 6) {
+  problems.push(`projects: expected 6 featured, found ${featured.length}`);
+}
+
+/*
  * The globals, which this verifier did not look at until a whole global came
  * back empty and it still said PASS.
  *

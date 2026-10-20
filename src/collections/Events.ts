@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { publishedOrSignedIn, signedIn } from "../access";
-import { slugField } from "../fields/slug";
+import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
@@ -148,5 +148,6 @@ export const Events: CollectionConfig = {
       },
       validate: forbidsPhrases(),
     },
+    orderField,
   ],
 };

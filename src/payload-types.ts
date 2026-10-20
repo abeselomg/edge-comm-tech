@@ -644,6 +644,10 @@ export interface Project {
    * Any privacy or data-handling note the client requires alongside this record.
    */
   privacy?: string | null;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -833,6 +837,10 @@ export interface Event {
    * Shown as a visible marker where something about the session is not yet confirmed.
    */
   pendingNote?: string | null;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -983,6 +991,10 @@ export interface News {
     };
     [k: string]: unknown;
   };
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -1115,6 +1127,10 @@ export interface Job {
    * How performance in the role will be judged.
    */
   success: string;
+  /**
+   * Lower numbers appear first.
+   */
+  order: number;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -1776,6 +1792,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   technologyNote?: T;
   training?: T;
   privacy?: T;
+  order?: T;
   meta?:
     | T
     | {
@@ -1811,6 +1828,7 @@ export interface EventsSelect<T extends boolean = true> {
       };
   action?: T;
   pendingNote?: T;
+  order?: T;
   meta?:
     | T
     | {
@@ -1876,6 +1894,7 @@ export interface NewsSelect<T extends boolean = true> {
   archive?: T;
   standfirst?: T;
   body?: T;
+  order?: T;
   meta?:
     | T
     | {
@@ -1977,6 +1996,7 @@ export interface JobsSelect<T extends boolean = true> {
         id?: T;
       };
   success?: T;
+  order?: T;
   meta?:
     | T
     | {

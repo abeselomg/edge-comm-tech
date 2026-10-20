@@ -407,7 +407,17 @@ async function seed() {
           title: pr.title,
           slug: pr.slug,
           client: client(pr.client),
-          featured: pr.featured === 1,
+          /*
+           * The content's `featured` is a RANK, 1 to 6, with 0 for the two
+           * that are not featured -- and `=== 1` wrote five of those six as
+           * false, so the home page would have shown one featured project
+           * instead of six. The rank itself is not stored: for every featured
+           * project the rank equals its position in the approved list, so
+           * `featured` says whether and `order` says where, which is the same
+           * result without a magic number in a boolean's place.
+           */
+          featured: pr.featured > 0,
+          order: PROJECTS.indexOf(pr) + 1,
           sector: sectorSlug(pr.sector),
           sectorFull: pr.sectorFull,
           location: pr.location,
@@ -486,6 +496,7 @@ async function seed() {
       {
         title: n.title,
         slug: n.slug,
+        order: NEWS.indexOf(n) + 1,
         kind: n.kind,
         date: toConfirmable(n.date, "Date to confirm"),
         archive: Boolean(n.archive),
@@ -505,6 +516,7 @@ async function seed() {
       {
         title: e.title,
         slug: e.slug,
+        order: EVENTS.indexOf(e) + 1,
         startsOn,
         endsOn,
         displayDate: e.date,
@@ -550,6 +562,7 @@ async function seed() {
       {
         title: j.title,
         slug: j.slug,
+        order: JOBS.indexOf(j) + 1,
         department: j.department,
         level: j.level,
         reports: j.reports,
