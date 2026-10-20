@@ -95,7 +95,9 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
     meta: {
-      titleSuffix: " · Edge COMM-TECH",
+      // "Edge Comm-Tech" is the approved short name: it appears 83 times in
+      // the content master and the upper-case form appears nowhere.
+      titleSuffix: " — Edge Comm-Tech",
     },
   },
   collections: [Solutions, Services, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Jobs, AcademyTracks, Media, Users],
@@ -131,7 +133,15 @@ export default buildConfig({
     seoPlugin({
       collections: ["solutions", "services", "projects", "news", "events", "jobs", "posts"],
       uploadsCollection: "media",
-      generateTitle: ({ doc }) => `${doc?.title ?? "Edge COMM-TECH"} · Edge COMM-TECH`,
+      /*
+       * This writes the <title> of every public page the plugin covers, so the
+       * brand name here reaches the live site and search results. "Edge
+       * Comm-Tech" is the approved short name; the upper-case form appears
+       * nowhere in the content master. The separator matches the frontend
+       * layout's title template so the two cannot drift apart.
+       */
+      generateTitle: ({ doc }) =>
+        doc?.title ? `${doc.title} — Edge Comm-Tech` : "Edge Comm-Tech",
       generateDescription: ({ doc }) =>
         doc?.blurb ?? doc?.summary ?? doc?.excerpt ?? "",
       // The plugin creates its own meta.title and meta.description, which the

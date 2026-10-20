@@ -9,7 +9,14 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: dirname,
   images: {
     remotePatterns: [],
-    localPatterns: [{ pathname: "/api/media/file/**" }],
+    /*
+     * An allowlist, so naming one path excludes every other. Uploaded media
+     * come from Payload's file route; the wordmark is the one asset that ships
+     * with the app rather than through the CMS, and the header and footer both
+     * render it through next/image, so it needs its own entry. Without it the
+     * page throws "Invalid src prop" rather than falling back to the raw file.
+     */
+    localPatterns: [{ pathname: "/api/media/file/**" }, { pathname: "/edge-logo.png" }],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Atkinson_Hyperlegible, Fragment_Mono, Geologica } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/chrome";
-import { getSiteSettings } from "@/lib/content";
 import "./globals.css";
 
 const geologica = Geologica({
@@ -26,18 +25,21 @@ const fragmentMono = Fragment_Mono({
   display: "swap",
 });
 
+/*
+ * "Edge Comm-Tech", not "Edge COMM-TECH": the short name appears 83 times in
+ * the approved content and never in the upper-case form. COMPANY.short in the
+ * content master is the authority.
+ */
 export const metadata: Metadata = {
   title: {
-    default: "Edge COMM-TECH",
-    template: "%s · Edge COMM-TECH",
+    default: "Edge Comm-Tech",
+    template: "%s — Edge Comm-Tech",
   },
   description:
-    "Edge Communication Technologies — data center, cybersecurity, network, cloud, and professional services for enterprises in Ethiopia.",
+    "Edge Communication Technologies — integrated technology solutions across enterprise networks, cloud, datacenters, cybersecurity, software, AI, power and broadcast for Ethiopian institutions.",
 };
 
-export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSiteSettings();
-
+export default function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${geologica.variable} ${atkinson.variable} ${fragmentMono.variable}`}>
       <body className="min-h-screen">
@@ -47,9 +49,9 @@ export default async function FrontendLayout({ children }: { children: React.Rea
         >
           Skip to content
         </a>
-        <SiteHeader settings={settings} />
+        <SiteHeader />
         <div id="main">{children}</div>
-        <SiteFooter settings={settings} />
+        <SiteFooter />
       </body>
     </html>
   );

@@ -123,7 +123,12 @@ type Slugged = (typeof SEEDED)[number];
  * validators refusing bad data on write, and `seed:verify` counting what
  * landed.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/*
+ * No eslint-disable here: this project's config extends next/core-web-vitals
+ * only, deliberately, so the typescript-eslint rules are not loaded. A disable
+ * comment naming one of them is itself an error ("Definition for rule ... was
+ * not found") and fails `next build` while leaving tsc and the tests green.
+ */
 type DetailRecord = Record<string, any>;
 
 const detailFor = (map: object, slug: string): DetailRecord =>
@@ -778,7 +783,7 @@ async function seed() {
   );
   if (MODE === "fill" && report.skipped > 0) {
     payload.logger.info(
-      "skipped documents already existed. Use --force to overwrite them.",
+      "skipped documents already existed. Run `npm run seed:force` to overwrite them.",
     );
   }
 }
