@@ -19,7 +19,10 @@
     "test:watch": "vitest",
     "seed:force": "cross-env SEED_MODE=force NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
     "seed:fresh": "cross-env SEED_MODE=fresh NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
-    "seed:verify": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/verify.ts"
+    "seed:verify": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/verify.ts",
+    "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
+    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
+    "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
