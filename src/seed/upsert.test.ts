@@ -70,20 +70,30 @@ describe("makeResolver", () => {
     expect(zero("A")).toBe(0);
   });
 
+  /*
+   * The unknown-name fixture is deliberately an institution that does not
+   * exist. Four organisations were retired from the approved client directory
+   * and the content master says they may appear nowhere, including comments
+   * and test data -- and the obvious fixture for "a name that is not a client"
+   * is exactly one of those, which is how one of them ended up here. Keep this
+   * invented; do not swap in a realistic Ethiopian institution.
+   */
+  const NOT_A_CLIENT = "Riverbend Polytechnic";
+
   it("throws on an unknown name rather than returning undefined", () => {
     // Review Focus #4: a silent undefined produces a project page with no
     // client and no error anywhere.
-    expect(() => resolve("Bonga University")).toThrow(/client/i);
+    expect(() => resolve(NOT_A_CLIENT)).toThrow(/client/i);
   });
 
   it("names the label, the failing key and how to fix it", () => {
     let message = "";
     try {
-      resolve("Bonga University");
+      resolve(NOT_A_CLIENT);
     } catch (error) {
       message = (error as Error).message;
     }
-    expect(message).toMatch(/No client matches "Bonga University"/);
+    expect(message).toMatch(new RegExp(`No client matches "${NOT_A_CLIENT}"`));
     expect(message).toMatch(/directory/);
   });
 

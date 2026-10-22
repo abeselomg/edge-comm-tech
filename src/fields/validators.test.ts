@@ -561,3 +561,58 @@ describe("the authorization rule ignores list and prepositional uses", () => {
       expect(validate(s), `should block: ${s}`).not.toBe(true);
   });
 });
+
+describe("the 100% completion figure must carry its qualifier", () => {
+  const validate = forbidsPhrases();
+
+  /*
+   * requiresScopeQualifier guards the impact counter, where the figure and
+   * its line are separate fields. This guards the same claim written as
+   * prose, which that rule cannot see -- there is no sibling `figure` field
+   * in a solution body.
+   */
+  it("blocks the figure where the sentence lacks the qualifier", () => {
+    for (const s of [
+      "We have delivered 100% completion across every engagement.",
+      "A 100% on-time delivery record.",
+      "100% project completion, every time.",
+      "Our 100 % success rate speaks for itself.",
+      "Edge has completed 100% of its projects.",
+    ])
+      expect(validate(s), `should block: ${s}`).not.toBe(true);
+  });
+
+  it("permits the figure when the qualifier is in the same sentence", () => {
+    for (const s of [
+      "100% completion against agreed project scope.",
+      "Delivered 100% completion against agreed project scope in 2025.",
+      // The qualifier first. The first version of this rule looked only
+      // forward from the figure and refused this.
+      "Against agreed project scope, Edge reports 100% completion.",
+    ])
+      expect(validate(s), `should allow: ${s}`).toBe(true);
+  });
+
+  it("leaves a figure alone when no completion is claimed", () => {
+    // The counter stores the bare figure in its own field; the unit and the
+    // line are separate. None of these claims a completion rate.
+    for (const s of [
+      "100%",
+      "100% of staff attended the training session.",
+      "Uptime reached 99.98% last quarter.",
+      "The project reached completion in March.",
+    ])
+      expect(validate(s), `should allow: ${s}`).toBe(true);
+  });
+
+  it("judges each sentence on its own, not the whole field", () => {
+    // Qualified in its own sentence -- the unrelated first sentence must not
+    // launder it, and must not be blamed for it either.
+    expect(
+      validate("The rollout is complete. 100% of sites are live against agreed project scope."),
+    ).toBe(true);
+    expect(
+      validate("Delivery ran against agreed project scope. We report 100% completion."),
+    ).not.toBe(true);
+  });
+});

@@ -109,6 +109,44 @@ export const BASE_RULES: Rule[] = [
   ),
 ];
 
+/*
+ * The completion figure, in prose.
+ *
+ * requiresScopeQualifier already guards the impact counter, where the figure
+ * and its line are separate fields -- and that counter is the only place the
+ * approved content states the figure today. But the master makes the
+ * qualifier mandatory wherever the figure appears, and an editor writing "we
+ * have delivered 100% completion" into a solution body is writing it
+ * somewhere that rule cannot see, because there is no sibling `figure` field
+ * to key off.
+ *
+ * This is a predicate rather than a pattern because the rule is not
+ * directional and a regex is. The first attempt looked only forward from the
+ * figure, which let "Edge has completed 100% of its projects" through (the
+ * claim word came first) and refused "Against agreed project scope, Edge
+ * reports 100% completion" (the qualifier came first). Splitting into
+ * sentences and asking three unordered questions of each is both correct and
+ * easier to read than the regex that would do it.
+ */
+const COMPLETION_WORD =
+  /\b(?:completion|completed|complete|delivery|delivered|success rate|on[- ]time)\b/i;
+const FULL_FIGURE = /\b100\s*%/;
+const SCOPE_QUALIFIER = /against agreed project scope/i;
+
+export function completionFigureUnqualified(text: string): boolean {
+  return text
+    .split(/[.!?]+/)
+    .some(
+      (sentence) =>
+        FULL_FIGURE.test(sentence) &&
+        COMPLETION_WORD.test(sentence) &&
+        !SCOPE_QUALIFIER.test(sentence),
+    );
+}
+
+const COMPLETION_MESSAGE =
+  'A 100% completion figure must carry "against agreed project scope" in the same sentence. The master requires the qualifier wherever the figure appears.';
+
 /** Base rules plus the project-only wording rule. */
 export const PROJECT_RULES: Rule[] = [
   ...BASE_RULES,
@@ -214,6 +252,9 @@ export function forbidsPhrases(rules: Rule[] = BASE_RULES) {
     for (const rule of rules) {
       if (rule.pattern.test(text)) return rule.message;
     }
+    // Not a Rule, because it asks three unordered questions of each sentence
+    // rather than matching one pattern. See completionFigureUnqualified.
+    if (completionFigureUnqualified(text)) return COMPLETION_MESSAGE;
     return true;
   };
 }
