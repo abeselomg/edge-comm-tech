@@ -67,6 +67,7 @@ import {
   toRichParagraphs,
 } from "./transform";
 import { sectorSlug } from "../fields/sectors";
+import { routeFor } from "../lib/routes";
 import { HEROES, SOLUTIONS_FRAMEWORK, SOLUTIONS_PRIORITIES } from "./page-copy";
 
 /*
@@ -665,10 +666,12 @@ async function seed() {
      * label and the stored label were the same string only by coincidence.
      */
     headerCta: { label: "Contact us", href: "/contact" },
-    nav: NAV.map(([label, href]) => ({
-      label,
-      href: `/${href.replace(/\.html$/, "").replace(/^index$/, "")}`,
-    })),
+    /*
+     * Routes come from src/lib/routes.ts, not from an inline replace here.
+     * Fourteen pages link to each other and to the dynamic families, and a
+     * second translation in the seed is a second convention to drift from.
+     */
+    nav: NAV.map(([label, file]) => ({ label, href: routeFor(file) })),
     impact: IMPACT.map((m) => ({
       figure: m.figure,
       unit: m.unit,
@@ -767,7 +770,7 @@ async function seed() {
       key: s.slug,
       title: s.title,
       body: s.body,
-      href: `/${s.file.replace(/\.html$/, "").replace(/^media-/, "resources/media/")}`,
+      href: routeFor(s.file),
     })),
   });
 
