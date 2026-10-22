@@ -16,6 +16,7 @@ import {
   CONTACT,
   INQUIRY_CATEGORIES,
   NAV,
+  ACCENT,
   PRIORITIES,
   SOLUTIONS,
   SERVICES,
@@ -134,6 +135,27 @@ type DetailRecord = Record<string, any>;
 
 const detailFor = (map: object, slug: string): DetailRecord =>
   (map as unknown as Record<string, DetailRecord>)[slug] ?? {};
+
+/*
+ * The family's own accent colour.
+ *
+ * Both call sites used to pass one hardcoded hex, so all seven solutions were
+ * #0888c5 and all six services #056a9a. Highland colours cards, chips,
+ * borders and hero washes by family, and a single colour loses that
+ * distinction on every page at once while looking perfectly valid in the
+ * database. Throws on a slug the approved map does not cover, because the
+ * alternative -- defaulting -- is how the bug looked in the first place.
+ */
+const accentFor = (slug: string): string => {
+  const hex = (ACCENT as Record<string, string>)[slug];
+  if (!hex) {
+    throw new Error(
+      `No accent for "${slug}". ACCENT in design-src/highland/content.mjs is ` +
+        "the approved source; add the family there rather than defaulting to a colour.",
+    );
+  }
+  return hex;
+};
 
 /** Highland stores these as 2-tuples; TypeScript widens them to string[]. */
 const pairs = (rows: unknown): [string, string][] => rows as [string, string][];
@@ -325,7 +347,7 @@ async function seed() {
           short: s.short,
           blurb: s.blurb,
           order: s.n,
-          accent: "#0888c5",
+          accent: accentFor(s.slug),
           headline: d.headline ?? s.title,
           intro: d.intro ?? s.blurb,
           lead: d.lead ?? null,
@@ -356,7 +378,7 @@ async function seed() {
           short: s.short,
           blurb: s.blurb,
           order: s.n,
-          accent: "#056a9a",
+          accent: accentFor(s.slug),
           headline: d.headline ?? s.title,
           intro: d.intro ?? s.blurb,
           capabilities: (d.capabilities ?? []).map(

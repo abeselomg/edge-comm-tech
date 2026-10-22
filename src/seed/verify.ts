@@ -1,5 +1,6 @@
 import { getPayload } from "payload";
 import config from "../payload.config";
+import { ACCENT } from "../../design-src/highland/content.mjs";
 
 /*
  * Asserts the database holds what the content master says it should.
@@ -79,6 +80,43 @@ const { docs: solutions } = await payload.find({
 for (const sol of solutions) {
   if (!sol.partners?.length)
     problems.push(`solution "${sol.slug}" lists no partners`);
+}
+
+/*
+ * The accent colour, per family.
+ *
+ * Solutions.accent and Services.accent existed and were seeded with ONE
+ * hardcoded value each, so all seven solutions were #0888c5 and all six
+ * services #056a9a -- where the approved content gives every family its own
+ * colour. Highland colours cards, chips, borders and hero washes by family,
+ * so the static pages would have lost that distinction on every page at once,
+ * and nothing would have failed: the field was present, non-empty and the
+ * right type.
+ */
+const accents = ACCENT as Record<string, string>;
+for (const collection of ["solutions", "services"] as const) {
+  const { docs } = await payload.find({
+    collection, limit: 100, depth: 0, pagination: false,
+  });
+  const seen = new Set<string>();
+  for (const doc of docs) {
+    const { slug, accent } = doc as { slug: string; accent?: string | null };
+    const want = accents[slug];
+    if (!want) {
+      problems.push(`${collection} "${slug}": no accent in the approved ACCENT map`);
+      continue;
+    }
+    if (accent !== want) {
+      problems.push(`${collection} "${slug}": accent is ${accent ?? "empty"}, expected ${want}`);
+    }
+    if (accent) seen.add(accent);
+  }
+  // One shared colour is the exact failure above, and it passes every
+  // per-document check if the map itself ever collapses.
+  const expected = collection === "solutions" ? 7 : 6;
+  if (docs.length === expected && seen.size < 2) {
+    problems.push(`${collection}: all ${expected} share the accent ${[...seen][0]}`);
+  }
 }
 
 /*
