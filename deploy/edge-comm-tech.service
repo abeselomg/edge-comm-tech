@@ -1,0 +1,38 @@
+[Unit]
+Description=Edge Comm-Tech CMS (Next.js + Payload)
+After=network-online.target postgresql.service
+Wants=network-online.target
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=edge
+Group=edge
+WorkingDirectory=/srv/edge-comm-tech/app
+EnvironmentFile=/etc/edge-comm-tech.env
+
+# `next start` directly rather than `npm run start`: npm wants to write a
+# cache and logs under HOME, which ProtectSystem=strict forbids, and the only
+# thing the npm script adds is NODE_OPTIONS, set here instead.
+Environment=NODE_OPTIONS=--no-deprecation
+ExecStart=/srv/edge-comm-tech/app/node_modules/.bin/next start -H 127.0.0.1
+
+Restart=on-failure
+RestartSec=5s
+
+# The filesystem is read-only to this service except the two paths it must
+# write: Next's runtime cache, and the directory Payload writes uploads to
+# while no S3 bucket is configured.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadWritePaths=/srv/edge-comm-tech/app/.next
+ReadWritePaths=/srv/edge-comm-tech/app/media
+
+[Install]
+WantedBy=multi-user.target
