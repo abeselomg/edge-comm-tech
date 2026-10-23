@@ -170,6 +170,12 @@ const DELIBERATE = [
   // Phase 4: /about links to the executive-management page, which Highland
   // generated and linked from nowhere.
   "See the executive management structure",
+  // Phase 4: Highland's review-build form note, and the CMS-era note that
+  // replaces it (see FormNote in components/ui/forms.tsx). Both sides are
+  // stripped, so the swap is waived but the form itself is still compared.
+  "Form shown for layout review.",
+  "Fields, validation, consent capture, secure upload and routing are built against the CMS at implementation.",
+  "This form is not yet accepting submissions.",
 ];
 
 /*
@@ -188,6 +194,7 @@ const SUBSTITUTIONS = [
   // still awaiting artwork; a directory should not apologise for what it is
   // waiting on.
   [/\d+ marks pending approved artwork/g, ""],
+  [/Please email \S+ in the meantime\./g, ""],
 ];
 
 /* Links the port adds on purpose, per page. */
