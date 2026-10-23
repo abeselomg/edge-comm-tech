@@ -101,3 +101,44 @@ fifteen direct dependencies declared with a caret.
 **Seed modes are environment variables, not flags.** `payload run` strips the
 script's arguments, so `--fresh` silently does nothing. Use
 `npm run seed:force` or `npm run seed:fresh`.
+
+## Phase 4: the static pages
+
+Fourteen pages now render from the CMS: home, about, executive management,
+clients, partners, resources, downloads, blog, the four careers pages, contact
+and subscribe. The solution, service, project, news, event and job pages are
+Phase 5 and are linked but not yet served.
+
+**Pages are prerendered at build time, so a reseed needs a redeploy.** Changing
+data with `seed:force` (or in the admin, before the revalidate hooks reach that
+path) does not change what a prerendered page serves until the next build. After
+a reseed run `edge-redeploy` again, or the site keeps showing the old copy. This
+is how a wrong partner-ring label survived a correct reseed for one check.
+
+**Checking a deploy against Highland.** `npm run check:parity` compares the
+fourteen pages with the Highland originals on visible sentences, h1–h3 order and
+link targets, and fails any link that is a `.html` filename or a path `routeFor`
+does not know. Against this server, whose certificate is self-signed:
+
+```bash
+NODE_TLS_REJECT_UNAUTHORIZED=0 BASE_URL=https://168.119.61.125 npm run check:parity
+```
+
+`npm run check:parity -- --self` compares each Highland page with itself and
+must report nothing; run it after editing the checker.
+
+**What the checker deliberately waives**, each listed in `tools/check-parity.mjs`
+with its reason: the skip link, the review build's footer note, the form-note
+wording on the five disabled forms, the count of logos still awaiting artwork,
+the compact nav's "Contact", and the one link `/about` adds to executive
+management. A new waiver belongs in that file with a comment, not in a flag.
+
+**Forms are inert until Phase 6.** Contact, subscribe, the internship
+application and the E-Academy enquiry render every control disabled with a note
+giving a mailbox to use meanwhile. Nothing submits.
+
+**Downloads are listed whether or not they are approved.** The approval gate is
+on the file link, not the listing: an unapproved document shows "Approval
+pending" and a request route, and only a document that is approved *and* has an
+approved file offers Download. See `downloadLink` in
+`src/app/(frontend)/downloads/download-parts.tsx`.

@@ -26,7 +26,7 @@
  */
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
-import { routeFor } from "../src/lib/routes.ts";
+import { isKnownRoute, routeFor } from "../src/lib/routes.ts";
 
 const HIGHLAND = "design-files/highland";
 const BASE_URL = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
@@ -326,6 +326,13 @@ for (const page of pages) {
     }
   }
   for (const l of haveL) {
+    /*
+     * Whatever the comparison below says, a rendered link must be a route the
+     * route map knows and never a Highland filename. This is what keeps a
+     * hand-built path from shipping as a working-looking dead link.
+     */
+    if (!selfCheck && /\.html$/.test(l)) problems.push(`${page}: links to the Highland file ${l}`);
+    else if (!selfCheck && !isKnownRoute(l)) problems.push(`${page}: links to ${l}, which routeFor does not know`);
     if (ADDED_LINKS[page]?.includes(l)) continue;
     if (!wantL.has(l)) problems.push(`${page}: links to ${l}, which Highland does not`);
   }

@@ -96,6 +96,21 @@ export function routeFor(file: HighlandFile): string {
 }
 
 /**
+ * Whether a path is one `routeFor` could have produced: a named page, a family
+ * index, or exactly one slug beneath a family base. The inverse of routeFor,
+ * used to prove no rendered link is a Highland filename or an invented path.
+ */
+export function isKnownRoute(path: string): boolean {
+  const named = new Set([...Object.values(STATIC_ROUTES), ...Object.values(FAMILY_INDEXES)]);
+  if (named.has(path)) return true;
+  return SLUG_FAMILIES.some(({ base }) => {
+    if (!path.startsWith(`${base}/`)) return false;
+    const slug = path.slice(base.length + 1);
+    return slug !== "" && !slug.includes("/");
+  });
+}
+
+/**
  * The documents in a populated relationship that may actually be rendered.
  *
  * Payload's `depth` populate does not re-apply the published filter to a

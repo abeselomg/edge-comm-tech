@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { publishedOnly, routeFor, STATIC_ROUTES } from "./routes";
+import { isKnownRoute, publishedOnly, routeFor, STATIC_ROUTES } from "./routes";
 
 describe("routeFor translates Highland's filenames", () => {
   it("maps the slug-less pages", () => {
@@ -149,5 +149,32 @@ describe("publishedOnly drops what must not be rendered", () => {
     const a = { slug: "a", _status: "published" };
     const c = { slug: "c", _status: "published" };
     expect(publishedOnly([a, { slug: "b", _status: "draft" }, c, 9, null])).toEqual([a, c]);
+  });
+});
+
+describe("isKnownRoute", () => {
+  it("accepts every route routeFor can produce", () => {
+    for (const r of ["/", "/about", "/about/executive-management", "/solutions", "/events"]) {
+      expect(isKnownRoute(r), r).toBe(true);
+    }
+    for (const r of [
+      "/solutions/cybersecurity",
+      "/careers/open-positions/hr-manager",
+      "/resources/media/documentaries",
+      "/news/some-item",
+    ]) {
+      expect(isKnownRoute(r), r).toBe(true);
+    }
+  });
+
+  it("rejects a Highland filename, which is the leak this guards against", () => {
+    expect(isKnownRoute("/about.html")).toBe(false);
+    expect(isKnownRoute("about.html")).toBe(false);
+  });
+
+  it("rejects paths no one declared, and over-deep slugs", () => {
+    expect(isKnownRoute("/nope")).toBe(false);
+    expect(isKnownRoute("/solutions/a/b")).toBe(false);
+    expect(isKnownRoute("/solutions/")).toBe(false);
   });
 });
