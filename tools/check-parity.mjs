@@ -167,6 +167,9 @@ const DELIBERATE = [
   // nothing renders. See the footerNote note in SiteSettings.
   "Design review build",
   "content pending final approval",
+  // Phase 4: /about links to the executive-management page, which Highland
+  // generated and linked from nowhere.
+  "See the executive management structure",
 ];
 
 /*
@@ -180,6 +183,9 @@ const DELIBERATE = [
  * the button finds half of it unchanged.
  */
 const SUBSTITUTIONS = [[/About Contact\b(?! us)/g, "About Contact us"]];
+
+/* Links the port adds on purpose, per page. */
+const ADDED_LINKS = { about: ["/about/executive-management"] };
 
 function normaliseNoise(s) {
   let out = s
@@ -307,6 +313,7 @@ for (const page of pages) {
     }
   }
   for (const l of haveL) {
+    if (ADDED_LINKS[page]?.includes(l)) continue;
     if (!wantL.has(l)) problems.push(`${page}: links to ${l}, which Highland does not`);
   }
 
