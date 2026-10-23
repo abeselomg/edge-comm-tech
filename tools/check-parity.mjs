@@ -1,0 +1,259 @@
+/*
+ * Does a rendered route say the same things as the Highland page it ports?
+ *
+ * The spec's done-when for Phase 4 is "parity check passes per page", and the
+ * two existing checkers cannot answer it: check-links.mjs and
+ * check-render.mjs both take a directory of static HTML and have no idea a
+ * Next app exists.
+ *
+ * This compares CONTENT, not pixels. The theme is already ported and shared,
+ * so a styling difference is not what this is for; a dropped section, a
+ * sentence that changed, or a link to a route nobody built is. Three things
+ * are compared:
+ *
+ *   - the visible sentences, so copy cannot quietly change or go missing
+ *   - the h1/h2/h3 text in order, so a section cannot vanish or move
+ *   - the internal link targets, with Highland's mapped through routeFor
+ *
+ * No browser and no dependencies, for the same reason check-links.mjs has
+ * none: a checker that needs a driver gets skipped.
+ *
+ * Usage:
+ *   node tools/check-parity.mjs                 # the fourteen static pages
+ *   node tools/check-parity.mjs about clients   # named pages
+ *   BASE_URL=https://168.119.61.125 node tools/check-parity.mjs
+ *   node tools/check-parity.mjs contact --allow-form-diff
+ */
+import { readFileSync, existsSync } from "node:fs";
+import path from "node:path";
+import { routeFor } from "../src/lib/routes.ts";
+
+const HIGHLAND = "design-files/highland";
+const BASE_URL = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+
+/* The fourteen slug-less pages Phase 4 owns, as Highland names them. */
+const PHASE_4 = [
+  "index",
+  "about",
+  "executive-management",
+  "clients",
+  "partners",
+  "resources",
+  "downloads",
+  "blog",
+  "careers",
+  "careers-open-positions",
+  "careers-e-academy",
+  "careers-internships",
+  "contact",
+  "subscribe",
+];
+
+const args = process.argv.slice(2);
+const allowFormDiff = args.includes("--allow-form-diff");
+/*
+ * --self compares a Highland page with itself instead of with a route.
+ *
+ * A checker that passes because it reports nothing is useless, and one that
+ * reports noise on an identical pair buries the real findings among the
+ * false ones. This is how the extractors and the normaliser are shown to be
+ * deterministic before any page is judged by them.
+ */
+const selfCheck = args.includes("--self");
+const named = args.filter((a) => !a.startsWith("--"));
+const pages = named.length ? named : PHASE_4;
+
+/* ------------------------------------------------------------ extraction */
+
+const BLOCK = "\u0001"; // marks where a tag stood, so words cannot fuse
+
+/** Strip scripts, styles and tags; decode the entities Highland emits. */
+function visibleText(html) {
+  return decode(
+    html
+      .replace(/<!--[\s\S]*?-->/g, " ")
+      // <head> is not visible copy. Highland writes a full SEO title per page
+      // and Next builds its own from metadata, so comparing them would report
+      // a difference on all fourteen and say nothing useful.
+      .replace(/<head\b[^>]*>[\s\S]*?<\/head>/i, " ")
+      .replace(/<(script|style|svg)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
+      .replace(/<[^>]+>/g, BLOCK),
+  )
+    .replace(new RegExp(BLOCK, "g"), " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function decode(s) {
+  const named = {
+    amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ",
+    middot: "·", mdash: "—", ndash: "–", rarr: "→", larr: "←",
+    copy: "©", hellip: "…", times: "×", rsquo: "’", lsquo: "‘",
+    ldquo: "“", rdquo: "”", deg: "°", trade: "™", reg: "®",
+  };
+  return s
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&([a-z]+);/gi, (m, n) => named[n.toLowerCase()] ?? m);
+}
+
+/**
+ * Sentences, for comparison.
+ *
+ * Split on sentence enders and on the block boundaries left by tags, so a
+ * heading and the paragraph after it are separate units. Short fragments are
+ * dropped: they are nav labels, chips and single words, which the link and
+ * heading checks already cover and which otherwise bury the signal.
+ */
+function sentences(text) {
+  return text
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length >= 25);
+}
+
+function headings(html) {
+  return [...html.matchAll(/<h([1-3])\b[^>]*>([\s\S]*?)<\/h\1>/gi)].map(
+    (m) => `h${m[1]}: ${visibleText(m[2])}`,
+  );
+}
+
+/** Internal link targets, normalised to routes. External links are ignored. */
+function links(html, { fromHighland }) {
+  const out = new Set();
+  for (const m of html.matchAll(/href="([^"]+)"/g)) {
+    const href = m[1];
+    if (/^(https?:|mailto:|tel:|#|data:)/.test(href)) continue;
+    const target = href.split("#")[0].split("?")[0];
+    if (!target) continue;
+    if (fromHighland) {
+      if (!target.endsWith(".html")) continue;
+      try {
+        out.add(routeFor(target));
+      } catch {
+        out.add(`UNMAPPED:${target}`);
+      }
+    } else {
+      // Next's own asset and API paths are not page links.
+      if (target.startsWith("/_next") || target.startsWith("/api/")) continue;
+      out.add(target.replace(/\/$/, "") || "/");
+    }
+  }
+  return out;
+}
+
+/* Differences that are legitimate and would otherwise drown the signal. */
+function normaliseNoise(s) {
+  return s
+    .replace(/\b(19|20)\d{2}\b/g, "<year>") // the copyright year ticks over
+    .replace(/\?v=[\w.]+/g, "") // Highland's cache-busting query strings
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const FORM_TAG = /<(input|textarea|select|button)\b/i;
+
+/* ---------------------------------------------------------------- compare */
+
+const problems = [];
+let checked = 0;
+
+for (const page of pages) {
+  const file = `${page}.html`;
+  const highlandPath = path.join(HIGHLAND, file);
+  if (!existsSync(highlandPath)) {
+    problems.push(`${page}: no Highland page at ${highlandPath}`);
+    continue;
+  }
+
+  let route;
+  try {
+    route = routeFor(file);
+  } catch (error) {
+    problems.push(`${page}: ${error.message}`);
+    continue;
+  }
+
+  const expected = readFileSync(highlandPath, "utf8");
+  let actual;
+  if (selfCheck) {
+    actual = expected;
+    checked += 1;
+  } else {
+    try {
+      const res = await fetch(`${BASE_URL}${route}`, { redirect: "follow" });
+      if (!res.ok) {
+        problems.push(`${page}: ${BASE_URL}${route} returned HTTP ${res.status}`);
+        continue;
+      }
+      actual = await res.text();
+    } catch (error) {
+      problems.push(`${page}: could not fetch ${BASE_URL}${route} — ${error.message}`);
+      continue;
+    }
+    checked += 1;
+  }
+
+  /* Copy. Reported in both directions: a missing sentence is a dropped
+     section, and an unexpected one is usually copy invented to fill a gap. */
+  const want = new Set(sentences(visibleText(expected)).map(normaliseNoise));
+  const have = new Set(sentences(visibleText(actual)).map(normaliseNoise));
+  for (const s of want) {
+    if (!have.has(s)) problems.push(`${page}: missing copy — "${s.slice(0, 110)}"`);
+  }
+  for (const s of have) {
+    if (!want.has(s)) problems.push(`${page}: copy not in Highland — "${s.slice(0, 110)}"`);
+  }
+
+  /* Headings, in order. */
+  const wantH = headings(expected).map(normaliseNoise);
+  const haveH = headings(actual).map(normaliseNoise);
+  if (wantH.join(" | ") !== haveH.join(" | ")) {
+    const missing = wantH.filter((h) => !haveH.includes(h));
+    const extra = haveH.filter((h) => !wantH.includes(h));
+    for (const h of missing) problems.push(`${page}: missing heading — ${h.slice(0, 90)}`);
+    for (const h of extra) problems.push(`${page}: heading not in Highland — ${h.slice(0, 90)}`);
+    if (!missing.length && !extra.length) {
+      problems.push(`${page}: headings are the same but out of order`);
+    }
+  }
+
+  /* Links. */
+  const wantL = links(expected, { fromHighland: true });
+  // In --self mode both sides are the Highland file, whose links are flat
+  // .html; comparing mapped routes against raw filenames would differ by
+  // design and say nothing about the extractors.
+  const haveL = selfCheck ? wantL : links(actual, { fromHighland: false });
+  for (const l of wantL) {
+    if (l.startsWith("UNMAPPED:")) {
+      problems.push(`${page}: Highland links ${l.slice(9)}, which routeFor does not map`);
+    } else if (!haveL.has(l)) {
+      problems.push(`${page}: missing link to ${l}`);
+    }
+  }
+  for (const l of haveL) {
+    if (!wantL.has(l)) problems.push(`${page}: links to ${l}, which Highland does not`);
+  }
+
+  /* Form controls, which Phase 4 renders disabled and Phase 6 makes live. */
+  if (!allowFormDiff && FORM_TAG.test(expected) !== FORM_TAG.test(actual)) {
+    problems.push(
+      `${page}: one side has form controls and the other does not ` +
+        "(pass --allow-form-diff if that is expected)",
+    );
+  }
+}
+
+if (!checked && !problems.length) {
+  console.error("checked nothing — was a page name misspelled?");
+  process.exit(1);
+}
+
+if (problems.length) {
+  console.error(`FAIL — ${problems.length} difference(s) across ${checked} page(s):`);
+  for (const p of problems) console.error(`  ${p}`);
+  process.exit(1);
+}
+
+console.log(`PASS — ${checked} page(s) match their Highland originals (${BASE_URL})`);
+process.exit(0);
