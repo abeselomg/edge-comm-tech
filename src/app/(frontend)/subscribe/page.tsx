@@ -172,7 +172,7 @@ export default async function SubscribePage() {
                   {sales}
                 </a>
               ) : null}{" "}
-              and a member of the team will reply {(contact.response ?? "").toLowerCase()}.
+              {` and a member of the team will reply ${(contact.response ?? "").toLowerCase()}.`}
             </p>
             <Link
               href="/contact"
