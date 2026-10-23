@@ -182,7 +182,13 @@ const DELIBERATE = [
  * from the CMS, because two labels from one field means an editor renaming
  * the button finds half of it unchanged.
  */
-const SUBSTITUTIONS = [[/About Contact\b(?! us)/g, "About Contact us"]];
+const SUBSTITUTIONS = [
+  [/About Contact\b(?! us)/g, "About Contact us"],
+  // Task 7: the client and partner directories do not print a count of marks
+  // still awaiting artwork; a directory should not apologise for what it is
+  // waiting on.
+  [/\d+ marks pending approved artwork/g, ""],
+];
 
 /* Links the port adds on purpose, per page. */
 const ADDED_LINKS = { about: ["/about/executive-management"] };
