@@ -131,3 +131,32 @@ export const SOLUTIONS_FRAMEWORK = [
     body: "Maintain availability, address incidents, improve performance, manage upgrades, and prepare for growth.",
   },
 ];
+
+/*
+ * The partner ring's short category labels. Highland wrote them by hand in
+ * pages/partners.mjs (RING) so ten of them fit round a circle without
+ * colliding; they are not derivable from the long names, which an earlier seed
+ * tried -- see ring-labels.test.ts.
+ */
+export const RING_LABELS: Record<string, string> = {
+  "software-ai": "Software & AI",
+  network: "Network",
+  "system-cloud": "Compute & Cloud",
+  datacenter: "Datacenter",
+  security: "Security",
+  power: "Power",
+  education: "Smart education",
+  broadcast: "Broadcast",
+  ev: "EV charging",
+  distribution: "Distribution",
+};
+
+export function ringLabelFor(key: string): string {
+  const label = RING_LABELS[key];
+  if (!label) {
+    throw new Error(
+      `No ring label for partner category "${key}". Add it to RING_LABELS in src/seed/page-copy.ts.`,
+    );
+  }
+  return label;
+}

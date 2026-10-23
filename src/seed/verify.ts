@@ -1,6 +1,7 @@
 import { getPayload } from "payload";
 import config from "../payload.config";
 import { ACCENT } from "../../design-src/highland/content.mjs";
+import { RING_LABELS } from "./page-copy";
 
 /*
  * Asserts the database holds what the content master says it should.
@@ -116,6 +117,22 @@ for (const collection of ["solutions", "services"] as const) {
   const expected = collection === "solutions" ? 7 : 6;
   if (docs.length === expected && seen.size < 2) {
     problems.push(`${collection}: all ${expected} share the accent ${[...seen][0]}`);
+  }
+}
+
+/*
+ * Partner ring labels: Highland's own short names, not derived from the long
+ * ones. A derived label ("Software, AI") passes every presence check.
+ */
+{
+  const { docs } = await payload.find({
+    collection: "partnerCategories", limit: 100, depth: 0, pagination: false,
+  });
+  for (const doc of docs) {
+    const { key, ringLabel } = doc as { key: string; ringLabel?: string | null };
+    if (ringLabel !== RING_LABELS[key]) {
+      problems.push(`partnerCategories "${key}": ringLabel is ${JSON.stringify(ringLabel)}, expected ${JSON.stringify(RING_LABELS[key])}`);
+    }
   }
 }
 

@@ -69,7 +69,7 @@ import {
 } from "./transform";
 import { sectorSlug } from "../fields/sectors";
 import { routeFor } from "../lib/routes";
-import { HEROES, SOLUTIONS_FRAMEWORK, SOLUTIONS_PRIORITIES } from "./page-copy";
+import { HEROES, ringLabelFor, SOLUTIONS_FRAMEWORK, SOLUTIONS_PRIORITIES } from "./page-copy";
 
 /*
  * Loads Edge's approved content into Payload from the Highland modules.
@@ -301,7 +301,7 @@ async function seed() {
 
   const categoryIds: { key: string; id: number }[] = [];
   for (const [key, label, description] of PARTNER_CATEGORIES) {
-    const ringLabel = label.split(/\s+(?:and|&)\s+/)[0];
+    const ringLabel = ringLabelFor(key);
     categoryIds.push({
       key,
       id: await write(
