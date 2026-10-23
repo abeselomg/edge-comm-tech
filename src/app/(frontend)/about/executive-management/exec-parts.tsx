@@ -56,3 +56,12 @@ export function executiveCard(role: ExecutiveRole, i: number) {
     </article>
   );
 }
+
+/**
+ * The holder line on the /about roster. Highland's wording while unconfirmed,
+ * the name once Edge confirms one, so confirming a name in the admin reaches
+ * both pages rather than only the detailed one.
+ */
+export function rosterHolder(holder: ConfirmableValue | null | undefined): string {
+  return holder?.status === "confirmed" && holder.value ? holder.value : "Name to be confirmed";
+}

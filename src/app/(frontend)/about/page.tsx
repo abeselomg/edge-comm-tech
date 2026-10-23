@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { rosterHolder } from "./executive-management/exec-parts";
 import { ClosingCta, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
 import {
   getClients,
@@ -277,7 +278,7 @@ export default async function AboutPage() {
                     &mdash;
                   </span>
                   <span className="mt-3 block font-display text-base leading-snug">{r.title}</span>
-                  <span className="mt-1 block text-xs text-steel">Name to be confirmed</span>
+                  <span className="mt-1 block text-xs text-steel">{rosterHolder(r.holder)}</span>
                 </li>
               ))}
             </ul>

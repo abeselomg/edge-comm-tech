@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { byCategory } from "./partner-parts";
+import { renderToStaticMarkup } from "react-dom/server";
+import { brandCard, byCategory } from "./partner-parts";
 import { bySector } from "../clients/client-parts";
 
 const cat = (key: string, status = "published") => ({ key, _status: status });
@@ -45,5 +46,41 @@ describe("bySector", () => {
   });
   it("omits a sector with no clients rather than printing an empty section", () => {
     expect(Object.keys(bySector([c("a", "banking")]))).toEqual(["banking"]);
+  });
+});
+
+describe("brandCard", () => {
+  const card = (solution: unknown) =>
+    renderToStaticMarkup(
+      <ul>
+        {brandCard(
+          {
+            name: "Brand",
+            capability: "Does things.",
+            logo: null,
+            categories: [],
+            projects: [],
+            solution,
+          } as never,
+          {},
+        )}
+      </ul>,
+    );
+
+  it("links the solution a brand belongs to when it is published", () => {
+    const out = card({ slug: "cyber", short: "Cyber", title: "Cyber", accent: "#111111", _status: "published" });
+    expect(out).toContain('href="/solutions/cyber"');
+  });
+
+  // Review Focus #2: the depth populate keeps an unpublished solution.
+  it("does not link, or take the colour of, an unpublished solution", () => {
+    const out = card({ slug: "cyber", short: "Cyber", title: "Cyber", accent: "#111111", _status: "draft" });
+    expect(out).not.toContain("/solutions/cyber");
+    expect(out).not.toContain("#111111");
+    expect(out).toContain("Brand");
+  });
+
+  it("copes with a solution that arrived as a bare id", () => {
+    expect(card(4)).not.toContain("/solutions/");
   });
 });

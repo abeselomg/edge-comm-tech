@@ -371,6 +371,7 @@ export default async function HomePage() {
               Explore the project portfolio
             </Link>
           </div>
+          {featured.length ? (
           <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {featured.map((p) => (
               <Link
@@ -393,6 +394,7 @@ export default async function HomePage() {
               </Link>
             ))}
           </div>
+          ) : null}
         </div>
       </section>
 
@@ -459,15 +461,17 @@ export default async function HomePage() {
               View our technology partners
             </Link>
           </div>
-          <ul className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-3 lg:grid-cols-6">
-            {partners
-              .filter((p) => p.featured)
-              .map((p) => (
-                <li key={p.name} className="grid h-24 place-items-center bg-paper-2 px-4">
-                  <Mark item={p} h="h-12" />
-                </li>
-              ))}
-          </ul>
+          {partners.some((p) => p.featured) ? (
+            <ul className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-3 lg:grid-cols-6">
+              {partners
+                .filter((p) => p.featured)
+                .map((p) => (
+                  <li key={p.name} className="grid h-24 place-items-center bg-paper-2 px-4">
+                    <Mark item={p} h="h-12" />
+                  </li>
+                ))}
+            </ul>
+          ) : null}
         </div>
       </section>
 
@@ -482,6 +486,9 @@ export default async function HomePage() {
         <div className="mt-10 space-y-8">
           {SECTOR_OPTIONS.map(({ value, label }) => {
             const group = clients.filter((c) => c.sector === value);
+            // A sector whose clients are all unpublished is left out, not printed
+            // as a label over an empty grid.
+            if (!group.length) return null;
             return (
               <div key={value} className="eg-inview">
                 <p className="font-mono text-[10px] uppercase tracking-widest text-steel">
@@ -525,6 +532,7 @@ export default async function HomePage() {
             Visit our resources
           </Link>
         </div>
+        {posts.length ? (
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {posts.slice(0, 3).map((p) => {
             const target = typeof p.target === "object" ? p.target : null;
@@ -568,6 +576,7 @@ export default async function HomePage() {
             );
           })}
         </div>
+        ) : null}
       </section>
 
       {/* 14 Careers */}

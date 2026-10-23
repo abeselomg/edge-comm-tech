@@ -67,9 +67,14 @@ export default async function BlogPage() {
         </aside>
 
         <div className="min-w-0">
-          {posts.map((post, i) => (
-            <PostArticle key={post.slug} post={post} index={i} />
-          ))}
+          {posts.length ? (
+            posts.map((post, i) => <PostArticle key={post.slug} post={post} index={i} />)
+          ) : (
+            <p className="rounded-2xl bg-paper-2 px-6 py-5 text-sm text-steel">
+              There are no insights published right now. Subscribe and we will send the next one
+              when it is ready.
+            </p>
+          )}
         </div>
       </div>
 

@@ -80,3 +80,9 @@ export function PostArticle({ post, index }: { post: Post; index: number }) {
     </article>
   );
 }
+
+/** The "all insights" link text, or null when there is nothing to link to. */
+export function allInsightsLabel(count: number): string | null {
+  if (count <= 0) return null;
+  return `All ${count} insight${count > 1 ? "s" : ""}`;
+}

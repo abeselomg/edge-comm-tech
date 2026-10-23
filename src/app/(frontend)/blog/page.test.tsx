@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { p } from "../../../seed/lexical";
-import { PostArticle, topics } from "./blog-parts";
+import { allInsightsLabel, PostArticle, topics } from "./blog-parts";
 
 const body = { root: { type: "root", children: [p("First paragraph."), p("Second paragraph.")] } };
 const cat = { key: "ai", label: "Enterprise AI", _status: "published" };
@@ -78,5 +78,15 @@ describe("topics", () => {
       { key: "ai", label: "AI", firstSlug: "a", count: 2 },
       { key: "net", label: "Network", firstSlug: "b", count: 1 },
     ]);
+  });
+});
+
+describe("allInsightsLabel", () => {
+  it("counts the insights, singular when there is one", () => {
+    expect(allInsightsLabel(10)).toBe("All 10 insights");
+    expect(allInsightsLabel(1)).toBe("All 1 insight");
+  });
+  it("offers no link text when there are none", () => {
+    expect(allInsightsLabel(0)).toBeNull();
   });
 });

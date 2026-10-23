@@ -115,3 +115,40 @@ export function PositionsList({ jobs }: { jobs: Job[] }) {
   }
   return <ul>{jobs.map(jobRow)}</ul>;
 }
+
+const lowerFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+
+type Intake = {
+  schedule?: ConfirmableValue | null;
+  deadline?: ConfirmableValue | null;
+};
+
+const schedulePending = (schedule: ConfirmableValue | null | undefined) =>
+  !(schedule?.status === "confirmed" && schedule.value);
+
+/**
+ * The internship hero's two facts. Each is a marker only while it is
+ * unconfirmed: once Edge sets a date it reads as plain text, in its own case,
+ * rather than staying a "pending" pill with the date lowercased inside it.
+ */
+export function internshipPills(i: Intake) {
+  const label = i.schedule?.pendingLabel?.trim() || "Dates and working schedule to be confirmed";
+  const deadline = `Application ${lowerFirst(deadlineText(i.deadline))}`;
+  return (
+    <>
+      {schedulePending(i.schedule) ? (
+        <Pending>{`Intake dates ${label.toLowerCase().replace(/^dates and working schedule /, "")}`}</Pending>
+      ) : null}
+      {deadlinePending(i.deadline) ? (
+        <Pending>{deadline}</Pending>
+      ) : (
+        <span className="font-mono text-[10px] uppercase tracking-widest text-steel">{deadline}</span>
+      )}
+    </>
+  );
+}
+
+/** The careers hub's intake marker: shown until the schedule is confirmed, then gone. */
+export function intakeNote(schedule: ConfirmableValue | null | undefined) {
+  return schedulePending(schedule) ? <Pending>Internship intake dates to be confirmed</Pending> : null;
+}

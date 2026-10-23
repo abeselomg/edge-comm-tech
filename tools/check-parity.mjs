@@ -202,7 +202,9 @@ const ADDED_LINKS = { about: ["/about/executive-management"] };
 
 function normaliseNoise(s) {
   let out = s
-    .replace(/\b(19|20)\d{2}\b/g, "<year>") // the copyright year ticks over
+    // Only the copyright year ticks over. A year anywhere else is content, and
+    // normalising it would let a wrong "established 2019" pass.
+    .replace(/(©\s*)(19|20)\d{2}\b/g, "$1<year>")
     .replace(/\?v=[\w.]+/g, ""); // Highland's cache-busting query strings
   for (const phrase of DELIBERATE) out = out.split(phrase).join("");
   for (const [from, to] of SUBSTITUTIONS) out = out.replace(from, to);

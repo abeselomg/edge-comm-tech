@@ -84,7 +84,9 @@ export function brandCard(
   p: Omit<Partner, "logo"> & { logo: Parameters<typeof Mark>[0]["item"]["logo"] },
   ringLabel: Record<string, string>,
 ) {
-  const solution = doc<Solution>(p.solution as Ref<Solution>);
+  // Published only: the depth populate keeps an unpublished solution, and a
+  // link to it is a 404 coloured by a draft.
+  const solution = publishedOnly<Solution>([doc<Solution>(p.solution as Ref<Solution>)])[0] ?? null;
   const cats = publishedOnly<PartnerCategory>((p.categories ?? []) as never[]);
   const work = publishedOnly<Project>((p.projects ?? []) as never[]);
   const accent = solution?.accent ?? "#0888c5";

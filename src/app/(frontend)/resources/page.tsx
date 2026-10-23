@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ClosingCta, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getDownloads, getEvents, getNews, getPageCopy, getPosts } from "@/lib/content";
 import { teaser } from "@/lib/lexical-text";
+import { allInsightsLabel } from "../blog/blog-parts";
 
 /*
  * Resource centre.
@@ -146,12 +147,14 @@ export default async function ResourcesPage() {
             <div>
               <SectionHead eyebrow="Insights" title="Latest from the team" />
             </div>
-            <Link
-              href="/blog"
-              className="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold"
-            >
-              {`All ${posts.length} insights`}
-            </Link>
+            {allInsightsLabel(posts.length) ? (
+              <Link
+                href="/blog"
+                className="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold"
+              >
+                {allInsightsLabel(posts.length)}
+              </Link>
+            ) : null}
           </div>
           <ul className="mt-9 grid gap-3 sm:grid-cols-3">
             {latest.map((p) => (

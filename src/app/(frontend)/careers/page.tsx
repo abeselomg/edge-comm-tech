@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ClosingCta, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getCareersContent, getContactDetails, getJobs } from "@/lib/content";
-import { hrEmail } from "./careers-parts";
+import { hrEmail, intakeNote } from "./careers-parts";
 
 /*
  * Careers hub.
@@ -264,9 +264,7 @@ export default async function CareersPage() {
               Check open roles first
             </Link>
           </p>
-          <p className="mt-5 flex justify-center">
-            <Pending>Internship intake dates to be confirmed</Pending>
-          </p>
+          <p className="mt-5 flex justify-center">{intakeNote(internship.schedule)}</p>
         </div>
       </section>
 

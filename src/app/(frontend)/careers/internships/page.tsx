@@ -1,6 +1,6 @@
 import { ClosingCta, Crumb, Field, FormNote, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getCareersContent, getContactDetails } from "@/lib/content";
-import { deadlineText, hrEmail } from "../careers-parts";
+import { hrEmail, internshipPills } from "../careers-parts";
 
 /*
  * Graduate internship program.
@@ -28,10 +28,6 @@ const STATUS_OPTIONS = [
   "Technical and vocational graduate",
   "Other",
 ];
-
-/** "Dates and working schedule to be confirmed" -> "Intake dates to be confirmed". */
-const intakeDatesLabel = (schedule: string) =>
-  `Intake dates ${schedule.toLowerCase().replace(/^dates and working schedule /, "")}`;
 
 export default async function InternshipsPage() {
   const [careers, contact] = await Promise.all([getCareersContent(), getContactDetails()]);
@@ -70,8 +66,7 @@ export default async function InternshipsPage() {
         crumb={<Crumb trail={[{ label: "Careers", href: "/careers" }, { label: "Internships" }]} />}
         meta={
           <p className="eg-rise mt-6 flex flex-wrap gap-2">
-            {schedule ? <Pending>{intakeDatesLabel(schedule)}</Pending> : null}
-            <Pending>{`Application ${deadlineText(i.deadline).toLowerCase()}`}</Pending>
+            {internshipPills(i)}
           </p>
         }
       />

@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { executiveCard, initials } from "./exec-parts";
+import { executiveCard, initials, rosterHolder } from "./exec-parts";
 
 const html = (el: React.ReactElement) => renderToStaticMarkup(el);
 
@@ -60,5 +60,19 @@ describe("initials", () => {
 
   it("stops at three so the frame cannot overflow", () => {
     expect(initials("Chief Information Security Officer Deputy")).toHaveLength(3);
+  });
+});
+
+describe("rosterHolder", () => {
+  // /about summarises the roster; confirming a name must reach it as well.
+  it("keeps Highland's wording while the holder is unconfirmed", () => {
+    expect(rosterHolder({ status: "pending", value: null })).toBe("Name to be confirmed");
+    expect(rosterHolder(undefined)).toBe("Name to be confirmed");
+  });
+  it("shows the name once Edge confirms one", () => {
+    expect(rosterHolder({ status: "confirmed", value: "A. Name" })).toBe("A. Name");
+  });
+  it("does not treat a confirmed-but-empty holder as confirmed", () => {
+    expect(rosterHolder({ status: "confirmed", value: "" })).toBe("Name to be confirmed");
   });
 });

@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { deadlineText, hrEmail, jobRow, PositionsList } from "../careers-parts";
+import { deadlineText, hrEmail, internshipPills, intakeNote, jobRow, PositionsList } from "../careers-parts";
 
 const job = (over: Record<string, unknown> = {}) =>
   ({
@@ -104,5 +104,40 @@ describe("hrEmail", () => {
 
   it("is undefined when no careers address exists, so a page can omit the line", () => {
     expect(hrEmail(contact([{ label: "Technical support", value: "s@example.com" }]))).toBeUndefined();
+  });
+});
+
+describe("internshipPills — a confirmed fact must not stay a pending marker", () => {
+  const pending = { status: "pending", value: null, pendingLabel: "Dates and working schedule to be confirmed" };
+  const pendingDeadline = { status: "pending", value: null, pendingLabel: "To be confirmed" };
+  const confirmedDeadline = { status: "confirmed", value: "30 June 2026" };
+  const confirmedSchedule = { status: "confirmed", value: "Mondays and Wednesdays" };
+  const pills = (schedule: unknown, deadline: unknown) =>
+    html(<p>{internshipPills({ schedule, deadline } as never)}</p>);
+
+  it("shows both markers while both are unconfirmed", () => {
+    const out = pills(pending, pendingDeadline);
+    expect(out).toContain("Intake dates to be confirmed");
+    expect(out).toContain("Application deadline to be confirmed");
+  });
+
+  it("states a confirmed deadline as a date, not as a marker, with its case intact", () => {
+    const out = pills(pending, confirmedDeadline);
+    expect(out).toContain("Application deadline 30 June 2026");
+    expect(out).not.toContain("30 june");
+    expect(out).not.toContain("Application deadline to be confirmed");
+  });
+
+  it("drops the intake-dates marker once the schedule is confirmed", () => {
+    const out = pills(confirmedSchedule, pendingDeadline);
+    expect(out).not.toContain("Intake dates");
+    expect(out).not.toContain("Mondays and Wednesdays");
+  });
+});
+
+describe("intakeNote", () => {
+  it("is a marker while the schedule is pending and nothing once it is confirmed", () => {
+    expect(html(<div>{intakeNote({ status: "pending", pendingLabel: "x" })}</div>)).toContain("Internship intake dates to be confirmed");
+    expect(html(<div>{intakeNote({ status: "confirmed", value: "Mondays" })}</div>)).not.toContain("to be confirmed");
   });
 });
