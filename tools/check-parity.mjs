@@ -77,6 +77,15 @@ function visibleText(html) {
       // a difference on all fourteen and say nothing useful.
       .replace(/<head\b[^>]*>[\s\S]*?<\/head>/i, " ")
       .replace(/<(script|style|svg)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
+      /*
+       * An image contributes its alt text, which is the whole point of alt
+       * text. This also makes the two sides comparable where artwork exists
+       * on one and not the other: Highland ships one client logo and three
+       * partner marks as files, the CMS has no uploaded media yet, and Mark
+       * therefore sets the institution's name in the frame instead. Both say
+       * "Bahir Dar University"; only one says it as a picture.
+       */
+      .replace(/<img\b[^>]*\balt="([^"]*)"[^>]*>/gi, (_, alt) => ` ${alt} `)
       .replace(/<[^>]+>/g, BLOCK),
   )
     .replace(new RegExp(BLOCK, "g"), " ")
@@ -142,13 +151,53 @@ function links(html, { fromHighland }) {
   return out;
 }
 
-/* Differences that are legitimate and would otherwise drown the signal. */
+/*
+ * Differences that are legitimate and would otherwise drown the signal.
+ *
+ * Each of these is a deliberate departure from Highland, not a tolerance for
+ * sloppiness. Anything not listed here is reported, including a stray space
+ * before a comma — that is reader-visible and was a real bug on the first
+ * run of this checker.
+ */
+const DELIBERATE = [
+  // An accessibility addition from Phase 3: Highland has no skip link.
+  "Skip to content",
+  // Highland's footer carried the review build's own marker. The CMS has an
+  // optional field for an approved line in that slot and it is empty, so
+  // nothing renders. See the footerNote note in SiteSettings.
+  "Design review build",
+  "content pending final approval",
+];
+
+/*
+ * Phrases Highland and the port both have, but worded differently on purpose.
+ * Rewriting the Highland side rather than deleting it, so the sentence stays
+ * comparable and only the known substitution is waived.
+ *
+ * The compact nav's call to action: Highland wrote "Contact" there and
+ * "Contact us" on the desktop pill. Both now read the one headerCta field
+ * from the CMS, because two labels from one field means an editor renaming
+ * the button finds half of it unchanged.
+ */
+const SUBSTITUTIONS = [[/About Contact\b(?! us)/g, "About Contact us"]];
+
 function normaliseNoise(s) {
-  return s
+  let out = s
     .replace(/\b(19|20)\d{2}\b/g, "<year>") // the copyright year ticks over
-    .replace(/\?v=[\w.]+/g, "") // Highland's cache-busting query strings
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/\?v=[\w.]+/g, ""); // Highland's cache-busting query strings
+  for (const phrase of DELIBERATE) out = out.split(phrase).join("");
+  for (const [from, to] of SUBSTITUTIONS) out = out.replace(from, to);
+  out = out.replace(/\s+/g, " ").trim();
+  // Stripping a deliberate phrase can leave behind the punctuation that
+  // joined it to its sentence. "— ." is not a finding.
+  return /[A-Za-z0-9]/.test(out) ? out : "";
+}
+
+/** How many leading characters two strings share. */
+function commonPrefix(a, b) {
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i += 1;
+  return i;
 }
 
 const FORM_TAG = /<(input|textarea|select|button)\b/i;
@@ -196,13 +245,39 @@ for (const page of pages) {
 
   /* Copy. Reported in both directions: a missing sentence is a dropped
      section, and an unexpected one is usually copy invented to fill a gap. */
-  const want = new Set(sentences(visibleText(expected)).map(normaliseNoise));
-  const have = new Set(sentences(visibleText(actual)).map(normaliseNoise));
-  for (const s of want) {
-    if (!have.has(s)) problems.push(`${page}: missing copy — "${s.slice(0, 110)}"`);
+  const want = [...new Set(sentences(visibleText(expected)).map(normaliseNoise))].filter(Boolean);
+  const have = [...new Set(sentences(visibleText(actual)).map(normaliseNoise))].filter(Boolean);
+  const wantSet = new Set(want);
+  const haveSet = new Set(have);
+  const missingCopy = want.filter((s) => !haveSet.has(s));
+  const extraCopy = have.filter((s) => !wantSet.has(s));
+  const paired = new Set();
+
+  for (const s of missingCopy) {
+    /*
+     * A long run that differs in one place reports as two near-identical
+     * lines, both truncated before the difference — which is the least
+     * useful thing a checker can say. Pair each missing sentence with its
+     * closest counterpart and point at the first character that differs.
+     */
+    const near = extraCopy
+      .filter((e) => !paired.has(e))
+      .map((e) => ({ e, shared: commonPrefix(s, e) }))
+      .sort((a, b) => b.shared - a.shared)[0];
+    if (near && near.shared > 40) {
+      paired.add(near.e);
+      const at = near.shared;
+      problems.push(
+        `${page}: copy differs at character ${at}\n` +
+          `      …${s.slice(Math.max(0, at - 45), at)}[HIGHLAND: ${s.slice(at, at + 45)}…]\n` +
+          `      …${near.e.slice(Math.max(0, at - 45), at)}[RENDERED: ${near.e.slice(at, at + 45)}…]`,
+      );
+    } else {
+      problems.push(`${page}: missing copy — "${s.slice(0, 110)}"`);
+    }
   }
-  for (const s of have) {
-    if (!want.has(s)) problems.push(`${page}: copy not in Highland — "${s.slice(0, 110)}"`);
+  for (const s of extraCopy) {
+    if (!paired.has(s)) problems.push(`${page}: copy not in Highland — "${s.slice(0, 110)}"`);
   }
 
   /* Headings, in order. */
@@ -256,4 +331,3 @@ if (problems.length) {
 }
 
 console.log(`PASS — ${checked} page(s) match their Highland originals (${BASE_URL})`);
-process.exit(0);

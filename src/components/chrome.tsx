@@ -184,7 +184,7 @@ export async function SiteFooter() {
 
       <div className="mx-auto flex max-w-6xl flex-col gap-3 border-t border-rule px-6 py-6 text-sm text-steel md:flex-row md:justify-between">
         <p>
-          &copy; {new Date().getFullYear()} {company.legalName}. All rights reserved.
+          {`© ${new Date().getFullYear()} ${company.legalName}. All rights reserved.`}
         </p>
         {/*
          * Highland's second line here read "Design review build — content
