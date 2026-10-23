@@ -1,0 +1,91 @@
+import { renderToStaticMarkup } from "react-dom/server";
+import { describe, expect, it } from "vitest";
+import { Confirmable, Mark, Pending } from "./markers";
+
+const html = (el: React.ReactElement) => renderToStaticMarkup(el);
+
+describe("Pending marks a fact Edge has not supplied", () => {
+  /*
+   * Review Focus #1. Five executive biographies, 29 of 32 partner marks and
+   * 9 of 10 client marks are absent by design. The content master's rule is
+   * that an absence is shown, because the alternative is a plausible-looking
+   * invention.
+   */
+  it("renders the text inside a visible marker", () => {
+    const out = html(<Pending>Year to confirm</Pending>);
+    expect(out).toContain("Year to confirm");
+    expect(out).toContain("text-lamp");
+  });
+});
+
+describe("Confirmable renders a fact or says it is unconfirmed", () => {
+  it("renders the value when Edge has confirmed it", () => {
+    expect(html(<Confirmable value={{ value: "2024", status: "confirmed" }} />)).toContain("2024");
+  });
+
+  it("renders the pending label, not the empty value", () => {
+    // Review Focus #4: one project's year is unconfirmed today, and
+    // pendingLabel exists so the page says so rather than showing a blank.
+    const out = html(
+      <Confirmable value={{ value: null, status: "pending", pendingLabel: "Year to confirm" }} />,
+    );
+    expect(out).toContain("Year to confirm");
+    expect(out).not.toContain("null");
+    expect(out).not.toContain("undefined");
+  });
+
+  it("falls back to a dash when confirmed but empty, never to a blank", () => {
+    // A confirmed-but-empty field is an editor mistake, and an em dash is a
+    // visible one. Rendering nothing hides it in a layout that looks fine.
+    expect(html(<Confirmable value={{ value: null, status: "confirmed" }} />)).toContain("—");
+  });
+
+  it("renders nothing readable for a missing value object", () => {
+    const out = html(<Confirmable value={undefined} />);
+    expect(out).not.toContain("undefined");
+    expect(out).not.toContain("null");
+  });
+});
+
+describe("Mark shows approved artwork or the name in its place", () => {
+  it("renders an approved logo", () => {
+    const out = html(
+      <Mark item={{ name: "Gadaa Bank", logo: { id: 1, url: "/m/g.png", approved: true } }} />,
+    );
+    expect(out).toContain("/m/g.png");
+    expect(out).toContain("Gadaa Bank"); // the alt text
+  });
+
+  it("refuses artwork whose approval was withdrawn", () => {
+    /*
+     * The second half of the media gate. filterOptions stops an unapproved
+     * asset being SELECTED; it does nothing about one un-approved after
+     * selection, which is the case that matters, because approval is
+     * withdrawn precisely when someone finds an asset should not be public.
+     */
+    const out = html(
+      <Mark item={{ name: "Gadaa Bank", logo: { id: 1, url: "/m/g.png", approved: false } }} />,
+    );
+    expect(out).not.toContain("/m/g.png");
+    expect(out).toContain("Gadaa Bank");
+  });
+
+  it("sets the name when there is no logo at all", () => {
+    const out = html(<Mark item={{ name: "Gadaa Bank", logo: null }} />);
+    expect(out).not.toContain("<img");
+    expect(out).toContain("Gadaa Bank");
+  });
+
+  it("treats an unpopulated relationship as no logo", () => {
+    // depth 0 gives a bare id, which carries no approval state to trust.
+    expect(html(<Mark item={{ name: "Gadaa Bank", logo: 7 }} />)).not.toContain("<img");
+  });
+
+  it("escapes a name that contains markup", () => {
+    // React escapes by default; Highland needed esc() and this asserts the
+    // port did not reintroduce dangerouslySetInnerHTML to replace it.
+    const out = html(<Mark item={{ name: "A & B <script>", logo: null }} />);
+    expect(out).toContain("&amp;");
+    expect(out).not.toContain("<script>");
+  });
+});
