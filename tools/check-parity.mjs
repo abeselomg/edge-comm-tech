@@ -31,6 +31,7 @@ import path from "node:path";
 import { isKnownRoute, routeFor } from "../src/lib/routes.ts";
 import { pageList } from "./parity-pages.mjs";
 import { checkMovedEvent, checkMovedIndex, eventMoved } from "./parity-clock.mjs";
+import { scanPage } from "./content-scan.mjs";
 
 const HIGHLAND = "design-files/highland";
 const BASE_URL = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
@@ -270,6 +271,9 @@ for (const page of pages) {
     }
     checked += 1;
   }
+
+  /* The project-wide content rules, on whatever the site actually renders. */
+  if (!selfCheck) problems.push(...scanPage(page, actual));
 
   /* Clock drift: an event has run since Highland was built. */
   if (!selfCheck && movedEvents.has(page)) {
