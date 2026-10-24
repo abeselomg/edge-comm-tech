@@ -17,10 +17,10 @@ import {
  *
  * None has approved items yet, so each renders its structure and an honest empty
  * state. Only the three media keys exist: /resources/media/news is a 404 even
- * though `news` is a resource section, because it has its own page.
+ * though `news` is a resource section, because it has its own page. The page
+ * 404s those itself rather than setting dynamicParams = false, which makes a
+ * revalidated page unrecoverable (NoFallbackError) until the next deploy.
  */
-
-export const dynamicParams = false;
 
 export function generateStaticParams() {
   return MEDIA_KEYS.map((slug) => ({ slug }));

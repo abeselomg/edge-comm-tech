@@ -142,3 +142,54 @@ on the file link, not the listing: an unapproved document shows "Approval
 pending" and a request route, and only a document that is approved *and* has an
 approved file offers Download. See `downloadLink` in
 `src/app/(frontend)/downloads/download-parts.tsx`.
+
+## Phase 5: the dynamic routes
+
+All 51 Highland pages are served: the 14 static pages plus five family indexes
+and 32 detail pages (7 solutions, 6 services, 8 projects, 3 news, 3 events,
+2 jobs, 3 media sections). Detail pages live at `/<family>/<slug>`; jobs sit under
+`/careers/open-positions/<slug>` and media under `/resources/media/<slug>`.
+
+**Checking a deploy.** Three commands, all against the self-signed server:
+
+```bash
+export NODE_TLS_REJECT_UNAUTHORIZED=0 BASE_URL=https://168.119.61.125
+npx tsx tools/check-parity.mjs --all     # 51 pages vs Highland, plus the content rules
+npx tsx tools/check-links-live.mjs       # every internal link answers 200
+npx tsx tools/audit-dynamic-content.mjs  # every Highland property has a CMS field
+```
+
+`check-parity --all` also scans every rendered page for the project-wide rules
+(`tools/content-scan.mjs`): no partnership tier, authorization level, salary or
+benefit; "Tier III-aligned", never "-certified"; the 100% figure with its scope;
+"security control room", never "SOC"; four organisations nowhere; no leaked
+`undefined`/`null`.
+
+**Events move with the clock.** Highland is static; the CMS derives an event's
+status from its dates. After an event has run, its page, the events index and the
+resource centre's "Coming up" band legitimately differ from Highland. The checker
+recognises that (`tools/parity-clock.mjs`), skips the sentence comparison for just
+those pieces, and instead asserts the event says it has run, has no form and offers
+a subscribe link. It prints a `NOTE` line for each. The event routes revalidate
+hourly (`revalidate = 3600`) so a page prerendered while an event was upcoming does
+not keep inviting registration after it ends.
+
+**Editing a solution refreshes the whole site.** The footer lists every published
+solution on every page, so the Solutions collection revalidates the root layout, not
+only the pages that mention it. Without that, unpublishing a solution 404'd its own
+page and left a link to it in the footer of every other page.
+
+**Never set `dynamicParams = false` on a route that revalidation can touch.**
+Once its cache entry is purged Next cannot regenerate the page (`NoFallbackError` in
+the service log) and every prerendered slug answers 404 until the next deploy. The
+media route 404s unknown keys itself instead.
+
+**Check the repository ignores nothing it should ship.** `.gitignore` once carried a
+bare `media` meant for the uploads folder; it also swallowed
+`src/app/(frontend)/resources/media/`, and the pages were missing from the first
+bundle while every local test passed. `src/lib/repo-hygiene.test.ts` now fails if git
+ignores anything under `src`, `tools`, `deploy` or `docs`.
+
+**Migrations.** `20261024_085850_news_holding_state` adds the news item's
+held-for-publication flag, outstanding-details list, titled sections and closing
+block. It is additive; `edge-redeploy` applies it.

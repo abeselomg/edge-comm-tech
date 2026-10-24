@@ -40,10 +40,20 @@ describe("the media sections", () => {
 
 describe("the media route 404s anything else", () => {
   const src = readFileSync(new URL("./[slug]/page.tsx", import.meta.url), "utf8");
-  it("serves only the three keys, prerendered, with no on-demand slugs", () => {
-    expect(src).toMatch(/export const dynamicParams = false/);
+  it("prerenders the three keys and 404s any other through isMediaKey", () => {
     expect(src).toMatch(/export (async )?function generateStaticParams/);
-    expect(src).toMatch(/notFound\(\)|loadOr404/);
+    expect(src).toMatch(/if \(!isMediaKey\(slug\)\) notFound\(\)/);
+  });
+
+  /*
+   * Found on the server: with dynamicParams = false, a layout revalidation (any
+   * solution edit) purges the cached page and Next cannot regenerate it. The log
+   * says NoFallbackError and the three media pages answer 404 until the next
+   * deploy. The default (on-demand rendering of an unknown slug) is safe here
+   * because the page itself 404s every key that is not a media key.
+   */
+  it("does not set dynamicParams = false", () => {
+    expect(src).not.toMatch(/export const dynamicParams\s*=\s*false/);
   });
 });
 
