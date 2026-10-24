@@ -85,9 +85,9 @@ export function NumberedSteps({
  * run-on line would have made the ported page differ from the design the
  * client approved.
  */
-export function CapCard({ title, body }: { title: string; body: string }) {
+export function CapCard({ title, body, id }: { title: string; body: string; id?: string }) {
   return (
-    <article className="eg-inview rounded-2xl bg-paper-2 p-6">
+    <article id={id} className="eg-inview rounded-2xl bg-paper-2 p-6">
       <h3 className="font-display text-xl">{title}</h3>
       <p className="mt-2 text-sm text-ink/70">{body}</p>
     </article>
