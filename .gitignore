@@ -8,7 +8,6 @@ out
 npm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
-media
 payload.db
 
 # Payload
