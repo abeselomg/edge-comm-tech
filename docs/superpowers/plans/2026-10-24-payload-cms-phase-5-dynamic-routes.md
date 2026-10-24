@@ -21,7 +21,7 @@ Carried from the spec and from decisions already made on this branch. Every task
 - "Tier III-aligned", never "Tier III-certified". The 100% figure always carries "against agreed project scope". CCTV and access control are IT infrastructure, not cybersecurity. Project records say "security control room", never "SOC".
 - Only approved media is published (`approvedLogo`); only published documents are linked (`publishedOnly`).
 - Routes come from `routeFor` / `src/lib/routes.ts`; never hand-built (Phase 4 review finding 11).
-- Pages that are not statically exportable alone need no `export` beyond `default`, `metadata`/`generateMetadata`, `generateStaticParams`, `revalidate`, `dynamicParams` — helpers go in a sibling `*-parts.tsx`.
+- A page file exports only `default`, `metadata`/`generateMetadata`, `generateStaticParams`, `revalidate` and `dynamicParams`; every other helper goes in a sibling `*-parts.tsx`.
 - JSX collapses a newline between `{expr}` and adjacent punctuation into a space; build such sentences as one template string.
 - `.env` is not edited; no real credentials in the repo. Do not run prettier on this repo.
 - Verification split (Phase 4 ruling): vitest and `tsc` run locally; `next build` and parity run on the server via `git bundle` → `scp` → `/usr/local/sbin/edge-redeploy`, then `NODE_TLS_REJECT_UNAUTHORIZED=0 BASE_URL=https://168.119.61.125 npx tsx tools/check-parity.mjs <pages>`. SSH needs the scratchpad deploy key and pinned `known_hosts` (`StrictHostKeyChecking=yes`).
@@ -194,7 +194,7 @@ The detail page is the hardest in the phase: a datasheet whose body is an ordere
 - Create: `src/app/(frontend)/solutions/solution-parts.tsx`, `src/app/(frontend)/solutions/page.test.tsx`
 
 **Interfaces:**
-- Consumes: `getSolutions`, `getSolution`, `getProjects`, `getPartners`, `getPosts`, `getServices`, `loadOr404`, `solutionHref`, `publishedOnly`, Task 3's components (`PageHead`, `Crumb`, `SectionHead`, `CheckList`, `NumberedSteps`, `CapCard`, `Mark`).
+- Consumes: `getSolutions`, `getSolution`, `getProjects`, `getPartners`, `getPosts`, `getServices`, `loadOr404`, `solutionHref`, `publishedOnly`, Phase 4's shared components in `src/components/ui` (`PageHead`, `Crumb`, `SectionHead`, `CheckList`, `NumberedSteps`, `CapCard`, `Mark`).
 - Produces: `DetailBlocks({ blocks, accent, anchors }: { blocks: Solution["detail"]; accent: string; anchors: Record<string,string> })`; `anchorsFor(posts: Post[], slug: string): string[]`; `relatedProjects(projects: Project[], slug: string): Project[]` (published only).
 
 - [ ] **Step 1: Write the failing tests** (Review Focus #4)
@@ -267,7 +267,7 @@ Case studies with a facts panel directly under the hero (client, sector, locatio
 - Create: `src/app/(frontend)/news/page.tsx`, `[slug]/page.tsx`, `news-parts.tsx`, `page.test.tsx`
 
 **Interfaces:**
-- Consumes: `getNews`, `getNewsItem`, `newsHref`, `RichText` (`@payloadcms/richtext-lexical/react`), `Confirmable`, `Task 2`'s `heldForPublication` / `pendingFields`.
+- Consumes: `getNews`, `getNewsItem`, `newsHref`, `RichText` (`@payloadcms/richtext-lexical/react`), `Confirmable`, and the `heldForPublication` / `pendingFields` fields from Task 2.
 - Produces: `PendingDetails({ fields }: { fields: { item: string }[] })` — renders nothing for an empty list; `splitArchive(items: News[]): { current: News[]; archive: News[] }`.
 
 - [ ] **Step 1: Write the failing tests** (Review Focus #3): the held item shows "Details to add before publishing" with all six fields and the statement that no authorized record supports the wording; the published items show neither; the archive band appears only when something is archived; an undated item shows its marker; the archived 2018 item shows the archived-milestone marker.
@@ -306,7 +306,7 @@ Two vacancy pages under `/careers/open-positions/<slug>`. Required and preferred
 - Consumes: `getJobs`, `getJob`, `jobHref`, `deadlineText`, `deadlinePending`, `hrEmail`, `Field`, `FormNote`, `getCareersContent`.
 - Produces: `JobHeader({ job }: { job: Job })`; `Qualifications({ required, preferred })` — omits an empty list's section, never merges the two.
 
-- [ ] **Step 1: Write the failing tests**: the unconfirmed deadline is a marker and a confirmed one reads as text (reusing Task 10's rules from Phase 4); `required` and `preferred` render under separate headings; the "other vacancy" link is absent when the job is the only one published; no rendered string contains "salary", "benefit", "compensation".
+- [ ] **Step 1: Write the failing tests**: the unconfirmed deadline is a marker and a confirmed one reads as text (the same `deadlineText` rules as the Phase 4 open-positions list); `required` and `preferred` render under separate headings; the "other vacancy" link is absent when the job is the only one published; no rendered string contains "salary", "benefit", "compensation".
 - [ ] **Step 2: Run them to verify they fail** — `npx vitest run "src/app/(frontend)/careers/open-positions"` → FAIL.
 - [ ] **Step 3: Build the page with `generateStaticParams`; port `job.mjs`.**
 - [ ] **Step 4: Tests, `tsc`, deploy, parity for the two `job-*` pages** → PASS.
