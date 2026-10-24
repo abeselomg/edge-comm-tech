@@ -8,6 +8,7 @@ import {
   getSolutions,
 } from "@/lib/content";
 import { projectHref, publishedOnly, serviceHref, solutionHref } from "@/lib/routes";
+import { clientOf } from "../projects/project-parts";
 import { projectsFor } from "./solution-parts";
 
 /*
@@ -230,14 +231,14 @@ export default async function SolutionsPage() {
           />
           <ul className="mt-9 flex flex-wrap gap-2">
             {published.map((p) => {
-              const client = p.client && typeof p.client === "object" ? p.client.name : "";
+              const client = clientOf(p)?.name;
               return (
                 <li key={p.slug}>
                   <Link
                     href={projectHref(p.slug)}
                     className="block rounded-full bg-paper-2 px-4 py-2 text-xs transition hover:text-gold"
                   >
-                    {`${client} · ${p.primary}`}
+                    {[client, p.primary].filter(Boolean).join(" · ")}
                   </Link>
                 </li>
               );

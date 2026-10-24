@@ -48,7 +48,8 @@ describe("splitEvents", () => {
 
 // Review Focus #2: a prerendered event goes stale once its date passes.
 describe("event routes revalidate on a timer", () => {
-  for (const file of ["page.tsx", "[slug]/page.tsx"]) {
+  // The resource centre's "Coming up" band is derived from the same dates.
+  for (const file of ["page.tsx", "[slug]/page.tsx", "../resources/page.tsx"]) {
     it(`${file} exports a revalidate window of a day or less`, () => {
       const src = readFileSync(new URL(`./${file}`, import.meta.url), "utf8");
       const m = /export const revalidate = (\d+)/.exec(src);

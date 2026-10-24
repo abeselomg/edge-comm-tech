@@ -16,6 +16,13 @@ import { eventHref } from "@/lib/routes";
  * collection yet and so always say so.
  */
 
+/*
+ * The "Coming up" band is derived from event dates, so a page prerendered while
+ * a session was upcoming would go on advertising it after it ended. Hourly, like
+ * the event pages themselves.
+ */
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Resource Centre — News, Events, Media and Downloads | Edge Comm-Tech",
   description:

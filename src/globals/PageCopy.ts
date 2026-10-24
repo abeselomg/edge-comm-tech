@@ -71,7 +71,7 @@ export const PageCopy: GlobalConfig = {
         "/resources",
         "/clients",
         "/partners",
-      ]),
+      ], false, ["/projects/[slug]", "/resources/media/[slug]"]),
     ],
   },
   fields: [

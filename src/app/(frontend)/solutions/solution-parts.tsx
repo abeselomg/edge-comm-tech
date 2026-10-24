@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CapCard, CheckList, Confirmable, Mark, NumberedSteps, SectionHead } from "@/components/ui";
 import { projectHref, publishedOnly, solutionHref } from "@/lib/routes";
 import type { Partner, Post, Project, Solution } from "@/payload-types";
+import { clientOf } from "../projects/project-parts";
 
 /*
  * The solution pages' own pieces, beside the pages because Next allows a page
@@ -304,7 +305,7 @@ export function DeliveredWork({ projects, accent }: { projects: Project[]; accen
       <SectionHead eyebrow="Delivered work" title="Where we have built it" accent={accent} />
       <ul className="mt-5 divide-y divide-rule border-y border-rule">
         {projects.map((p) => {
-          const client = doc<{ name: string }>(p.client as Ref<{ name: string }>);
+          const client = clientOf(p);
           return (
             <li key={p.slug}>
               <Link
@@ -315,7 +316,9 @@ export function DeliveredWork({ projects, accent }: { projects: Project[]; accen
                   <span className="block font-display text-lg group-hover:text-gold">
                     {p.title}
                   </span>
-                  <span className="text-sm text-steel">{`${client?.name ?? ""} · ${p.primary}`}</span>
+                  <span className="text-sm text-steel">
+                    {[client?.name, p.primary].filter(Boolean).join(" · ")}
+                  </span>
                 </span>
                 <span className="shrink-0 font-mono text-xs text-steel">
                   <Confirmable value={p.year} />

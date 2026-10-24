@@ -180,3 +180,17 @@ describe("published-only relations (Review Focus #1)", () => {
     expect(html(<DeliveredWork projects={[]} accent="#111111" />)).not.toContain("Delivered work");
   });
 });
+
+describe("delivered work and an unpublished client", () => {
+  it("does not name a client that is no longer published", () => {
+    const project = published({
+      slug: "p", title: "A project", primary: "Focus",
+      client: { name: "Withdrawn Bank", _status: "draft" },
+      year: { status: "confirmed", value: "2024" },
+    });
+    const out = html(<DeliveredWork projects={[project] as never} accent="#111111" />);
+    expect(out).toContain("A project");
+    expect(out).not.toContain("Withdrawn Bank");
+    expect(out).not.toMatch(/^\s*·/);
+  });
+});

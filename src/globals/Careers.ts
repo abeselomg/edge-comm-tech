@@ -38,7 +38,7 @@ export const Careers: GlobalConfig = {
         "/careers/open-positions",
         "/careers/internships",
         "/careers/e-academy",
-      ]),
+      ], false, ["/careers/open-positions/[slug]"]),
     ],
   },
   fields: [

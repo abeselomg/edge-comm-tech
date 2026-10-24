@@ -25,7 +25,13 @@ export const PROJECT_SECTOR_ACCENT: Record<SectorSlug, string> = {
 };
 export const accentFor = (p: Project): string => PROJECT_SECTOR_ACCENT[p.sector] ?? "#0888c5";
 
-const clientOf = (p: Project) => doc<Client>(p.client as Ref<Client>);
+/**
+ * The project's client, only while the client is published. The client directory
+ * is the approval gate -- an institution that withdraws consent to be named is
+ * unpublished -- so every view reads the client through here.
+ */
+export const clientOf = (p: Project): Client | null =>
+  publishedOnly<Client>([doc<Client>(p.client as Ref<Client>)])[0] ?? null;
 const solutionsOf = (p: Project) =>
   publishedOnly<Solution>((p.solutions ?? []) as (Solution | number)[]);
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -144,7 +150,7 @@ export function FeaturedProject({ project: p }: { project: Project | null }) {
       >
         <div className="p-9">
           <p className="font-mono text-[10px] uppercase tracking-widest" style={{ color: accent }}>
-            {`${client?.name ?? ""} · ${p.sectorFull ?? ""}`}
+            {[client?.name, p.sectorFull].filter(Boolean).join(" · ")}
           </p>
           <p className="mt-4 text-lg leading-relaxed text-ink/80">{p.summary}</p>
           <div className="mt-6 flex flex-wrap gap-2">
@@ -183,7 +189,7 @@ export function ProjectBody({
 }) {
   const c = accentFor(p);
   const solutions = solutionsOf(p);
-  const client = publishedOnly<Client>([clientOf(p)])[0];
+  const client = clientOf(p);
   const scope = p.scope ?? [];
   const delivered = p.delivered ?? [];
   const outcomes = p.outcomes ?? [];

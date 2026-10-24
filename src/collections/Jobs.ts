@@ -43,8 +43,8 @@ export const Jobs: CollectionConfig = {
   },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
-    afterChange: [revalidateAfterChange(paths)],
-    afterDelete: [revalidateAfterDelete(paths)],
+    afterChange: [revalidateAfterChange(paths, { patterns: ["/careers/open-positions/[slug]"] })],
+    afterDelete: [revalidateAfterDelete(paths, { patterns: ["/careers/open-positions/[slug]"] })],
   },
   fields: [
     { name: "title", type: "text", required: true, validate: forbidsPhrases() },

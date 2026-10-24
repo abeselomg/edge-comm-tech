@@ -7,50 +7,91 @@
  * stale: comparing the two sentence by sentence reports a "defect" that is the
  * clock doing its job.
  *
- * Rather than waive those pages, the checker recognises the drift, skips the text
- * comparison for just those pages, and holds the port to positive assertions
- * about what a closed event must look like. The reverse -- the site open where
- * Highland is closed -- is never drift and is reported like any other difference.
+ * The checker recognises the drift only when the event's own dates say it has run
+ * (parity-events.mjs), removes just the parts that legitimately differ -- the
+ * registration panel, its meta line and the Status cell -- and compares everything
+ * else as normal. The closed panel itself is held to positive assertions. A page
+ * closed before its event has ended, or open after it has ended, is a defect and
+ * is reported like any other difference.
  */
 
 const CLOSED = "registration is closed";
+const PANEL = '<section class="mt-16 rounded-3xl p-8"';
 
-/** Highland shows the event open; the site shows it closed. */
-export function eventMoved(expectedHtml, actualHtml) {
-  return !expectedHtml.includes(CLOSED) && actualHtml.includes(CLOSED);
+/** The dates say it has run; Highland shows it open; the site shows it closed. */
+export function eventMoved(expectedHtml, actualHtml, hasRun) {
+  return hasRun && !expectedHtml.includes(CLOSED) && actualHtml.includes(CLOSED);
+}
+
+function panelOf(html) {
+  const start = html.indexOf(PANEL);
+  if (start < 0) return "";
+  const end = html.indexOf("</section>", start);
+  return html.slice(start, end < 0 ? undefined : end);
 }
 
 /** What a closed event page must still offer, and must no longer offer. */
 export function checkMovedEvent(page, actualHtml) {
   const problems = [];
-  if (!actualHtml.includes("This event has already run")) {
+  const panel = panelOf(actualHtml);
+  if (!panel.includes("This event has already run")) {
     problems.push(`${page}: moved to past but does not say the event has run`);
   }
   if (/<form\b/i.test(actualHtml)) {
     problems.push(`${page}: moved to past but still shows a registration form`);
   }
-  if (!/href="\/subscribe"/.test(actualHtml)) {
-    problems.push(`${page}: moved to past but offers no way to hear about the next session (subscribe link)`);
+  // The header links /subscribe on every page, so the link must be in the panel.
+  if (!/href="\/subscribe"/.test(panel)) {
+    problems.push(`${page}: the closed registration panel offers no subscribe link`);
   }
   return problems;
 }
 
+const META = /<p class="eg-rise mt-6">[\s\S]*?<\/p>/;
+
+function stripPanel(html) {
+  const start = html.indexOf(PANEL);
+  if (start < 0) return html;
+  const end = html.indexOf("</section>", start);
+  return end < 0 ? html : html.slice(0, start) + html.slice(end + "</section>".length);
+}
+
+/**
+ * Remove what legitimately differs between an upcoming event (Highland) and the
+ * same event once run (the site), so the rest of the page can be compared.
+ */
+export function alignMovedEvent(expectedHtml, actualHtml) {
+  const strip = (html) => stripPanel(html).replace(META, "");
+  const expected = strip(expectedHtml).replace(/(Status<\/dt>\s*<dd[^>]*>\s*)Upcoming/, "$1Completed");
+  return [expected, strip(actualHtml)];
+}
+
 /** The number in the Upcoming band, or 0 when the page says nothing is scheduled. */
 export function upcomingCount(html) {
-  const m = /Upcoming<\/h2>[\s\S]*?(\d+)\s+sessions?/i.exec(html);
+  const m = /Upcoming<\/h2>\s*<p[^>]*>\s*(\d+)\s+sessions?/i.exec(html);
   return m ? Number(m[1]) : 0;
 }
 
-/** After `moved` events ran, exactly that many must have left Upcoming, into Already held. */
-export function checkMovedIndex(expectedHtml, actualHtml, moved) {
+/** After events ran, exactly those must have left Upcoming, into Already held, by name. */
+export function checkMovedIndex(expectedHtml, actualHtml, movedTitles) {
   const problems = [];
-  const want = upcomingCount(expectedHtml) - moved;
+  const want = upcomingCount(expectedHtml) - movedTitles.length;
   const have = upcomingCount(actualHtml);
   if (have !== want) {
-    problems.push(`events: expected ${want} upcoming session(s) after ${moved} moved to past, found ${have}`);
+    problems.push(
+      `events: expected ${want} upcoming session(s) after ${movedTitles.length} moved to past, found ${have}`,
+    );
   }
-  if (!actualHtml.includes("Already held")) {
+  const held = actualHtml.indexOf("Already held");
+  if (held < 0) {
     problems.push("events: a session has moved to past but there is no Already held band");
+    return problems;
+  }
+  const upcomingPart = actualHtml.slice(0, held);
+  const heldPart = actualHtml.slice(held);
+  for (const title of movedTitles) {
+    if (!heldPart.includes(title)) problems.push(`events: "${title}" has run but is not under Already held`);
+    if (upcomingPart.includes(title)) problems.push(`events: "${title}" has run but is still listed as upcoming`);
   }
   return problems;
 }

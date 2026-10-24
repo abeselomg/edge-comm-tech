@@ -34,8 +34,8 @@ export const Partners: CollectionConfig = {
   access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
-    afterChange: [revalidateAfterChange(paths)],
-    afterDelete: [revalidateAfterDelete(paths)],
+    afterChange: [revalidateAfterChange(paths, { patterns: ["/solutions/[slug]", "/projects/[slug]"] })],
+    afterDelete: [revalidateAfterDelete(paths, { patterns: ["/solutions/[slug]", "/projects/[slug]"] })],
   },
   fields: [
     { name: "name", type: "text", required: true, validate: forbidsPhrases() },

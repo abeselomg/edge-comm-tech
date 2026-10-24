@@ -35,8 +35,8 @@ export const Events: CollectionConfig = {
   access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
-    afterChange: [revalidateAfterChange(paths)],
-    afterDelete: [revalidateAfterDelete(paths)],
+    afterChange: [revalidateAfterChange(paths, { patterns: ["/events/[slug]"] })],
+    afterDelete: [revalidateAfterDelete(paths, { patterns: ["/events/[slug]"] })],
   },
   fields: [
     { name: "title", type: "text", required: true, validate: forbidsPhrases() },

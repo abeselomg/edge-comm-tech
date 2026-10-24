@@ -5,7 +5,7 @@ import { SECTOR_OPTIONS } from "../fields/sectors";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
-const paths = () => ["/", "/clients"];
+const paths = () => ["/", "/about", "/clients", "/projects", "/solutions"];
 
 /*
  * The ten institutions in the approved client directory, and only those.
@@ -28,8 +28,8 @@ export const Clients: CollectionConfig = {
   access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
-    afterChange: [revalidateAfterChange(paths)],
-    afterDelete: [revalidateAfterDelete(paths)],
+    afterChange: [revalidateAfterChange(paths, { patterns: ["/projects/[slug]", "/solutions/[slug]"] })],
+    afterDelete: [revalidateAfterDelete(paths, { patterns: ["/projects/[slug]", "/solutions/[slug]"] })],
   },
   fields: [
     { name: "name", type: "text", required: true, validate: forbidsPhrases() },

@@ -29,7 +29,7 @@ export const Company: GlobalConfig = {
   admin: { group: "Company", description: "Profile, mission, values, history and leadership." },
   access: { read: () => true, update: signedIn },
   versions: { drafts: false },
-  hooks: { afterChange: [revalidateGlobal(["/", "/about", "/about/executive-management"])] },
+  hooks: { afterChange: [revalidateGlobal(["/", "/about", "/about/executive-management"], true)] },
   fields: [
     {
       type: "tabs",

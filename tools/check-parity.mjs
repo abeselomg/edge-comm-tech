@@ -30,7 +30,15 @@ import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { isKnownRoute, routeFor } from "../src/lib/routes.ts";
 import { pageList } from "./parity-pages.mjs";
-import { checkMovedEvent, checkMovedIndex, checkMovedResources, eventMoved, stripComingUp } from "./parity-clock.mjs";
+import {
+  alignMovedEvent,
+  checkMovedEvent,
+  checkMovedIndex,
+  checkMovedResources,
+  eventMoved,
+  stripComingUp,
+} from "./parity-clock.mjs";
+import { highlandEvent } from "./parity-events.mjs";
 import { scanPage } from "./content-scan.mjs";
 
 const HIGHLAND = "design-files/highland";
@@ -221,14 +229,21 @@ const notes = [];
  * a pre-pass over every event page, because the events index needs to know how
  * many moved even when only the index was asked for.
  */
-const movedEvents = new Set();
+const movedEvents = new Map(); // page -> title, for events whose dates say they have run
 if (!selfCheck && pages.some((p) => p === "events" || p === "resources" || p.startsWith("event-"))) {
   for (const page of pageList("all").filter((p) => p.startsWith("event-"))) {
     try {
       const res = await fetch(`${BASE_URL}${routeFor(`${page}.html`)}`, { redirect: "follow" });
       if (!res.ok) continue;
       const expected = readFileSync(path.join(HIGHLAND, `${page}.html`), "utf8");
-      if (eventMoved(expected, await res.text())) movedEvents.add(page);
+      const text = await res.text();
+      const info = highlandEvent(page.slice("event-".length));
+      const hasRun = info.hasRun();
+      if (eventMoved(expected, text, hasRun)) movedEvents.set(page, info.title);
+      else if (hasRun && !text.includes("registration is closed")) {
+        // Stale the other way: the dates say it ended and the page still invites sign-up.
+        problems.push(`${page}: the event has ended but the page still shows registration open`);
+      }
     } catch {
       // A failed fetch is reported by the main loop; the pre-pass only finds drift.
     }
@@ -278,18 +293,18 @@ for (const page of pages) {
   /* Clock drift: an event has run since Highland was built. */
   if (!selfCheck && movedEvents.has(page)) {
     problems.push(...checkMovedEvent(page, actual));
-    notes.push(`${page}: event has run since Highland was built; checked as a closed event`);
-    continue;
+    notes.push(`${page}: event has run since Highland was built; its registration panel is checked as a closed one and the rest of the page compared`);
+    [expected, actual] = alignMovedEvent(expected, actual);
   }
   if (!selfCheck && page === "resources" && movedEvents.size) {
-    const routes = [...movedEvents].map((e) => routeFor(`${e}.html`));
+    const routes = [...movedEvents.keys()].map((e) => routeFor(`${e}.html`));
     problems.push(...checkMovedResources(actual, routes));
     notes.push("resources: an event in Highland's Coming up band has run; that band is checked on its own and the rest of the page compared");
     expected = stripComingUp(expected);
     actual = stripComingUp(actual);
   }
   if (!selfCheck && page === "events" && movedEvents.size) {
-    problems.push(...checkMovedIndex(expected, actual, movedEvents.size));
+    problems.push(...checkMovedIndex(expected, actual, [...movedEvents.values()]));
     notes.push(`events: ${movedEvents.size} session(s) have run since Highland was built; checked structurally`);
     continue;
   }

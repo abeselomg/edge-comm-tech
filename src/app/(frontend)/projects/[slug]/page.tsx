@@ -2,7 +2,7 @@ import { ClosingCta, Crumb, PageHead } from "@/components/ui";
 import { SECTOR_SHORT } from "@/fields/sectors";
 import { getPageCopy, getPartners, getProject, getProjects } from "@/lib/content";
 import { loadOr404 } from "@/lib/load";
-import { accentFor, ProjectBody, ProjectFacts, siblingProjects } from "../project-parts";
+import { accentFor, clientOf, ProjectBody, ProjectFacts, siblingProjects } from "../project-parts";
 
 /*
  * One template, eight completed-project pages.
@@ -26,7 +26,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const { slug } = await params;
   const p = await loadOr404(() => getProject(slug));
   const [all, copy, brands] = await Promise.all([getProjects(), getPageCopy(), getPartners()]);
-  const client = p.client && typeof p.client === "object" ? p.client : null;
+  const client = clientOf(p);
 
   return (
     <main>

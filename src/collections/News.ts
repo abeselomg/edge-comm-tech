@@ -30,8 +30,8 @@ export const News: CollectionConfig = {
   access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
-    afterChange: [revalidateAfterChange(paths)],
-    afterDelete: [revalidateAfterDelete(paths)],
+    afterChange: [revalidateAfterChange(paths, { patterns: ["/news/[slug]", "/resources/media/[slug]"] })],
+    afterDelete: [revalidateAfterDelete(paths, { patterns: ["/news/[slug]", "/resources/media/[slug]"] })],
   },
   fields: [
     { name: "title", type: "text", required: true, validate: forbidsPhrases() },

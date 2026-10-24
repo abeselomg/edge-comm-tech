@@ -5,6 +5,7 @@ import {
   heroProject,
   ProjectBody,
   ProjectFacts,
+  clientOf,
   ProjectRow,
   siblingProjects,
 } from "./project-parts";
@@ -132,5 +133,32 @@ describe("ProjectBody", () => {
     const out = html(<ProjectBody project={project({ technology: "A security control room." })} siblings={[]} implementationNote="" />);
     expect(out).toContain("security control room");
     expect(out).not.toMatch(/\bSOC\b/);
+  });
+});
+
+/*
+ * The client directory is the approval gate: unpublishing a client (say, after it
+ * withdraws consent to be named) must remove its name from every project view,
+ * not only from the one that happened to check.
+ */
+describe("an unpublished client is never named", () => {
+  const draftClient = { name: "Withdrawn Bank", _status: "draft" };
+  const p = project({ client: draftClient });
+
+  it("clientOf returns the published client and nothing else", () => {
+    expect(clientOf(project())?.name).toBe("Bahir Dar University");
+    expect(clientOf(p)).toBeNull();
+    expect(clientOf(project({ client: 5 }))).toBeNull();
+  });
+
+  it("the facts panel, index row and featured card leave the name out", () => {
+    expect(html(<ProjectFacts project={p} />)).not.toContain("Withdrawn Bank");
+    expect(html(<ul><ProjectRow project={p} /></ul>)).not.toContain("Withdrawn Bank");
+    expect(html(<FeaturedProject project={p} />)).not.toContain("Withdrawn Bank");
+  });
+
+  it("the case-study body offers no 'All … work' link for it", () => {
+    const out = html(<ProjectBody project={p} siblings={[]} implementationNote="" />);
+    expect(out).not.toContain("Withdrawn Bank");
   });
 });
