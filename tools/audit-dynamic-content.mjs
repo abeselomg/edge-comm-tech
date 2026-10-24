@@ -114,7 +114,10 @@ const MAP = {
 function interfaceFields(source, name) {
   const start = source.indexOf(`export interface ${name} {`);
   if (start < 0) return null;
-  const end = source.indexOf("\n}\n", start);
+  // The generated file may carry CRLF endings (a Windows checkout), so the closing
+  // brace is matched with either line ending; otherwise the slice runs to the end
+  // of the file and picks up fields of later interfaces.
+  const end = start + source.slice(start).search(/\r?\n}\r?\n/);
   const body = source.slice(start, end);
   return new Set([...body.matchAll(/^ {2}(\w+)\??:/gm)].map((m) => m[1]));
 }
