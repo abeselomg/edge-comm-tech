@@ -24,6 +24,7 @@ import { News } from "./collections/News";
 import { PostCategories } from "./collections/PostCategories";
 import { Posts } from "./collections/Posts";
 import { Downloads } from "./collections/Downloads";
+import { Applications } from "./collections/Applications";
 import { SiteSettings } from "./globals/SiteSettings";
 import { Company } from "./globals/Company";
 import { ContactDetails } from "./globals/ContactDetails";
@@ -100,7 +101,7 @@ export default buildConfig({
       titleSuffix: " — Edge Comm-Tech",
     },
   },
-  collections: [Solutions, Services, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Jobs, AcademyTracks, Media, Users],
+  collections: [Solutions, Services, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Jobs, AcademyTracks, Media, Applications, Users],
   globals: [SiteSettings, Company, ContactDetails, Careers, PageCopy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
@@ -149,7 +150,8 @@ export default buildConfig({
       fields: guardSeoMetaFields,
     }),
     formBuilderPlugin({
-      fields: { payment: false },
+      fields: { payment: false, upload: true },
+      uploadCollections: ["applications"],
       formOverrides: {
         admin: { group: "Site" },
       },
