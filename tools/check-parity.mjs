@@ -30,6 +30,7 @@ import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { isKnownRoute, routeFor } from "../src/lib/routes.ts";
 import { pageList } from "./parity-pages.mjs";
+import { checkMovedEvent, checkMovedIndex, eventMoved } from "./parity-clock.mjs";
 
 const HIGHLAND = "design-files/highland";
 const BASE_URL = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
@@ -212,6 +213,26 @@ const FORM_TAG = /<(input|textarea|select|button)\b/i;
 /* ---------------------------------------------------------------- compare */
 
 const problems = [];
+const notes = [];
+
+/*
+ * Events that have run since Highland was built (see parity-clock.mjs). Found in
+ * a pre-pass over every event page, because the events index needs to know how
+ * many moved even when only the index was asked for.
+ */
+const movedEvents = new Set();
+if (!selfCheck && pages.some((p) => p === "events" || p.startsWith("event-"))) {
+  for (const page of pageList("all").filter((p) => p.startsWith("event-"))) {
+    try {
+      const res = await fetch(`${BASE_URL}${routeFor(`${page}.html`)}`, { redirect: "follow" });
+      if (!res.ok) continue;
+      const expected = readFileSync(path.join(HIGHLAND, `${page}.html`), "utf8");
+      if (eventMoved(expected, await res.text())) movedEvents.add(page);
+    } catch {
+      // A failed fetch is reported by the main loop; the pre-pass only finds drift.
+    }
+  }
+}
 let checked = 0;
 
 for (const page of pages) {
@@ -248,6 +269,18 @@ for (const page of pages) {
       continue;
     }
     checked += 1;
+  }
+
+  /* Clock drift: an event has run since Highland was built. */
+  if (!selfCheck && movedEvents.has(page)) {
+    problems.push(...checkMovedEvent(page, actual));
+    notes.push(`${page}: event has run since Highland was built; checked as a closed event`);
+    continue;
+  }
+  if (!selfCheck && page === "events" && movedEvents.size) {
+    problems.push(...checkMovedIndex(expected, actual, movedEvents.size));
+    notes.push(`events: ${movedEvents.size} session(s) have run since Highland was built; checked structurally`);
+    continue;
   }
 
   /* Copy. Reported in both directions: a missing sentence is a dropped
@@ -345,4 +378,5 @@ if (problems.length) {
   process.exit(1);
 }
 
+for (const n of notes) console.log(`NOTE — ${n}`);
 console.log(`PASS — ${checked} page(s) match their Highland originals (${BASE_URL})`);
