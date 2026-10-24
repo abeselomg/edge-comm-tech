@@ -26,13 +26,23 @@ export function internalLinks(html) {
   return out;
 }
 
+/**
+ * One request, retried once on a network failure. A dropped connection is not a
+ * dead link, and reporting it as one teaches people to ignore the probe; an HTTP
+ * status is never retried, so a real 404 is reported the first time.
+ */
 async function status(path) {
-  try {
-    const res = await fetch(`${BASE_URL}${path}`, { redirect: "manual" });
-    return res.status;
-  } catch (error) {
-    return `unreachable (${error.message})`;
+  let last = "";
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const res = await fetch(`${BASE_URL}${path}`, { redirect: "manual" });
+      return res.status;
+    } catch (error) {
+      last = `unreachable (${error.message})`;
+      await new Promise((r) => setTimeout(r, 500));
+    }
   }
+  return last;
 }
 
 const problems = [];
