@@ -1,14 +1,15 @@
 import type { CollectionConfig } from "payload";
+import { newsHref } from "../lib/routes";
 import { publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases, richTextGuard } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
-const paths = (doc: { slug?: string | null }) => [
+export const paths = (doc: { slug?: string | null }) => [
   "/resources",
   "/news",
-  ...(doc.slug ? [`/news/${doc.slug}`] : []),
+  ...(doc.slug ? [newsHref(doc.slug)] : []),
 ];
 
 /*

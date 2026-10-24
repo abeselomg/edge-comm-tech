@@ -1,13 +1,14 @@
 import type { CollectionConfig } from "payload";
+import { eventHref } from "../lib/routes";
 import { publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
-const paths = (doc: { slug?: string | null }) => [
+export const paths = (doc: { slug?: string | null }) => [
   "/resources",
   "/events",
-  ...(doc.slug ? [`/events/${doc.slug}`] : []),
+  ...(doc.slug ? [eventHref(doc.slug)] : []),
 ];
 
 /*

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { RichText } from "@payloadcms/richtext-lexical/react";
-import { publishedOnly } from "@/lib/routes";
+import { publishedOnly, solutionHref } from "@/lib/routes";
 import type { Post, PostCategory, Solution } from "@/payload-types";
 
 /*
@@ -44,7 +44,7 @@ export function PostArticle({ post, index }: { post: Post; index: number }) {
   const target = publishedOnly<Solution>([doc<Solution>(post.target as Ref<Solution>)])[0];
   const category = doc<PostCategory>(post.category as Ref<PostCategory>);
   const accent = target?.accent ?? DEFAULT_ACCENT;
-  const href = target ? `/solutions/${target.slug}${post.anchor ? `#${post.anchor}` : ""}` : null;
+  const href = target ? solutionHref(target.slug, post.anchor || undefined) : null;
 
   return (
     <article

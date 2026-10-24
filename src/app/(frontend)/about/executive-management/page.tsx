@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ClosingCta, Crumb, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getCompany, getContactDetails } from "@/lib/content";
 import { executiveCard } from "./exec-parts";
+import { emailByLabel } from "@/lib/routes";
 
 /*
  * Executive management.
@@ -29,7 +30,7 @@ export const metadata = {
 export default async function ExecutiveManagementPage() {
   const [company, contact] = await Promise.all([getCompany(), getContactDetails()]);
   const roles = company.executiveRoles ?? [];
-  const email = contact.emails?.[0]?.value;
+  const email = emailByLabel(contact, /sales/i);
 
   return (
     <main>

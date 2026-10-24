@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { PROJECTS } from "../../../design-src/highland/content.mjs";
-import { featuredProjects, impactCard } from "./home-parts";
+import { featuredProjects, impactCard, SuccessStory } from "./home-parts";
 
 const html = (el: React.ReactElement) => renderToStaticMarkup(el);
 
@@ -68,5 +68,22 @@ describe("impactCard", () => {
     expect(out).toContain("67+");
     expect(out).not.toContain("undefined");
     expect(out).not.toContain("null");
+  });
+});
+
+describe("SuccessStory", () => {
+  const story = (client: unknown) =>
+    ({
+      slug: "s", title: "T", summary: "S", sectorFull: "Education", location: "L",
+      year: { status: "pending", value: null, pendingLabel: "Year to confirm" },
+      client, solutions: [], tech: [],
+    }) as never;
+
+  // A deleted client sets the relationship to null, and typeof null is "object".
+  it("renders when the client relationship is null", () => {
+    expect(() => html(<SuccessStory story={story(null)} />)).not.toThrow();
+  });
+  it("renders the client's name when populated", () => {
+    expect(html(<SuccessStory story={story({ name: "Bahir Dar University" })} />)).toContain("Bahir Dar University");
   });
 });

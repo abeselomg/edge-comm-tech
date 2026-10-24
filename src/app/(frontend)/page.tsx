@@ -14,6 +14,7 @@ import {
   type Project,
 } from "@/lib/content";
 import { SECTOR_OPTIONS, SECTOR_SHORT, type SectorSlug } from "@/fields/sectors";
+import { projectHref, solutionHref } from "@/lib/routes";
 
 /*
  * The home page, in the fifteen-section order the content master sets out in
@@ -224,7 +225,7 @@ export default async function HomePage() {
             {solutions.map((s) => (
               <Link
                 key={s.slug}
-                href={`/solutions/${s.slug}`}
+                href={solutionHref(s.slug)}
                 className="eg-inview group relative flex flex-col overflow-hidden rounded-2xl bg-paper-2 p-6 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_52px_-28px_rgb(8_136_197/0.5)]"
               >
                 <span
@@ -376,7 +377,7 @@ export default async function HomePage() {
             {featured.map((p) => (
               <Link
                 key={p.slug}
-                href={`/projects/${p.slug}`}
+                href={projectHref(p.slug)}
                 className="eg-inview group flex flex-col rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1"
               >
                 <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-steel">
@@ -537,7 +538,7 @@ export default async function HomePage() {
           {posts.slice(0, 3).map((p) => {
             const target = typeof p.target === "object" ? p.target : null;
             const href = target
-              ? `/solutions/${target.slug}${p.anchor ? `#${p.anchor}` : ""}`
+              ? solutionHref(target.slug, p.anchor || undefined)
               : undefined;
             const body = (
               <>

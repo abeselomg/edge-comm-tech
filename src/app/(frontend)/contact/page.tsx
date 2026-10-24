@@ -1,6 +1,7 @@
 import { CtaRow, PageHead, SectionHead } from "@/components/ui";
 import { getContactDetails, getSolutions } from "@/lib/content";
 import { ContactChannels, ContactFacts, FormShell, InquiryCard } from "./contact-parts";
+import { emailByLabel } from "@/lib/routes";
 
 /*
  * Contact.
@@ -27,7 +28,7 @@ export const metadata = {
 export default async function ContactPage() {
   const [contact, solutions] = await Promise.all([getContactDetails(), getSolutions()]);
   const categories = contact.inquiryCategories ?? [];
-  const sales = (contact.emails ?? [])[0]?.value;
+  const sales = emailByLabel(contact, /sales/i);
 
   return (
     <main>

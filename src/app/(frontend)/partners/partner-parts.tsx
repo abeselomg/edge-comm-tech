@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Mark } from "@/components/ui";
-import { publishedOnly } from "@/lib/routes";
+import { projectHref, publishedOnly, solutionHref } from "@/lib/routes";
 import type { Partner, PartnerCategory, Project, Solution } from "@/payload-types";
 
 /*
@@ -111,7 +111,7 @@ export function brandCard(
       </div>
       {solution ? (
         <Link
-          href={`/solutions/${solution.slug}`}
+          href={solutionHref(solution.slug)}
           className="mt-3 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-90"
           style={{ color: accent }}
         >
@@ -125,7 +125,7 @@ export function brandCard(
             return (
               <li key={x.slug}>
                 <Link
-                  href={`/projects/${x.slug}`}
+                  href={projectHref(x.slug)}
                   className="text-[11px] text-steel underline decoration-rule underline-offset-2 hover:text-gold"
                 >
                   {client?.name ?? x.title}

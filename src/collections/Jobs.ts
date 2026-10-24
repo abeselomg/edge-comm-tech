@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { jobHref } from "../lib/routes";
 import { publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
@@ -8,10 +9,10 @@ import {
   revalidateAfterDelete,
 } from "../hooks/revalidate";
 
-const paths = (doc: { slug?: string | null }) => [
+export const paths = (doc: { slug?: string | null }) => [
   "/careers",
   "/careers/open-positions",
-  ...(doc.slug ? [`/careers/jobs/${doc.slug}`] : []),
+  ...(doc.slug ? [jobHref(doc.slug)] : []),
 ];
 
 /*

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ClosingCta, Crumb, CtaRow, Field, FormNote, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getAcademyTracks, getCareersContent, getContactDetails } from "@/lib/content";
-import { routeFor, publishedOnly } from "@/lib/routes";
+import { emailByLabel, publishedOnly, routeFor, solutionHref } from "@/lib/routes";
 import type { Solution } from "@/payload-types";
 
 /*
@@ -37,7 +37,7 @@ export default async function EAcademyPage() {
   const audiences = careers.academyAudiences ?? [];
   const levels = (careers.academyLevels ?? []).map((l) => l.item);
   const delivery = (careers.academyDelivery ?? []).map((d) => d.item);
-  const sales = (contact.emails ?? []).find((e) => /sales/i.test(e.label)) ?? contact.emails?.[0];
+  const sales = emailByLabel(contact, /sales/i);
 
   const FIELDS: Parameters<typeof Field>[0][] = [
     { label: "Full name", required: true },
@@ -126,7 +126,7 @@ export default async function EAcademyPage() {
                 <p className="mt-2.5 flex-1 text-sm leading-relaxed text-ink/70">{t.body}</p>
                 {solution ? (
                   <Link
-                    href={`/solutions/${solution.slug}`}
+                    href={solutionHref(solution.slug)}
                     className="mt-5 border-t border-rule pt-4 font-mono text-[10px] uppercase tracking-widest transition hover:brightness-90"
                     style={{ color: c }}
                   >
@@ -259,7 +259,7 @@ export default async function EAcademyPage() {
                 </button>
               </div>
             </form>
-            <FormNote email={sales?.value} />
+            <FormNote email={sales} />
           </div>
 
           <aside className="self-start lg:sticky lg:top-32">
@@ -285,10 +285,10 @@ export default async function EAcademyPage() {
               <p className="mt-2.5 text-sm leading-relaxed text-ink/70">
                 {sales ? (
                   <a
-                    href={`mailto:${sales.value}`}
+                    href={`mailto:${sales}`}
                     className="underline decoration-rule underline-offset-2 hover:text-gold"
                   >
-                    {sales.value}
+                    {sales}
                   </a>
                 ) : null}
                 <br />

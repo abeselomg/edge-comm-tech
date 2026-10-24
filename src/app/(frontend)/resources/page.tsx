@@ -3,6 +3,7 @@ import { ClosingCta, CtaRow, PageHead, Pending, SectionHead } from "@/components
 import { getDownloads, getEvents, getNews, getPageCopy, getPosts } from "@/lib/content";
 import { teaser } from "@/lib/lexical-text";
 import { allInsightsLabel } from "../blog/blog-parts";
+import { eventHref } from "@/lib/routes";
 
 /*
  * Resource centre.
@@ -72,7 +73,7 @@ export default async function ResourcesPage() {
               {upcoming.map((e) => (
                 <li key={e.slug}>
                   <Link
-                    href={`/events/${e.slug}`}
+                    href={eventHref(e.slug)}
                     className="eg-inview group flex items-start justify-between gap-5 rounded-2xl bg-paper p-6 transition hover:-translate-y-0.5"
                   >
                     <span className="min-w-0">

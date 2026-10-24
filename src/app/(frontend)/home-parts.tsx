@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Confirmable } from "@/components/ui";
 import type { Project } from "@/lib/content";
 import { extractText } from "@/fields/validators";
+import { projectHref, solutionHref } from "@/lib/routes";
 
 /*
  * The home page's own pieces: the two helpers its tests exercise, and the two
@@ -89,7 +90,7 @@ export function HeroCard({
 
 /** The Bahir Dar smart-classrooms story, pulled out as the one wide panel. */
 export function SuccessStory({ story }: { story: Project }) {
-  const client = typeof story.client === "object" ? story.client.name : null;
+  const client = story.client && typeof story.client === "object" ? story.client.name : null;
   const rows: [string, React.ReactNode][] = [
     ["Client", client],
     ["Sector", story.sectorFull],
@@ -116,13 +117,13 @@ export function SuccessStory({ story }: { story: Project }) {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              href={`/projects/${story.slug}`}
+              href={projectHref(story.slug)}
               className="rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
             >
               Read the success story
             </Link>
             <Link
-              href="/solutions/software-ai-digital"
+              href={solutionHref("software-ai-digital")}
               className="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold"
             >
               Explore education solutions

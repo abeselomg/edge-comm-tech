@@ -1,6 +1,19 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { isKnownRoute, publishedOnly, routeFor, STATIC_ROUTES } from "./routes";
+import {
+  emailByLabel,
+  eventHref,
+  isKnownRoute,
+  jobHref,
+  mediaHref,
+  newsHref,
+  projectHref,
+  publishedOnly,
+  routeFor,
+  serviceHref,
+  solutionHref,
+  STATIC_ROUTES,
+} from "./routes";
 
 describe("routeFor translates Highland's filenames", () => {
   it("maps the slug-less pages", () => {
@@ -176,5 +189,54 @@ describe("isKnownRoute", () => {
     expect(isKnownRoute("/nope")).toBe(false);
     expect(isKnownRoute("/solutions/a/b")).toBe(false);
     expect(isKnownRoute("/solutions/")).toBe(false);
+  });
+});
+
+describe("family href helpers", () => {
+  it("build each family's route through routeFor", () => {
+    expect(solutionHref("cybersecurity")).toBe("/solutions/cybersecurity");
+    expect(serviceHref("procurement")).toBe("/services/procurement");
+    expect(projectHref("a")).toBe("/projects/a");
+    expect(newsHref("a")).toBe("/news/a");
+    expect(eventHref("a")).toBe("/events/a");
+    expect(jobHref("hr-manager")).toBe("/careers/open-positions/hr-manager");
+    expect(mediaHref("coverage")).toBe("/resources/media/coverage");
+  });
+
+  it("append an anchor when given one", () => {
+    expect(solutionHref("cybersecurity", "zero-trust-ztna-nac")).toBe(
+      "/solutions/cybersecurity#zero-trust-ztna-nac",
+    );
+    expect(solutionHref("cybersecurity", undefined)).toBe("/solutions/cybersecurity");
+    expect(solutionHref("cybersecurity", "")).toBe("/solutions/cybersecurity");
+  });
+
+  it("only ever produce routes the route map knows", () => {
+    for (const href of [
+      solutionHref("a"), serviceHref("a"), projectHref("a"), newsHref("a"),
+      eventHref("a"), jobHref("a"), mediaHref("a"),
+    ]) {
+      expect(isKnownRoute(href.split("#")[0]), href).toBe(true);
+    }
+  });
+
+  it("keep a slug that contains another family's name intact", () => {
+    expect(projectHref("news-room-build")).toBe("/projects/news-room-build");
+  });
+});
+
+describe("emailByLabel", () => {
+  const contact = {
+    emails: [
+      { label: "Technical support", value: "support@example.com" },
+      { label: "Sales and general inquiries", value: "sales@example.com" },
+    ],
+  } as never;
+  it("finds a mailbox by its label, wherever it sits in the list", () => {
+    expect(emailByLabel(contact, /sales/i)).toBe("sales@example.com");
+  });
+  it("is undefined when no label matches", () => {
+    expect(emailByLabel(contact, /careers/i)).toBeUndefined();
+    expect(emailByLabel({ emails: null } as never, /sales/i)).toBeUndefined();
   });
 });

@@ -1,6 +1,7 @@
 import { ClosingCta, Crumb, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getContactDetails, getDownloads } from "@/lib/content";
 import { DownloadList } from "./download-parts";
+import { emailByLabel } from "@/lib/routes";
 
 /*
  * Downloads.
@@ -35,7 +36,7 @@ const ON_REQUEST = [
 
 export default async function DownloadsPage() {
   const [docs, contact] = await Promise.all([getDownloads(), getContactDetails()]);
-  const email = contact.emails?.[0]?.value;
+  const email = emailByLabel(contact, /sales/i);
   /*
    * The "nothing is cleared yet" marker is true only while that is true. It
    * disappears the day an editor approves a document, rather than sitting

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { projectHref } from "../lib/routes";
 import { publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { SECTOR_OPTIONS } from "../fields/sectors";
@@ -6,11 +7,14 @@ import { confirmable } from "../fields/confirmable";
 import { PROJECT_RULES, forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
-const paths = (doc: { slug?: string | null }) => [
+export const paths = (doc: { slug?: string | null }) => [
   "/",
-  "/projects",
   "/clients",
-  ...(doc.slug ? [`/projects/${doc.slug}`] : []),
+  "/partners",
+  "/projects",
+  "/services",
+  "/solutions",
+  ...(doc.slug ? [projectHref(doc.slug)] : []),
 ];
 
 /*

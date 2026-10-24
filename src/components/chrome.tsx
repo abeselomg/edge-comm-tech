@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { NavLinks } from "./nav-links";
 import { getCompany, getContactDetails, getSiteSettings, getSolutions } from "@/lib/content";
+import { solutionHref } from "@/lib/routes";
 
 /*
  * Highland's header and footer.
@@ -118,7 +119,7 @@ export async function SiteFooter() {
           <ul className="mt-3 space-y-1.5 text-sm text-ink/70">
             {solutions.map((s) => (
               <li key={s.slug}>
-                <Link href={`/solutions/${s.slug}`} className="hover:text-gold">
+                <Link href={solutionHref(s.slug)} className="hover:text-gold">
                   {s.short}
                 </Link>
               </li>

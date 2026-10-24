@@ -1,13 +1,23 @@
 import type { Block, CollectionConfig } from "payload";
+import { solutionHref } from "../lib/routes";
 import { publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
-const paths = (doc: { slug?: string | null }) => [
+export const paths = (doc: { slug?: string | null }) => [
+  // Every page that can link a solution, so unpublishing one removes the link
+  // everywhere rather than only on its own page.
   "/",
+  "/about",
+  "/blog",
+  "/careers/e-academy",
+  "/clients",
+  "/partners",
+  "/projects",
+  "/services",
   "/solutions",
-  ...(doc.slug ? [`/solutions/${doc.slug}`] : []),
+  ...(doc.slug ? [solutionHref(doc.slug)] : []),
 ];
 
 /*

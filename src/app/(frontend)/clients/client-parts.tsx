@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Mark } from "@/components/ui";
 import { SECTOR_OPTIONS, type SectorSlug } from "@/fields/sectors";
-import { publishedOnly } from "@/lib/routes";
+import { projectHref, publishedOnly, solutionHref } from "@/lib/routes";
 import type { Project, Solution } from "@/payload-types";
 
 /*
@@ -62,7 +62,7 @@ export function clientCard(c: ClientCardData) {
           {solutions.map((s) => (
             <Link
               key={s.slug}
-              href={`/solutions/${s.slug}`}
+              href={solutionHref(s.slug)}
               className="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition hover:brightness-95"
               style={{ background: `${s.accent}16`, color: s.accent }}
             >
@@ -75,7 +75,7 @@ export function clientCard(c: ClientCardData) {
             {work.map((p) => (
               <li key={p.slug}>
                 <Link
-                  href={`/projects/${p.slug}`}
+                  href={projectHref(p.slug)}
                   className="group flex items-baseline justify-between gap-4 rounded-xl bg-paper-2 px-4 py-2.5"
                 >
                   <span className="text-[13px] group-hover:text-gold">{p.title}</span>

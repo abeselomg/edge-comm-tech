@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Crumb, Field, FormNote, PageHead, SectionHead } from "@/components/ui";
 import { getContactDetails, getPostCategories, getSolutions } from "@/lib/content";
+import { emailByLabel } from "@/lib/routes";
 
 /*
  * Subscribe.
@@ -61,7 +62,7 @@ export default async function SubscribePage() {
     getSolutions(),
     getPostCategories(),
   ]);
-  const sales = (contact.emails ?? [])[0]?.value;
+  const sales = emailByLabel(contact, /sales/i);
 
   return (
     <main>

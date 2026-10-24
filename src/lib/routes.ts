@@ -95,6 +95,30 @@ export function routeFor(file: HighlandFile): string {
   );
 }
 
+/*
+ * Href builders for the slug families. Each goes through routeFor, so the path
+ * a page links to can never drift from the path the route map serves -- the
+ * Phase 4 review found eleven hand-built template literals doing the same job.
+ */
+const familyHref = (prefix: string) => (slug: string, anchor?: string): string =>
+  `${routeFor(`${prefix}${slug}.html`)}${anchor ? `#${anchor}` : ""}`;
+
+export const solutionHref = familyHref("solution-");
+export const serviceHref = familyHref("service-");
+export const projectHref = familyHref("project-");
+export const newsHref = familyHref("news-");
+export const eventHref = familyHref("event-");
+export const jobHref = familyHref("job-");
+export const mediaHref = familyHref("media-");
+
+/** A mailbox found by its label, not by its position in the list an editor can reorder. */
+export function emailByLabel(
+  contact: { emails?: { label: string; value: string }[] | null },
+  label: RegExp,
+): string | undefined {
+  return (contact.emails ?? []).find((e) => label.test(e.label))?.value;
+}
+
 /**
  * Whether a path is one `routeFor` could have produced: a named page, a family
  * index, or exactly one slug beneath a family base. The inverse of routeFor,

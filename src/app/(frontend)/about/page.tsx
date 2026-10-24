@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { rosterHolder } from "./executive-management/exec-parts";
 import { ClosingCta, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
+import { solutionHref } from "@/lib/routes";
 import {
   getClients,
   getCompany,
@@ -187,7 +188,7 @@ export default async function AboutPage() {
             {solutions.map((s) => (
               <li key={s.slug}>
                 <Link
-                  href={`/solutions/${s.slug}`}
+                  href={solutionHref(s.slug)}
                   className="eg-inview block h-full rounded-2xl bg-paper-2 p-5 transition hover:-translate-y-1"
                 >
                   <span

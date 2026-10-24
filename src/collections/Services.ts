@@ -1,14 +1,15 @@
 import type { CollectionConfig } from "payload";
+import { serviceHref } from "../lib/routes";
 import { publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
-const paths = (doc: { slug?: string | null }) => [
+export const paths = (doc: { slug?: string | null }) => [
   "/",
   "/services",
   "/solutions",
-  ...(doc.slug ? [`/services/${doc.slug}`] : []),
+  ...(doc.slug ? [serviceHref(doc.slug)] : []),
 ];
 
 /*
