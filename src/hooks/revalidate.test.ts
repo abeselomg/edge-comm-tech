@@ -98,3 +98,36 @@ describe("the resource centre", () => {
     }
   });
 });
+
+/*
+ * Live finding: the pattern call alone left /solutions/<slug> and
+ * /projects/<slug> pages serving a link to an unpublished project (x-nextjs-cache
+ * HIT 15s later). Concrete URLs do purge, so each pattern is expanded to them.
+ */
+describe("dynamic page types are refreshed by their concrete URLs", () => {
+  const payload = {
+    find: vi.fn(async ({ collection }: { collection: string }) => ({
+      docs:
+        collection === "solutions"
+          ? [{ slug: "system-cloud" }, { slug: "software-ai-digital" }]
+          : [{ slug: "gadaa-bank" }, {}],
+    })),
+  };
+
+  it("a project change refreshes every solution and project page by URL", async () => {
+    const hook = (Projects as { hooks: { afterChange: unknown[] } }).hooks.afterChange[0] as (
+      a: unknown,
+    ) => Promise<unknown>;
+    await hook({ doc: { slug: "x" }, previousDoc: { slug: "x" }, req: { payload } });
+    for (const p of ["/solutions/system-cloud", "/solutions/software-ai-digital", "/projects/gadaa-bank"]) {
+      expect(revalidatePath, p).toHaveBeenCalledWith(p);
+    }
+  });
+
+  it("without a payload instance (seed script) it still completes", async () => {
+    const hook = (Projects as { hooks: { afterChange: unknown[] } }).hooks.afterChange[0] as (
+      a: unknown,
+    ) => Promise<unknown>;
+    await expect(hook({ doc: { slug: "x" }, previousDoc: null })).resolves.toBeTruthy();
+  });
+});
