@@ -20,6 +20,8 @@
  *
  * Usage:
  *   node tools/check-parity.mjs                 # the fourteen static pages
+ *   node tools/check-parity.mjs --dynamic       # the 37 dynamic pages
+ *   node tools/check-parity.mjs --all           # all 51
  *   node tools/check-parity.mjs about clients   # named pages
  *   BASE_URL=https://168.119.61.125 node tools/check-parity.mjs
  *   node tools/check-parity.mjs contact --allow-form-diff
@@ -27,27 +29,10 @@
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { isKnownRoute, routeFor } from "../src/lib/routes.ts";
+import { pageList } from "./parity-pages.mjs";
 
 const HIGHLAND = "design-files/highland";
 const BASE_URL = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
-
-/* The fourteen slug-less pages Phase 4 owns, as Highland names them. */
-const PHASE_4 = [
-  "index",
-  "about",
-  "executive-management",
-  "clients",
-  "partners",
-  "resources",
-  "downloads",
-  "blog",
-  "careers",
-  "careers-open-positions",
-  "careers-e-academy",
-  "careers-internships",
-  "contact",
-  "subscribe",
-];
 
 const args = process.argv.slice(2);
 const allowFormDiff = args.includes("--allow-form-diff");
@@ -61,7 +46,8 @@ const allowFormDiff = args.includes("--allow-form-diff");
  */
 const selfCheck = args.includes("--self");
 const named = args.filter((a) => !a.startsWith("--"));
-const pages = named.length ? named : PHASE_4;
+const scope = args.includes("--all") ? "all" : args.includes("--dynamic") ? "dynamic" : "static";
+const pages = named.length ? named : pageList(scope);
 
 /* ------------------------------------------------------------ extraction */
 
