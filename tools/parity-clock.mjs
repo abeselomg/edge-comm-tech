@@ -54,3 +54,32 @@ export function checkMovedIndex(expectedHtml, actualHtml, moved) {
   }
   return problems;
 }
+
+/**
+ * The resource centre's "Coming up" band must not still list an event that has
+ * run. Only that band is inspected: the sections grid below it links to the
+ * events index and is unaffected.
+ */
+export function checkMovedResources(actualHtml, movedRoutes) {
+  const start = actualHtml.indexOf("Coming up");
+  if (start < 0) return [];
+  const end = actualHtml.indexOf("</section>", start);
+  const band = actualHtml.slice(start, end < 0 ? undefined : end);
+  return movedRoutes
+    .filter((route) => band.includes(`href="${route}"`))
+    .map((route) => `resources: "Coming up" still lists ${route}, which has run`);
+}
+
+/**
+ * Remove the section holding the "Coming up" band, so the rest of the resource
+ * centre can still be compared sentence by sentence while the band itself is
+ * checked on its own terms (checkMovedResources).
+ */
+export function stripComingUp(html) {
+  const at = html.indexOf("Coming up");
+  if (at < 0) return html;
+  const start = html.lastIndexOf("<section", at);
+  const end = html.indexOf("</section>", at);
+  if (start < 0 || end < 0) return html;
+  return html.slice(0, start) + html.slice(end + "</section>".length);
+}

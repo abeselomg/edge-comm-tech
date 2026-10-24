@@ -30,18 +30,31 @@ function expire(paths: string[], layout = false) {
 
 type PathsFor<T> = (doc: T) => string[];
 
-/** Revalidate after a document is created or updated. */
-export function revalidateAfterChange<T>(paths: PathsFor<T>): CollectionAfterChangeHook {
+/**
+ * Revalidate after a document is created or updated. Pass `layout` when the
+ * document appears in the site chrome (the footer lists every published
+ * solution), so every route is stale rather than only the ones named.
+ */
+export function revalidateAfterChange<T>(
+  paths: PathsFor<T>,
+  options: { layout?: boolean } = {},
+): CollectionAfterChangeHook {
   return ({ doc, previousDoc }) => {
-    expire([...paths(doc as T), ...(previousDoc ? paths(previousDoc as T) : [])]);
+    expire(
+      [...paths(doc as T), ...(previousDoc ? paths(previousDoc as T) : [])],
+      options.layout,
+    );
     return doc;
   };
 }
 
 /** Revalidate after a document is deleted. */
-export function revalidateAfterDelete<T>(paths: PathsFor<T>): CollectionAfterDeleteHook {
+export function revalidateAfterDelete<T>(
+  paths: PathsFor<T>,
+  options: { layout?: boolean } = {},
+): CollectionAfterDeleteHook {
   return ({ doc }) => {
-    expire(paths(doc as T));
+    expire(paths(doc as T), options.layout);
     return doc;
   };
 }

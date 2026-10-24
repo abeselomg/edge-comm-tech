@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   checkMovedEvent,
   checkMovedIndex,
+  checkMovedResources,
+  stripComingUp,
   eventMoved,
   upcomingCount,
 } from "./parity-clock.mjs";
@@ -59,5 +61,41 @@ describe("upcomingCount and checkMovedIndex", () => {
 
   it("requires the Already held band to exist once something has moved", () => {
     expect(checkMovedIndex(index(2), index(1, false), 1).join()).toMatch(/already held/i);
+  });
+});
+
+describe("checkMovedResources", () => {
+  const coming = (links: string[]) =>
+    `<section><p>Coming up</p><ul>${links.map((l) => `<li><a href="${l}">x</a></li>`).join("")}</ul></section><section><h2>Sections</h2><a href="/events/ran">elsewhere</a></section>`;
+
+  it("accepts a Coming up band that no longer lists an event that has run", () => {
+    expect(checkMovedResources(coming(["/events/next"]), ["/events/ran"])).toEqual([]);
+  });
+
+  it("rejects one that still invites a visitor to an event that has run", () => {
+    expect(checkMovedResources(coming(["/events/ran", "/events/next"]), ["/events/ran"]).join()).toMatch(/Coming up/);
+  });
+
+  it("looks only inside the Coming up band, not at links elsewhere on the page", () => {
+    expect(checkMovedResources(coming([]), ["/events/ran"])).toEqual([]);
+  });
+
+  it("passes a page with no Coming up band at all", () => {
+    expect(checkMovedResources("<main><h2>Sections</h2></main>", ["/events/ran"])).toEqual([]);
+  });
+});
+
+describe("stripComingUp", () => {
+  it("removes only the section holding the Coming up band", () => {
+    const html = "<main><section><p>Intro</p></section><section><p>Coming up</p><a href=\"/events/x\">x</a></section><section><h2>Sections</h2></section></main>";
+    const out = stripComingUp(html);
+    expect(out).not.toContain("Coming up");
+    expect(out).not.toContain("/events/x");
+    expect(out).toContain("Intro");
+    expect(out).toContain("Sections");
+  });
+  it("leaves a page without the band untouched", () => {
+    const html = "<main><section>Hello</section></main>";
+    expect(stripComingUp(html)).toBe(html);
   });
 });

@@ -202,8 +202,8 @@ export const Solutions: CollectionConfig = {
   access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
-    afterChange: [revalidateAfterChange(paths)],
-    afterDelete: [revalidateAfterDelete(paths)],
+    afterChange: [revalidateAfterChange(paths, { layout: true })],
+    afterDelete: [revalidateAfterDelete(paths, { layout: true })],
   },
   fields: [
     { name: "title", type: "text", required: true, validate: forbidsPhrases() },

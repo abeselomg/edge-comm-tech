@@ -30,7 +30,7 @@ import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { isKnownRoute, routeFor } from "../src/lib/routes.ts";
 import { pageList } from "./parity-pages.mjs";
-import { checkMovedEvent, checkMovedIndex, eventMoved } from "./parity-clock.mjs";
+import { checkMovedEvent, checkMovedIndex, checkMovedResources, eventMoved, stripComingUp } from "./parity-clock.mjs";
 import { scanPage } from "./content-scan.mjs";
 
 const HIGHLAND = "design-files/highland";
@@ -222,7 +222,7 @@ const notes = [];
  * many moved even when only the index was asked for.
  */
 const movedEvents = new Set();
-if (!selfCheck && pages.some((p) => p === "events" || p.startsWith("event-"))) {
+if (!selfCheck && pages.some((p) => p === "events" || p === "resources" || p.startsWith("event-"))) {
   for (const page of pageList("all").filter((p) => p.startsWith("event-"))) {
     try {
       const res = await fetch(`${BASE_URL}${routeFor(`${page}.html`)}`, { redirect: "follow" });
@@ -252,7 +252,7 @@ for (const page of pages) {
     continue;
   }
 
-  const expected = readFileSync(highlandPath, "utf8");
+  let expected = readFileSync(highlandPath, "utf8");
   let actual;
   if (selfCheck) {
     actual = expected;
@@ -280,6 +280,13 @@ for (const page of pages) {
     problems.push(...checkMovedEvent(page, actual));
     notes.push(`${page}: event has run since Highland was built; checked as a closed event`);
     continue;
+  }
+  if (!selfCheck && page === "resources" && movedEvents.size) {
+    const routes = [...movedEvents].map((e) => routeFor(`${e}.html`));
+    problems.push(...checkMovedResources(actual, routes));
+    notes.push("resources: an event in Highland's Coming up band has run; that band is checked on its own and the rest of the page compared");
+    expected = stripComingUp(expected);
+    actual = stripComingUp(actual);
   }
   if (!selfCheck && page === "events" && movedEvents.size) {
     problems.push(...checkMovedIndex(expected, actual, movedEvents.size));
