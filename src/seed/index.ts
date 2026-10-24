@@ -64,12 +64,15 @@ import {
   toConfirmable,
   toDetailBlocks,
   toItems,
+  toHeld,
   toNewsBody,
+  toNewsSections,
+  toPendingFields,
   toRichParagraphs,
 } from "./transform";
 import { sectorSlug } from "../fields/sectors";
 import { routeFor } from "../lib/routes";
-import { HEROES, ringLabelFor, SOLUTIONS_FRAMEWORK, SOLUTIONS_PRIORITIES } from "./page-copy";
+import { HEROES, NEWS_CLOSING, ringLabelFor, SOLUTIONS_FRAMEWORK, SOLUTIONS_PRIORITIES } from "./page-copy";
 
 /*
  * Loads Edge's approved content into Payload from the Highland modules.
@@ -530,6 +533,10 @@ async function seed() {
         archive: Boolean(n.archive),
         standfirst: n.standfirst,
         body: toNewsBody(n),
+        sections: toNewsSections(n),
+        heldForPublication: toHeld(n),
+        pendingFields: toPendingFields(n),
+        closing: NEWS_CLOSING[n.slug] ?? null,
       },
       report,
     );

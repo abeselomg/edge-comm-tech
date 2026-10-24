@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { newsHref } from "../lib/routes";
+import { isKnownRoute, newsHref } from "../lib/routes";
 import { publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
@@ -72,10 +72,75 @@ export const News: CollectionConfig = {
     {
       name: "body",
       type: "richText",
-      required: true,
+      // Not required: an item can be all titled sections and no running text.
       // richTextGuard, not forbidsPhrases: a Lexical body can embed an image,
       // and the editor's upload picker cannot be narrowed to approved assets.
       validate: richTextGuard(),
+    },
+    {
+      name: "sections",
+      type: "array",
+      labels: { singular: "Section", plural: "Sections" },
+      admin: {
+        description:
+          "Titled sections under the opening text. Each shows a 'Priority' label above its heading.",
+      },
+      fields: [
+        { name: "title", type: "text", required: true, validate: forbidsPhrases() },
+        { name: "body", type: "textarea", required: true, validate: forbidsPhrases() },
+      ],
+    },
+    {
+      name: "heldForPublication",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        position: "sidebar",
+        description:
+          "Tick while details are still outstanding. The article then lists them under 'Details to add before publishing' instead of presenting itself as complete.",
+      },
+    },
+    {
+      name: "pendingFields",
+      type: "array",
+      labels: { singular: "Outstanding detail", plural: "Outstanding details" },
+      admin: {
+        description:
+          "What is still needed before this can be published as complete, e.g. 'Date and venue'. Clear the list and untick Held when it is all supplied.",
+      },
+      fields: [{ name: "item", type: "text", required: true, validate: forbidsPhrases() }],
+    },
+    {
+      name: "closing",
+      type: "group",
+      label: "Closing block",
+      admin: { description: "An optional boxed look-ahead under the article, with up to two links." },
+      fields: [
+        { name: "eyebrow", type: "text", validate: forbidsPhrases() },
+        { name: "title", type: "text", validate: forbidsPhrases() },
+        { name: "body", type: "textarea", validate: forbidsPhrases() },
+        {
+          name: "links",
+          type: "array",
+          maxRows: 2,
+          labels: { singular: "Link", plural: "Links" },
+          fields: [
+            { name: "label", type: "text", required: true, validate: forbidsPhrases() },
+            {
+              name: "href",
+              type: "text",
+              required: true,
+              admin: { description: "A page on this site, e.g. /about. Not a .html file." },
+              validate: (value: unknown) => {
+                const path = typeof value === "string" ? value.split("#")[0] : "";
+                return isKnownRoute(path)
+                  ? true
+                  : "Use a page this site serves, such as /about or /projects.";
+              },
+            },
+          ],
+        },
+      ],
     },
     orderField,
   ],

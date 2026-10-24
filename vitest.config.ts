@@ -37,6 +37,6 @@ export default defineConfig({
     // .tsx as well as .ts, because the components are tested through JSX. A
     // glob that misses those files collects nothing and reports nothing,
     // which is worse than a failure.
-    include: ["src/**/*.test.{ts,tsx}"],
+    include: ["src/**/*.test.{ts,tsx}", "tools/**/*.test.{ts,tsx}"],
   },
 });

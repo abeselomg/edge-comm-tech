@@ -976,7 +976,7 @@ export interface News {
    * The opening paragraph, shown on the index and under the headline.
    */
   standfirst: string;
-  body: {
+  body?: {
     root: {
       type: string;
       children: {
@@ -990,6 +990,47 @@ export interface News {
       version: number;
     };
     [k: string]: unknown;
+  } | null;
+  /**
+   * Titled sections under the opening text. Each shows a 'Priority' label above its heading.
+   */
+  sections?:
+    | {
+        title: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Tick while details are still outstanding. The article then lists them under 'Details to add before publishing' instead of presenting itself as complete.
+   */
+  heldForPublication?: boolean | null;
+  /**
+   * What is still needed before this can be published as complete, e.g. 'Date and venue'. Clear the list and untick Held when it is all supplied.
+   */
+  pendingFields?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * An optional boxed look-ahead under the article, with up to two links.
+   */
+  closing?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    body?: string | null;
+    links?:
+      | {
+          label: string;
+          /**
+           * A page on this site, e.g. /about. Not a .html file.
+           */
+          href: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Lower numbers appear first.
@@ -1894,6 +1935,34 @@ export interface NewsSelect<T extends boolean = true> {
   archive?: T;
   standfirst?: T;
   body?: T;
+  sections?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  heldForPublication?: T;
+  pendingFields?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  closing?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        body?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+      };
   order?: T;
   meta?:
     | T

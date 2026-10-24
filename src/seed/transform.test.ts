@@ -4,8 +4,11 @@ import {
   eventDates,
   toConfirmable,
   toDetailBlocks,
+  toHeld,
   toItems,
   toNewsBody,
+  toNewsSections,
+  toPendingFields,
   toRichParagraphs,
 } from "./transform";
 
@@ -447,36 +450,74 @@ describe("toNewsBody handles both shapes Highland uses", () => {
     expect(texts(body)).toEqual(["First.", "Second."]);
   });
 
-  it("turns sections into a heading and a paragraph each", () => {
-    const body = toNewsBody({
-      sections: [
-        { title: "Reliable foundations", body: "Networks first." },
-        { title: "Trusted data", body: "Then identity." },
-      ],
-    });
-    expect(tags(body)).toEqual(["h2", "paragraph", "h2", "paragraph"]);
-    expect(texts(body)).toEqual([
-      "Reliable foundations",
-      "Networks first.",
-      "Trusted data",
-      "Then identity.",
-    ]);
+  // Sections are their own field now (Phase 5): the article template gives each
+  // a "Priority" eyebrow, which a heading in a rich-text body cannot carry.
+  it("leaves sections out of the body", () => {
+    expect(toNewsBody({ sections: [{ title: "Reliable foundations", body: "Networks first." }] })).toBeNull();
   });
 
-  it("produces a body for every approved news record", async () => {
+  it("carries sections as titled bodies, in order", () => {
+    expect(
+      toNewsSections({
+        sections: [
+          { title: "Reliable foundations", body: "Networks first." },
+          { title: "Trusted data", body: "Then identity." },
+        ],
+      }),
+    ).toEqual([
+      { title: "Reliable foundations", body: "Networks first." },
+      { title: "Trusted data", body: "Then identity." },
+    ]);
+    expect(toNewsSections({ paras: ["x"] })).toEqual([]);
+  });
+
+  it("gives every approved news record body text or sections, never neither", async () => {
     const { NEWS } = (await import("../../design-src/highland/editorial.mjs")) as {
       NEWS: { slug: string; paras?: string[]; sections?: { title: string; body: string }[] }[];
     };
     expect(NEWS.length).toBeGreaterThan(0);
     for (const n of NEWS) {
-      const body = toNewsBody(n);
-      // An empty body is refused by the required field, so every record must
-      // yield text from whichever shape it happens to carry.
-      expect(texts(body).length, `${n.slug} should have body text`).toBeGreaterThan(0);
+      const hasBody = texts(toNewsBody(n)).length > 0;
+      const hasSections = toNewsSections(n).length > 0;
+      expect(hasBody || hasSections, `${n.slug} should have something to read`).toBe(true);
     }
   });
 
-  it("yields nothing for a record carrying neither shape", () => {
-    expect(texts(toNewsBody({}))).toEqual([]);
+  it("yields no body for a record carrying neither shape", () => {
+    expect(toNewsBody({})).toBeNull();
+  });
+});
+
+/*
+ * Review Focus #3. One approved news item is held until six publication
+ * details are supplied. The schema had nowhere to keep that list, so the page
+ * would have lost its "Details to add before publishing" section.
+ */
+describe("the held news item", () => {
+  it("carries the held flag and its six outstanding details in order", async () => {
+    const { NEWS } = (await import("../../design-src/highland/editorial.mjs")) as {
+      NEWS: { slug: string; draft?: boolean; pendingFields?: string[] }[];
+    };
+    const held = NEWS.filter((n) => n.draft);
+    expect(held).toHaveLength(1);
+    expect(toHeld(held[0])).toBe(true);
+    expect(toPendingFields(held[0])).toEqual([
+      { item: "Official meeting name" },
+      { item: "Organizer and partners" },
+      { item: "Date and venue" },
+      { item: "Edge Comm-Tech attendees" },
+      { item: "Approved event photographs" },
+      { item: "Organizer or official program URL" },
+    ]);
+  });
+
+  it("is false and empty for the items that are not held", async () => {
+    const { NEWS } = (await import("../../design-src/highland/editorial.mjs")) as {
+      NEWS: { slug: string; draft?: boolean; pendingFields?: string[] }[];
+    };
+    for (const n of NEWS.filter((x) => !x.draft)) {
+      expect(toHeld(n)).toBe(false);
+      expect(toPendingFields(n)).toEqual([]);
+    }
   });
 });

@@ -160,3 +160,25 @@ export function ringLabelFor(key: string): string {
   }
   return label;
 }
+
+/*
+ * The boxed look-ahead under one news article. Highland wrote it into
+ * news-article.mjs behind a slug test (`a.slug === "edge-comm-tech-established-2018"`),
+ * so it was template code rather than content and never reached the seed. The
+ * CMS has a closing block per article; this is that one block's copy, taken
+ * from the template verbatim.
+ */
+export const NEWS_CLOSING: Record<
+  string,
+  { eyebrow: string; title: string; body: string; links: { label: string; href: string }[] }
+> = {
+  "edge-comm-tech-established-2018": {
+    eyebrow: "Looking forward",
+    title: "Accelerating Africa's digital transformation",
+    body: "Edge Comm-Tech continues to invest in capable teams, professional certifications, strategic partnerships, responsible AI, sustainable infrastructure, and lifecycle support.",
+    links: [
+      { label: "Learn more about Edge Comm-Tech", href: "/about" },
+      { label: "Explore completed projects", href: "/projects" },
+    ],
+  },
+};

@@ -137,6 +137,27 @@ for (const collection of ["solutions", "services"] as const) {
 }
 
 /*
+ * News holding state (Phase 5). Exactly one item is held for publication, with
+ * its six outstanding details; the other two carry none. A held flag with an
+ * empty list would render a "Details to add" box with nothing in it.
+ */
+{
+  const { docs } = await payload.find({ collection: "news", limit: 50, depth: 0, pagination: false });
+  type NewsDoc = { slug: string; heldForPublication?: boolean; pendingFields?: unknown[]; sections?: unknown[]; closing?: { links?: unknown[] } | null };
+  const held = (docs as NewsDoc[]).filter((n) => n.heldForPublication);
+  if (held.length !== 1) problems.push(`news: expected 1 held item, found ${held.length}`);
+  for (const n of docs as NewsDoc[]) {
+    const count = n.pendingFields?.length ?? 0;
+    if (n.heldForPublication && count !== 6) problems.push(`news "${n.slug}": held but has ${count} outstanding details, expected 6`);
+    if (!n.heldForPublication && count) problems.push(`news "${n.slug}": not held but lists ${count} outstanding details`);
+  }
+  const withSections = (docs as NewsDoc[]).filter((n) => n.sections?.length);
+  if (withSections.length !== 1) problems.push(`news: expected 1 item with sections, found ${withSections.length}`);
+  const closing = (docs as NewsDoc[]).filter((n) => n.closing?.links?.length);
+  if (closing.length !== 1) problems.push(`news: expected 1 closing block, found ${closing.length}`);
+}
+
+/*
  * Order. Every list on this site is in an order the client approved, and
  * almost none of it is alphabetical or chronological -- the three news items
  * carry the dates "2018", "Evergreen" and "Date to confirm", which cannot be

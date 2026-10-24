@@ -36,25 +36,32 @@ export function toConfirmable(
 export const toRichParagraphs = (paras: string[] = []) => rich(...paras.map((text) => p(text)));
 
 /**
- * A news body, from either shape Highland uses.
+ * A news body: the running text, as Lexical paragraphs, or null when the item
+ * has none.
  *
- * Most records carry `paras`, a flat list of sentences. The longer "Insight"
- * pieces instead carry `sections` of `{ title, body }`, which news-article.mjs
- * renders as an h2 with a paragraph under it. Only one of the three approved
- * records uses sections, which is exactly why it was missed: passing `paras`
- * straight through produced an empty body, and `body` is required, so the seed
- * refused the document rather than writing a blank one.
+ * Highland's records carry either `paras` (flat sentences) or `sections`
+ * (titled blocks). Sections used to be folded into this body as headings, which
+ * lost the "Priority" label the article template puts above each one; they are
+ * now their own field (toNewsSections), and a sections-only item has no body.
  */
-export const toNewsBody = (record: {
+export const toNewsBody = (record: { paras?: string[]; sections?: unknown }) => {
+  const paras = record.paras ?? [];
+  return paras.length ? rich(...paras.map((text) => p(text))) : null;
+};
+
+/** Titled sections, kept apart from the body so each can carry its own label. */
+export const toNewsSections = (record: {
   paras?: string[];
   sections?: { title: string; body: string }[];
-}) => {
-  const blocks = [
-    ...(record.paras ?? []).map((text) => p(text)),
-    ...(record.sections ?? []).flatMap((s) => [h2(s.title), p(s.body)]),
-  ];
-  return rich(...blocks);
-};
+}) =>
+  (record.sections ?? []).map(({ title, body }) => ({ title, body }));
+
+/** Highland marks the held item `draft`; the CMS names what that means. */
+export const toHeld = (record: { draft?: boolean }) => Boolean(record.draft);
+
+/** The details still owed before a held item can be published as complete. */
+export const toPendingFields = (record: { pendingFields?: string[] }) =>
+  (record.pendingFields ?? []).map((item) => ({ item }));
 
 /*
  * Highland keeps one `iso` per event plus a human date string, which is fine
