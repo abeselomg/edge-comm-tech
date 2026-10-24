@@ -536,7 +536,7 @@ async function seed() {
         sections: toNewsSections(n),
         heldForPublication: toHeld(n),
         pendingFields: toPendingFields(n),
-        closing: NEWS_CLOSING[n.slug] ?? null,
+        closing: NEWS_CLOSING[n.slug] ?? {},
       },
       report,
     );
