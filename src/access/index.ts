@@ -12,6 +12,18 @@ export const signedIn: Access = ({ req: { user } }) => Boolean(user);
 /** Only admins. */
 export const adminOnly: Access = ({ req: { user } }) => user?.role === "admin";
 
+/**
+ * Admins may touch any document; an editor only their own record.
+ *
+ * Returns a `where` filter for editors, so the limit is enforced by the query
+ * and not by the caller. For `users`, which holds the email and password.
+ */
+export const selfOrAdmin: Access = ({ req: { user } }) => {
+  if (!user) return false;
+  if (user.role === "admin") return true;
+  return { id: { equals: user.id } };
+};
+
 /** Only admins may edit this field. */
 export const adminOnlyField: FieldAccess = ({ req: { user } }) => user?.role === "admin";
 

@@ -1,9 +1,10 @@
 import type { Block, CollectionConfig } from "payload";
 import { solutionHref } from "../lib/routes";
-import { publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 export const paths = (doc: { slug?: string | null }) => [
   // Every page that can link a solution, so unpublishing one removes the link
@@ -194,12 +195,13 @@ export const Solutions: CollectionConfig = {
   labels: { singular: "Solution family", plural: "Solution families" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("solutions", doc),
     defaultColumns: ["title", "order", "_status"],
     group: "Content",
     description:
       "The seven integrated solution families. These are the main pages buyers land on from search.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
+  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths, { layout: true })],

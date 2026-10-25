@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Atkinson_Hyperlegible, Fragment_Mono, Geologica } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/chrome";
+import { DraftBanner } from "@/components/draft-banner";
 import "./globals.css";
 
 const geologica = Geologica({
@@ -52,6 +53,8 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
         <SiteHeader />
         <div id="main">{children}</div>
         <SiteFooter />
+        {/* Nothing at all unless an editor is previewing a draft. */}
+        <DraftBanner />
       </body>
     </html>
   );

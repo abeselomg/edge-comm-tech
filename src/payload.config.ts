@@ -193,11 +193,11 @@ export default buildConfig({
       beforeEmail: () => [],
       /*
        * Form definitions are read by the public pages, so `read` stays open;
-       * only signed-in staff may change them.
+       * only admins may change them (a reshaped form breaks its route).
        */
       formOverrides: {
         admin: { group: "Site" },
-        access: { read: () => true, create: signedIn, update: signedIn, delete: signedIn },
+        access: { read: () => true, create: adminOnly, update: adminOnly, delete: adminOnly },
         // Recipients, cc/bcc and templates are staff-only over REST/GraphQL.
         // Local-API readers (the pages, the submission route) override access.
         fields: ({ defaultFields }) =>
@@ -221,7 +221,7 @@ export default buildConfig({
        */
       formSubmissionOverrides: {
         admin: { group: "Site" },
-        access: { create: signedIn, read: signedIn, update: adminOnly, delete: adminOnly },
+        access: { create: adminOnly, read: signedIn, update: adminOnly, delete: adminOnly },
         fields: ({ defaultFields }) => [...defaultFields, ...submissionExtraFields],
       },
     }),

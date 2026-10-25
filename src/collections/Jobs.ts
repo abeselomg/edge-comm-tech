@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { jobHref } from "../lib/routes";
-import { publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases } from "../fields/validators";
@@ -8,6 +8,7 @@ import {
   revalidateAfterChange,
   revalidateAfterDelete,
 } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 export const paths = (doc: { slug?: string | null }) => [
   "/careers",
@@ -30,6 +31,7 @@ export const Jobs: CollectionConfig = {
   labels: { singular: "Open position", plural: "Open positions" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("jobs", doc),
     defaultColumns: ["title", "department", "level", "_status"],
     group: "People",
     description:
@@ -39,7 +41,7 @@ export const Jobs: CollectionConfig = {
     read: publishedOrSignedIn,
     create: signedIn,
     update: signedIn,
-    delete: signedIn,
+    delete: adminOnly,
   },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {

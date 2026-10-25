@@ -21,11 +21,12 @@ async function collection(slug: string) {
 }
 
 describe("form-submissions access", () => {
-  it("refuses anonymous create and read, allows signed-in staff", async () => {
+  it("refuses anonymous create and read, lets staff read", async () => {
     const { access } = await collection("form-submissions");
     expect(await access.create!(anon)).toBe(false);
     expect(await access.read!(anon)).toBe(false);
-    expect(await access.create!(staff)).toBe(true);
+    expect(await access.create!(staff)).toBe(false);
+    expect(await access.create!(admin)).toBe(true);
     expect(await access.read!(staff)).toBe(true);
   });
 
@@ -45,11 +46,12 @@ describe("forms access", () => {
     expect(await access.read!(anon)).toBe(true);
   });
 
-  it("is writable only when signed in", async () => {
+  it("is writable only by admins, since a reshaped form breaks its route", async () => {
     const { access } = await collection("forms");
     for (const op of ["create", "update", "delete"] as const) {
       expect(await access[op]!(anon), `${op} anonymous`).toBe(false);
-      expect(await access[op]!(staff), `${op} signed in`).toBe(true);
+      expect(await access[op]!(staff), `${op} editor`).toBe(false);
+      expect(await access[op]!(admin), `${op} admin`).toBe(true);
     }
   });
 });

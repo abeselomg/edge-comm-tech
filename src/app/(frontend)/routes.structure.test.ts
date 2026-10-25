@@ -13,6 +13,32 @@ function pages(dir: string, out: string[] = []): string[] {
   }
   return out;
 }
+function files(dir: string, out: string[] = []): string[] {
+  for (const name of readdirSync(dir)) {
+    const full = path.join(dir, name);
+    if (statSync(full).isDirectory()) files(full, out);
+    else if (/\.tsx?$/.test(name)) out.push(full);
+  }
+  return out;
+}
+
+/** True when the source sets the dynamicParams segment config to false, however written. */
+function dynamicParamsFalse(src: string): boolean {
+  const code = src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+  const isFalse = (name: string) =>
+    new RegExp(`\\b(?:const|let|var)\\s+${name}\\b[^=;]*=\\s*false\\b`).test(code);
+  if (/\bexport\s+(?:const|let|var)\s+dynamicParams\b[^=;]*=\s*false\b/.test(code)) return true;
+  for (const m of code.matchAll(/\bexport\s*\{([^}]*)\}\s*(from\b)?/g)) {
+    for (const spec of m[1].split(",")) {
+      const [local, exported = local] = spec.trim().split(/\s+as\s+/).map((s) => s.trim());
+      if (exported !== "dynamicParams") continue;
+      // A re-export from another module cannot be checked here, so it is refused.
+      if (m[2] || isFalse(local)) return true;
+    }
+  }
+  return false;
+}
+
 const rel = (f: string) => path.relative(here, f).replaceAll("\\", "/");
 const all = pages(here);
 const dynamic = all.filter((f) => rel(f).includes("[slug]"));
@@ -48,6 +74,46 @@ describe("dynamic routes", () => {
   it("the database-backed routes read through loadOr404 so an unpublished slug is a 404", () => {
     for (const file of dynamic.filter((f) => !rel(f).startsWith("resources/media"))) {
       expect(read(file), rel(file)).toMatch(/loadOr404\(/);
+    }
+  });
+
+  it("no route file sets dynamicParams = false", () => {
+    /*
+     * Review Focus #5 (Phase 7). generateStaticParams lists published slugs
+     * only, so under dynamicParams = false a draft-only document -- the one an
+     * editor most wants to preview -- could never be rendered, and a layout
+     * revalidation leaves the route unrecoverable (NoFallbackError, see the
+     * media page). The 404 for an unknown or unpublished slug is loadOr404's
+     * job, not the router's. Every source file is scanned -- layouts and
+     * route handlers carry segment config too -- with comments stripped so
+     * prose about the setting does not trip it.
+     */
+    const sources = files(here).filter((f) => !/\.test\.tsx?$/.test(f));
+    expect(sources.length).toBeGreaterThan(all.length);
+    for (const file of sources) {
+      expect(dynamicParamsFalse(read(file)), rel(file)).toBe(false);
+    }
+  });
+
+  it("the dynamicParams check recognises every way of writing it", () => {
+    for (const bad of [
+      "export const dynamicParams = false;",
+      "export let dynamicParams = false",
+      "export var dynamicParams: boolean = false;",
+      "export const dynamicParams = false as const;",
+      "const dynamicParams = false;\nexport { dynamicParams };",
+      "const off = false as const;\nexport { off as dynamicParams };",
+      'export { dynamicParams } from "./config";',
+    ]) {
+      expect(dynamicParamsFalse(bad), bad).toBe(true);
+    }
+    for (const ok of [
+      "/* rather than setting dynamicParams = false, which ... */",
+      "// export const dynamicParams = false;",
+      "export const dynamicParams = true;",
+      "export const revalidate = 3600;",
+    ]) {
+      expect(dynamicParamsFalse(ok), ok).toBe(false);
     }
   });
 

@@ -1,8 +1,9 @@
 import type { CollectionConfig } from "payload";
-import { publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 const paths = () => ["/blog"];
 
@@ -12,11 +13,12 @@ export const PostCategories: CollectionConfig = {
   labels: { singular: "Insight topic", plural: "Insight topics" },
   admin: {
     useAsTitle: "label",
+    preview: (doc) => previewUrl("postCategories", doc),
     defaultColumns: ["label", "order"],
     group: "Resources",
     description: "Topics used to group the insights page.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
+  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths)],

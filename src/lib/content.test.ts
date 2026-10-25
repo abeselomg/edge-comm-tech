@@ -1,5 +1,224 @@
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Careers } from "@/globals/Careers";
+import { Company } from "@/globals/Company";
+import { ContactDetails } from "@/globals/ContactDetails";
+import { PageCopy } from "@/globals/PageCopy";
+import { SiteSettings } from "@/globals/SiteSettings";
+
+/*
+ * The behavioural half: content.ts run against a fake Local API and a fake
+ * draftMode(). No database and no Next request -- the fakes record what each
+ * reader asks Payload for, which is the property that matters: published-only
+ * outside draft mode, the latest draft inside it.
+ */
+let draftEnabled = false;
+vi.mock("next/headers", () => ({
+  draftMode: async () => ({ isEnabled: draftEnabled }),
+  headers: async () => new Headers(),
+}));
+
+type Doc = Record<string, unknown> & { slug?: string; _status?: string };
+type FindArgs = { collection: string; where?: Record<string, any>; draft?: boolean; [k: string]: unknown };
+let store: Record<string, Doc[]> = {};
+
+/*
+ * Roughly what Payload does: `draft: true` reads the latest version of every
+ * document whatever its status; otherwise the main table is read. Either way
+ * the `where` applies. Only the filters content.ts uses are understood.
+ */
+const fake = {
+  find: vi.fn(async ({ collection, where = {} }: FindArgs) => {
+    // Draft-only documents sit in the main table too, with _status "draft", so
+    // without `draft` it is the where clause alone that keeps them out.
+    let docs = store[collection] ?? [];
+    if (where._status) docs = docs.filter((d) => d._status === where._status.equals);
+    if (where.slug) docs = docs.filter((d) => d.slug === where.slug.equals);
+    if (where.title) docs = docs.filter((d) => d.title === where.title.equals);
+    return { docs };
+  }),
+  findGlobal: vi.fn(async ({ slug }: { slug: string }) => ({ slug })),
+  // isDraft() needs a staff session as well as draft mode; draft.test.ts covers
+  // the refusals, here an editor is always signed in.
+  auth: vi.fn(async () => ({ user: { id: 1, collection: "users", role: "editor" } })),
+};
+vi.mock("payload", () => ({ getPayload: vi.fn(async () => fake) }));
+vi.mock("@payload-config", () => ({ default: {} }));
+
+const content = await import("./content");
+
+/** Every list reader and every by-slug reader content.ts exports. */
+const LIST_READERS = [
+  "getSolutions", "getServices", "getProjects", "getClients", "getPartners",
+  "getPartnerCategories", "getPosts", "getPostCategories", "getNews", "getEvents",
+  "getDownloads", "getJobs", "getAcademyTracks",
+] as const;
+const SLUG_READERS = [
+  "getSolution", "getService", "getProject", "getNewsItem", "getEvent", "getJob",
+] as const;
+const GLOBAL_READERS = [
+  "getSiteSettings", "getCompany", "getContactDetails", "getCareersContent", "getPageCopy",
+] as const;
+
+const callsOf = (fn: typeof fake.find) => fn.mock.calls.map(([a]) => a as FindArgs);
+
+beforeEach(() => {
+  draftEnabled = false;
+  store = {};
+  fake.find.mockClear();
+  fake.findGlobal.mockClear();
+});
+
+describe("the readers outside draft mode", () => {
+  it("every reader filters to published and never asks for drafts", async () => {
+    for (const name of LIST_READERS) await content[name]();
+    for (const name of SLUG_READERS) await content[name]("x");
+    const calls = callsOf(fake.find);
+    expect(calls).toHaveLength(LIST_READERS.length + SLUG_READERS.length);
+    for (const c of calls) {
+      expect(c.where?._status, c.collection).toEqual({ equals: "published" });
+      expect(c, c.collection).not.toHaveProperty("draft");
+    }
+  });
+
+  it("a draft-only document is a null (so loadOr404 answers 404)", async () => {
+    store.solutions = [{ slug: "draft-only", _status: "draft", title: "Unfinished" }];
+    await expect(content.getSolution("draft-only")).resolves.toBeNull();
+    await expect(content.getSolutions()).resolves.toEqual([]);
+  });
+});
+
+describe("the readers in draft mode", () => {
+  beforeEach(() => {
+    draftEnabled = true;
+  });
+
+  it("every reader asks for the latest draft and drops the published filter", async () => {
+    for (const name of LIST_READERS) await content[name]();
+    for (const name of SLUG_READERS) await content[name]("x");
+    const calls = callsOf(fake.find);
+    expect(calls).toHaveLength(LIST_READERS.length + SLUG_READERS.length);
+    for (const c of calls) {
+      expect(c.draft, c.collection).toBe(true);
+      expect(c.where?._status, c.collection).toBeUndefined();
+    }
+  });
+
+  it("the by-slug readers still match on the slug", async () => {
+    await content.getSolution("datacenter");
+    expect(callsOf(fake.find)[0].where).toEqual({ slug: { equals: "datacenter" } });
+  });
+
+  it("getSolution returns a draft-only document", async () => {
+    store.solutions = [{ slug: "draft-only", _status: "draft", title: "Unfinished" }];
+    await expect(content.getSolution("draft-only")).resolves.toMatchObject({ title: "Unfinished" });
+  });
+
+  it("still strips a logo whose approval was withdrawn -- a content rule, not a publishing one", async () => {
+    const unapproved = { id: 1, url: "/m/a.png", approved: false };
+    const approved = { id: 2, url: "/m/b.png", approved: true };
+    store.clients = [
+      { slug: "a", _status: "draft", logo: unapproved },
+      { slug: "b", _status: "draft", logo: approved },
+    ];
+    store.partners = [{ slug: "p", _status: "draft", logo: unapproved }];
+    const clients = await content.getClients();
+    expect(clients.map((c) => c.logo)).toEqual([null, approved]);
+    expect((await content.getPartners())[0].logo).toBeNull();
+  });
+
+  it("events keep their derived status in draft mode", async () => {
+    store.events = [{ slug: "e", _status: "draft", startsOn: "2000-01-01", endsOn: "2000-01-02" }];
+    const [e] = await content.getEvents();
+    expect(e.status).toBe("past");
+    expect((await content.getEvent("e"))?.status).toBe("past");
+  });
+
+  it("getForm is untouched: forms have no drafts, so no draft flag and no status filter", async () => {
+    store.forms = [{ title: "Contact" }];
+    await expect(content.getForm("contact")).resolves.toMatchObject({ title: "Contact" });
+    const [c] = callsOf(fake.find);
+    expect(c.collection).toBe("forms");
+    expect(c).not.toHaveProperty("draft");
+    expect(c.where).not.toHaveProperty("_status");
+  });
+});
+
+describe("a caller's extra options cannot override the read mode", () => {
+  /*
+   * many() takes per-reader options (today only byOrder). If those were spread
+   * after the read mode, a caller passing `where` or `draft` would replace the
+   * published filter or force a draft read on the public site. The type forbids
+   * it; this proves the order holds even if the type is cast around.
+   */
+  const hostile = { sort: "order", where: { slug: { exists: true } }, draft: true } as never;
+
+  it("outside draft mode the published filter stands and no draft is read", async () => {
+    await content.many("solutions", hostile);
+    const [c] = callsOf(fake.find);
+    expect(c.where).toEqual({ _status: { equals: "published" } });
+    expect(c).not.toHaveProperty("draft");
+    expect(c.sort).toBe("order");
+  });
+
+  it("in draft mode the draft read stands and no status filter appears", async () => {
+    draftEnabled = true;
+    await content.many("solutions", { ...(hostile as object), draft: false } as never);
+    const [c] = callsOf(fake.find);
+    expect(c.draft).toBe(true);
+    expect(c.where).toEqual({});
+    expect(c.sort).toBe("order");
+  });
+});
+
+describe("the draft flag is read per call, not captured once", () => {
+  /*
+   * React's cache() memoises per server request, and one request has one
+   * draft-mode state, so a draft request cannot hand its result to a public
+   * one. What would break that is the flag being read outside the cached
+   * function (at import, or once per process). Flip it between two calls of
+   * the same reader with the same argument and the second must follow.
+   */
+  it("follows the flag across calls of the same reader and argument", async () => {
+    store.solutions = [{ slug: "s", _status: "draft", title: "Draft" }];
+    draftEnabled = true;
+    await expect(content.getSolution("s")).resolves.not.toBeNull();
+    draftEnabled = false;
+    await expect(content.getSolution("s")).resolves.toBeNull();
+    draftEnabled = true;
+    await expect(content.getSolutions()).resolves.toHaveLength(1);
+    draftEnabled = false;
+    await expect(content.getSolutions()).resolves.toHaveLength(0);
+  });
+});
+
+describe("the globals", () => {
+  /*
+   * Every global publishes immediately (versions.drafts false, or no versions
+   * at all), so there is no draft to read and findGlobal never gets `draft`.
+   * If a global ever gains drafts this test fails, and its reader must then
+   * pass `draft: await isDraft()` -- the assertion below is what to change.
+   */
+  const configs = [Careers, Company, ContactDetails, PageCopy, SiteSettings];
+
+  it("none has drafts enabled", () => {
+    expect(configs).toHaveLength(5);
+    for (const g of configs) {
+      const drafts = typeof g.versions === "object" ? g.versions.drafts : undefined;
+      expect(Boolean(drafts), g.slug).toBe(false);
+    }
+  });
+
+  for (const mode of [false, true]) {
+    it(`never passes draft to findGlobal (draft mode ${mode ? "on" : "off"})`, async () => {
+      draftEnabled = mode;
+      for (const name of GLOBAL_READERS) await content[name]();
+      const calls = fake.findGlobal.mock.calls.map(([a]) => a as Record<string, unknown>);
+      expect(calls.map((c) => c.slug).sort()).toEqual(configs.map((g) => g.slug).sort());
+      for (const c of calls) expect(c, String(c.slug)).not.toHaveProperty("draft");
+    });
+  }
+});
 
 /*
  * Structural checks on the read layer, in the manner of seo.test.ts.
@@ -56,11 +275,24 @@ describe("the read layer only reads published documents", () => {
     expect(callSites).toHaveLength(3);
   });
 
-  it("filters on _status in both helpers", () => {
+  it("filters on _status in both helpers, unless the request is in draft mode", () => {
+    const mode = source.slice(source.indexOf("async function readMode"), source.indexOf("async function many"));
     const many = source.slice(source.indexOf("async function many"), source.indexOf("async function one"));
     const one = source.slice(source.indexOf("async function one"), source.indexOf("/* ------"));
-    expect(many, "many() must filter to published").toMatch(/where:\s*PUBLISHED/);
-    expect(one, "one() must filter to published").toMatch(/where:\s*\{\s*\.\.\.PUBLISHED/);
+    // Each helper takes its mode from readMode(), spreads it into the find, and
+    // passes the result through forMode() so that outside draft mode the
+    // unpublished related documents are stripped (content-relations.test.ts).
+    for (const [name, body] of [["many()", many], ["one()", one]] as const) {
+      expect(body, `${name} must read through readMode()`).toMatch(/const mode = await readMode\(/);
+      expect(body, `${name} must spread the mode into the find`).toMatch(/\.\.\.mode,/);
+      expect(body, `${name} must filter its result through forMode()`).toMatch(/forMode<T>\(docs, mode\)/);
+    }
+    expect(source).toMatch(/mode\.draft \? docs : docs\.map\(\(d\) => dropUnpublishedRelations\(d\)\)/);
+    // The draft branch is the only one without the filter, and it is taken
+    // only when isDraft() says so. PUBLISHED is spread last so no caller's
+    // where clause can override it.
+    expect(mode).toMatch(/\(await isDraft\(\)\)\s*\?\s*\{ where, draft: true \}/);
+    expect(mode).toMatch(/:\s*\{ where: \{ \.\.\.where, \.\.\.PUBLISHED \} \}/);
     expect(source).toMatch(/PUBLISHED = \{ _status: \{ equals: "published" \} \}/);
   });
 

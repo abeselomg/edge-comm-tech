@@ -112,6 +112,15 @@ fifteen direct dependencies declared with a caret.
 **The seed does not create users.** The first visit to `/admin` offers
 "Create first user". Until someone does that, there is no way in.
 
+> **WARNING — an empty users table is an open door.** On a database with no
+> users, *anyone* who visits `/admin` can click **Create first user** and is made
+> an **administrator** (no invitation, no secret). So right after the first
+> deploy, Edge's real administrator creates their own account at `/admin` —
+> they choose their own password. That account is never created by a script,
+> and its password is never written into a file, an environment variable, a
+> chat or this repository. And **never delete the last admin**: deleting it
+> reopens the door (`tools/editorial-live-setup.mjs` refuses to).
+
 **Seed modes are environment variables, not flags.** `payload run` strips the
 script's arguments, so `--fresh` silently does nothing. Use
 `NODE_ENV=production npm run seed:force` or `NODE_ENV=production npm run seed:fresh`.
@@ -346,3 +355,145 @@ NODE_ENV=production FORMS_CLEANUP_MODE=delete npx payload run tools/forms-live-c
 
 Read each probe submission's `emailStatus` and its CV's access in the admin or
 through the local API before the delete.
+
+## Phase 7: the editorial workflow
+
+Edge's own staff edit the site in `/admin`. There are two roles, `admin` and
+`editor`, and nothing else.
+
+**Who can do what.**
+
+- **Editors** can create, edit, save drafts of and publish every content item
+  (solutions, services, projects, clients, partners and their categories,
+  events, jobs, E-Academy tracks, news, insights and their topics, downloads),
+  and can edit the Company, Careers and Page copy sections. They can upload and
+  manage media. They can read the form submissions and the uploaded CVs, and see
+  the list of users, and they can change their own name, email and password.
+- **Editors cannot** edit Contact details or Site settings, create, change or
+  delete form definitions, create or delete users, change another person's
+  account, change their own role, change or delete form submissions and CVs, or
+  **delete any content**. An editor takes something down with Unpublish.
+- **Admins** can do all of that, and are the only ones who delete content,
+  create users and edit Contact details, Site settings and the forms.
+- **Visitors** read published content only. A draft is never served to them.
+
+The same table is code: `src/access/matrix.ts`, checked against the real
+configuration by `src/access/matrix.test.ts`, which fails when a collection or
+global is added without a row.
+
+**Editor walkthrough** (no technical knowledge needed).
+
+1. Sign in at `/admin` and open the item under its section (for example
+   Resources, then News and announcements).
+2. Edit it. The admin saves your work as a draft every second or so ("autosave").
+   The live page does **not** change while you do this.
+3. Click **Preview**. The real page opens with your unsaved-for-the-public
+   changes in it, and a small bar at the bottom left says "Preview — unpublished
+   changes are shown". Close the bar's **Exit preview** link when you are done.
+4. Happy with it? Click **Publish**. The live page changes within a few seconds,
+   with no developer involved.
+5. To take something down, use **Unpublish** (it becomes a draft again). Deleting
+   content is an admin action; ask an administrator.
+
+**The first admin.** On a new database, visit `/admin`: it offers **Create first
+user**. The first user is always made an admin, whatever role the form shows
+(`firstUserIsAdmin` in `src/collections/Users.ts`), so the site always has
+someone who can manage users. Everyone created after that gets the role an admin
+chooses, `editor` by default.
+
+> **WARNING.** Because the first user is *always* an admin, whoever reaches an
+> empty `/admin` first owns the site. Edge's real administrator must create
+> their account at `/admin` **immediately after the first deploy**, choosing
+> their own password — never a script, never a password written down anywhere.
+> Never delete the last admin. Only admins can unlock an account locked by too
+> many failed logins (`unlock` is admin-only).
+
+**How preview works.** `/preview?path=/news/<slug>` checks the staff session,
+accepts only a page this site serves (nothing under `/api`, `/admin`, or off-site),
+sets Next's `__prerender_bypass` draft cookie and redirects to that page. Without
+a session it answers 401 and sets nothing. The preview cookie alone shows
+nothing: every draft page also checks for a live staff session (`isDraft()` in
+`src/lib/draft.ts`), so the cookie only works together with a signed-in admin or
+editor. Logging out ends preview even if the browser keeps the cookie, and a
+copied or forged cookie gets the published page.
+The cookie is `SameSite=None; Secure`, so **preview needs HTTPS in production**
+(over plain http the browser will not keep it). The banner only exists in draft
+mode.
+
+**Frame protection.** A `SameSite=None` draft cookie is sent when another site
+frames this one, so a page elsewhere could embed the site as a signed-in staff
+member. nginx therefore sends, from the 443 server block in
+`deploy/nginx-edge-comm-tech.conf`, `X-Frame-Options: SAMEORIGIN` and
+`Content-Security-Policy: frame-ancestors 'self'` on every response (`always`,
+so error pages too). Payload's admin only frames its own origin (live preview,
+document drawers), so it keeps working. No `location` in that block has an
+`add_header` of its own; one that ever does must repeat both lines, because nginx
+then drops the inherited ones (`src/lib/deploy-files.test.ts` fails if a location
+gains one). The conf is installed by hand (copy it to `/etc/nginx/sites-available/edge-comm-tech`,
+`nginx -t`, `systemctl reload nginx`). Verify:
+
+```bash
+curl -skI https://168.119.61.125/ | grep -iE 'x-frame-options|content-security-policy'
+curl -skI https://168.119.61.125/no-such-page | grep -iE 'x-frame-options|content-security-policy'
+# both print: x-frame-options: SAMEORIGIN / content-security-policy: frame-ancestors 'self'
+```
+
+The probe prints both headers of the home page and a WARN when neither is set.
+
+**Probe the workflow on the server.** `tools/check-editorial-live.mjs` signs in as
+a throwaway editor and a throwaway admin, takes a disposable News item through
+draft, publish, autosave, preview, republish and unpublish, tries everything an
+editor must not do, and deletes what it made. Operator steps:
+
+```bash
+# 0. FIRST: Edge's real administrator has created their own account at /admin
+#    (their own password). The probe users are created next to it, and step 3
+#    refuses to run if the probe admin would be the last admin.
+
+# 1. On the server, from the app directory with the environment loaded:
+EDITORIAL_SETUP_MODE=create NODE_ENV=production npx payload run tools/editorial-live-setup.mjs
+#    creates admin-probe@ and editor-probe@example.invalid with random passwords,
+#    written to /root/editorial-probe.env (mode 0600) and never printed.
+#    (dry-run is the default mode; it refuses if the users already exist.)
+
+# 2. Copy the file's contents into your developer shell WITHOUT echoing them
+#    (for example: scp it, then `set -a; . ./editorial-probe.env; set +a`, and delete the copy).
+#    Then:
+BASE_URL=https://168.119.61.125 NODE_TLS_REJECT_UNAUTHORIZED=0 \
+  node --import tsx tools/check-editorial-live.mjs
+
+# 3. Back on the server, remove the throwaway users and the file:
+EDITORIAL_SETUP_MODE=delete NODE_ENV=production npx payload run tools/editorial-live-setup.mjs
+#    refuses (exit 1, nothing deleted) when no other admin exists; afterwards it
+#    prints "remaining users: N (A admin, E editor)" and exits 1 if A is 0.
+```
+
+The preview checks prove the fix for a stale cookie: the bypass cookie alone
+shows the published page; with the editor's session it shows the draft and the
+banner; after `POST /api/users/logout` the same old cookie shows the published
+page again. While a draft is pending the probe also checks the anonymous API:
+`/api/news/<id>?draft=true` returns the published title, a `?draft=true` listing
+of drafts is empty, the News and Contact details versions endpoints answer
+401/403, and GraphQL `versionsNews` answers with errors and no data.
+
+The global checks use `POST /api/globals/<slug>` with an empty body, which is how
+Payload updates a global (`PATCH` on a global answers 404): the editor must get
+403 for Contact details and Site settings. The admin's side is never tested by
+writing a live global; the probe reads `GET /api/access` for both sessions and
+requires `globals['contact-details'].update`, `collections.users.create` and
+`collections.news.delete` to be allowed for the admin and refused for the editor
+(the response gives either a bare boolean or `{ permission }`; both are read).
+
+The probe prints `ok` or `FAIL name: reason` per check and exits non-zero on any
+FAIL. Its destructive role checks on form submissions and CVs use an id no row has
+(a 403 proves denial; a 404 would mean access is open), so a misconfiguration can
+never delete a real record. Two things it reports without failing: the frame
+headers above, and a "related draft" finding: whether a published page prints the
+title of a related item that is only a draft (a published insight whose topic is a
+draft). It is reported as LEAK or NO LEAK (a finding, not a gate), and the probe
+deletes both test items either way. The first live run reported LEAK; the read
+layer (`dropUnpublishedRelations()` in `src/lib/content.ts`) now strips every
+populated related document that is not published outside draft mode, so after
+that fix is deployed the finding must read NO LEAK. The first-user rule is
+exercised by its unit test, not by the probe: by the time the probe runs, the real
+admin (step 0) already exists.

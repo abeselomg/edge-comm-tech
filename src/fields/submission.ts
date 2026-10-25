@@ -12,7 +12,7 @@ export const submissionExtraFields: Field[] = [
   {
     name: "consent",
     type: "group",
-    admin: { description: "The consent the visitor gave when submitting." },
+    admin: { readOnly: true, description: "The consent the visitor gave when submitting." },
     fields: [
       { name: "accepted", type: "checkbox", defaultValue: false },
       { name: "acceptedAt", type: "date" },
@@ -29,16 +29,17 @@ export const submissionExtraFields: Field[] = [
       { label: "Failed", value: "failed" },
       { label: "Skipped", value: "skipped" },
     ],
-    admin: { position: "sidebar" },
+    admin: { position: "sidebar", readOnly: true },
   },
   {
     name: "emailError",
     type: "text",
-    admin: { position: "sidebar", description: "Why the notification email did not send." },
+    admin: { position: "sidebar", readOnly: true, description: "Why the notification email did not send." },
   },
   {
     name: "meta",
     type: "group",
+    admin: { readOnly: true },
     fields: [
       { name: "ipHash", type: "text", admin: { description: "Salted hash. The address itself is not stored." } },
       { name: "userAgent", type: "text" },

@@ -34,3 +34,36 @@ describe("deploy/redeploy.sh", () => {
     expect(script).not.toMatch(/seed:(force|fresh)|SEED_MODE=(force|fresh)/);
   });
 });
+
+describe("deploy/nginx-edge-comm-tech.conf", () => {
+  /*
+   * The preview cookie is SameSite=None, so a page on another site that frames
+   * this one would load it as the signed-in staff member. Both headers forbid
+   * framing by anyone but this origin (Payload's admin frames only itself).
+   * `always` so 4xx/5xx carry them too. nginx drops inherited add_header lines
+   * in any location that sets its own, so the server block that proxies the app
+   * must have no location with an add_header of its own.
+   */
+  // Comments dropped first: they mention locations and add_header in prose.
+  const conf = read("nginx-edge-comm-tech.conf").replace(/#.*$/gm, "");
+  const servers = conf.split(/^server \{/m).slice(1);
+  const tls = servers.find((s) => /listen 443 ssl/.test(s)) ?? "";
+  const serverLevel = tls.replace(/location [^{]*\{[^}]*\}/g, "");
+
+  it("sends X-Frame-Options SAMEORIGIN and CSP frame-ancestors 'self' from the TLS server block", () => {
+    expect(tls).toMatch(/proxy_pass http:\/\/edge_cms;/);
+    expect(serverLevel).toMatch(/^\s*add_header X-Frame-Options "SAMEORIGIN" always;\r?$/m);
+    expect(serverLevel).toMatch(/^\s*add_header Content-Security-Policy "frame-ancestors 'self'" always;\r?$/m);
+  });
+
+  it("has no location that would shadow those headers with its own add_header", () => {
+    for (const loc of tls.match(/location [^{]*\{[^}]*\}/g) ?? []) expect(loc).not.toMatch(/add_header/);
+  });
+
+  it("every server block that proxies the app sets both headers", () => {
+    for (const s of servers.filter((b) => /proxy_pass/.test(b))) {
+      expect(s).toMatch(/add_header X-Frame-Options "SAMEORIGIN" always;/);
+      expect(s).toMatch(/add_header Content-Security-Policy "frame-ancestors 'self'" always;/);
+    }
+  });
+});

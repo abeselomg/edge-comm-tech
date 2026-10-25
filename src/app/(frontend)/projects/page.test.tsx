@@ -149,6 +149,8 @@ describe("an unpublished client is never named", () => {
     expect(clientOf(project())?.name).toBe("Bahir Dar University");
     expect(clientOf(p)).toBeNull();
     expect(clientOf(project({ client: 5 }))).toBeNull();
+    // content.ts turns an unpublished client into null outside draft mode.
+    expect(clientOf(project({ client: null }))).toBeNull();
   });
 
   it("the facts panel, index row and featured card leave the name out", () => {

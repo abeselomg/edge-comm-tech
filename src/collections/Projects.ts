@@ -1,11 +1,12 @@
 import type { CollectionConfig } from "payload";
 import { projectHref } from "../lib/routes";
-import { publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { SECTOR_OPTIONS } from "../fields/sectors";
 import { confirmable } from "../fields/confirmable";
 import { PROJECT_RULES, forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 export const paths = (doc: { slug?: string | null }) => [
   "/",
@@ -35,11 +36,12 @@ export const Projects: CollectionConfig = {
   labels: { singular: "Project", plural: "Projects" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("projects", doc),
     defaultColumns: ["title", "client", "sector", "_status"],
     group: "Content",
     description: "Delivered engagements, written as case records rather than marketing.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
+  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths, { patterns: ["/solutions/[slug]", "/projects/[slug]"] })],

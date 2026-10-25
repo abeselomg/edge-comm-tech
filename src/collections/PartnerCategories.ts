@@ -1,8 +1,9 @@
 import type { CollectionConfig } from "payload";
-import { publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 const paths = () => ["/partners"];
 
@@ -19,11 +20,12 @@ export const PartnerCategories: CollectionConfig = {
   labels: { singular: "Partner category", plural: "Partner categories" },
   admin: {
     useAsTitle: "label",
+    preview: (doc) => previewUrl("partnerCategories", doc),
     defaultColumns: ["label", "ringLabel", "order"],
     group: "Content",
     description: "Capability groups used to organise and filter the partner network.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
+  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths)],

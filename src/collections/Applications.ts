@@ -1,11 +1,12 @@
 import type { CollectionConfig } from "payload";
-import { signedIn } from "../access";
+import { adminOnly, signedIn } from "../access";
 
 /*
  * Uploaded CVs from the two application forms.
  *
  * Deliberately not `media`, which is public by URL: a CV must never be
- * readable by an anonymous request. Every operation is staff-only, and
+ * readable by an anonymous request. Staff read; only admins change or delete
+ * (the form route writes through the local API, which overrides access). And
  * `disablePayloadAccessControl` is left unset so file URLs go through the same
  * access check as the API (an anonymous GET of a file is refused).
  *
@@ -18,7 +19,7 @@ export const Applications: CollectionConfig = {
   slug: "applications",
   labels: { singular: "Application file", plural: "Application files" },
   admin: { group: "Site" },
-  access: { read: signedIn, create: signedIn, update: signedIn, delete: signedIn },
+  access: { read: signedIn, create: adminOnly, update: adminOnly, delete: adminOnly },
   upload: {
     // Relative to the working directory: /srv/edge-comm-tech/app/applications on
     // the server. Outside public/, and the one place besides .next and media
