@@ -6,8 +6,10 @@ import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { seoPlugin } from "@payloadcms/plugin-seo";
 import { formBuilderPlugin } from "@payloadcms/plugin-form-builder";
 import { s3Storage } from "@payloadcms/storage-s3";
+import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
 import sharp from "sharp";
 
+import { readMailConfig } from "./lib/mail";
 import { guardSeoMetaFields } from "./fields/seo";
 import { submissionExtraFields } from "./fields/submission";
 import { signedIn, adminOnly } from "./access";
@@ -95,6 +97,28 @@ function buildStoragePlugins() {
 
 const storagePlugins = buildStoragePlugins();
 
+/*
+ * Outgoing mail. With SMTP_HOST unset there is no adapter and Payload's
+ * default logs instead of sending, so development needs no mail server. The
+ * transport is not verified at boot (skipVerify): an unreachable relay must
+ * not stop the site starting, and each send's failure is recorded on the
+ * submission by sendNotification.
+ */
+const mail = readMailConfig(process.env);
+const emailAdapter = mail
+  ? nodemailerAdapter({
+      defaultFromAddress: mail.from,
+      defaultFromName: "Edge Comm-Tech",
+      skipVerify: true,
+      transportOptions: {
+        host: mail.host,
+        port: mail.port,
+        secure: mail.secure,
+        ...(mail.user && mail.pass ? { auth: { user: mail.user, pass: mail.pass } } : {}),
+      },
+    })
+  : undefined;
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -133,6 +157,7 @@ export default buildConfig({
      */
     push: process.env.NODE_ENV !== "production",
   }),
+  ...(emailAdapter ? { email: emailAdapter } : {}),
   sharp,
   plugins: [
     seoPlugin({
@@ -156,6 +181,14 @@ export default buildConfig({
     formBuilderPlugin({
       fields: { payment: false, upload: true },
       uploadCollections: ["applications"],
+      /*
+       * One notification per submission, sent by sendNotification (src/lib/mail.ts)
+       * so a failure is recorded on the submission. The plugin has its own
+       * sender that mails each form's `emails` on create; returning no emails
+       * here stops it, leaving ours the only one. The `emails` array stays as
+       * the recipient list we read.
+       */
+      beforeEmail: () => [],
       /*
        * Form definitions are read by the public pages, so `read` stays open;
        * only signed-in staff may change them.
