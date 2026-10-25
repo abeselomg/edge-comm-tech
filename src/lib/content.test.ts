@@ -138,6 +138,33 @@ describe("the readers in draft mode", () => {
   });
 });
 
+describe("a caller's extra options cannot override the read mode", () => {
+  /*
+   * many() takes per-reader options (today only byOrder). If those were spread
+   * after the read mode, a caller passing `where` or `draft` would replace the
+   * published filter or force a draft read on the public site. The type forbids
+   * it; this proves the order holds even if the type is cast around.
+   */
+  const hostile = { sort: "order", where: { slug: { exists: true } }, draft: true } as never;
+
+  it("outside draft mode the published filter stands and no draft is read", async () => {
+    await content.many("solutions", hostile);
+    const [c] = callsOf(fake.find);
+    expect(c.where).toEqual({ _status: { equals: "published" } });
+    expect(c).not.toHaveProperty("draft");
+    expect(c.sort).toBe("order");
+  });
+
+  it("in draft mode the draft read stands and no status filter appears", async () => {
+    draftEnabled = true;
+    await content.many("solutions", { ...(hostile as object), draft: false } as never);
+    const [c] = callsOf(fake.find);
+    expect(c.draft).toBe(true);
+    expect(c.where).toEqual({});
+    expect(c.sort).toBe("order");
+  });
+});
+
 describe("the draft flag is read per call, not captured once", () => {
   /*
    * React's cache() memoises per server request, and one request has one

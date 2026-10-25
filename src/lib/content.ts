@@ -105,14 +105,23 @@ async function readMode(where: Where = {}): Promise<{ where: Where; draft?: true
   return (await isDraft()) ? { where, draft: true } : { where: { ...where, ...PUBLISHED } };
 }
 
-async function many<T>(collection: string, extra: Record<string, unknown> = {}): Promise<T[]> {
+/*
+ * `extra` is the per-reader options -- today only the sort. Only `sort` is
+ * taken from it: the type forbids `where` and `draft`, and even a caller that
+ * casts around the type cannot pass them through, since nothing else is read
+ * and the read mode is spread last. So no caller can replace the published
+ * filter or force a draft read. Exported for content.test.ts only; routes use
+ * the named readers below.
+ */
+export async function many<T>(collection: string, extra: { sort?: string } = {}): Promise<T[]> {
   const payload = await payloadClient();
+  const { sort } = extra;
   const { docs } = await payload.find({
     collection: collection as never,
-    ...(await readMode()),
     limit: 200,
     depth: 2,
-    ...extra,
+    ...(sort ? { sort } : {}),
+    ...(await readMode()),
   });
   return docs as T[];
 }
