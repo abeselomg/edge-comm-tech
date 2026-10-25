@@ -128,14 +128,12 @@ NODE_TLS_REJECT_UNAUTHORIZED=0 BASE_URL=https://168.119.61.125 npm run check:par
 must report nothing; run it after editing the checker.
 
 **What the checker deliberately waives**, each listed in `tools/check-parity.mjs`
-with its reason: the skip link, the review build's footer note, the form-note
-wording on the five disabled forms, the count of logos still awaiting artwork,
+with its reason: the skip link, the review build's footer note, the count of logos still awaiting artwork,
 the compact nav's "Contact", and the one link `/about` adds to executive
 management. A new waiver belongs in that file with a comment, not in a flag.
 
-**Forms are inert until Phase 6.** Contact, subscribe, the internship
-application and the E-Academy enquiry render every control disabled with a note
-giving a mailbox to use meanwhile. Nothing submits.
+**Forms are live from Phase 6** (see the Phase 6 section at the end). They were
+inert in Phase 4, and the form-note waiver listed above went with that.
 
 **Downloads are listed whether or not they are approved.** The approval gate is
 on the file link, not the listing: an unapproved document shows "Approval
@@ -194,12 +192,112 @@ ignores anything under `src`, `tools`, `deploy` or `docs`.
 held-for-publication flag, outstanding-details list, titled sections and closing
 block. It is additive; `edge-redeploy` applies it.
 
-**Form rate limiting is per process (Phase 8 follow-up).** The limiter and the
-double-submit memory behind `POST /forms/<slug>` live in the Node process
-(`src/lib/forms/guard.ts`). With the one systemd instance this server runs,
-that is correct. If the site is ever run as more than one instance, or moved to
-a host that starts several, each holds its own buckets: the effective limit
-multiplies by the instance count and a restart forgets them all. Move that
-state to a shared store before scaling out. `TRUSTED_PROXY_HOPS` (default 1)
-must equal the number of proxies that append to `X-Forwarded-For` — nginx
-alone is 1; put a CDN in front and it becomes 2.
+## Phase 6: the forms
+
+Six forms submit: contact, subscribe, event registration, E-Academy enquiry, job
+application and internship application.
+
+**The endpoint.** `POST /forms/<slug>` is the only public way in, with slug one of
+`contact`, `subscribe`, `event-registration`, `academy-enquiry`,
+`job-application`, `internship-application`. It takes `multipart/form-data` (JSON
+for the forms without an upload). Answers: 200 `{ok:true,message}`, 404 unknown
+form, 413 too large, 415 wrong content type, 422 `{errors:{field:message}}`,
+429 with `Retry-After`, 500 generic. Anonymous `GET`/`POST` on
+`/api/form-submissions` and `/api/applications` is refused; a CV is stored in the
+`applications` collection and has no public URL.
+
+**Environment** (`/etc/edge-comm-tech.env`; names and meaning are in `.env.example`):
+
+| Key | Meaning |
+|---|---|
+| `SMTP_HOST` | Unset: notification is skipped and recorded `skipped`; the submission is still stored. |
+| `SMTP_PORT` | Default 587. 465 uses TLS; others use STARTTLS if offered. |
+| `SMTP_USER`, `SMTP_PASS` | Set together or not at all. |
+| `SMTP_FROM` | Required once `SMTP_HOST` is set. |
+| `FORM_NOTIFY_FALLBACK` | Recipient used only when a form has none of its own. |
+| `FORM_RATE_MAX` | Submissions per client per form per window (default 5). |
+| `FORM_RATE_WINDOW_SEC` | The window (default 600). |
+| `TRUSTED_PROXY_HOPS` | How many proxies append to `X-Forwarded-For` (default 1; nginx alone is 1, a CDN in front makes it 2). |
+
+A failed or absent mail transport never loses or fails a submission: it is stored
+first and the outcome is written to its `emailStatus` (`sent`, `failed`,
+`skipped`). SMTP credentials from Edge are still outstanding; until then every
+submission records `skipped`.
+
+**The limiter is per process (Phase 8 follow-up).** The limiter and the
+double-submit memory live in the Node process (`src/lib/forms/guard.ts`). With the
+one systemd instance this server runs, that is correct. Run more than one
+instance, or a host that starts several, and each holds its own buckets: the
+effective limit multiplies by the instance count and a restart forgets them all.
+Move that state to a shared store before scaling out.
+
+**If nginx stops setting `X-Forwarded-For`, every visitor shares one bucket.** The
+client key is the address the trusted proxy appended. When the header is missing,
+has fewer entries than `TRUSTED_PROXY_HOPS`, or holds a non-IP, the key falls
+back to a single `unknown` bucket per form. That fails strict, not open, but one
+visitor's burst then blocks everyone's submissions on that form for the window.
+The nginx site must keep `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for`.
+
+**Submissions hold personal data, and the retention period is an open decision for
+Edge.** Names, emails, phone numbers, application answers and CVs are kept in
+`form-submissions` and `applications` until someone deletes them; the stored
+IP is only a keyed hash. How long to keep them, and who deletes them, has not been
+decided. Do not pick a period here: record Edge's answer, then build the deletion
+that matches it.
+
+**Migration.** `20261024_154422_phase6_forms` is additive: it creates the
+`applications` collection (CV files) and the upload-block tables for forms, and
+adds the submission-upload, consent and delivery-status columns to
+`form_submissions`. Nothing is dropped. `edge-redeploy` applies it.
+
+**Seed the forms before `next build`.** The form pages call `getForm` while they
+prerender, and it throws on a form that is not in the database, so a build against
+an unseeded database fails. Order on the server: migrate, `npm run seed`
+(or `seed:force`), then build. Seed the six forms once before the first
+`edge-redeploy` that contains Phase 6, or its build step fails.
+
+**Forms are looked up by title.** The route finds its form by the exact title
+seeded from `src/lib/forms/definitions.ts` ("Contact", "Subscribe", "Event
+registration", "E-Academy enquiry", "Job application", "Internship application").
+Renaming a form in the admin makes `/forms/<slug>` answer 404 and the page fail to
+build. Edit its fields, recipients and confirmation message freely; leave the
+title alone.
+
+**Checking the forms.** Run against the self-signed server, with an upcoming event
+and an open job (the server refuses a registration or application for a closed
+one):
+
+```bash
+export NODE_TLS_REJECT_UNAUTHORIZED=0 BASE_URL=https://168.119.61.125
+npx tsx tools/check-forms-live.mjs --event-slug <upcoming-event> --job-slug <open-job>
+```
+
+For each form it posts a valid entry marked `[automated test – ignore]` (200), the
+same entry minus one required field (422), the honeypot `website_url` filled (the
+normal 200) and a burst past the limit (429 with `Retry-After`); the two
+application forms also post a PDF and a DOCX-shaped zip as `cv`. It also checks
+that anonymous requests to `/api/form-submissions` and `/api/applications` are
+refused. It sends a distinct `X-Forwarded-For` per form, but behind nginx with
+`TRUSTED_PROXY_HOPS=1` the key is this machine's real address, so a rerun inside
+`FORM_RATE_WINDOW_SEC` finds the bucket full and says so.
+**What HTTP alone cannot prove**, so the probe prints it as outstanding instead of
+passing it: that the honeypot, 422 and 429 requests stored nothing; that each valid
+post was stored once; the `emailStatus` of each; that a stored CV refuses an
+anonymous read (the response exposes no file URL, so the probe only tries a guessed
+name and reports a 404 as inconclusive); and removing the test entries. These need
+the local API, so there is no public endpoint for them. On the server, from the
+app directory with the environment loaded (`payload run` drops arguments, so the
+mode is an environment variable):
+
+```bash
+FORMS_CLEANUP_MODE=count FORMS_CLEANUP_OUT=/tmp/forms-before.json npx payload run tools/forms-live-cleanup.mjs
+# ... run check-forms-live from anywhere ...
+FORMS_CLEANUP_MODE=count FORMS_CLEANUP_OUT=/tmp/forms-after.json  npx payload run tools/forms-live-cleanup.mjs
+node --import tsx tools/check-forms-live.mjs --expect-count-file /tmp/forms-before.json --actual-count-file /tmp/forms-after.json
+# expects exactly 8 new submissions (6 forms, plus a second CV type on 2)
+npx payload run tools/forms-live-cleanup.mjs                          # dry run, the default: lists, deletes nothing
+FORMS_CLEANUP_MODE=delete npx payload run tools/forms-live-cleanup.mjs # removes marked submissions and their CVs
+```
+
+Read each probe submission's `emailStatus` and its CV's access in the admin or
+through the local API before the delete.
