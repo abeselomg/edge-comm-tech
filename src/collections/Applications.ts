@@ -9,9 +9,10 @@ import { signedIn } from "../access";
  * `disablePayloadAccessControl` is left unset so file URLs go through the same
  * access check as the API (an anonymous GET of a file is refused).
  *
- * Files are stored in the `applications` directory (app root, not public/) (or the `applications/`
- * prefix of the S3 bucket). The form route enforces size and emptiness before
- * anything reaches here; this collection restricts the type.
+ * Files are stored in the `applications` directory under the app root (outside
+ * `public/`), or under the `applications/` prefix of the S3 bucket. The form route
+ * enforces size and emptiness before anything reaches here; this collection
+ * restricts the type.
  */
 export const Applications: CollectionConfig = {
   slug: "applications",

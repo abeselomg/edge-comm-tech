@@ -248,14 +248,15 @@ back to a single `unknown` bucket per form. That fails strict, not open, but one
 visitor's burst then blocks everyone's submissions on that form for the window.
 The nginx site must keep `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for`.
 
-**Submissions hold personal data, and the retention period is an open decision for
-Edge.** Names, emails, phone numbers, application answers and CVs are kept in
-`form-submissions` and `applications` until someone deletes them; the stored
-IP is only a keyed hash, salted with the app secret. The browser's `User-Agent`
-(`meta.userAgent`, capped at 300 characters) is stored alongside that hash, so a
-submission also records which browser and device sent it. How long to keep them, and who deletes them, has not been
-decided. Do not pick a period here: record Edge's answer, then build the deletion
-that matches it.
+**Submissions hold personal data, and they are kept indefinitely.** Names, emails,
+phone numbers, application answers and CVs are kept in `form-submissions` and
+`applications` until someone deletes them; the stored IP is only a keyed hash,
+salted with the app secret. The browser's `User-Agent` (`meta.userAgent`, capped
+at 300 characters) is stored alongside that hash, so a submission also records
+which browser and device sent it. Edge has decided to retain submissions,
+including uploaded CVs: there is no automatic deletion job, and an administrator
+deletes records by hand. This stands until Edge sets a retention period, and it
+should be revisited then, with the deletion built to match that period.
 
 **Migration.** `20261024_154422_phase6_forms` is additive: it creates the
 `applications` collection (CV files) and the upload-block tables for forms, and
