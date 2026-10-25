@@ -4,6 +4,7 @@ import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 export const paths = (doc: { slug?: string | null }) => [
   "/",
@@ -25,6 +26,7 @@ export const Services: CollectionConfig = {
   labels: { singular: "Professional service", plural: "Professional services" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("services", doc),
     defaultColumns: ["title", "order", "_status"],
     group: "Content",
     description:

@@ -4,6 +4,7 @@ import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 export const paths = (doc: { slug?: string | null }) => [
   "/resources",
@@ -27,6 +28,7 @@ export const Events: CollectionConfig = {
   labels: { singular: "Event", plural: "Events" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("events", doc),
     defaultColumns: ["title", "displayDate", "format", "_status"],
     group: "Resources",
     description:

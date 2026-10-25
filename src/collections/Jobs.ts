@@ -8,6 +8,7 @@ import {
   revalidateAfterChange,
   revalidateAfterDelete,
 } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 export const paths = (doc: { slug?: string | null }) => [
   "/careers",
@@ -30,6 +31,7 @@ export const Jobs: CollectionConfig = {
   labels: { singular: "Open position", plural: "Open positions" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("jobs", doc),
     defaultColumns: ["title", "department", "level", "_status"],
     group: "People",
     description:

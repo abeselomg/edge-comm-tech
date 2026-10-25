@@ -3,6 +3,7 @@ import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 const paths = () => ["/resources", "/downloads"];
 
@@ -20,6 +21,7 @@ export const Downloads: CollectionConfig = {
   labels: { singular: "Download", plural: "Downloads" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("downloads", doc),
     defaultColumns: ["title", "category", "approved", "_status"],
     group: "Resources",
     description:

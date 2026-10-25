@@ -3,6 +3,7 @@ import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 const paths = () => ["/careers", "/careers/e-academy"];
 
@@ -22,6 +23,7 @@ export const AcademyTracks: CollectionConfig = {
   labels: { singular: "Academy track", plural: "Academy tracks" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("academyTracks", doc),
     defaultColumns: ["title", "solution", "order", "_status"],
     group: "People",
     description: "Training tracks, each mapped to a solution family Edge delivers.",

@@ -6,6 +6,7 @@ import { SECTOR_OPTIONS } from "../fields/sectors";
 import { confirmable } from "../fields/confirmable";
 import { PROJECT_RULES, forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 export const paths = (doc: { slug?: string | null }) => [
   "/",
@@ -35,6 +36,7 @@ export const Projects: CollectionConfig = {
   labels: { singular: "Project", plural: "Projects" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("projects", doc),
     defaultColumns: ["title", "client", "sector", "_status"],
     group: "Content",
     description: "Delivered engagements, written as case records rather than marketing.",

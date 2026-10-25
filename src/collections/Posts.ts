@@ -3,6 +3,7 @@ import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases, richTextGuard } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 /*
  * Insights.
@@ -25,6 +26,7 @@ export const Posts: CollectionConfig = {
   labels: { singular: "Insight", plural: "Insights" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("posts", doc),
     defaultColumns: ["title", "category", "order", "_status"],
     group: "Resources",
     description:

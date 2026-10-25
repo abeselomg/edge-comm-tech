@@ -4,6 +4,7 @@ import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 export const paths = (doc: { slug?: string | null }) => [
   // Every page that can link a solution, so unpublishing one removes the link
@@ -194,6 +195,7 @@ export const Solutions: CollectionConfig = {
   labels: { singular: "Solution family", plural: "Solution families" },
   admin: {
     useAsTitle: "title",
+    preview: (doc) => previewUrl("solutions", doc),
     defaultColumns: ["title", "order", "_status"],
     group: "Content",
     description:

@@ -4,6 +4,7 @@ import { orderField } from "../fields/slug";
 import { SECTOR_OPTIONS } from "../fields/sectors";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
+import { previewUrl } from "../lib/preview";
 
 const paths = () => ["/", "/about", "/clients", "/projects", "/solutions"];
 
@@ -20,6 +21,7 @@ export const Clients: CollectionConfig = {
   labels: { singular: "Client", plural: "Clients" },
   admin: {
     useAsTitle: "name",
+    preview: (doc) => previewUrl("clients", doc),
     defaultColumns: ["name", "sector", "order", "_status"],
     group: "Content",
     description:
