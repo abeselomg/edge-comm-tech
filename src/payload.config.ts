@@ -9,6 +9,8 @@ import { s3Storage } from "@payloadcms/storage-s3";
 import sharp from "sharp";
 
 import { guardSeoMetaFields } from "./fields/seo";
+import { submissionExtraFields } from "./fields/submission";
+import { signedIn, adminOnly } from "./access";
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Solutions } from "./collections/Solutions";
@@ -76,7 +78,9 @@ function buildStoragePlugins() {
 
   return [
     s3Storage({
-      collections: { media: true },
+      // CVs share the bucket under their own prefix; they are still served
+      // through Payload (access control is not disabled), never by public URL.
+      collections: { media: true, applications: { prefix: "applications" } },
       bucket,
       config: {
         region,
@@ -152,11 +156,25 @@ export default buildConfig({
     formBuilderPlugin({
       fields: { payment: false, upload: true },
       uploadCollections: ["applications"],
+      /*
+       * Form definitions are read by the public pages, so `read` stays open;
+       * only signed-in staff may change them.
+       */
       formOverrides: {
         admin: { group: "Site" },
+        access: { read: () => true, create: signedIn, update: signedIn, delete: signedIn },
       },
+      /*
+       * The plugin's default is `create: () => true`, which would let a bot
+       * POST /api/form-submissions and skip the honeypot and rate limiter in
+       * the submission route. Public visitors never write here directly; the
+       * route does, through the local API. Reads are staff-only (the default,
+       * pinned here), and editing or deleting a record is for admins.
+       */
       formSubmissionOverrides: {
         admin: { group: "Site" },
+        access: { create: signedIn, read: signedIn, update: adminOnly, delete: adminOnly },
+        fields: ({ defaultFields }) => [...defaultFields, ...submissionExtraFields],
       },
     }),
     ...storagePlugins,

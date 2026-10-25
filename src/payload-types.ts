@@ -1470,6 +1470,29 @@ export interface FormSubmission {
         id?: string | null;
       }[]
     | null;
+  /**
+   * The consent the visitor gave when submitting.
+   */
+  consent?: {
+    accepted?: boolean | null;
+    acceptedAt?: string | null;
+    /**
+     * The exact consent text shown.
+     */
+    wording?: string | null;
+  };
+  emailStatus?: ('pending' | 'sent' | 'failed' | 'skipped') | null;
+  /**
+   * Why the notification email did not send.
+   */
+  emailError?: string | null;
+  meta?: {
+    /**
+     * Salted hash. The address itself is not stored.
+     */
+    ipHash?: string | null;
+    userAgent?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -2417,6 +2440,21 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         field?: T;
         value?: T;
         id?: T;
+      };
+  consent?:
+    | T
+    | {
+        accepted?: T;
+        acceptedAt?: T;
+        wording?: T;
+      };
+  emailStatus?: T;
+  emailError?: T;
+  meta?:
+    | T
+    | {
+        ipHash?: T;
+        userAgent?: T;
       };
   updatedAt?: T;
   createdAt?: T;
