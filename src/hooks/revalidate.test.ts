@@ -131,3 +131,96 @@ describe("dynamic page types are refreshed by their concrete URLs", () => {
     await expect(hook({ doc: { slug: "x" }, previousDoc: null })).resolves.toBeTruthy();
   });
 });
+
+import { affectsPublishedSite, revalidateAfterChange, revalidateAfterDelete, revalidateGlobal } from "./revalidate";
+
+/*
+ * Phase 7: an autosave or Save Draft over a published document must not re-render
+ * the live page, but a publish, an unpublish, or an edit of a published document
+ * must. Payload 3.88 hands the afterChange hook, for a draft-version save, the
+ * draft version as `doc` and the latest version as `previousDoc`; an Unpublish is
+ * a plain PATCH (no `draft=true`) of `_status: "draft"` whose `previousDoc` is the
+ * LATEST version, which is "draft" when an autosave is pending. So the statuses
+ * alone cannot tell a draft save from an unpublish; `req.query.draft` (set by
+ * autosave and Save Draft, never by Unpublish or Publish) is the signal.
+ */
+describe("affectsPublishedSite", () => {
+  const D = { _status: "draft" };
+  const P = { _status: "published" };
+  const draftSave = { draft: true };
+  const cases: [string, { doc: unknown; previousDoc?: unknown; query?: unknown }, boolean][] = [
+    ["new document saved as a draft (create, previousDoc {})", { doc: D, previousDoc: {}, query: draftSave }, false],
+    ["new draft with no query signal (nothing was ever public)", { doc: D, previousDoc: {} }, false],
+    ["autosave of a never-published draft", { doc: D, previousDoc: D, query: draftSave }, false],
+    ["autosave over a published document", { doc: D, previousDoc: P, query: draftSave }, false],
+    ["Save Draft over a published document (draft=true as a string)", { doc: D, previousDoc: P, query: { draft: "true" } }, false],
+    ["publish of a draft", { doc: P, previousDoc: D }, true],
+    ["publish of a draft that sent draft=true with _status published", { doc: P, previousDoc: D, query: draftSave }, true],
+    ["edit and publish of a published document", { doc: P, previousDoc: P }, true],
+    ["unpublish (published -> draft, no draft query)", { doc: D, previousDoc: P }, true],
+    ["unpublish while an autosave is pending (draft -> draft, no draft query)", { doc: D, previousDoc: D }, true],
+    ["draft over published from the Local API (no query to tell)", { doc: D, previousDoc: P, query: {} }, true],
+    ["draft=false is not a draft save", { doc: D, previousDoc: P, query: { draft: "false" } }, true],
+    ["no _status at all (global, forms)", { doc: { title: "x" }, previousDoc: { title: "x" } }, true],
+    ["no _status and a draft query (a collection without drafts)", { doc: {}, previousDoc: {}, query: draftSave }, true],
+  ];
+  for (const [name, args, expected] of cases) {
+    it(`${name}: ${expected ? "revalidates" : "skips"}`, () => {
+      expect(affectsPublishedSite(args as never)).toBe(expected);
+    });
+  }
+});
+
+describe("the change hook skips draft-version saves only", () => {
+  const hook = revalidateAfterChange<{ slug: string }>((d) => [`/things/${d.slug}`]);
+  const call = (doc: unknown, previousDoc: unknown, query?: unknown) =>
+    hook({ doc, previousDoc, req: { query } } as never);
+  const x = (_status?: string) => ({ slug: "x", ...(_status ? { _status } : {}) });
+
+  it("draft -> draft on a new document: not called", async () => {
+    await call(x("draft"), {}, { draft: true });
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+  it("autosave over a published document: not called", async () => {
+    await call(x("draft"), x("published"), { draft: true, autosave: true });
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+  it("draft -> published: called", async () => {
+    await call(x("published"), x("draft"));
+    expect(revalidatePath).toHaveBeenCalledWith("/things/x");
+  });
+  it("published -> published: called", async () => {
+    await call(x("published"), x("published"));
+    expect(revalidatePath).toHaveBeenCalledWith("/things/x");
+  });
+  it("a real unpublish: called", async () => {
+    await call(x("draft"), x("published"));
+    expect(revalidatePath).toHaveBeenCalledWith("/things/x");
+  });
+  it("a real unpublish with a pending autosave: called", async () => {
+    await call(x("draft"), x("draft"));
+    expect(revalidatePath).toHaveBeenCalledWith("/things/x");
+  });
+  it("a document with no _status (forms): called", async () => {
+    await call({ slug: "x" }, { slug: "x" });
+    expect(revalidatePath).toHaveBeenCalledWith("/things/x");
+  });
+  it("still returns the doc", async () => {
+    const doc = x("draft");
+    await expect(call(doc, {}, { draft: true })).resolves.toBe(doc);
+  });
+});
+
+describe("delete and globals always revalidate", () => {
+  it("deleting a draft document still revalidates", async () => {
+    await revalidateAfterDelete<{ slug: string }>((d) => [`/things/${d.slug}`])({
+      doc: { slug: "x", _status: "draft" },
+      req: { query: { draft: true } },
+    } as never);
+    expect(revalidatePath).toHaveBeenCalledWith("/things/x");
+  });
+  it("a global update revalidates even with a draft query", async () => {
+    await revalidateGlobal(["/about"])({ doc: {}, req: { query: { draft: true } } } as never);
+    expect(revalidatePath).toHaveBeenCalledWith("/about");
+  });
+});

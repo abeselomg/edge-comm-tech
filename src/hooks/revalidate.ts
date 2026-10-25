@@ -86,6 +86,49 @@ async function expire(
 type PathsFor<T> = (doc: T) => string[];
 
 /**
+ * Does this save change what the public site shows? Only published content is
+ * public, so a save that touches no published document needs no re-render.
+ *
+ * What Payload 3.88 passes to afterChange (operations/utilities/update.js):
+ * - Autosave and Save Draft (PATCH `?draft=true`, body `_status: "draft"`) over a
+ *   published document write only a version row; the live row is untouched.
+ *   `doc` is that draft version (`_status: "draft"`), `previousDoc` the latest
+ *   version before the save (`"published"`, or `"draft"` if an autosave was pending).
+ * - Unpublish (PATCH, body `_status: "draft"`, NO `draft` param) updates the live
+ *   row. `doc._status` is "draft" and `previousDoc` is again the latest version,
+ *   "published" or, when an autosave is pending, "draft". Statuses alone therefore
+ *   cannot tell it from a draft save; only the `draft` query param can.
+ * - Publish / edit-and-publish: `doc._status` is "published".
+ * - Create: `previousDoc` is `{}`.
+ * A draft-version save never changes the live row (Payload skips `updateOne`
+ * unless `_status` is "published"), so `draft=true` with `doc._status` "draft" is
+ * safe to skip and cannot be used to hide a real change.
+ *
+ * Rule (correctness first, over-revalidating is harmless):
+ * 1. no `_status` on either side (globals, forms): revalidate;
+ * 2. `draft` query true and `doc._status` "draft": skip (a draft-version save);
+ * 3. either side "published": revalidate (publish, edit, unpublish);
+ * 4. no previous status (a new document, never public): skip;
+ * 5. otherwise (draft -> draft with no draft signal, e.g. an unpublish while an
+ *    autosave is pending, or a Local API draft save): revalidate.
+ */
+export function affectsPublishedSite(args: {
+  doc?: unknown;
+  previousDoc?: unknown;
+  query?: unknown;
+}): boolean {
+  const statusOf = (d: unknown) => (d as { _status?: string } | null | undefined)?._status;
+  const now = statusOf(args.doc);
+  const before = statusOf(args.previousDoc);
+  if (now === undefined && before === undefined) return true;
+  const draftParam = (args.query as { draft?: unknown } | null | undefined)?.draft;
+  if ((draftParam === true || draftParam === "true") && now === "draft") return false;
+  if (now === "published" || before === "published") return true;
+  if (before === undefined) return false;
+  return true;
+}
+
+/**
  * `layout`: every route is stale (the document appears in the site chrome).
  * `patterns`: dynamic page types to refresh, e.g. "/projects/[slug]".
  */
@@ -101,6 +144,7 @@ export function revalidateAfterChange<T>(
   options: HookOptions = {},
 ): CollectionAfterChangeHook {
   return async ({ doc, previousDoc, req }) => {
+    if (!affectsPublishedSite({ doc, previousDoc, query: req?.query })) return doc;
     await expire(
       [...paths(doc as T), ...(previousDoc ? paths(previousDoc as T) : [])],
       options.layout,
