@@ -45,11 +45,12 @@ describe("forms access", () => {
     expect(await access.read!(anon)).toBe(true);
   });
 
-  it("is writable only when signed in", async () => {
+  it("is writable only by admins, since a reshaped form breaks its route", async () => {
     const { access } = await collection("forms");
     for (const op of ["create", "update", "delete"] as const) {
       expect(await access[op]!(anon), `${op} anonymous`).toBe(false);
-      expect(await access[op]!(staff), `${op} signed in`).toBe(true);
+      expect(await access[op]!(staff), `${op} editor`).toBe(false);
+      expect(await access[op]!(admin), `${op} admin`).toBe(true);
     }
   });
 });

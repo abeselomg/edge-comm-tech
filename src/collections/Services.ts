@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { serviceHref } from "../lib/routes";
-import { publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
@@ -30,7 +30,7 @@ export const Services: CollectionConfig = {
     description:
       "The six services spanning the technology lifecycle, from advisory through managed support.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
+  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths, { patterns: ["/services/[slug]"] })],

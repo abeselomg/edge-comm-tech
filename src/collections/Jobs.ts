@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { jobHref } from "../lib/routes";
-import { publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases } from "../fields/validators";
@@ -39,7 +39,7 @@ export const Jobs: CollectionConfig = {
     read: publishedOrSignedIn,
     create: signedIn,
     update: signedIn,
-    delete: signedIn,
+    delete: adminOnly,
   },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {

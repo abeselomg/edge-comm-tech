@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { isKnownRoute, newsHref } from "../lib/routes";
-import { publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases, richTextGuard } from "../fields/validators";
@@ -27,7 +27,7 @@ export const News: CollectionConfig = {
     group: "Resources",
     description: "Milestones, partnership and project announcements, and company updates.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
+  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths, { patterns: ["/news/[slug]", "/resources/media/[slug]"] })],

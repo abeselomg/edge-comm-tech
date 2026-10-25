@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
 import { orderField } from "../fields/slug";
 import { SECTOR_OPTIONS } from "../fields/sectors";
 import { forbidsPhrases } from "../fields/validators";
@@ -25,7 +25,7 @@ export const Clients: CollectionConfig = {
     description:
       "Institutions Edge works with. Only organisations in the approved client directory belong here.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: signedIn },
+  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths, { patterns: ["/projects/[slug]", "/solutions/[slug]"] })],
