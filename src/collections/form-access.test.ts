@@ -21,11 +21,12 @@ async function collection(slug: string) {
 }
 
 describe("form-submissions access", () => {
-  it("refuses anonymous create and read, allows signed-in staff", async () => {
+  it("refuses anonymous create and read, lets staff read", async () => {
     const { access } = await collection("form-submissions");
     expect(await access.create!(anon)).toBe(false);
     expect(await access.read!(anon)).toBe(false);
-    expect(await access.create!(staff)).toBe(true);
+    expect(await access.create!(staff)).toBe(false);
+    expect(await access.create!(admin)).toBe(true);
     expect(await access.read!(staff)).toBe(true);
   });
 

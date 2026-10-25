@@ -23,12 +23,14 @@ describe("applications collection", () => {
     expect(upload.disablePayloadAccessControl).toBeUndefined();
   });
 
-  it("is staff-only for every operation", () => {
+  it("lets staff read, and only admins create, change or delete", () => {
+    const as = (user: unknown) => ({ req: { user } }) as never;
     for (const op of ["read", "create", "update", "delete"] as const) {
       const rule = Applications.access?.[op];
       expect(rule, op).toBeTypeOf("function");
-      expect(rule?.({ req: { user: null } } as never), `${op} anonymous`).toBe(false);
-      expect(rule?.({ req: { user: { id: 1 } } } as never), `${op} signed in`).toBe(true);
+      expect(rule?.(as(null)), `${op} anonymous`).toBe(false);
+      expect(rule?.(as({ id: 1, role: "editor" })), `${op} editor`).toBe(op === "read");
+      expect(rule?.(as({ id: 1, role: "admin" })), `${op} admin`).toBe(true);
     }
   });
 });

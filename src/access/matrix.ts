@@ -70,7 +70,7 @@ export const COLLECTION_MATRIX: Record<string, RoleEntry<CollectionOps>> = {
     admin: ALL,
   },
 
-  // Staff may create and read accounts only for themselves; see selfOrAdmin.
+  // Staff read all accounts; only admins create or delete; an editor updates only their own record (selfOrAdmin).
   users: {
     anonymous: NONE,
     editor: { read: true, create: false, update: true /* own record only */, delete: false },
@@ -84,15 +84,19 @@ export const COLLECTION_MATRIX: Record<string, RoleEntry<CollectionOps>> = {
     admin: ALL,
   },
 
-  // The inbox: editors read it, only admins change or delete a record.
+  // The inbox: editors read it; only admins create (the route uses the local API), change or delete.
   "form-submissions": {
     anonymous: NONE,
-    editor: { read: true, create: true, update: false, delete: false },
+    editor: { read: true, create: false, update: false, delete: false },
     admin: ALL,
   },
 
-  // Uploaded CVs: never public, staff only.
-  applications: { anonymous: NONE, editor: ALL, admin: ALL },
+  // Uploaded CVs: never public; staff read, only admins change or delete.
+  applications: {
+    anonymous: NONE,
+    editor: { read: true, create: false, update: false, delete: false },
+    admin: ALL,
+  },
 };
 
 export const GLOBAL_MATRIX: Record<string, RoleEntry<GlobalOps>> = {

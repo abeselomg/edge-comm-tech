@@ -115,14 +115,16 @@ describe("filtered access", () => {
     });
   });
 
-  it("keeps content deletion and form definitions admin-only, with no filter", async () => {
-    for (const slug of [...CONTENT_SLUGS, "forms"]) {
-      for (const op of ["delete"] as const) {
-        expect(await evaluate(find(slug).access?.[op] as Fn, users.editor), `${slug} ${op}`).toEqual({
-          kind: "boolean",
-          value: false,
-        });
-      }
+  it("keeps content deletion and every form-definition write admin-only, with no filter", async () => {
+    const cases = [
+      ...CONTENT_SLUGS.map((slug) => [slug, "delete"] as const),
+      ...(["create", "update", "delete"] as const).map((op) => ["forms", op] as const),
+    ];
+    for (const [slug, op] of cases) {
+      expect(await evaluate(find(slug).access?.[op] as Fn, users.editor), `${slug} ${op}`).toEqual({
+        kind: "boolean",
+        value: false,
+      });
     }
   });
 });

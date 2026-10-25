@@ -221,7 +221,7 @@ export default buildConfig({
        */
       formSubmissionOverrides: {
         admin: { group: "Site" },
-        access: { create: signedIn, read: signedIn, update: adminOnly, delete: adminOnly },
+        access: { create: adminOnly, read: signedIn, update: adminOnly, delete: adminOnly },
         fields: ({ defaultFields }) => [...defaultFields, ...submissionExtraFields],
       },
     }),
