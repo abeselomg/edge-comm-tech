@@ -346,3 +346,95 @@ NODE_ENV=production FORMS_CLEANUP_MODE=delete npx payload run tools/forms-live-c
 
 Read each probe submission's `emailStatus` and its CV's access in the admin or
 through the local API before the delete.
+
+## Phase 7: the editorial workflow
+
+Edge's own staff edit the site in `/admin`. There are two roles, `admin` and
+`editor`, and nothing else.
+
+**Who can do what.**
+
+- **Editors** can create, edit, save drafts of and publish every content item
+  (solutions, services, projects, clients, partners and their categories,
+  events, jobs, E-Academy tracks, news, insights and their topics, downloads),
+  and can edit the Company, Careers and Page copy sections. They can upload and
+  manage media. They can read the form submissions and the uploaded CVs, and see
+  the list of users, and they can change their own name, email and password.
+- **Editors cannot** edit Contact details or Site settings, create, change or
+  delete form definitions, create or delete users, change another person's
+  account, change their own role, change or delete form submissions and CVs, or
+  **delete any content**. An editor takes something down with Unpublish.
+- **Admins** can do all of that, and are the only ones who delete content,
+  create users and edit Contact details, Site settings and the forms.
+- **Visitors** read published content only. A draft is never served to them.
+
+The same table is code: `src/access/matrix.ts`, checked against the real
+configuration by `src/access/matrix.test.ts`, which fails when a collection or
+global is added without a row.
+
+**Editor walkthrough** (no technical knowledge needed).
+
+1. Sign in at `/admin` and open the item under its section (for example
+   Resources, then News and announcements).
+2. Edit it. The admin saves your work as a draft every second or so ("autosave").
+   The live page does **not** change while you do this.
+3. Click **Preview**. The real page opens with your unsaved-for-the-public
+   changes in it, and a small bar at the bottom left says "Preview — unpublished
+   changes are shown". Close the bar's **Exit preview** link when you are done.
+4. Happy with it? Click **Publish**. The live page changes within a few seconds,
+   with no developer involved.
+5. To take something down, use **Unpublish** (it becomes a draft again). Deleting
+   content is an admin action; ask an administrator.
+
+**The first admin.** On a new database, visit `/admin`: it offers **Create first
+user**. The first user is always made an admin, whatever role the form shows
+(`firstUserIsAdmin` in `src/collections/Users.ts`), so the site always has
+someone who can manage users. Everyone created after that gets the role an admin
+chooses, `editor` by default.
+
+**How preview works.** `/preview?path=/news/<slug>` checks the staff session,
+accepts only a page this site serves (nothing under `/api`, `/admin`, or off-site),
+sets Next's `__prerender_bypass` draft cookie and redirects to that page. Without
+a session it answers 401 and sets nothing; a hand-made `__prerender_bypass` cookie
+does nothing, because the cookie value is checked by Next against its own secret.
+The cookie is `SameSite=None; Secure`, so **preview needs HTTPS in production**
+(over plain http the browser will not keep it). The banner only exists in draft
+mode.
+
+**Frame protection (to be checked by the probe).** A `SameSite=None` draft cookie
+is sent when another site frames this one, so a page elsewhere could embed the
+site as a signed-in staff member. The site should therefore send `X-Frame-Options`
+or a CSP `frame-ancestors` header. Whether it does today is **to be checked by the
+probe**, which prints both headers of the home page and a WARN when neither is set.
+
+**Probe the workflow on the server.** `tools/check-editorial-live.mjs` signs in as
+a throwaway editor and a throwaway admin, takes a disposable News item through
+draft, publish, autosave, preview, republish and unpublish, tries everything an
+editor must not do, and deletes what it made. Operator steps:
+
+```bash
+# 1. On the server, from the app directory with the environment loaded:
+EDITORIAL_SETUP_MODE=create NODE_ENV=production npx payload run tools/editorial-live-setup.mjs
+#    creates admin-probe@ and editor-probe@example.invalid with random passwords,
+#    written to /root/editorial-probe.env (mode 0600) and never printed.
+#    (dry-run is the default mode; it refuses if the users already exist.)
+
+# 2. Copy the file's contents into your developer shell WITHOUT echoing them
+#    (for example: scp it, then `set -a; . ./editorial-probe.env; set +a`, and delete the copy).
+#    Then:
+BASE_URL=https://168.119.61.125 NODE_TLS_REJECT_UNAUTHORIZED=0 \
+  node --import tsx tools/check-editorial-live.mjs
+
+# 3. Back on the server, remove the throwaway users and the file:
+EDITORIAL_SETUP_MODE=delete NODE_ENV=production npx payload run tools/editorial-live-setup.mjs
+```
+
+The probe prints `ok` or `FAIL name: reason` per check and exits non-zero on any
+FAIL. Its destructive role checks on form submissions and CVs use an id no row has
+(a 403 proves denial; a 404 would mean access is open), so a misconfiguration can
+never delete a real record. Two things it reports without failing: the frame
+headers above, and a "related draft" finding: whether a published page prints the
+title of a related item that is only a draft (a published insight whose topic is a
+draft). It is a suspected pre-existing gap, reported as LEAK or NO LEAK (a finding,
+not a gate), and the probe deletes both test items either way. The first-user rule can
+only be exercised by its unit test on the server, which already has an admin.
