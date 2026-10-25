@@ -79,7 +79,10 @@ export type NotificationResult = "sent" | "failed" | "skipped";
 
 type Notification = { submissionId: number | string; to: string[]; subject: string; text: string };
 
-async function record(
+/** The longest `emailError` stored; a transport can return a page of diagnostics. */
+export const EMAIL_ERROR_MAX = 500;
+
+export async function recordEmailStatus(
   payload: Payload,
   id: number | string,
   emailStatus: NotificationResult,
@@ -89,7 +92,7 @@ async function record(
     await payload.update({
       collection: "form-submissions",
       id,
-      data: { emailStatus, emailError },
+      data: { emailStatus, emailError: emailError === null ? null : emailError.slice(0, EMAIL_ERROR_MAX) },
       overrideAccess: true,
     });
   } catch (err) {
@@ -113,20 +116,20 @@ export async function sendNotification(
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     payload.logger.error({ err, msg: `Submission ${submissionId} stored; mail is misconfigured.` });
-    await record(payload, submissionId, "failed", message);
+    await recordEmailStatus(payload, submissionId, "failed", message);
     return "failed";
   }
 
   if (!config) {
     payload.logger.info(`Submission ${submissionId} stored; SMTP_HOST is not set, so no notification was sent.`);
-    await record(payload, submissionId, "skipped", "SMTP is not configured.");
+    await recordEmailStatus(payload, submissionId, "skipped", "SMTP is not configured.");
     return "skipped";
   }
 
   const recipients = to.length ? to : config.to ? [config.to] : [];
   if (!recipients.length) {
     payload.logger.warn(`Submission ${submissionId} stored; the form has no recipient and FORM_NOTIFY_FALLBACK is unset.`);
-    await record(payload, submissionId, "skipped", "No recipient: the form has none and FORM_NOTIFY_FALLBACK is unset.");
+    await recordEmailStatus(payload, submissionId, "skipped", "No recipient: the form has none and FORM_NOTIFY_FALLBACK is unset.");
     return "skipped";
   }
 
@@ -135,10 +138,10 @@ export async function sendNotification(
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     payload.logger.error({ err, msg: `Submission ${submissionId} stored; the notification email failed.` });
-    await record(payload, submissionId, "failed", message);
+    await recordEmailStatus(payload, submissionId, "failed", message);
     return "failed";
   }
 
-  await record(payload, submissionId, "sent", null);
+  await recordEmailStatus(payload, submissionId, "sent", null);
   return "sent";
 }

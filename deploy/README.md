@@ -193,3 +193,13 @@ ignores anything under `src`, `tools`, `deploy` or `docs`.
 **Migrations.** `20261024_085850_news_holding_state` adds the news item's
 held-for-publication flag, outstanding-details list, titled sections and closing
 block. It is additive; `edge-redeploy` applies it.
+
+**Form rate limiting is per process (Phase 8 follow-up).** The limiter and the
+double-submit memory behind `POST /forms/<slug>` live in the Node process
+(`src/lib/forms/guard.ts`). With the one systemd instance this server runs,
+that is correct. If the site is ever run as more than one instance, or moved to
+a host that starts several, each holds its own buckets: the effective limit
+multiplies by the instance count and a restart forgets them all. Move that
+state to a shared store before scaling out. `TRUSTED_PROXY_HOPS` (default 1)
+must equal the number of proxies that append to `X-Forwarded-For` — nginx
+alone is 1; put a CDN in front and it becomes 2.

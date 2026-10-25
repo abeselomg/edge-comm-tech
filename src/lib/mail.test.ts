@@ -82,6 +82,15 @@ describe("sendNotification", () => {
     );
   });
 
+  it("truncates a long error to 500 characters before recording it", async () => {
+    const p = fakePayload(async () => {
+      throw new Error("x".repeat(2000));
+    });
+    await sendNotification(p as never, message, base);
+    const [[{ data }]] = p.update.mock.calls as unknown as [[{ data: { emailError: string } }]];
+    expect(data.emailError).toHaveLength(500);
+  });
+
   it("does not throw even if recording the status also fails", async () => {
     const p = fakePayload(async () => {
       throw new Error("down");
