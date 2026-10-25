@@ -5,7 +5,7 @@ import { CONTROL_BASE } from "@/components/ui/forms";
 import { HONEYPOT_FIELD } from "@/lib/forms/constants";
 import { confirmationText, consentWording, renderFields, type RenderField } from "@/lib/forms/read";
 import type { FormDoc } from "@/lib/forms/validate";
-import { createSubmitter, sendForm, validateClient, type FormState } from "./submit-client";
+import { createSubmitter, describeFile, sendForm, validateClient, type FormState } from "./submit-client";
 
 /*
  * A form that submits for real.
@@ -45,6 +45,34 @@ function segments(fields: RenderField[]): Segment[] {
   return out;
 }
 
+/** The file input, with the chosen file's name and size shown beneath it. */
+function UploadInput({
+  common,
+  className,
+}: {
+  common: Record<string, unknown> & { id: string };
+  className: string;
+}) {
+  const [chosen, setChosen] = useState("");
+  return (
+    <>
+      <input
+        {...common}
+        type="file"
+        accept=".pdf,.docx"
+        className={className}
+        onChange={(e) => {
+          const file = e.currentTarget.files?.[0];
+          setChosen(file ? describeFile(file) : "");
+        }}
+      />
+      <p className="mt-1 text-[11px] text-ink/75" aria-live="polite">
+        {chosen}
+      </p>
+    </>
+  );
+}
+
 function Fieldline({ field, id, error }: { field: RenderField; id: string; error?: string }) {
   const errId = `${id}-error`;
   const common = {
@@ -76,7 +104,7 @@ function Fieldline({ field, id, error }: { field: RenderField; id: string; error
           )}
         </select>
       ) : field.type === "upload" ? (
-        <input {...common} type="file" accept=".pdf,.docx" className={cls} />
+        <UploadInput common={common} className={cls} />
       ) : (
         <input {...common} type={field.type === "number" ? "number" : field.type} className={cls} />
       )}

@@ -4,7 +4,8 @@ import { FORM_DEFINITIONS } from "@/lib/forms/definitions";
 import { renderFields } from "@/lib/forms/read";
 import { formDoc } from "@/lib/forms/testing";
 import { FormView } from "./LiveForm";
-import { createSubmitter, sendForm, validateClient, type FormState } from "./submit-client";
+import { MAX_UPLOAD_BYTES } from "@/lib/forms/constants";
+import { createSubmitter, describeFile, sendForm, validateClient, type FormState } from "./submit-client";
 
 const view = (key: Parameters<typeof formDoc>[0], state: FormState = { phase: "idle" }, extra = {}) =>
   renderToStaticMarkup(
@@ -243,5 +244,62 @@ describe("createSubmitter", () => {
     await submit(new FormData());
     await submit(new FormData());
     expect(run).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("the CV upload", () => {
+  const fields = renderFields(formDoc("job-application"));
+  const consent = FORM_DEFINITIONS["job-application"].consent;
+  const pdf = (bytes: number, name = "cv.pdf") => new File([new Uint8Array(bytes)], name, { type: "application/pdf" });
+  const filled = (file: File | null) => {
+    const fd = new FormData();
+    for (const f of fields) if (f.type !== "upload" && f.required) fd.set(f.name, f.type === "email" ? "a@b.co" : "x");
+    for (const f of fields) if (f.type === "select" && f.required) fd.set(f.name, f.options?.[1] ?? "x");
+    fd.set("consent", "on");
+    if (file) fd.set("cv", file);
+    return fd;
+  };
+
+  it("renders a file input that takes PDF and DOCX, under the stored field name", () => {
+    const out = view("job-application");
+    const input = tag(out, "cv");
+    expect(input).toContain('type="file"');
+    expect(input).toContain('accept=".pdf,.docx"');
+    expect(input).toContain('required=""');
+    expect(out).toContain("PDF or DOCX");
+  });
+
+  it("describes the chosen file by name and size", () => {
+    expect(describeFile(pdf(1536 * 1024, "My CV.pdf"))).toBe("My CV.pdf (1.5 MB)");
+    expect(describeFile(pdf(2048))).toBe("cv.pdf (2 KB)");
+    expect(describeFile(pdf(10))).toBe("cv.pdf (1 KB)");
+  });
+
+  it("accepts a CV at the limit and one under it", () => {
+    expect(validateClient(fields, consent, filled(pdf(MAX_UPLOAD_BYTES)))).toEqual({});
+    expect(validateClient(fields, consent, filled(pdf(1000)))).toEqual({});
+  });
+
+  it("refuses an oversize CV with the server's own wording", () => {
+    const errors = validateClient(fields, consent, filled(pdf(MAX_UPLOAD_BYTES + 1)));
+    expect(errors).toEqual({ cv: "CV upload: the file is larger than 5 MB." });
+  });
+
+  it("asks for a CV when none was chosen", () => {
+    const empty = new File([], "");
+    expect(validateClient(fields, consent, filled(empty)).cv).toBe("CV upload is required.");
+  });
+
+  it("posts multipart with the file under the field name and no hand-set content type", async () => {
+    const fetchImpl = vi.fn(async (_url: string, _init: { method: "POST"; body: FormData }) => json(200, { ok: true }));
+    const body = filled(pdf(3000, "cv.pdf"));
+    body.set("job", "hr-manager");
+    await sendForm("/forms/job-application", body, fetchImpl);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    const sent = fetchImpl.mock.calls[0]![1];
+    expect(sent.body).toBeInstanceOf(FormData);
+    expect((sent.body.get("cv") as File).name).toBe("cv.pdf");
+    expect(sent.body.get("job")).toBe("hr-manager");
+    expect(Object.keys(sent)).toEqual(["method", "body"]);
   });
 });

@@ -1,5 +1,6 @@
-import { ClosingCta, Crumb, Field, FormNote, PageHead, Pending, SectionHead } from "@/components/ui";
-import { getCareersContent, getContactDetails } from "@/lib/content";
+import { LiveForm } from "@/components/forms/LiveForm";
+import { ClosingCta, Crumb, PageHead, SectionHead } from "@/components/ui";
+import { getCareersContent, getContactDetails, getForm } from "@/lib/content";
 import { hrEmail, internshipPills } from "../careers-parts";
 
 /*
@@ -21,39 +22,16 @@ export const metadata = {
     "Supervised graduate internships at Edge Comm-Tech in network engineering and system engineering, with mentorship, structured learning plans and real project exposure.",
 };
 
-const STATUS_OPTIONS = [
-  "Select",
-  "Final-year student",
-  "Recent graduate",
-  "Technical and vocational graduate",
-  "Other",
-];
-
 export default async function InternshipsPage() {
-  const [careers, contact] = await Promise.all([getCareersContent(), getContactDetails()]);
+  const [careers, contact, form] = await Promise.all([
+    getCareersContent(),
+    getContactDetails(),
+    getForm("internship-application"),
+  ]);
   const i = careers.internship;
   const email = hrEmail(contact);
   const tracks = i.tracks ?? [];
   const schedule = i.schedule?.status === "pending" ? i.schedule.pendingLabel : i.schedule?.value;
-
-  const FIELDS: Parameters<typeof Field>[0][] = [
-    { label: "Full legal name", required: true },
-    { label: "Email address", type: "email", required: true },
-    { label: "Mobile number", required: true },
-    { label: "City and country of residence", required: true },
-    {
-      label: "Preferred track",
-      type: "select",
-      required: true,
-      options: ["Select a track", ...tracks.map((t) => t.title)],
-    },
-    { label: "University or institution", required: true },
-    { label: "Field of study", required: true },
-    { label: "Current status", type: "select", options: STATUS_OPTIONS },
-    { label: "Expected or actual graduation year" },
-    { label: "CV upload", required: true, hint: "PDF or DOCX" },
-    { label: "Why this track", type: "textarea", wide: true, hint: "A short paragraph is enough" },
-  ];
 
   return (
     <main>
@@ -197,30 +175,13 @@ export default async function InternshipsPage() {
               Applications are held and reviewed against the next intake&apos;s published tracks and
               criteria. You will receive an acknowledgement with a reference number.
             </p>
-            <form className="mt-8 grid gap-5 sm:grid-cols-2">
-              {FIELDS.map((f) => (
-                <Field key={f.label} {...f} />
-              ))}
-              <div className="sm:col-span-2">
-                <label className="flex items-start gap-3 text-xs leading-relaxed text-steel">
-                  <input type="checkbox" className="mt-0.5" disabled />
-                  <span>
-                    I confirm the information provided is accurate, I have read the note above, and
-                    I accept the privacy notice and consent to recruitment processing.
-                  </span>
-                </label>
-              </div>
-              <div className="sm:col-span-2">
-                <button
-                  type="button"
-                  className="rounded-full bg-[#2ba8de] px-6 py-3 text-sm font-semibold text-white opacity-60"
-                  disabled
-                >
-                  Submit application
-                </button>
-              </div>
-            </form>
-            <FormNote email={email} />
+            <LiveForm
+              form={form}
+              action="/forms/internship-application"
+              submitLabel="Submit application"
+              accent={ACCENT}
+              email={email}
+            />
           </div>
 
           <aside className="self-start lg:sticky lg:top-32">

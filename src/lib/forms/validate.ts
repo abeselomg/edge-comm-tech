@@ -1,6 +1,9 @@
 import type { Form } from "@/payload-types";
 import { FORM_DEFINITIONS, type FormDefinition, type FormFieldDef, type FormKey } from "./definitions";
 import { HONEYPOT_FIELD } from "./guard";
+import { MAX_UPLOAD_BYTES } from "./constants";
+
+export { MAX_UPLOAD_BYTES };
 
 /*
  * Server-side validation of a submission against the stored form document.
@@ -22,7 +25,6 @@ import { HONEYPOT_FIELD } from "./guard";
 export type FormDoc = Form;
 type Block = NonNullable<Form["fields"]>[number];
 
-export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 const DEFAULT_MAX = 500;
 const DEFAULT_TEXTAREA_MAX = 5000;
 /** More keys than any form has fields, by a wide margin; past it, the request is junk. */

@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Confirmable, Field, FormNote, SectionHead } from "@/components/ui";
+import { LiveForm } from "@/components/forms/LiveForm";
+import { Confirmable, SectionHead } from "@/components/ui";
+import { jobOpen } from "@/lib/jobs";
 import { jobHref, publishedOnly } from "@/lib/routes";
-import type { Job } from "@/payload-types";
+import type { Form, Job } from "@/payload-types";
 import { deadlinePending, deadlineText } from "../careers-parts";
 
 /*
@@ -104,80 +106,52 @@ export function JobSections({ job: j, accent }: { job: Job; accent: string }) {
   );
 }
 
-const APPLICATION_FIELDS: Parameters<typeof Field>[0][] = [
-  { label: "Full legal name", required: true },
-  { label: "Email address", type: "email", required: true },
-  { label: "Mobile number", required: true },
-  { label: "City and country of residence", required: true },
-  { label: "Current or most recent position", required: true },
-  {
-    label: "Years of relevant experience",
-    type: "select",
-    options: ["Select", "0–2", "3–5", "6–10", "More than 10"],
-  },
-  {
-    label: "Highest education",
-    type: "select",
-    options: ["Select", "Diploma", "Bachelor's degree", "Postgraduate"],
-  },
-  { label: "Field of study", required: true },
-  { label: "University or institution", required: true },
-  { label: "LinkedIn or portfolio URL" },
-  { label: "CV upload", required: true, wide: true, hint: "PDF or DOCX" },
-];
-
-/** The application, as an inert shell until Phase 6 wires submissions. */
+/** The application: the live form while the job takes applications, a closed note once it does not. */
 export function ApplyPanel({
   job: j,
   accent,
   email,
+  form,
 }: {
   job: Job;
   accent: string;
   email?: string;
+  form?: Form | null;
 }) {
+  const open = jobOpen(j);
   return (
     <section className="mt-14" id="apply">
       <SectionHead eyebrow="Apply" title={`Apply for ${j.title}`} accent={accent} />
-      <form className="mt-7 grid gap-5 sm:grid-cols-2">
-        {APPLICATION_FIELDS.map((f) => (
-          <Field key={f.label} {...f} />
-        ))}
-        <div className="sm:col-span-2">
-          <label className="flex items-start gap-3 text-xs text-steel">
-            <input type="checkbox" className="mt-0.5" disabled />
-            <span>
-              I confirm the information provided is accurate and accept the privacy notice and
-              consent to recruitment processing.
-            </span>
-          </label>
-        </div>
-        <div className="sm:col-span-2">
-          <button
-            type="button"
-            className="rounded-full px-6 py-3 text-sm font-semibold text-white opacity-60"
-            style={{ background: accent }}
-            disabled
-          >
-            Submit application
-          </button>
-        </div>
-      </form>
-      <FormNote email={email} />
-      <p className="mt-4 text-xs text-steel">
-        {"Applications are acknowledged with a reference number and routed to "}
-        {email ? (
-          <a
-            href={`mailto:${email}`}
-            className="underline decoration-rule underline-offset-2 hover:text-gold"
-          >
-            {email}
-          </a>
-        ) : (
-          "our HR team"
-        )}
-        {". Our HR team contacts candidates selected for the next stage."}
-      </p>
+      {!open ? (
+        <p className="mt-7 rounded-2xl bg-paper-2 px-5 py-4 text-sm text-ink/80">
+          Applications for this position have closed.
+        </p>
+      ) : form ? (
+        <LiveForm
+          form={form}
+          action="/forms/job-application"
+          submitLabel="Submit application"
+          accent={accent}
+          email={email}
+          hidden={{ job: j.slug }}
+        />
+      ) : null}
+      {open ? (
+        <p className="mt-4 text-xs text-steel">
+          {"Applications are acknowledged with a reference number and routed to "}
+          {email ? (
+            <a
+              href={`mailto:${email}`}
+              className="underline decoration-rule underline-offset-2 hover:text-gold"
+            >
+              {email}
+            </a>
+          ) : (
+            "our HR team"
+          )}
+          {". Our HR team contacts candidates selected for the next stage."}
+        </p>
+      ) : null}
     </section>
   );
 }

@@ -4,6 +4,7 @@ import config from "@payload-config";
 
 import type { Event, Job } from "@/payload-types";
 import { eventStatus } from "../events";
+import { jobOpen } from "../jobs";
 import { paragraphs } from "../lexical-text";
 import { buildSubmissionBody, recordEmailStatus, sendNotification, type SubmissionEntry } from "../mail";
 import { FORM_DEFINITIONS, type FormKey } from "./definitions";
@@ -180,17 +181,7 @@ async function parseBody(
 export const registrationOpen = (event: Pick<Event, "startsOn" | "endsOn">, now = new Date()) =>
   eventStatus(event, now) === "upcoming";
 
-/*
- * A job takes applications until its confirmed deadline has passed, compared
- * on whole UTC days like event status. An open-ended deadline (pending, empty,
- * or not a date) stays open: the page shows it as unconfirmed, and refusing
- * applications there would close a role nobody meant to close.
- */
-export function jobOpen(job: Pick<Job, "deadline">, now = new Date()): boolean {
-  const { status, value } = job.deadline ?? {};
-  if (status !== "confirmed" || !value) return true;
-  return eventStatus({ startsOn: value }, now) === "upcoming";
-}
+export { jobOpen };
 
 async function resolveContext(
   payload: Payload,

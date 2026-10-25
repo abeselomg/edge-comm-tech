@@ -10,4 +10,3 @@ export { CtaRow, Crumb, PageHead, type Cta, type HeadVariant } from "./page-head
 export { ClosingCta, Eyebrow, SectionHead } from "./section";
 export { CapCard, CheckList, NumberedSteps } from "./lists";
 export { Confirmable, Mark, Pending, type ConfirmableValue, type MarkItem } from "./markers";
-export { Field, FormNote, type FieldType } from "./forms";

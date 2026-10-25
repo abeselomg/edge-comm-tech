@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { formDoc } from "@/lib/forms/testing";
 import { ApplyPanel, JobAside, JobHeader, JobSections } from "./job-parts";
 
 const html = (el: React.ReactElement | null) => renderToStaticMarkup(<div>{el}</div>);
@@ -68,15 +69,44 @@ describe("JobSections", () => {
 });
 
 describe("ApplyPanel", () => {
-  const out = html(<ApplyPanel job={job()} accent="#0888c5" email="hr@example.com" />);
-  it("is an inert application form for this role", () => {
+  const form = formDoc("job-application");
+  const panel = (j: never, f: typeof form | null = form) =>
+    html(<ApplyPanel job={j} form={f} accent="#0888c5" email="hr@example.com" />);
+
+  it("is the live application form for this role, with the job slug in a hidden field", () => {
+    const out = panel(job());
     expect(out).toContain("Apply for HR Manager");
-    expect(out).toContain("disabled");
-    expect(out).not.toMatch(/<input(?![^>]*disabled)/);
-    expect(out).not.toMatch(/<button(?![^>]*disabled)/);
+    expect(out).toContain('action="/forms/job-application"');
+    expect(out).toMatch(/<input[^>]*name="job"[^>]*value="hr-manager"|<input[^>]*value="hr-manager"[^>]*name="job"/);
+    expect(out).toContain('accept=".pdf,.docx"');
+    expect(out).toContain(">Submit application</button>");
+    expect(out).not.toContain("not accepting submissions");
+    expect(out).not.toContain("not yet accepting");
+    expect(out).not.toMatch(/\sdisabled=/);
   });
+
   it("says where applications go", () => {
-    expect(out).toContain('href="mailto:hr@example.com"');
+    expect(panel(job())).toContain('href="mailto:hr@example.com"');
+  });
+
+  it("stays open when the deadline is unconfirmed", () => {
+    expect(panel(job({ deadline: { status: "pending", value: "2020-01-01" } }))).toContain("<form");
+  });
+
+  it("stays open until the confirmed deadline has passed", () => {
+    expect(panel(job({ deadline: { status: "confirmed", value: "2999-01-01" } }))).toContain("<form");
+  });
+
+  it("renders no form, only a closed message, once a confirmed deadline has passed", () => {
+    const out = panel(job({ deadline: { status: "confirmed", value: "2020-01-01" } }));
+    expect(out).not.toContain("<form");
+    expect(out).not.toContain("<input");
+    expect(out).toContain("Applications for this position have closed.");
+    expect(out.toLowerCase()).not.toMatch(/salary|benefit|compensation|tier/);
+  });
+
+  it("renders no form when the stored form is missing", () => {
+    expect(panel(job(), null)).not.toContain("<form");
   });
 });
 

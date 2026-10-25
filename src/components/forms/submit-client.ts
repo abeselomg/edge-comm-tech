@@ -1,3 +1,4 @@
+import { MAX_UPLOAD_BYTES } from "@/lib/forms/constants";
 import type { RenderField } from "@/lib/forms/read";
 
 /*
@@ -33,7 +34,12 @@ export function validateClient(fields: RenderField[], consentWording: string, da
     const value = data.get(f.name);
     if (f.type === "upload") {
       const empty = !(value instanceof File) || (value.size === 0 && value.name === "");
-      if (f.required && empty) errors[f.name] = `${f.label} is required.`;
+      if (empty) {
+        if (f.required) errors[f.name] = `${f.label} is required.`;
+      } else if (value.size > MAX_UPLOAD_BYTES) {
+        // The server's wording (validate.ts), so the message reads the same from either side.
+        errors[f.name] = `${f.label}: the file is larger than ${Math.floor(MAX_UPLOAD_BYTES / (1024 * 1024))} MB.`;
+      }
       continue;
     }
     if (f.type === "checkbox") {
@@ -49,6 +55,13 @@ export function validateClient(fields: RenderField[], consentWording: string, da
   }
   if (!data.get("consent")) errors.consent = `Please confirm: ${consentWording}`;
   return errors;
+}
+
+/** "My CV.pdf (1.5 MB)": what the visitor sees after choosing a file. */
+export function describeFile(file: { name: string; size: number }): string {
+  const mb = file.size / (1024 * 1024);
+  const size = mb >= 1 ? `${Math.round(mb * 10) / 10} MB` : `${Math.max(1, Math.round(file.size / 1024))} KB`;
+  return `${file.name} (${size})`;
 }
 
 type FetchLike = (input: string, init: { method: "POST"; body: FormData }) => Promise<Response>;

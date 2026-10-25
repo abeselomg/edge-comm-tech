@@ -173,17 +173,10 @@ const DELIBERATE = [
 ];
 
 /*
- * Phase 6: the pages whose form is live (contact, subscribe, careers-e-academy
- * and the event pages). They no longer render the CMS-era shell note ("This
- * form is not yet accepting submissions. Please email ... in the meantime."),
- * so it is NOT waived there: if it reappears, it is reported as copy that is
- * not in Highland. Pages still on the shell (careers-internships and the job
- * pages, until the application forms are wired) keep the waiver.
+ * Phase 6: every form on the site is live, so the CMS-era shell note ("This
+ * form is not yet accepting submissions. Please email ... in the meantime.")
+ * is waived nowhere. If it reappears it is reported as copy not in Highland.
  */
-const SHELL_NOTE = ["This form is not yet accepting submissions."];
-const SHELL_NOTE_SUBSTITUTION = [/Please email \S+ in the meantime\./g, ""];
-const isLiveFormPage = (page) =>
-  page === "contact" || page === "subscribe" || page === "careers-e-academy" || page.startsWith("event-");
 
 /*
  * Phrases Highland and the port both have, but worded differently on purpose.
@@ -206,7 +199,7 @@ const SUBSTITUTIONS = [
 /* Links the port adds on purpose, per page. */
 const ADDED_LINKS = { about: ["/about/executive-management"] };
 
-function normaliseNoise(s, live = false) {
+function normaliseNoise(s) {
   let out = s
     // Only the copyright year ticks over. A year anywhere else is content, and
     // normalising it would let a wrong "established 2019" pass.
@@ -214,10 +207,6 @@ function normaliseNoise(s, live = false) {
     .replace(/\?v=[\w.]+/g, ""); // Highland's cache-busting query strings
   for (const phrase of DELIBERATE) out = out.split(phrase).join("");
   for (const [from, to] of SUBSTITUTIONS) out = out.replace(from, to);
-  if (!live) {
-    for (const phrase of SHELL_NOTE) out = out.split(phrase).join("");
-    out = out.replace(...SHELL_NOTE_SUBSTITUTION);
-  }
   out = out.replace(/\s+/g, " ").trim();
   // Stripping a deliberate phrase can leave behind the punctuation that
   // joined it to its sentence. "— ." is not a finding.
@@ -323,12 +312,11 @@ for (const page of pages) {
     continue;
   }
 
-  const live = isLiveFormPage(page);
 
   /* Copy. Reported in both directions: a missing sentence is a dropped
      section, and an unexpected one is usually copy invented to fill a gap. */
-  const want = [...new Set(sentences(visibleText(expected)).map((x) => normaliseNoise(x, live)))].filter(Boolean);
-  const have = [...new Set(sentences(visibleText(actual)).map((x) => normaliseNoise(x, live)))].filter(Boolean);
+  const want = [...new Set(sentences(visibleText(expected)).map((x) => normaliseNoise(x)))].filter(Boolean);
+  const have = [...new Set(sentences(visibleText(actual)).map((x) => normaliseNoise(x)))].filter(Boolean);
   const wantSet = new Set(want);
   const haveSet = new Set(have);
   const missingCopy = want.filter((s) => !haveSet.has(s));
@@ -363,8 +351,8 @@ for (const page of pages) {
   }
 
   /* Headings, in order. */
-  const wantH = headings(expected).map((x) => normaliseNoise(x, live));
-  const haveH = headings(actual).map((x) => normaliseNoise(x, live));
+  const wantH = headings(expected).map((x) => normaliseNoise(x));
+  const haveH = headings(actual).map((x) => normaliseNoise(x));
   if (wantH.join(" | ") !== haveH.join(" | ")) {
     const missing = wantH.filter((h) => !haveH.includes(h));
     const extra = haveH.filter((h) => !wantH.includes(h));
@@ -400,7 +388,7 @@ for (const page of pages) {
     if (!wantL.has(l)) problems.push(`${page}: links to ${l}, which Highland does not`);
   }
 
-  /* Form controls: present on both sides (live now on four pages, disabled shells on the rest). */
+  /* Form controls: present on both sides (live on every form page). */
   if (!allowFormDiff && FORM_TAG.test(expected) !== FORM_TAG.test(actual)) {
     problems.push(
       `${page}: one side has form controls and the other does not ` +
