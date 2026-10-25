@@ -31,7 +31,6 @@ const formDoc = (key: FormKey, id: number): Form => ({
 
 type Doc = Record<string, unknown>;
 // The fake records whatever the route passes; the assertions say what that must be.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Args = { collection: string; [k: string]: any };
 
 function fakePayload(opts: { events?: Doc[]; jobs?: Doc[] } = {}) {
