@@ -279,8 +279,15 @@ describe("the read layer only reads published documents", () => {
     const mode = source.slice(source.indexOf("async function readMode"), source.indexOf("async function many"));
     const many = source.slice(source.indexOf("async function many"), source.indexOf("async function one"));
     const one = source.slice(source.indexOf("async function one"), source.indexOf("/* ------"));
-    expect(many, "many() must read through readMode()").toMatch(/\.\.\.\(await readMode\(\)\)/);
-    expect(one, "one() must read through readMode()").toMatch(/\.\.\.\(await readMode\(\{/);
+    // Each helper takes its mode from readMode(), spreads it into the find, and
+    // passes the result through forMode() so that outside draft mode the
+    // unpublished related documents are stripped (content-relations.test.ts).
+    for (const [name, body] of [["many()", many], ["one()", one]] as const) {
+      expect(body, `${name} must read through readMode()`).toMatch(/const mode = await readMode\(/);
+      expect(body, `${name} must spread the mode into the find`).toMatch(/\.\.\.mode,/);
+      expect(body, `${name} must filter its result through forMode()`).toMatch(/forMode<T>\(docs, mode\)/);
+    }
+    expect(source).toMatch(/mode\.draft \? docs : docs\.map\(\(d\) => dropUnpublishedRelations\(d\)\)/);
     // The draft branch is the only one without the filter, and it is taken
     // only when isDraft() says so. PUBLISHED is spread last so no caller's
     // where clause can override it.

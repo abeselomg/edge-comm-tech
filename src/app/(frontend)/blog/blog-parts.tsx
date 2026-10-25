@@ -55,7 +55,10 @@ export function PostArticle({ post, index }: { post: Post; index: number }) {
         className="eg-inview font-mono text-[10px] uppercase tracking-widest"
         style={{ color: accent }}
       >
-        {`${String(index + 1).padStart(2, "0")} · ${category?.label ?? ""}`}
+        {/* A category that is not published arrives null (content.ts strips it); the number stands alone. */}
+        {category
+          ? `${String(index + 1).padStart(2, "0")} · ${category.label}`
+          : String(index + 1).padStart(2, "0")}
       </p>
       <h2 className="eg-inview mt-3 max-w-3xl font-display text-[clamp(1.5rem,3vw,2.3rem)] leading-tight">
         {post.title}

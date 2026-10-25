@@ -67,9 +67,22 @@ describe("PostArticle", () => {
     expect(out).toContain("Post title");
     expect(out).not.toContain("/solutions/");
   });
+
+  it("drops the category from the eyebrow when it arrives null (unpublished, stripped by the read layer)", () => {
+    const out = html(<PostArticle post={post({ category: null })} index={1} />);
+    expect(out).toContain("Post title");
+    expect(out).toContain(">02<");
+    expect(out).not.toContain("02 ·");
+  });
 });
 
 describe("topics", () => {
+  it("leaves out a post whose category arrived null, without throwing", () => {
+    const a = post({ slug: "a", category: null });
+    const b = post({ slug: "b", category: { key: "net", label: "Network" } });
+    expect(topics([a, b])).toEqual([{ key: "net", label: "Network", firstSlug: "b", count: 1 }]);
+  });
+
   it("lists only categories that have an article, in article order, with a count", () => {
     const a = post({ slug: "a", category: { key: "ai", label: "AI" } });
     const b = post({ slug: "b", category: { key: "net", label: "Network" } });

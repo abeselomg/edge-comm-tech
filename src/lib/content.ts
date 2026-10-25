@@ -106,6 +106,76 @@ async function readMode(where: Where = {}): Promise<{ where: Where; draft?: true
 }
 
 /*
+ * The published filter applies to the top-level documents only. Payload's
+ * depth populate does not re-apply it to the documents it pulls in, so a
+ * published post arrives carrying its draft-only category, label and all --
+ * measured live on the review server in Phase 7 (/blog printed the label of a
+ * draft-only postCategory). Outside draft mode every result therefore goes
+ * through dropUnpublishedRelations() before a route sees it.
+ *
+ * A nested object counts as a populated related document when it has an `id`
+ * and a `_status` key; one whose status is anything but "published" (a null
+ * status included -- fail closed, as publishedOnly() in routes.ts does) is
+ * removed: a single relationship becomes null, and an entry of a hasMany is
+ * dropped from its array. Objects without `_status` -- media, users, groups,
+ * array rows, blocks, rich text -- are kept, and walked for related documents
+ * further down. The document passed in is not judged itself; the readers have
+ * already filtered it.
+ *
+ * The walk copies rather than mutates (the Local API's result may be shared
+ * with Payload's own caches), maps each input object to one copy so a cycle
+ * terminates on the copy already made, and stops at MAX_RELATION_DEPTH. Past
+ * the bound it returns null instead of the subtree: depth-2 data never gets
+ * near it, and an unfiltered subtree is the one outcome that must not happen.
+ *
+ * The per-page publishedOnly() guards stay; they also keep a link from being
+ * rendered to a related document that is published but whose own status a
+ * shallow read could not show.
+ */
+const MAX_RELATION_DEPTH = 32;
+const DROP = Symbol("drop");
+
+const isObject = (v: unknown): v is Record<string, unknown> =>
+  v !== null && typeof v === "object" && !(v instanceof Date);
+
+const isUnpublishedRelation = (v: Record<string, unknown>) =>
+  !Array.isArray(v) && "id" in v && "_status" in v && v._status !== "published";
+
+function walk(value: unknown, depth: number, seen: WeakMap<object, unknown>): unknown {
+  if (!isObject(value)) return value;
+  if (seen.has(value)) return seen.get(value);
+  if (depth > MAX_RELATION_DEPTH) return null;
+  if (depth > 0 && isUnpublishedRelation(value)) {
+    seen.set(value, DROP);
+    return DROP;
+  }
+  if (Array.isArray(value)) {
+    const out: unknown[] = [];
+    seen.set(value, out);
+    for (const item of value) {
+      const next = walk(item, depth + 1, seen);
+      if (next !== DROP) out.push(next);
+    }
+    return out;
+  }
+  const out: Record<string, unknown> = {};
+  seen.set(value, out);
+  for (const [key, child] of Object.entries(value)) {
+    const next = walk(child, depth + 1, seen);
+    out[key] = next === DROP ? null : next;
+  }
+  return out;
+}
+
+export function dropUnpublishedRelations<T>(doc: T): T {
+  return walk(doc, 0, new WeakMap()) as T;
+}
+
+/** The read's result as a public page may see it: drafts only inside draft mode. */
+const forMode = <T>(docs: unknown[], mode: { draft?: true }): T[] =>
+  (mode.draft ? docs : docs.map((d) => dropUnpublishedRelations(d))) as T[];
+
+/*
  * `extra` is the per-reader options -- today only the sort. Only `sort` is
  * taken from it: the type forbids `where` and `draft`, and even a caller that
  * casts around the type cannot pass them through, since nothing else is read
@@ -116,25 +186,27 @@ async function readMode(where: Where = {}): Promise<{ where: Where; draft?: true
 export async function many<T>(collection: string, extra: { sort?: string } = {}): Promise<T[]> {
   const payload = await payloadClient();
   const { sort } = extra;
+  const mode = await readMode();
   const { docs } = await payload.find({
     collection: collection as never,
     limit: 200,
     depth: 2,
     ...(sort ? { sort } : {}),
-    ...(await readMode()),
+    ...mode,
   });
-  return docs as T[];
+  return forMode<T>(docs, mode);
 }
 
 async function one<T>(collection: string, slug: string): Promise<T | null> {
   const payload = await payloadClient();
+  const mode = await readMode({ slug: { equals: slug } });
   const { docs } = await payload.find({
     collection: collection as never,
-    ...(await readMode({ slug: { equals: slug } })),
+    ...mode,
     limit: 1,
     depth: 2,
   });
-  return (docs[0] as T) ?? null;
+  return forMode<T>(docs, mode)[0] ?? null;
 }
 
 /* ---------------------------------------------------------------- globals */
