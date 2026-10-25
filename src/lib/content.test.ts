@@ -13,7 +13,10 @@ import { SiteSettings } from "@/globals/SiteSettings";
  * outside draft mode, the latest draft inside it.
  */
 let draftEnabled = false;
-vi.mock("next/headers", () => ({ draftMode: async () => ({ isEnabled: draftEnabled }) }));
+vi.mock("next/headers", () => ({
+  draftMode: async () => ({ isEnabled: draftEnabled }),
+  headers: async () => new Headers(),
+}));
 
 type Doc = Record<string, unknown> & { slug?: string; _status?: string };
 type FindArgs = { collection: string; where?: Record<string, any>; draft?: boolean; [k: string]: unknown };
@@ -35,6 +38,9 @@ const fake = {
     return { docs };
   }),
   findGlobal: vi.fn(async ({ slug }: { slug: string }) => ({ slug })),
+  // isDraft() needs a staff session as well as draft mode; draft.test.ts covers
+  // the refusals, here an editor is always signed in.
+  auth: vi.fn(async () => ({ user: { id: 1, collection: "users", role: "editor" } })),
 };
 vi.mock("payload", () => ({ getPayload: vi.fn(async () => fake) }));
 vi.mock("@payload-config", () => ({ default: {} }));
