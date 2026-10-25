@@ -462,6 +462,14 @@ page again. While a draft is pending the probe also checks the anonymous API:
 of drafts is empty, the News and Contact details versions endpoints answer
 401/403, and GraphQL `versionsNews` answers with errors and no data.
 
+The global checks use `POST /api/globals/<slug>` with an empty body, which is how
+Payload updates a global (`PATCH` on a global answers 404): the editor must get
+403 for Contact details and Site settings. The admin's side is never tested by
+writing a live global; the probe reads `GET /api/access` for both sessions and
+requires `globals['contact-details'].update`, `collections.users.create` and
+`collections.news.delete` to be allowed for the admin and refused for the editor
+(the response gives either a bare boolean or `{ permission }`; both are read).
+
 The probe prints `ok` or `FAIL name: reason` per check and exits non-zero on any
 FAIL. Its destructive role checks on form submissions and CVs use an id no row has
 (a 403 proves denial; a 404 would mean access is open), so a misconfiguration can

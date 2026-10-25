@@ -1,6 +1,9 @@
 // @ts-nocheck -- exercises plain .mjs tools whose parameter types TypeScript can only infer from their defaults
 import { describe, expect, it } from "vitest";
 import {
+  ACCESS_CHECKS,
+  accessProblems,
+  allowed,
   BANNER_TEXT,
   BYPASS_COOKIE,
   buildRequest,
@@ -20,11 +23,9 @@ import {
   readCreds,
   relatedDraftFinding,
   runProbe,
-  sameContent,
   setCookiesOf,
   shows,
   titlesFor,
-  writableCopy,
 } from "./check-editorial-live.mjs";
 import { MARKER } from "./forms-live-shared.mjs";
 
@@ -155,11 +156,29 @@ describe("content helpers", () => {
     expect(shows("<h1>other</h1>", `${MARKER} a`)).toBe(false);
   });
 
-  it("a read global is written back without system fields, and compared ignoring timestamps", () => {
-    const read = { id: 1, globalType: "contact-details", createdAt: "a", updatedAt: "b", _status: "published", email: "x", nested: { b: 2, a: 1 } };
-    expect(writableCopy(read)).toEqual({ email: "x", nested: { b: 2, a: 1 } });
-    expect(sameContent(read, { ...read, updatedAt: "c", nested: { a: 1, b: 2 } })).toBe(true);
-    expect(sameContent(read, { ...read, email: "y" })).toBe(false);
+  it("reads a permission from /api/access as a bare boolean or as { permission }", () => {
+    expect(allowed(true)).toBe(true);
+    expect(allowed({ permission: true })).toBe(true);
+    expect(allowed({ permission: true, where: { id: { equals: 1 } } })).toBe(true);
+    expect(allowed(false)).toBe(false);
+    expect(allowed({ permission: false })).toBe(false);
+    expect(allowed(undefined)).toBe(false);
+    expect(allowed(null)).toBe(false);
+    expect(allowed({})).toBe(false);
+  });
+
+  it("checks the admin-only permissions: allowed for the admin, refused for the editor", () => {
+    expect(ACCESS_CHECKS.map((c) => c.label)).toEqual(["globals.contact-details.update", "collections.users.create", "collections.news.delete"]);
+    const admin = { globals: { "contact-details": { update: true } }, collections: { users: { create: { permission: true } }, news: { delete: true } } };
+    const editor = { globals: { "contact-details": { update: false } }, collections: { users: { create: { permission: false } }, news: { delete: false } } };
+    expect(accessProblems(admin, true)).toBeNull();
+    expect(accessProblems(editor, false)).toBeNull();
+    expect(accessProblems(editor, true)).toMatch(/globals\.contact-details\.update.*collections\.users\.create.*collections\.news\.delete/);
+    expect(accessProblems({ ...editor, globals: { "contact-details": { update: { permission: true } } } }, false)).toMatch(/contact-details\.update/);
+    expect(accessProblems(null, true)).toMatch(/no access document/);
+    // a missing key is "not allowed": fine for the editor, a problem for the admin
+    expect(accessProblems({}, false)).toBeNull();
+    expect(accessProblems({}, true)).toMatch(/contact-details/);
   });
 
   it("reads frame protection from either header, and flags when there is none", () => {
@@ -232,8 +251,8 @@ const creds = { editorEmail: "editor-probe@example.invalid", editorPassword: "ed
  * wrong behaviour (cookie alone is enough) so the probe can be seen to catch it;
  * `leakApi` makes the anonymous API hand out the draft.
  */
-function fakeServer(opts: { failPublish?: boolean; bypassAloneShowsDraft?: boolean; leakApi?: boolean } = {}) {
-  const state = { exists: false, published: false, title: "", draftTitle: "", deleted: false, requests: [] as string[], contact: { id: 1, email: "x@y.z", updatedAt: "t0" }, revoked: new Set<string>(), logins: 0 };
+function fakeServer(opts: { failPublish?: boolean; bypassAloneShowsDraft?: boolean; leakApi?: boolean; editorAccessOpen?: boolean } = {}) {
+  const state = { exists: false, published: false, title: "", draftTitle: "", deleted: false, requests: [] as string[], contact: { id: 1, email: "x@y.z", updatedAt: "t0" }, globalWrites: [] as string[], revoked: new Set<string>(), logins: 0 };
   const BYP = "BYPASSVALUE123";
   const json = (status: number, body: unknown, headers: Record<string, string> = {}) => new Response(JSON.stringify(body), { status, headers });
   const tokenOf = (c: string) => /payload-token=([^;\s]+)/.exec(c)?.[1] ?? null;
@@ -291,12 +310,26 @@ function fakeServer(opts: { failPublish?: boolean; bypassAloneShowsDraft?: boole
       state.deleted = true;
       return json(200, { doc: { id: 7 } });
     }
-    if (p === "/api/globals/contact-details") {
-      if (who !== "admin") return json(403, {});
-      if (method === "PATCH") state.contact.updatedAt = "t1";
+    // Payload updates a global with POST; PATCH on a global is a 404, as live.
+    if (p === "/api/globals/contact-details" || p === "/api/globals/site-settings") {
+      if (method === "PATCH") return json(404, {});
+      if (method === "POST") {
+        if (who !== "admin") return json(403, {});
+        state.globalWrites.push(`${p} ${who}`);
+        return json(200, {});
+      }
       return json(200, state.contact);
     }
-    if (p === "/api/globals/site-settings") return who === "admin" ? json(200, {}) : json(403, {});
+    if (p === "/api/access" && method === "GET") {
+      // Both shapes the live server uses: bare booleans for some keys, { permission } for others.
+      const open = who === "admin" || (who === "editor" && opts.editorAccessOpen);
+      if (!who) return json(200, {});
+      return json(200, {
+        canAccessAdmin: true,
+        globals: { "contact-details": { read: { permission: true }, update: { permission: open } }, "site-settings": { update: open } },
+        collections: { users: { create: open, read: { permission: true } }, news: { create: { permission: true }, delete: { permission: open } } },
+      });
+    }
     if (p === "/api/users" && method === "POST") return json(403, {});
     if (p === "/api/users" && method === "GET") return json(403, {});
     if (p === "/api/users/1") return json(404, {});
@@ -329,6 +362,29 @@ describe("runProbe against a fake server", () => {
     expect(all).toMatch(/skipped: no published solution/);
     // the destructive role probes use an id no row has
     expect(state.requests.some((r) => r.startsWith("DELETE /api/form-submissions/2147483000"))).toBe(true);
+  });
+
+  it("checks the globals with POST and the admin's permission via /api/access, never writing a live global", async () => {
+    const clock = fakeClock();
+    const { fetchImpl, state } = fakeServer();
+    const res = await runProbe({ base: "http://x", creds, fetchImpl, log: () => {}, run: "99", ...clock });
+    const names = res.results.map((r: { name: string }) => r.name);
+    for (const n of ["h-editor-cannot-post-contact-details", "h-editor-cannot-post-site-settings", "h-access-admin-allowed", "h-access-editor-refused"]) expect(names).toContain(n);
+    expect(names).not.toContain("h-admin-patch-contact-details-unchanged");
+    expect(state.requests).toContain("POST /api/globals/contact-details editor");
+    expect(state.requests).toContain("POST /api/globals/site-settings editor");
+    expect(state.requests).toContain("GET /api/access admin");
+    expect(state.requests).toContain("GET /api/access editor");
+    expect(state.requests.some((r) => r.startsWith("PATCH /api/globals/"))).toBe(false);
+    expect(state.globalWrites).toEqual([]);
+  });
+
+  it("FAILS the editor's /api/access check when the editor holds an admin-only permission", async () => {
+    const clock = fakeClock();
+    const { fetchImpl } = fakeServer({ editorAccessOpen: true });
+    const res = await runProbe({ base: "http://x", creds, fetchImpl, log: () => {}, run: "99", ...clock });
+    const failed = res.results.filter((r: { ok: boolean }) => !r.ok).map((r: { name: string }) => r.name);
+    expect(failed).toEqual(["h-access-editor-refused"]);
   });
 
   it("cleans up with the admin session when a check blows up half way", async () => {

@@ -19,7 +19,11 @@
  *      cookie (still valid for this build) shows the published page again
  *   f  editor publishes the change: the public page shows the NEW title, no redeploy
  *   g  editor UNPUBLISHES: the URL is 404 again
- *   h  role gating (globals, users, forms, submissions, applications, delete)
+ *   h  role gating: editor POST to contact-details / site-settings -> 403 (a
+ *      global updates with POST); /api/access shows contact-details update,
+ *      users create and news delete allowed for the admin and refused for the
+ *      editor (no live global is written); users, forms, submissions,
+ *      applications, delete
  *   i  response headers on the home page (frame-ancestors / X-Frame-Options)
  *   j  a best-effort, NON-FAILING finding: does a published page show the title of
  *      a related document that is only a draft?
@@ -241,19 +245,31 @@ export function shows(text, title) {
   return typeof text === "string" && (text.includes(title) || text.includes(escapeHtml(title)));
 }
 
-/** Strip what Payload sets itself, so a read document can be written back unchanged. */
-export function writableCopy(doc) {
-  const out = { ...doc };
-  for (const key of ["id", "createdAt", "updatedAt", "globalType", "_status"]) delete out[key];
-  return out;
+/*
+ * GET /api/access answers, for the signed-in user, what each collection and
+ * global allows. This Payload version uses both shapes -- a bare boolean for
+ * some operations and { permission: boolean, where? } for others -- so read
+ * either. Asking it is how the probe checks the admin's write permission on a
+ * live global without writing to it.
+ */
+export function allowed(entry) {
+  if (entry === true) return true;
+  return Boolean(entry) && typeof entry === "object" && entry.permission === true;
 }
 
-const stable = (v) =>
-  JSON.stringify(v, (_k, val) => (val && typeof val === "object" && !Array.isArray(val) ? Object.fromEntries(Object.entries(val).sort(([a], [b]) => (a < b ? -1 : 1))) : val));
+/** The admin-only operations the probe checks in /api/access, for both roles. */
+export const ACCESS_CHECKS = [
+  { label: "globals.contact-details.update", get: (a) => a?.globals?.["contact-details"]?.update },
+  { label: "collections.users.create", get: (a) => a?.collections?.users?.create },
+  { label: "collections.news.delete", get: (a) => a?.collections?.news?.delete },
+];
 
-/** True when two read documents hold the same content (ignoring ids and timestamps). */
-export function sameContent(a, b) {
-  return stable(writableCopy(a ?? {})) === stable(writableCopy(b ?? {}));
+/** null when every ACCESS_CHECKS entry is allowed (admin) or refused (editor) as expected. */
+export function accessProblems(access, expectAllowed) {
+  if (!access || typeof access !== "object") return "no access document in the /api/access response";
+  const wrong = ACCESS_CHECKS.filter((c) => allowed(c.get(access)) !== expectAllowed).map((c) => c.label);
+  if (!wrong.length) return null;
+  return `${expectAllowed ? "expected allowed" : "expected refused"}: ${wrong.join(", ")}`;
 }
 
 /* ---------------------------------------------------------------- the verdicts */
@@ -524,21 +540,19 @@ export async function runProbe({ base, creds, fetchImpl, now = Date.now, sleep, 
     }
 
     // ---- h: role gating
-    await step("h-editor-cannot-patch-contact-details", async () => expectStatus(await api("editor", "PATCH", "/api/globals/contact-details", {}), 403, "editor PATCH contact-details"));
-    await step("h-admin-patch-contact-details-unchanged", async () => {
-      const before = await api("admin", "GET", "/api/globals/contact-details?depth=0");
-      const bad = expectStatus(before, 200, "admin GET contact-details");
-      if (bad) return bad;
-      const res = await api("admin", "PATCH", "/api/globals/contact-details?depth=0", writableCopy(before.json));
-      const bad2 = expectStatus(res, 200, "admin PATCH contact-details");
-      if (bad2) return bad2;
-      const after = await api("admin", "GET", "/api/globals/contact-details?depth=0");
-      if (sameContent(before.json, after.json)) return null;
-      // Put back exactly what was read, and say so.
-      await api("admin", "PATCH", "/api/globals/contact-details?depth=0", writableCopy(before.json));
-      return "contact-details changed after writing back what was read (an attempt was made to restore it; check it)";
+    // Payload updates a global with POST (PATCH on a global is a 404). Body {}:
+    // access is checked before anything is written, so a 403 changes nothing.
+    await step("h-editor-cannot-post-contact-details", async () => expectStatus(await api("editor", "POST", "/api/globals/contact-details", {}), 403, "editor POST contact-details"));
+    await step("h-editor-cannot-post-site-settings", async () => expectStatus(await api("editor", "POST", "/api/globals/site-settings", {}), 403, "editor POST site-settings"));
+    // The admin's side is read from /api/access, never by writing the live global.
+    await step("h-access-admin-allowed", async () => {
+      const res = await api("admin", "GET", "/api/access");
+      return expectStatus(res, 200, "admin GET /api/access") ?? accessProblems(res.json, true);
     });
-    await step("h-editor-cannot-patch-site-settings", async () => expectStatus(await api("editor", "PATCH", "/api/globals/site-settings", {}), 403, "editor PATCH site-settings"));
+    await step("h-access-editor-refused", async () => {
+      const res = await api("editor", "GET", "/api/access");
+      return expectStatus(res, 200, "editor GET /api/access") ?? accessProblems(res.json, false);
+    });
     await step("h-editor-cannot-create-user", async () => {
       const res = await api("editor", "POST", "/api/users", { email: `probe-extra-${run}@example.invalid`, password: `Pw-${run}-${run}-aA1!`, name: MARKER, role: "editor" });
       if (res.status === 200 || res.status === 201) {
