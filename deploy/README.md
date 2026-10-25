@@ -19,6 +19,7 @@ a different host, and nothing here touches it.
 | nginx site | `/etc/nginx/sites-available/edge-comm-tech` |
 | Interim TLS | `/etc/ssl/edge-comm-tech/selfsigned.{crt,key}` |
 | Uploads | `/srv/edge-comm-tech/app/media` |
+| CVs (private, outside `public/`) | `/srv/edge-comm-tech/app/applications` (`750 edge:edge`) |
 | TLS enabler | `/usr/local/sbin/edge-enable-tls` |
 
 The three config files here are copies of what is live. Change them here,
@@ -40,7 +41,10 @@ the schema on its own.
 
 The app runs as the `edge` system account with no login shell, under systemd
 hardening: the filesystem is read-only to it apart from `.next` (Next's
-runtime cache) and `media` (uploads, while no S3 bucket is configured).
+runtime cache), `media` (uploads, while no S3 bucket is configured) and
+`applications` (CVs from the two application forms; private, outside `public/`,
+served only through Payload's access control). `applications` is created once by
+hand, see "One-time setup for CV uploads" under Phase 6.
 
 ## TLS, and the one thing still outstanding
 
@@ -69,13 +73,19 @@ nothing has to be pushed to GitHub to deploy.
 From a machine with the repo:
 
 ```bash
-git bundle create /tmp/edge.bundle payload-cms-integration
+git bundle create /tmp/edge.bundle <your-branch>:refs/heads/payload-cms-integration
 scp /tmp/edge.bundle root@168.119.61.125:/tmp/edge.bundle
 ssh root@168.119.61.125 /usr/local/sbin/edge-redeploy
 ```
 
+`edge-redeploy` hard-codes the ref `payload-cms-integration`, so the bundle must
+carry your current branch under that name (for example
+`phase-6-forms:refs/heads/payload-cms-integration`); a bundle of any other ref
+fails the fetch.
+
 `edge-redeploy` fetches the bundle into the checkout, installs dependencies,
-runs migrations, rebuilds and restarts. It stops at the first failure rather
+runs migrations, seeds any missing documents (fill mode, never overwriting),
+rebuilds and restarts. It stops at the first failure rather
 than restarting a broken build over a working one.
 
 ## Things that will bite
@@ -100,7 +110,7 @@ fifteen direct dependencies declared with a caret.
 
 **Seed modes are environment variables, not flags.** `payload run` strips the
 script's arguments, so `--fresh` silently does nothing. Use
-`npm run seed:force` or `npm run seed:fresh`.
+`NODE_ENV=production npm run seed:force` or `NODE_ENV=production npm run seed:fresh`.
 
 ## Phase 4: the static pages
 
@@ -241,7 +251,9 @@ The nginx site must keep `proxy_set_header X-Forwarded-For $proxy_add_x_forwarde
 **Submissions hold personal data, and the retention period is an open decision for
 Edge.** Names, emails, phone numbers, application answers and CVs are kept in
 `form-submissions` and `applications` until someone deletes them; the stored
-IP is only a keyed hash. How long to keep them, and who deletes them, has not been
+IP is only a keyed hash, salted with the app secret. The browser's `User-Agent`
+(`meta.userAgent`, capped at 300 characters) is stored alongside that hash, so a
+submission also records which browser and device sent it. How long to keep them, and who deletes them, has not been
 decided. Do not pick a period here: record Edge's answer, then build the deletion
 that matches it.
 
@@ -250,11 +262,39 @@ that matches it.
 adds the submission-upload, consent and delivery-status columns to
 `form_submissions`. Nothing is dropped. `edge-redeploy` applies it.
 
-**Seed the forms before `next build`.** The form pages call `getForm` while they
-prerender, and it throws on a form that is not in the database, so a build against
-an unseeded database fails. Order on the server: migrate, `npm run seed`
-(or `seed:force`), then build. Seed the six forms once before the first
-`edge-redeploy` that contains Phase 6, or its build step fails.
+**The forms are seeded by the redeploy.** The form pages call `getForm` while they
+prerender, and it throws on a form that is not in the database. The seed code and
+the migration arrive with the very redeploy that needs them, so nothing can be
+seeded beforehand; instead `edge-redeploy` now runs the seed in fill mode between
+migrations and the build, which adds the six forms if they are missing and
+overwrites nothing. **Operator step:** `deploy/redeploy.sh` changed, so copy it to
+the server as `/usr/local/sbin/edge-redeploy` (mode 755) before running the first
+Phase 6 redeploy; the old copy has no seed step and its build would fail on the
+missing forms after rewriting `.next`.
+
+**One-time setup for CV uploads.** Payload stores CVs in `applications/` under the
+app directory (the collection's `staticDir`). The service runs with
+`ProtectSystem=strict`, so the unit allows writes to that path
+(`ReadWritePaths=-/srv/edge-comm-tech/app/applications`) and the directory must
+exist, owned by the service user (`edge`, from `User=` in the unit):
+
+```bash
+mkdir -p /srv/edge-comm-tech/app/applications
+chown edge:edge /srv/edge-comm-tech/app/applications
+chmod 750 /srv/edge-comm-tech/app/applications
+cp deploy/edge-comm-tech.service /etc/systemd/system/edge-comm-tech.service
+systemctl daemon-reload && systemctl restart edge-comm-tech
+```
+
+Without the unit change a CV upload fails with a read-only filesystem error and the
+form answers 500. `applications/` is git-ignored and is not under `public/`, so no
+CV has a public URL.
+
+**Server-side Payload commands need `NODE_ENV=production`.** `/etc/edge-comm-tech.env`
+is not known to set it (nothing in `deploy/` or `.env.example` does; only `redeploy.sh` sets it, per command), and
+`payload.config.ts` turns the interactive dev schema push on whenever it is not
+`production`, which would run against the live database and hang on a prompt. Prefix
+every `payload`, `seed` and `migrate` command you run by hand, as below.
 
 **Forms are looked up by title.** The route finds its form by the exact title
 seeded from `src/lib/forms/definitions.ts` ("Contact", "Subscribe", "Event
@@ -290,13 +330,13 @@ app directory with the environment loaded (`payload run` drops arguments, so the
 mode is an environment variable):
 
 ```bash
-FORMS_CLEANUP_MODE=count FORMS_CLEANUP_OUT=/tmp/forms-before.json npx payload run tools/forms-live-cleanup.mjs
+NODE_ENV=production FORMS_CLEANUP_MODE=count FORMS_CLEANUP_OUT=/tmp/forms-before.json npx payload run tools/forms-live-cleanup.mjs
 # ... run check-forms-live from anywhere ...
-FORMS_CLEANUP_MODE=count FORMS_CLEANUP_OUT=/tmp/forms-after.json  npx payload run tools/forms-live-cleanup.mjs
+NODE_ENV=production FORMS_CLEANUP_MODE=count FORMS_CLEANUP_OUT=/tmp/forms-after.json  npx payload run tools/forms-live-cleanup.mjs
 node --import tsx tools/check-forms-live.mjs --expect-count-file /tmp/forms-before.json --actual-count-file /tmp/forms-after.json
 # expects exactly 8 new submissions (6 forms, plus a second CV type on 2)
-npx payload run tools/forms-live-cleanup.mjs                          # dry run, the default: lists, deletes nothing
-FORMS_CLEANUP_MODE=delete npx payload run tools/forms-live-cleanup.mjs # removes marked submissions and their CVs
+NODE_ENV=production npx payload run tools/forms-live-cleanup.mjs      # dry run, the default: lists, deletes nothing
+NODE_ENV=production FORMS_CLEANUP_MODE=delete npx payload run tools/forms-live-cleanup.mjs # removes marked submissions and their CVs
 ```
 
 Read each probe submission's `emailStatus` and its CV's access in the admin or
