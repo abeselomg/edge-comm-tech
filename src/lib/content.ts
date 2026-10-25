@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { getPayload } from "payload";
+import { getPayload, type Where } from "payload";
 import config from "@payload-config";
 import type {
   AcademyTrack,
@@ -22,6 +22,7 @@ import type {
   SiteSetting,
   Solution,
 } from "@/payload-types";
+import { isDraft } from "./draft";
 import { eventStatus, type EventStatus } from "./events";
 import { FORM_DEFINITIONS, type FormKey } from "./forms/definitions";
 import { approvedLogo } from "./media";
@@ -56,7 +57,8 @@ export type {
  * Only published documents reach the public site. The Local API defaults to
  * overrideAccess: true, so the access rules in src/access are not enough on
  * their own -- every read below filters on _status explicitly. Do not remove
- * that filter to "simplify" a query.
+ * that filter to "simplify" a query. The one exception is an editor's preview
+ * in Next draft mode; see readMode() below.
  */
 
 const payloadClient = cache(async () => getPayload({ config }));
@@ -80,11 +82,34 @@ export const PUBLISHED = { _status: { equals: "published" } } as const;
  */
 const byOrder = { sort: "order" } as const;
 
+/*
+ * Published-only, unless this request is an editor's preview (Phase 7).
+ *
+ * In draft mode -- which only the staff-only /preview route can switch on, see
+ * src/lib/draft.ts -- the read asks Payload for the latest version of each
+ * document (`draft: true`) and drops the _status filter, so a draft-only
+ * document and the unpublished edits to a published one both show. Everywhere
+ * else, including the build and ISR revalidation, isDraft() is false and the
+ * filter applies. PUBLISHED is spread last so no caller's where clause can
+ * override it.
+ *
+ * The flag is read inside each reader call rather than once, and the readers
+ * are wrapped in React's cache(), which memoises per server request. One
+ * request has one draft-mode state, so a preview cannot hand its result to a
+ * public render.
+ *
+ * Media approval is a content rule, not a publishing one: the logo gate below
+ * applies in draft mode too.
+ */
+async function readMode(where: Where = {}): Promise<{ where: Where; draft?: true }> {
+  return (await isDraft()) ? { where, draft: true } : { where: { ...where, ...PUBLISHED } };
+}
+
 async function many<T>(collection: string, extra: Record<string, unknown> = {}): Promise<T[]> {
   const payload = await payloadClient();
   const { docs } = await payload.find({
     collection: collection as never,
-    where: PUBLISHED,
+    ...(await readMode()),
     limit: 200,
     depth: 2,
     ...extra,
@@ -96,7 +121,7 @@ async function one<T>(collection: string, slug: string): Promise<T | null> {
   const payload = await payloadClient();
   const { docs } = await payload.find({
     collection: collection as never,
-    where: { ...PUBLISHED, slug: { equals: slug } },
+    ...(await readMode({ slug: { equals: slug } })),
     limit: 1,
     depth: 2,
   });
@@ -104,6 +129,14 @@ async function one<T>(collection: string, slug: string): Promise<T | null> {
 }
 
 /* ---------------------------------------------------------------- globals */
+
+/*
+ * The globals publish immediately (versions.drafts false on Company, Careers,
+ * Contact details and Page copy; Site settings has no versions), so there is
+ * no draft to read and these never pass `draft`, in draft mode or not. If a
+ * global gains drafts, its reader must pass `draft: await isDraft()` --
+ * content.test.ts fails until it does.
+ */
 
 export const getSiteSettings = cache(async (): Promise<SiteSetting> => {
   const payload = await payloadClient();

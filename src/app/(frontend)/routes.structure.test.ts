@@ -51,6 +51,20 @@ describe("dynamic routes", () => {
     }
   });
 
+  it("no [slug] page sets dynamicParams = false", () => {
+    /*
+     * Review Focus #5 (Phase 7). generateStaticParams lists published slugs
+     * only, so under dynamicParams = false a draft-only document -- the one an
+     * editor most wants to preview -- could never be rendered, and a layout
+     * revalidation leaves the route unrecoverable (NoFallbackError, see the
+     * media page). The 404 for an unknown or unpublished slug is loadOr404's
+     * job, not the router's.
+     */
+    for (const file of dynamic) {
+      expect(read(file), rel(file)).not.toMatch(/export\s+const\s+dynamicParams\s*(?::[^=]+)?=\s*false/);
+    }
+  });
+
   it("no page file exports anything Next does not allow from one", () => {
     const allowed = new Set([
       "default", "metadata", "generateMetadata", "generateStaticParams", "revalidate", "dynamicParams",
