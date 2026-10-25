@@ -14,12 +14,18 @@
  *   FORMS_CLEANUP_OUT=/tmp/x.json  also write {"total":N,"marked":M} there
  *
  * Run from the app directory with the server's environment loaded:
- *   npx payload run tools/forms-live-cleanup.mjs
+ *   NODE_ENV=production npx payload run tools/forms-live-cleanup.mjs
  */
 import { writeFileSync } from "node:fs";
 import { getPayload } from "payload";
 import config from "../src/payload.config";
-import { isMarkedSubmission, MARKER, uploadIdsOf } from "./forms-live-shared.mjs";
+import { isMarkedSubmission, MARKER, unsafeEnvironment, uploadIdsOf } from "./forms-live-shared.mjs";
+
+const unsafe = unsafeEnvironment(process.env);
+if (unsafe) {
+  console.error(unsafe);
+  process.exit(2);
+}
 
 const mode = process.env.FORMS_CLEANUP_MODE ?? "dry-run";
 if (!["dry-run", "count", "delete"].includes(mode)) {

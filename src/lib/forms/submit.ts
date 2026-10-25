@@ -79,6 +79,8 @@ async function findForm(payload: Payload, key: FormKey): Promise<FormDoc | null>
     where: { title: { equals: FORM_DEFINITIONS[key].title } },
     limit: 1,
     depth: 0,
+    // The `emails` field is staff-only over the API; the route is trusted server code.
+    overrideAccess: true,
   });
   return docs[0] ?? null;
 }
@@ -238,6 +240,19 @@ function recipientsOf(form: FormDoc): string[] {
 const subjectOf = (form: FormDoc) =>
   `New ${form.title.replace(/[\u0000-\u001f\u007f]+/g, " ").trim().slice(0, 120)} submission from the website`;
 
+/*
+ * What is safe to log about a failure. A Drizzle query error's message embeds
+ * the SQL parameters, which for a submission are the visitor's name, email,
+ * phone and message, so only the error's class is kept.
+ */
+const safeErr = (err: unknown) => ({ name: err instanceof Error ? err.name : typeof err });
+
+/** True for the ValidationError Payload throws when it rejects the uploaded file itself. */
+const isFileRejection = (err: unknown) => {
+  const errors = (err as { data?: { errors?: { path?: unknown }[] } } | null)?.data?.errors;
+  return (err as { name?: unknown } | null)?.name === "ValidationError" && Array.isArray(errors) && errors.some((e) => e?.path === "file");
+};
+
 const messageOf = (err: unknown) => (err instanceof Error ? err.message : String(err));
 
 export async function handleSubmission(request: Request, slug: string): Promise<Response> {
@@ -266,7 +281,7 @@ export async function handleSubmission(request: Request, slug: string): Promise<
 
     const success = json(200, { ok: true, message: confirmationOf(form, key) });
     // A bot gets exactly what a person gets, and nothing is kept.
-    if (isHoneypotTripped(input)) return success;
+    if (isHoneypotTripped(input, files)) return success;
 
     const result = await validateSubmission(form, input, files);
     if (!result.ok) return fail(422, result.errors);
@@ -286,15 +301,17 @@ export async function handleSubmission(request: Request, slug: string): Promise<
           try {
             await payload!.delete({ collection: "applications", id, overrideAccess: true });
           } catch (err) {
-            payload!.logger.error({ err, msg: `Could not remove orphaned application file ${id}.` });
+            payload!.logger.error({ err: safeErr(err), msg: `Could not remove orphaned application file ${id}.` });
           }
         }
       }
     };
 
     let submissionId: number | string;
+    let currentUpload: (typeof data.uploads)[number] | null = null;
     try {
       for (const u of data.uploads) {
+        currentUpload = u;
         const entry = { field: u.field, label: u.label, ids: [] as (string | number)[], names: [] as string[] };
         uploaded.push(entry);
         for (const f of u.files) {
@@ -334,8 +351,16 @@ export async function handleSubmission(request: Request, slug: string): Promise<
       submissionId = created.id;
     } catch (err) {
       deduper.forget(dedupe);
-      payload.logger.error({ err, msg: `A ${key} submission could not be stored.` });
+      // Payload's own file check (it reads the bytes) can disagree with ours, e.g. a zip named .docx.
+      const rejectedUpload = currentUpload && isFileRejection(err) ? (currentUpload as (typeof data.uploads)[number]) : null;
+      payload.logger.error({
+        err: safeErr(err),
+        msg: rejectedUpload
+          ? `A ${key} upload was rejected by the file check.`
+          : `A ${key} submission could not be stored.`,
+      });
       await removeUploads();
+      if (rejectedUpload) return fail(422, { [rejectedUpload.field]: `${rejectedUpload.label}: upload a PDF or DOCX file.` });
       return fail(500, { _form: GENERIC_500 });
     }
 
@@ -353,14 +378,14 @@ export async function handleSubmission(request: Request, slug: string): Promise<
       });
     } catch (err) {
       // sendNotification does not throw; if it ever does, the submission stands.
-      payload.logger.error({ err, msg: `Submission ${submissionId} stored; the notification step threw.` });
+      payload.logger.error({ err: safeErr(err), msg: `Submission ${submissionId} stored; the notification step threw.` });
       await recordEmailStatus(payload, submissionId, "failed", messageOf(err));
     }
 
     return success;
   } catch (err) {
-    if (payload) payload.logger.error({ err, msg: "The form submission route failed." });
-    else console.error("The form submission route failed.", err);
+    if (payload) payload.logger.error({ err: safeErr(err), msg: "The form submission route failed." });
+    else console.error("The form submission route failed.", safeErr(err));
     return fail(500, { _form: GENERIC_500 });
   }
 }

@@ -13,6 +13,15 @@ describe("isHoneypotTripped", () => {
     expect(isHoneypotTripped({ website_url: true })).toBe(true);
   });
 
+  it("trips on a non-empty file part with the honeypot's name", () => {
+    const file = new File(["x"], "a.txt");
+    expect(isHoneypotTripped({}, { website_url: [file] })).toBe(true);
+    expect(isHoneypotTripped({}, { website_url: [] })).toBe(false);
+    expect(isHoneypotTripped({}, { cv: [file] })).toBe(false);
+    // An empty unnamed part is what a browser sends for an unchosen file.
+    expect(isHoneypotTripped({}, { website_url: [new File([], "")] })).toBe(false);
+  });
+
   it("is not tripped when absent or empty", () => {
     expect(isHoneypotTripped({})).toBe(false);
     expect(isHoneypotTripped({ website_url: "" })).toBe(false);

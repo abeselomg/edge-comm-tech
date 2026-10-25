@@ -54,6 +54,24 @@ describe("forms access", () => {
   });
 });
 
+describe("forms emails field", () => {
+  const emailsField = async () => {
+    const { fields } = await collection("forms");
+    const found = fields.find((f) => "name" in f && f.name === "emails") as
+      | { access?: { read?: (a: never) => unknown } }
+      | undefined;
+    if (!found) throw new Error("forms has no emails field");
+    return found;
+  };
+
+  it("hides recipients and templates from anonymous readers, shows them to staff", async () => {
+    const { access } = await emailsField();
+    expect(access?.read, "emails has a field-level read rule").toBeTypeOf("function");
+    expect(await access!.read!(anon)).toBe(false);
+    expect(await access!.read!(staff)).toBe(true);
+  });
+});
+
 describe("applications access", () => {
   it("refuses anonymous reads", async () => {
     const { access } = await collection("applications");
@@ -91,5 +109,12 @@ describe("form-submissions extra fields", () => {
       options: { value: string }[];
     };
     expect(status.options.map((o) => o.value)).toEqual(["pending", "sent", "failed", "skipped"]);
+  });
+});
+
+describe("applications storage", () => {
+  it("keeps uploads in the directory the service unit lets Payload write", async () => {
+    const { upload } = (await collection("applications")) as { upload: { staticDir?: string } };
+    expect(upload.staticDir).toMatch(/applications$/);
   });
 });

@@ -9,7 +9,7 @@ import { signedIn } from "../access";
  * `disablePayloadAccessControl` is left unset so file URLs go through the same
  * access check as the API (an anonymous GET of a file is refused).
  *
- * Files are stored in the `applications` directory (or the `applications/`
+ * Files are stored in the `applications` directory (app root, not public/) (or the `applications/`
  * prefix of the S3 bucket). The form route enforces size and emptiness before
  * anything reaches here; this collection restricts the type.
  */
@@ -19,6 +19,10 @@ export const Applications: CollectionConfig = {
   admin: { group: "Site" },
   access: { read: signedIn, create: signedIn, update: signedIn, delete: signedIn },
   upload: {
+    // Relative to the working directory: /srv/edge-comm-tech/app/applications on
+    // the server. Outside public/, and the one place besides .next and media
+    // the systemd unit allows writes (deploy/edge-comm-tech.service).
+    staticDir: "applications",
     mimeTypes: [
       "application/pdf",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

@@ -25,3 +25,14 @@ export function uploadIdsOf(submission) {
   }
   return ids;
 }
+
+/**
+ * Why the cleanup must not run in this environment, or null when it may.
+ * Outside NODE_ENV=production, payload.config.ts turns Payload's dev schema
+ * push on, and that push is interactive and can alter the database it is
+ * pointed at. FORMS_CLEANUP_ALLOW_DEV=1 is for a throwaway local database.
+ */
+export function unsafeEnvironment(env) {
+  if (env.NODE_ENV === "production" || env.FORMS_CLEANUP_ALLOW_DEV === "1") return null;
+  return "Refusing to run: NODE_ENV is not production, so Payload would try its dev schema push against DATABASE_URI. Prefix the command with NODE_ENV=production (or set FORMS_CLEANUP_ALLOW_DEV=1 for a local scratch database).";
+}

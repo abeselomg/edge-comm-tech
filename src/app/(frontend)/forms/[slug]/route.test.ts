@@ -166,6 +166,18 @@ describe("POST /forms/[slug]", () => {
     expect(notify).not.toHaveBeenCalled();
   });
 
+  it("treats a file part named like the honeypot as a tripped honeypot", async () => {
+    const good = await call(post("contact", contactValues), "contact");
+    fake.create.mockClear();
+    notify.mockClear();
+    const trap = new File(["bot"], "x.txt", { type: "text/plain" });
+    const res = await call(post("contact", { ...contactValues, website_url: trap }), "contact");
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(await good.json());
+    expect(fake.create).not.toHaveBeenCalled();
+    expect(notify).not.toHaveBeenCalled();
+  });
+
   it("returns 422 with per-field errors and stores nothing when invalid", async () => {
     const { consent: _c, ...noConsent } = contactValues;
     const res = await call(post("contact", { ...noConsent, inquiryType: "Select", extra: "x" }), "contact");
@@ -239,6 +251,20 @@ describe("POST /forms/[slug]", () => {
     expect(text).not.toMatch(/relation|form_submissions|at Object|\.js/);
     expect(JSON.parse(text).errors).toBeDefined();
     expect(notify).not.toHaveBeenCalled();
+  });
+
+  it("does not log submitted values when the database error carries them", async () => {
+    const leaky = new Error(
+      'Failed query: insert into "form_submissions" params: Abebe Kebede,leak@example.test,+251 11 999 0000,We would like a quotation.',
+    );
+    leaky.name = "DrizzleQueryError";
+    fake.create.mockRejectedValueOnce(leaky);
+    const res = await call(post("contact", contactValues), "contact");
+    expect(res.status).toBe(500);
+    const logged = JSON.stringify(fake.logger.error.mock.calls, (_k, v) => (v instanceof Error ? { name: v.name, message: v.message, stack: v.stack } : v));
+    expect(fake.logger.error).toHaveBeenCalled();
+    expect(logged).not.toMatch(/leak@example\.test|251 11 999|Abebe|quotation/);
+    expect(logged).toContain("DrizzleQueryError");
   });
 
   it("refuses a body that is neither multipart nor JSON with 415", async () => {
@@ -356,6 +382,21 @@ describe("job application uploads", () => {
     const res = await call(post("job-application", { ...jobValues, cv: exe }), "job-application");
     expect(res.status).toBe(422);
     expect(fake.create).not.toHaveBeenCalled();
+  });
+
+  it("answers 422, not 500, when Payload rejects the stored file type, and cleans up", async () => {
+    fake = fakePayload({ jobs: [openJob] });
+    // A zip renamed .docx starts with PK, so our check passes it; Payload's own check sees application/zip.
+    const rejection = Object.assign(new Error("The following field is invalid: file"), {
+      name: "ValidationError",
+      data: { errors: [{ message: "File type 'application/zip' not allowed", path: "file" }] },
+    });
+    fake.create.mockRejectedValueOnce(rejection);
+    const zipped = new File([Buffer.concat([Buffer.from([0x50, 0x4b, 3, 4]), Buffer.alloc(500)])], "cv.docx");
+    const res = await call(post("job-application", { ...jobValues, cv: zipped }), "job-application");
+    expect(res.status).toBe(422);
+    expect((await res.json()).errors.cv).toMatch(/upload a PDF or DOCX file/);
+    expect(submissionCreates()).toHaveLength(0);
   });
 
   it("deletes the uploaded CV when the submission create fails", async () => {

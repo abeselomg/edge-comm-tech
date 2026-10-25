@@ -19,7 +19,12 @@ import { HONEYPOT_FIELD } from "./constants";
 export { HONEYPOT_FIELD };
 
 /** A person never sees the field, so any value at all means a bot filled it. */
-export function isHoneypotTripped(input: Record<string, unknown>): boolean {
+export function isHoneypotTripped(
+  input: Record<string, unknown>,
+  files: Record<string, File[]> = {},
+): boolean {
+  // A multipart part sent with a filename lands in `files`, not `input`.
+  if ((files[HONEYPOT_FIELD] ?? []).some((f) => !(f.size === 0 && f.name === ""))) return true;
   const value = input[HONEYPOT_FIELD];
   if (value === undefined || value === null || value === false) return false;
   if (typeof value === "string") return value.trim() !== "";
