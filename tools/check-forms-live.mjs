@@ -95,12 +95,24 @@ export function validFields(key, ctx) {
 /* -------------------------------------------------------------- the files */
 
 export function tinyPdf() {
-  const text =
-    "%PDF-1.4\n" +
-    "1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" +
-    "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n" +
-    "3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\n" +
-    "trailer<</Root 1 0 R/Size 4>>\n%%EOF\n";
+  // A well-formed PDF, cross-reference table included: a real applicant's CV has one,
+  // and strict parsers on the server reject a PDF without it ("Invalid PDF file.").
+  const objects = [
+    "<</Type/Catalog/Pages 2 0 R>>",
+    "<</Type/Pages/Kids[3 0 R]/Count 1>>",
+    "<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]/Contents 4 0 R>>",
+    "<</Length 0>>\nstream\n\nendstream",
+  ];
+  let text = "%PDF-1.4\n";
+  const offsets = [];
+  objects.forEach((body, i) => {
+    offsets.push(text.length);
+    text += `${i + 1} 0 obj\n${body}\nendobj\n`;
+  });
+  const xref = text.length;
+  text += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (const o of offsets) text += `${String(o).padStart(10, "0")} 00000 n \n`;
+  text += `trailer\n<</Root 1 0 R/Size ${objects.length + 1}>>\nstartxref\n${xref}\n%%EOF\n`;
   return new TextEncoder().encode(text);
 }
 
