@@ -73,15 +73,19 @@ nothing has to be pushed to GitHub to deploy.
 From a machine with the repo:
 
 ```bash
-git bundle create /tmp/edge.bundle <your-branch>:refs/heads/payload-cms-integration
+git clone -q --no-hardlinks -b <your-branch> . /tmp/edge-src
+git -C /tmp/edge-src branch -m payload-cms-integration
+git -C /tmp/edge-src bundle create /tmp/edge.bundle payload-cms-integration
 scp /tmp/edge.bundle root@168.119.61.125:/tmp/edge.bundle
 ssh root@168.119.61.125 /usr/local/sbin/edge-redeploy
 ```
 
 `edge-redeploy` hard-codes the ref `payload-cms-integration`, so the bundle must
-carry your current branch under that name (for example
-`phase-6-forms:refs/heads/payload-cms-integration`); a bundle of any other ref
-fails the fetch.
+carry your current branch under that name; a bundle of any other ref fails the
+fetch. `git bundle` cannot rename a ref (`<branch>:refs/heads/...` is rejected),
+hence the throwaway clone, which is renamed and bundled instead. Strip carriage
+returns from any script or unit file copied from a Windows checkout before
+installing it on the server (`sed -i 's/\r$//' <file>`); a CRLF shell script does not run.
 
 `edge-redeploy` fetches the bundle into the checkout, installs dependencies,
 runs migrations, seeds any missing documents (fill mode, never overwriting),
