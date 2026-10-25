@@ -420,11 +420,25 @@ The cookie is `SameSite=None; Secure`, so **preview needs HTTPS in production**
 (over plain http the browser will not keep it). The banner only exists in draft
 mode.
 
-**Frame protection (to be checked by the probe).** A `SameSite=None` draft cookie
-is sent when another site frames this one, so a page elsewhere could embed the
-site as a signed-in staff member. The site should therefore send `X-Frame-Options`
-or a CSP `frame-ancestors` header. Whether it does today is **to be checked by the
-probe**, which prints both headers of the home page and a WARN when neither is set.
+**Frame protection.** A `SameSite=None` draft cookie is sent when another site
+frames this one, so a page elsewhere could embed the site as a signed-in staff
+member. nginx therefore sends, from the 443 server block in
+`deploy/nginx-edge-comm-tech.conf`, `X-Frame-Options: SAMEORIGIN` and
+`Content-Security-Policy: frame-ancestors 'self'` on every response (`always`,
+so error pages too). Payload's admin only frames its own origin (live preview,
+document drawers), so it keeps working. No `location` in that block has an
+`add_header` of its own; one that ever does must repeat both lines, because nginx
+then drops the inherited ones (`src/lib/deploy-files.test.ts` fails if a location
+gains one). The conf is installed by hand (copy it to `/etc/nginx/sites-available/edge-comm-tech`,
+`nginx -t`, `systemctl reload nginx`). Verify:
+
+```bash
+curl -skI https://168.119.61.125/ | grep -iE 'x-frame-options|content-security-policy'
+curl -skI https://168.119.61.125/no-such-page | grep -iE 'x-frame-options|content-security-policy'
+# both print: x-frame-options: SAMEORIGIN / content-security-policy: frame-ancestors 'self'
+```
+
+The probe prints both headers of the home page and a WARN when neither is set.
 
 **Probe the workflow on the server.** `tools/check-editorial-live.mjs` signs in as
 a throwaway editor and a throwaway admin, takes a disposable News item through
@@ -476,7 +490,10 @@ FAIL. Its destructive role checks on form submissions and CVs use an id no row h
 never delete a real record. Two things it reports without failing: the frame
 headers above, and a "related draft" finding: whether a published page prints the
 title of a related item that is only a draft (a published insight whose topic is a
-draft). It is a suspected pre-existing gap, reported as LEAK or NO LEAK (a finding,
-not a gate), and the probe deletes both test items either way. The first-user rule is
+draft). It is reported as LEAK or NO LEAK (a finding, not a gate), and the probe
+deletes both test items either way. The first live run reported LEAK; the read
+layer (`dropUnpublishedRelations()` in `src/lib/content.ts`) now strips every
+populated related document that is not published outside draft mode, so after
+that fix is deployed the finding must read NO LEAK. The first-user rule is
 exercised by its unit test, not by the probe: by the time the probe runs, the real
 admin (step 0) already exists.
