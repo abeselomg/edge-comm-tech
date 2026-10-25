@@ -1,5 +1,5 @@
 import { Crumb, PageHead, Pending } from "@/components/ui";
-import { getContactDetails, getEvent, getEvents } from "@/lib/content";
+import { getContactDetails, getEvent, getEvents, getForm } from "@/lib/content";
 import { loadOr404 } from "@/lib/load";
 import { emailByLabel } from "@/lib/routes";
 import {
@@ -34,8 +34,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const e = await loadOr404(() => getEvent(slug));
-  const [all, contact] = await Promise.all([getEvents(), getContactDetails()]);
   const past = e.status === "past";
+  // A past event shows the closed state and never reads the form.
+  const [all, contact, form] = await Promise.all([
+    getEvents(),
+    getContactDetails(),
+    past ? null : getForm("event-registration"),
+  ]);
   const accent = past ? "#5c6b76" : "#0888c5";
 
   return (
@@ -71,7 +76,12 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       <div className="mx-auto max-w-5xl px-6 py-16">
         <EventDetails event={e} />
         <ProgramList event={e} accent={accent} />
-        <RegistrationPanel event={e} accent={accent} email={emailByLabel(contact, /sales/i)} />
+        <RegistrationPanel
+          event={e}
+          accent={accent}
+          email={emailByLabel(contact, /sales/i)}
+          form={form}
+        />
         <OtherEvents events={all} currentSlug={slug} />
       </div>
     </main>

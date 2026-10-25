@@ -81,6 +81,7 @@ export interface Config {
     jobs: Job;
     academyTracks: AcademyTrack;
     media: Media;
+    applications: Application;
     users: User;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -105,6 +106,7 @@ export interface Config {
     jobs: JobsSelect<false> | JobsSelect<true>;
     academyTracks: AcademyTracksSelect<false> | AcademyTracksSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    applications: ApplicationsSelect<false> | ApplicationsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1215,6 +1217,24 @@ export interface AcademyTrack {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "applications".
+ */
+export interface Application {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -1357,6 +1377,24 @@ export interface Form {
             blockName?: string | null;
             blockType: 'textarea';
           }
+        | {
+            name: string;
+            label?: string | null;
+            uploadCollection: 'applications';
+            mimeTypes?:
+              | {
+                  mimeType: string;
+                  id?: string | null;
+                }[]
+              | null;
+            width?: number | null;
+            maxFileSize?: number | null;
+            required?: boolean | null;
+            multiple?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'upload';
+          }
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -1422,6 +1460,39 @@ export interface FormSubmission {
         id?: string | null;
       }[]
     | null;
+  submissionUploads?:
+    | {
+        field: string;
+        value: {
+          relationTo: 'applications';
+          value: number | Application;
+        }[];
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The consent the visitor gave when submitting.
+   */
+  consent?: {
+    accepted?: boolean | null;
+    acceptedAt?: string | null;
+    /**
+     * The exact consent text shown.
+     */
+    wording?: string | null;
+  };
+  emailStatus?: ('pending' | 'sent' | 'failed' | 'skipped') | null;
+  /**
+   * Why the notification email did not send.
+   */
+  emailError?: string | null;
+  meta?: {
+    /**
+     * Salted hash. The address itself is not stored.
+     */
+    ipHash?: string | null;
+    userAgent?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1504,6 +1575,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'applications';
+        value: number | Application;
       } | null)
     | ({
         relationTo: 'users';
@@ -2155,6 +2230,23 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "applications_select".
+ */
+export interface ApplicationsSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -2286,6 +2378,25 @@ export interface FormsSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        upload?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              uploadCollection?: T;
+              mimeTypes?:
+                | T
+                | {
+                    mimeType?: T;
+                    id?: T;
+                  };
+              width?: T;
+              maxFileSize?: T;
+              required?: T;
+              multiple?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   submitButtonLabel?: T;
   confirmationType?: T;
@@ -2322,6 +2433,28 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         field?: T;
         value?: T;
         id?: T;
+      };
+  submissionUploads?:
+    | T
+    | {
+        field?: T;
+        value?: T;
+        id?: T;
+      };
+  consent?:
+    | T
+    | {
+        accepted?: T;
+        acceptedAt?: T;
+        wording?: T;
+      };
+  emailStatus?: T;
+  emailError?: T;
+  meta?:
+    | T
+    | {
+        ipHash?: T;
+        userAgent?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -12,6 +12,7 @@ payload.db
 
 # Payload
 /media
+/applications
 .env
 
 # Highland render-check screenshots (written by a later task)

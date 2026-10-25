@@ -28,6 +28,14 @@ sudo -u edge npm ci --no-audit --no-fund 2>&1 | tail -3
 echo "==> migrations"
 run npx payload migrate < /dev/null 2>&1 | grep -viE "^\[2K" | tail -4
 
+# Fill mode only: adds the forms (and any other seeded document) that are
+# missing, never overwrites or resets. The build prerenders the form pages and
+# throws on a missing form after .next has been rewritten, so the forms must
+# exist first. SEED_MODE=fill is also the default; it is pinned so
+# nothing in the environment file can turn it into force or fresh. Stdin is closed so it cannot wait on a prompt.
+echo "==> seed (fill missing only)"
+run env SEED_MODE=fill npm run seed < /dev/null 2>&1 | tail -6
+
 echo "==> build"
 run npx next build < /dev/null 2>&1 | tail -6
 [ -f .next/BUILD_ID ] || { echo "    build produced no BUILD_ID; not restarting"; exit 1; }

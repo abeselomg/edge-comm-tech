@@ -1,5 +1,6 @@
 import { Crumb, PageHead } from "@/components/ui";
-import { getCareersContent, getContactDetails, getJob, getJobs } from "@/lib/content";
+import { getCareersContent, getContactDetails, getForm, getJob, getJobs } from "@/lib/content";
+import { jobOpen } from "@/lib/jobs";
 import { loadOr404 } from "@/lib/load";
 import { hrEmail } from "../../careers-parts";
 import { accentFor, ApplyPanel, JobAside, JobHeader, JobSections } from "../job-parts";
@@ -23,10 +24,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function JobPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const j = await loadOr404(() => getJob(slug));
-  const [all, careers, contact] = await Promise.all([
+  const [all, careers, contact, form] = await Promise.all([
     getJobs(),
     getCareersContent(),
     getContactDetails(),
+    // A closed job shows no form, so the form is not read for it.
+    jobOpen(j) ? getForm("job-application") : null,
   ]);
   const accent = accentFor(j);
 
@@ -54,7 +57,7 @@ export default async function JobPage({ params }: { params: Promise<{ slug: stri
       <div className="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[1fr_17rem]">
         <article className="min-w-0">
           <JobSections job={j} accent={accent} />
-          <ApplyPanel job={j} accent={accent} email={hrEmail(contact)} />
+          <ApplyPanel job={j} accent={accent} email={hrEmail(contact)} form={form} />
         </article>
         <JobAside job={j} others={all} docs={careers.applicationDocs ?? []} accent={accent} />
       </div>

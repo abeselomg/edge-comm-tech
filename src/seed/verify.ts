@@ -323,6 +323,24 @@ expectText(
   copy.projectImplementationNote,
 );
 
+/* The six public forms: present, each with something required, and exactly one
+   CV upload on each of the two application forms. */
+const { docs: forms } = await payload.find({
+  collection: "forms",
+  limit: 100,
+  depth: 0,
+});
+if (forms.length !== 6) problems.push(`forms: expected 6, found ${forms.length}`);
+for (const f of forms) {
+  const fields = (f.fields ?? []) as { blockType: string; required?: boolean | null }[];
+  if (!fields.some((x) => x.required)) problems.push(`form "${f.title}" has no required field`);
+  const uploads = fields.filter((x) => x.blockType === "upload").length;
+  const wanted = /application$/i.test(f.title) ? 1 : 0;
+  if (uploads !== wanted) {
+    problems.push(`form "${f.title}": expected ${wanted} upload field(s), found ${uploads}`);
+  }
+}
+
 if (problems.length) {
   console.error(`FAIL — ${problems.length} problem(s):`);
   for (const line of problems) console.error(`  ${line}`);

@@ -9,6 +9,7 @@ import type {
   ContactDetail,
   Download,
   Event,
+  Form,
   Job,
   News,
   PageCopy,
@@ -22,6 +23,7 @@ import type {
   Solution,
 } from "@/payload-types";
 import { eventStatus, type EventStatus } from "./events";
+import { FORM_DEFINITIONS, type FormKey } from "./forms/definitions";
 import { approvedLogo } from "./media";
 
 export type {
@@ -32,6 +34,7 @@ export type {
   ContactDetail,
   Download,
   Event,
+  Form,
   Job,
   News,
   PageCopy,
@@ -194,19 +197,21 @@ export const getAcademyTracks = cache(() => many<AcademyTrack>("academyTracks", 
 
 /* ----------------------------------------------------------------- forms */
 
-export type ContactForm = Awaited<ReturnType<typeof getContactForm>>;
-
 /**
- * The contact form is a plugin-form-builder document so Edge staff can add or
- * reorder fields without a deploy. Phase 6 builds the remaining five forms.
+ * A form is a plugin-form-builder document so Edge staff can add or reorder
+ * fields without a deploy. `forms` has no draft status, so there is nothing to
+ * filter: a form either exists and is live, or it was never seeded. A missing
+ * one throws rather than rendering a page with no way to reach Edge, and it is
+ * found by its seeded title, the same lookup the submission route makes.
  */
-export const getContactForm = cache(async () => {
+export const getForm = cache(async (key: FormKey): Promise<Form> => {
   const payload = await payloadClient();
   const { docs } = await payload.find({
     collection: "forms",
-    where: { title: { equals: "Contact" } },
+    where: { title: { equals: FORM_DEFINITIONS[key].title } },
     limit: 1,
-    depth: 1,
+    depth: 0,
   });
-  return docs[0] ?? null;
+  if (!docs[0]) throw new Error(`The "${key}" form is not in the forms collection. Run the forms seed.`);
+  return docs[0];
 });

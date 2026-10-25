@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Field, FormNote } from "@/components/ui";
 import type { ContactDetail } from "@/payload-types";
 
 /*
@@ -204,79 +203,5 @@ export function ContactFacts({ contact }: { contact: Contact }) {
         </a>
       ) : null}
     </aside>
-  );
-}
-
-const SECTORS = [
-  "Select a sector",
-  "Banking and finance",
-  "Education",
-  "Government and public",
-  "Enterprise",
-  "Other",
-];
-
-/**
- * The enquiry form, as a shell. Nothing is wired to accept a submission until
- * Phase 6, so every control is disabled and FormNote says so, with the
- * mailbox to use meanwhile.
- */
-export function FormShell({
-  solutions,
-  inquiryTypes,
-  email,
-}: {
-  solutions: string[];
-  inquiryTypes: string[];
-  email?: string;
-}) {
-  const fields: Parameters<typeof Field>[0][] = [
-    { label: "Full name", required: true },
-    { label: "Organization", required: true },
-    { label: "Job title" },
-    { label: "Email address", type: "email", required: true },
-    { label: "Phone or WhatsApp", required: true, hint: "Include country code" },
-    { label: "Sector", type: "select", options: SECTORS },
-    { label: "Inquiry type", type: "select", required: true, options: ["Select", ...inquiryTypes] },
-    {
-      label: "Solution area",
-      type: "select",
-      options: ["Select if relevant", ...solutions, "Not sure yet"],
-    },
-    {
-      label: "How can we help?",
-      type: "textarea",
-      wide: true,
-      required: true,
-      hint: "The more specific, the more useful our first reply will be",
-    },
-  ];
-  return (
-    <>
-      <form className="mt-8 grid gap-5 sm:grid-cols-2">
-        {fields.map((f) => (
-          <Field key={f.label} {...f} />
-        ))}
-        <div className="sm:col-span-2">
-          <label className="flex items-start gap-3 text-xs leading-relaxed text-steel">
-            <input type="checkbox" className="mt-0.5" disabled />
-            <span>
-              I accept the privacy notice and consent to Edge Comm-Tech using these details to
-              respond to my inquiry.
-            </span>
-          </label>
-        </div>
-        <div className="sm:col-span-2">
-          <button
-            type="button"
-            className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white opacity-60"
-            disabled
-          >
-            Send message
-          </button>
-        </div>
-      </form>
-      <FormNote email={email} />
-    </>
   );
 }

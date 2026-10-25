@@ -1,14 +1,20 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { buildConfig } from "payload";
+import { buildConfig, type Field } from "payload";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { seoPlugin } from "@payloadcms/plugin-seo";
 import { formBuilderPlugin } from "@payloadcms/plugin-form-builder";
 import { s3Storage } from "@payloadcms/storage-s3";
+import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
 import sharp from "sharp";
 
+import { readMailConfig } from "./lib/mail";
 import { guardSeoMetaFields } from "./fields/seo";
+import { submissionExtraFields } from "./fields/submission";
+import { signedIn, signedInField, adminOnly } from "./access";
+import { revalidateAfterChange, revalidateAfterDelete } from "./hooks/revalidate";
+import { FORM_PATHS, FORM_PATTERNS } from "./lib/forms/pages";
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Solutions } from "./collections/Solutions";
@@ -24,6 +30,7 @@ import { News } from "./collections/News";
 import { PostCategories } from "./collections/PostCategories";
 import { Posts } from "./collections/Posts";
 import { Downloads } from "./collections/Downloads";
+import { Applications } from "./collections/Applications";
 import { SiteSettings } from "./globals/SiteSettings";
 import { Company } from "./globals/Company";
 import { ContactDetails } from "./globals/ContactDetails";
@@ -75,7 +82,9 @@ function buildStoragePlugins() {
 
   return [
     s3Storage({
-      collections: { media: true },
+      // CVs share the bucket under their own prefix; they are still served
+      // through Payload (access control is not disabled), never by public URL.
+      collections: { media: true, applications: { prefix: "applications" } },
       bucket,
       config: {
         region,
@@ -90,6 +99,28 @@ function buildStoragePlugins() {
 
 const storagePlugins = buildStoragePlugins();
 
+/*
+ * Outgoing mail. With SMTP_HOST unset there is no adapter and Payload's
+ * default logs instead of sending, so development needs no mail server. The
+ * transport is not verified at boot (skipVerify): an unreachable relay must
+ * not stop the site starting, and each send's failure is recorded on the
+ * submission by sendNotification.
+ */
+const mail = readMailConfig(process.env);
+const emailAdapter = mail
+  ? nodemailerAdapter({
+      defaultFromAddress: mail.from,
+      defaultFromName: "Edge Comm-Tech",
+      skipVerify: true,
+      transportOptions: {
+        host: mail.host,
+        port: mail.port,
+        secure: mail.secure,
+        ...(mail.user && mail.pass ? { auth: { user: mail.user, pass: mail.pass } } : {}),
+      },
+    })
+  : undefined;
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -100,7 +131,7 @@ export default buildConfig({
       titleSuffix: " — Edge Comm-Tech",
     },
   },
-  collections: [Solutions, Services, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Jobs, AcademyTracks, Media, Users],
+  collections: [Solutions, Services, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Jobs, AcademyTracks, Media, Applications, Users],
   globals: [SiteSettings, Company, ContactDetails, Careers, PageCopy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
@@ -128,6 +159,7 @@ export default buildConfig({
      */
     push: process.env.NODE_ENV !== "production",
   }),
+  ...(emailAdapter ? { email: emailAdapter } : {}),
   sharp,
   plugins: [
     seoPlugin({
@@ -149,12 +181,48 @@ export default buildConfig({
       fields: guardSeoMetaFields,
     }),
     formBuilderPlugin({
-      fields: { payment: false },
+      fields: { payment: false, upload: true },
+      uploadCollections: ["applications"],
+      /*
+       * One notification per submission, sent by sendNotification (src/lib/mail.ts)
+       * so a failure is recorded on the submission. The plugin has its own
+       * sender that mails each form's `emails` on create; returning no emails
+       * here stops it, leaving ours the only one. The `emails` array stays as
+       * the recipient list we read.
+       */
+      beforeEmail: () => [],
+      /*
+       * Form definitions are read by the public pages, so `read` stays open;
+       * only signed-in staff may change them.
+       */
       formOverrides: {
         admin: { group: "Site" },
+        access: { read: () => true, create: signedIn, update: signedIn, delete: signedIn },
+        // Recipients, cc/bcc and templates are staff-only over REST/GraphQL.
+        // Local-API readers (the pages, the submission route) override access.
+        fields: ({ defaultFields }) =>
+          defaultFields.map((f) =>
+            "name" in f && f.name === "emails"
+              ? ({ ...f, access: { ...("access" in f ? f.access : {}), read: signedInField } } as Field)
+              : f,
+          ),
+        // The six pages are prerendered from these documents.
+        hooks: {
+          afterChange: [revalidateAfterChange(() => FORM_PATHS, { patterns: FORM_PATTERNS })],
+          afterDelete: [revalidateAfterDelete(() => FORM_PATHS, { patterns: FORM_PATTERNS })],
+        },
       },
+      /*
+       * The plugin's default is `create: () => true`, which would let a bot
+       * POST /api/form-submissions and skip the honeypot and rate limiter in
+       * the submission route. Public visitors never write here directly; the
+       * route does, through the local API. Reads are staff-only (the default,
+       * pinned here), and editing or deleting a record is for admins.
+       */
       formSubmissionOverrides: {
         admin: { group: "Site" },
+        access: { create: signedIn, read: signedIn, update: adminOnly, delete: adminOnly },
+        fields: ({ defaultFields }) => [...defaultFields, ...submissionExtraFields],
       },
     }),
     ...storagePlugins,

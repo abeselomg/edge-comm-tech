@@ -40,6 +40,7 @@ import {
 } from "./parity-clock.mjs";
 import { highlandEvent } from "./parity-events.mjs";
 import { scanPage } from "./content-scan.mjs";
+import { copySentences, normaliseNoise, visibleText } from "./parity-copy.mjs";
 
 const HIGHLAND = "design-files/highland";
 const BASE_URL = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
@@ -61,61 +62,7 @@ const pages = named.length ? named : pageList(scope);
 
 /* ------------------------------------------------------------ extraction */
 
-const BLOCK = "\u0001"; // marks where a tag stood, so words cannot fuse
 
-/** Strip scripts, styles and tags; decode the entities Highland emits. */
-function visibleText(html) {
-  return decode(
-    html
-      .replace(/<!--[\s\S]*?-->/g, " ")
-      // <head> is not visible copy. Highland writes a full SEO title per page
-      // and Next builds its own from metadata, so comparing them would report
-      // a difference on all fourteen and say nothing useful.
-      .replace(/<head\b[^>]*>[\s\S]*?<\/head>/i, " ")
-      .replace(/<(script|style|svg)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
-      /*
-       * An image contributes its alt text, which is the whole point of alt
-       * text. This also makes the two sides comparable where artwork exists
-       * on one and not the other: Highland ships one client logo and three
-       * partner marks as files, the CMS has no uploaded media yet, and Mark
-       * therefore sets the institution's name in the frame instead. Both say
-       * "Bahir Dar University"; only one says it as a picture.
-       */
-      .replace(/<img\b[^>]*\balt="([^"]*)"[^>]*>/gi, (_, alt) => ` ${alt} `)
-      .replace(/<[^>]+>/g, BLOCK),
-  )
-    .replace(new RegExp(BLOCK, "g"), " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function decode(s) {
-  const named = {
-    amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ",
-    middot: "·", mdash: "—", ndash: "–", rarr: "→", larr: "←",
-    copy: "©", hellip: "…", times: "×", rsquo: "’", lsquo: "‘",
-    ldquo: "“", rdquo: "”", deg: "°", trade: "™", reg: "®",
-  };
-  return s
-    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
-    .replace(/&([a-z]+);/gi, (m, n) => named[n.toLowerCase()] ?? m);
-}
-
-/**
- * Sentences, for comparison.
- *
- * Split on sentence enders and on the block boundaries left by tags, so a
- * heading and the paragraph after it are separate units. Short fragments are
- * dropped: they are nav labels, chips and single words, which the link and
- * heading checks already cover and which otherwise bury the signal.
- */
-function sentences(text) {
-  return text
-    .split(/(?<=[.!?])\s+/)
-    .map((s) => s.trim())
-    .filter((s) => s.length >= 25);
-}
 
 function headings(html) {
   return [...html.matchAll(/<h([1-3])\b[^>]*>([\s\S]*?)<\/h\1>/gi)].map(
@@ -147,68 +94,9 @@ function links(html, { fromHighland }) {
   return out;
 }
 
-/*
- * Differences that are legitimate and would otherwise drown the signal.
- *
- * Each of these is a deliberate departure from Highland, not a tolerance for
- * sloppiness. Anything not listed here is reported, including a stray space
- * before a comma — that is reader-visible and was a real bug on the first
- * run of this checker.
- */
-const DELIBERATE = [
-  // An accessibility addition from Phase 3: Highland has no skip link.
-  "Skip to content",
-  // Highland's footer carried the review build's own marker. The CMS has an
-  // optional field for an approved line in that slot and it is empty, so
-  // nothing renders. See the footerNote note in SiteSettings.
-  "Design review build",
-  "content pending final approval",
-  // Phase 4: /about links to the executive-management page, which Highland
-  // generated and linked from nowhere.
-  "See the executive management structure",
-  // Phase 4: Highland's review-build form note, and the CMS-era note that
-  // replaces it (see FormNote in components/ui/forms.tsx). Both sides are
-  // stripped, so the swap is waived but the form itself is still compared.
-  "Form shown for layout review.",
-  "Fields, validation, consent capture, secure upload and routing are built against the CMS at implementation.",
-  "This form is not yet accepting submissions.",
-];
-
-/*
- * Phrases Highland and the port both have, but worded differently on purpose.
- * Rewriting the Highland side rather than deleting it, so the sentence stays
- * comparable and only the known substitution is waived.
- *
- * The compact nav's call to action: Highland wrote "Contact" there and
- * "Contact us" on the desktop pill. Both now read the one headerCta field
- * from the CMS, because two labels from one field means an editor renaming
- * the button finds half of it unchanged.
- */
-const SUBSTITUTIONS = [
-  [/About Contact\b(?! us)/g, "About Contact us"],
-  // Task 7: the client and partner directories do not print a count of marks
-  // still awaiting artwork; a directory should not apologise for what it is
-  // waiting on.
-  [/\d+ marks pending approved artwork/g, ""],
-  [/Please email \S+ in the meantime\./g, ""],
-];
 
 /* Links the port adds on purpose, per page. */
 const ADDED_LINKS = { about: ["/about/executive-management"] };
-
-function normaliseNoise(s) {
-  let out = s
-    // Only the copyright year ticks over. A year anywhere else is content, and
-    // normalising it would let a wrong "established 2019" pass.
-    .replace(/(©\s*)(19|20)\d{2}\b/g, "$1<year>")
-    .replace(/\?v=[\w.]+/g, ""); // Highland's cache-busting query strings
-  for (const phrase of DELIBERATE) out = out.split(phrase).join("");
-  for (const [from, to] of SUBSTITUTIONS) out = out.replace(from, to);
-  out = out.replace(/\s+/g, " ").trim();
-  // Stripping a deliberate phrase can leave behind the punctuation that
-  // joined it to its sentence. "— ." is not a finding.
-  return /[A-Za-z0-9]/.test(out) ? out : "";
-}
 
 /** How many leading characters two strings share. */
 function commonPrefix(a, b) {
@@ -309,10 +197,11 @@ for (const page of pages) {
     continue;
   }
 
+
   /* Copy. Reported in both directions: a missing sentence is a dropped
      section, and an unexpected one is usually copy invented to fill a gap. */
-  const want = [...new Set(sentences(visibleText(expected)).map(normaliseNoise))].filter(Boolean);
-  const have = [...new Set(sentences(visibleText(actual)).map(normaliseNoise))].filter(Boolean);
+  const want = copySentences(expected, page);
+  const have = copySentences(actual, page);
   const wantSet = new Set(want);
   const haveSet = new Set(have);
   const missingCopy = want.filter((s) => !haveSet.has(s));
@@ -347,8 +236,8 @@ for (const page of pages) {
   }
 
   /* Headings, in order. */
-  const wantH = headings(expected).map(normaliseNoise);
-  const haveH = headings(actual).map(normaliseNoise);
+  const wantH = headings(expected).map((x) => normaliseNoise(x, page));
+  const haveH = headings(actual).map((x) => normaliseNoise(x, page));
   if (wantH.join(" | ") !== haveH.join(" | ")) {
     const missing = wantH.filter((h) => !haveH.includes(h));
     const extra = haveH.filter((h) => !wantH.includes(h));
@@ -384,7 +273,7 @@ for (const page of pages) {
     if (!wantL.has(l)) problems.push(`${page}: links to ${l}, which Highland does not`);
   }
 
-  /* Form controls, which Phase 4 renders disabled and Phase 6 makes live. */
+  /* Form controls: present on both sides (live on every form page). */
   if (!allowFormDiff && FORM_TAG.test(expected) !== FORM_TAG.test(actual)) {
     problems.push(
       `${page}: one side has form controls and the other does not ` +

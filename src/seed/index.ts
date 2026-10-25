@@ -70,6 +70,7 @@ import {
   toPendingFields,
   toRichParagraphs,
 } from "./transform";
+import { seedForms } from "./forms";
 import { sectorSlug } from "../fields/sectors";
 import { routeFor } from "../lib/routes";
 import { HEROES, NEWS_CLOSING, ringLabelFor, SOLUTIONS_FRAMEWORK, SOLUTIONS_PRIORITIES } from "./page-copy";
@@ -809,6 +810,10 @@ async function seed() {
         "Each refusal is printed above with the field and the value passed.",
     );
   }
+
+  /* ---------------------------------------------------------- 9. forms
+     After the globals: each form's recipient comes from contact-details. */
+  await seedForms(payload);
 
   payload.logger.info(
     `seed (${MODE}): ${report.created} created, ${report.updated} updated, ${report.skipped} left alone`,

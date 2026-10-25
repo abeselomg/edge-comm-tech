@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Crumb, Field, FormNote, PageHead, SectionHead } from "@/components/ui";
-import { getContactDetails, getPostCategories, getSolutions } from "@/lib/content";
+import { LiveForm } from "@/components/forms/LiveForm";
+import { Crumb, PageHead, SectionHead } from "@/components/ui";
+import { getContactDetails, getForm, getPostCategories } from "@/lib/content";
 import { emailByLabel } from "@/lib/routes";
 
 /*
@@ -8,11 +9,11 @@ import { emailByLabel } from "@/lib/routes";
  *
  * A single-purpose page: the interest checkboxes are the solution families, so
  * a subscriber's preferences map onto the same taxonomy the site is organised
- * by rather than a separate invented list of topics.
+ * by rather than a separate invented list of topics. They are fields of the
+ * stored "Subscribe" form.
  *
  * No frequency promise appears beyond what the content master approves, and
- * the consent line is explicit, because this collects personal data. The form
- * is a disabled shell until Phase 6 wires submissions, and says so.
+ * the consent line is explicit, because this collects personal data.
  */
 
 const ACCENT = "#2ba8de";
@@ -23,32 +24,6 @@ export const metadata = {
     "Receive Edge Comm-Tech news, event invitations and technology insights relevant to your sector.",
 };
 
-const FIELDS: Parameters<typeof Field>[0][] = [
-  { label: "Full name", required: true },
-  { label: "Email address", type: "email", required: true },
-  { label: "Organization", required: true },
-  { label: "Job title" },
-  {
-    label: "Sector",
-    type: "select",
-    options: [
-      "Select a sector",
-      "Banking and finance",
-      "Education",
-      "Government and public",
-      "Enterprise",
-      "Other",
-    ],
-  },
-  { label: "Country", type: "select", options: ["Ethiopia", "Other"] },
-];
-
-const SEND = [
-  ["Insights", "New articles as they are published."],
-  ["Events", "Invitations to webinars and briefings."],
-  ["Company news", "Milestones and announcements."],
-] as const;
-
 const EXPECT = [
   "Only the topics you select.",
   "One unsubscribe click, honoured immediately.",
@@ -57,9 +32,9 @@ const EXPECT = [
 ];
 
 export default async function SubscribePage() {
-  const [contact, solutions, categories] = await Promise.all([
+  const [contact, form, categories] = await Promise.all([
     getContactDetails(),
-    getSolutions(),
+    getForm("subscribe"),
     getPostCategories(),
   ]);
   const sales = emailByLabel(contact, /sales/i);
@@ -82,66 +57,7 @@ export default async function SubscribePage() {
             title="Tell us who you are and what interests you"
             accent={ACCENT}
           />
-          <form className="mt-8 grid gap-5 sm:grid-cols-2">
-            {FIELDS.map((f) => (
-              <Field key={f.label} {...f} />
-            ))}
-
-            <fieldset className="sm:col-span-2">
-              <legend className="font-mono text-[10px] uppercase tracking-widest text-steel">
-                Topics of interest
-              </legend>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {solutions.map((s) => (
-                  <label
-                    key={s.slug}
-                    className="flex items-start gap-3 rounded-xl bg-paper-2 px-4 py-3 text-sm text-ink/75"
-                  >
-                    <input type="checkbox" className="mt-1" disabled />
-                    <span>{s.short}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-
-            <fieldset className="sm:col-span-2">
-              <legend className="font-mono text-[10px] uppercase tracking-widest text-steel">
-                What to send
-              </legend>
-              <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                {SEND.map(([t, b]) => (
-                  <label key={t} className="flex flex-col gap-1 rounded-xl bg-paper-2 px-4 py-3">
-                    <span className="flex items-center gap-2.5 text-sm">
-                      <input type="checkbox" className="shrink-0" disabled />
-                      <span>{t}</span>
-                    </span>
-                    <span className="pl-[1.6rem] text-[11px] text-steel">{b}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-
-            <div className="sm:col-span-2">
-              <label className="flex items-start gap-3 text-xs leading-relaxed text-steel">
-                <input type="checkbox" className="mt-0.5" disabled />
-                <span>
-                  I consent to Edge Comm-Tech using these details to send the updates I have
-                  selected. I understand I can unsubscribe at any time using the link in any
-                  message, or by emailing the team.
-                </span>
-              </label>
-            </div>
-            <div className="sm:col-span-2">
-              <button
-                type="button"
-                className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white opacity-60"
-                disabled
-              >
-                Subscribe
-              </button>
-            </div>
-          </form>
-          <FormNote email={sales} />
+          <LiveForm form={form} action="/forms/subscribe" submitLabel="Subscribe" email={sales} />
         </section>
 
         <aside className="self-start lg:sticky lg:top-32">

@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { formDoc } from "@/lib/forms/testing";
 import {
   EventDetails,
   EventsEmpty,
@@ -61,20 +62,24 @@ describe("event routes revalidate on a timer", () => {
 });
 
 describe("RegistrationPanel", () => {
-  it("is an inert form with its action while the event is upcoming", () => {
-    const out = html(<RegistrationPanel event={event()} accent="#0888c5" email="sales@example.com" />);
+  it("is a live form posting to /forms/event-registration, carrying the event it sits on", () => {
+    const out = html(<RegistrationPanel event={event()} accent="#0888c5" email="sales@example.com" form={formDoc("event-registration")} />);
     expect(out).toContain("What registrants should expect");
-    expect(out).toContain("Register now");
-    expect(out).toContain("disabled");
-    expect(out).not.toMatch(/<input(?![^>]*disabled)/);
-    expect(out).not.toMatch(/<button(?![^>]*disabled)/);
+    expect(out).toContain('action="/forms/event-registration"');
+    expect(out).toContain(">Register now</button>");
+    expect(out).toMatch(/<input[^>]*type="hidden"[^>]*name="event"[^>]*value="e1"|<input[^>]*name="event"[^>]*value="e1"[^>]*type="hidden"/);
+    expect(out).not.toContain("Form shown for layout review");
+    expect(out).not.toContain("not accepting submissions");
+    expect(out).not.toContain("not yet accepting");
+    expect(out).not.toMatch(/\sdisabled=/);
   });
 
   it("is closed, with no form, once the event has run", () => {
-    const out = html(<RegistrationPanel event={event({ status: "past" })} accent="#5c6b76" email="x@example.com" />);
+    const out = html(<RegistrationPanel event={event({ status: "past" })} accent="#5c6b76" email="x@example.com" form={formDoc("event-registration")} />);
     expect(out).toContain("Registration closed");
     expect(out).toContain("This event has already run");
     expect(out).not.toContain("<form");
+    expect(out).not.toContain("/forms/");
     expect(out).toContain('href="/subscribe"');
   });
 });
