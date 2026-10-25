@@ -26,24 +26,53 @@ export function isHoneypotTripped(input: Record<string, unknown>): boolean {
   return true;
 }
 
-export type Limiter = { check(key: string): { allowed: boolean; retryAfterSec: number } };
+export type Limiter = {
+  check(key: string): { allowed: boolean; retryAfterSec: number };
+  /** Buckets currently held; never more than `maxKeys`. */
+  size(): number;
+};
+
+/** How far into the least-recently-seen end an eviction looks for a bucket with room. */
+const EVICTION_SCAN = 64;
 
 /*
  * Sliding window log: each key keeps the times of its accepted requests in the
  * last `windowMs`. A blocked attempt is not recorded, so hammering does not
  * push recovery further away; the bucket frees up as its oldest hit ages out.
+ *
+ * Memory is capped at `maxKeys` buckets. The map is kept in least-recently-
+ * seen order (every check, allowed or blocked, moves its key to the end), and
+ * a new key arriving at the cap evicts one bucket from the stale end:
+ *
+ *   - the first, among the EVICTION_SCAN least recently seen, that is idle
+ *     (no hits left in the window) or still has room (fewer than `max` hits);
+ *   - only if all of those are full, the least recently seen bucket itself.
+ *
+ * Why this order: evicting a bucket that is full is the one eviction that
+ * resets a limited client, so it is the last resort. A client that keeps
+ * hammering while limited keeps moving to the fresh end and is never near the
+ * eviction point. To get a full bucket evicted an attacker has to fill the
+ * whole map (`maxKeys` distinct clients, i.e. distinct IPv4 addresses or IPv6
+ * /64s, each of them filled to `max`) while the target stays quiet, and a
+ * target that stays quiet is not the one doing harm. Each eviction is O(1)
+ * bounded by EVICTION_SCAN, so a full map costs no more per request than an
+ * empty one. The periodic sweep (every 500 checks) drops idle buckets in bulk.
  */
 export function createLimiter({
   max,
   windowMs,
   now = Date.now,
+  maxKeys = 50_000,
 }: {
   max: number;
   windowMs: number;
   now?: () => number;
+  maxKeys?: number;
 }): Limiter {
   const hits = new Map<string, number[]>();
   let checks = 0;
+
+  const live = (times: number[], t: number) => times.filter((at) => at > t - windowMs);
 
   const sweep = (t: number) => {
     for (const [key, times] of hits) {
@@ -51,14 +80,34 @@ export function createLimiter({
     }
   };
 
+  const evictOne = (t: number) => {
+    let scanned = 0;
+    for (const [key, times] of hits) {
+      if (live(times, t).length < max) {
+        hits.delete(key);
+        return;
+      }
+      scanned += 1;
+      if (scanned >= EVICTION_SCAN) break;
+    }
+    const oldest = hits.keys().next();
+    if (!oldest.done) hits.delete(oldest.value);
+  };
+
   return {
     check(key) {
       const t = now();
-      // Bound memory: drop idle buckets every so often.
       checks += 1;
-      if (checks % 500 === 0 || hits.size > 10_000) sweep(t);
+      if (checks % 500 === 0) sweep(t);
 
-      const times = (hits.get(key) ?? []).filter((at) => at > t - windowMs);
+      const existing = hits.get(key);
+      const times = existing ? live(existing, t) : [];
+      // Move the key to the recently-seen end.
+      hits.delete(key);
+      if (!existing) {
+        while (hits.size >= maxKeys) evictOne(t);
+      }
+
       if (times.length >= max) {
         hits.set(key, times);
         const retryAfterMs = times[0] + windowMs - t;
@@ -68,6 +117,7 @@ export function createLimiter({
       hits.set(key, times);
       return { allowed: true, retryAfterSec: 0 };
     },
+    size: () => hits.size,
   };
 }
 
@@ -93,7 +143,47 @@ export function clientKey(headers: Headers, trustedProxies: number): string {
     .map((s) => s.trim())
     .filter(Boolean);
   const candidate = entries[entries.length - trustedProxies];
-  return candidate && isIP(candidate) ? candidate : "unknown";
+  return candidate ? normaliseAddress(candidate) : "unknown";
+}
+
+/*
+ * The bucket an address belongs to.
+ *
+ * IPv4: the address. IPv6: its /64 prefix, because one subscriber is
+ * routinely handed a whole /64 and can pick a new address from it per
+ * request; keying the full address would hand them 2^64 buckets. An
+ * IPv4-mapped IPv6 address (::ffff:203.0.113.7, what a dual-stack socket
+ * reports for an IPv4 peer) is the IPv4 client and keys as such.
+ */
+function normaliseAddress(raw: string): string {
+  const address = raw.replace(/%.*$/, ""); // drop an IPv6 zone id
+  const family = isIP(address);
+  if (family === 4) return address;
+  if (family !== 6) return "unknown";
+
+  const mapped = /^(?:0{0,4}:){0,5}:?ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i.exec(address);
+  if (mapped && isIP(mapped[1]) === 4) return mapped[1];
+
+  const groups = expandIPv6(address);
+  return groups ? `${groups.slice(0, 4).join(":")}::/64` : "unknown";
+}
+
+/** The eight 16-bit groups of a valid IPv6 address, lower-case and unpadded. */
+function expandIPv6(address: string): string[] | null {
+  let text = address.toLowerCase();
+  // An embedded IPv4 tail (e.g. 64:ff9b::192.0.2.1) is two groups.
+  const v4 = /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(text);
+  if (v4) {
+    const [a, b, c, d] = v4.slice(1).map(Number);
+    text = `${text.slice(0, v4.index)}${((a << 8) | b).toString(16)}:${((c << 8) | d).toString(16)}`;
+  }
+  const [head, tail] = text.split("::");
+  const left = head ? head.split(":") : [];
+  const right = tail !== undefined && tail !== "" ? tail.split(":") : [];
+  const fill = tail === undefined ? 0 : 8 - left.length - right.length;
+  const groups = [...left, ...Array<string>(Math.max(0, fill)).fill("0"), ...right];
+  if (groups.length !== 8) return null;
+  return groups.map((g) => parseInt(g, 16).toString(16));
 }
 
 /*

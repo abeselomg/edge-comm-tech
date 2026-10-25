@@ -120,7 +120,11 @@ async function parseBody(
   request: Request,
   hasUpload: boolean,
 ): Promise<{ ok: true; parsed: Parsed } | { ok: false; response: Response }> {
-  const type = (request.headers.get("content-type") ?? "").toLowerCase();
+  // Lower-cased for the type checks only. The original goes to the parser:
+  // the multipart boundary is case-sensitive, and Chrome and Safari send
+  // mixed-case ones (----WebKitFormBoundaryAbC...).
+  const contentType = request.headers.get("content-type") ?? "";
+  const type = contentType.toLowerCase();
   const multipart = type.startsWith("multipart/form-data");
   const isJson = type.startsWith("application/json");
   if (!multipart && !(isJson && !hasUpload)) {
@@ -155,7 +159,7 @@ async function parseBody(
 
   let form: FormData;
   try {
-    form = await new Response(bytes, { headers: { "content-type": type } }).formData();
+    form = await new Response(bytes, { headers: { "content-type": contentType } }).formData();
   } catch {
     return unreadable;
   }

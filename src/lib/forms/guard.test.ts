@@ -58,6 +58,28 @@ describe("createLimiter", () => {
     expect(limiter.check("b").allowed).toBe(true);
   });
 
+  it("never holds more than maxKeys buckets", () => {
+    const limiter = createLimiter({ max: 5, windowMs: 60_000, now: () => 0, maxKeys: 50 });
+    for (let i = 0; i < 1_000; i += 1) {
+      limiter.check(`k${i}`);
+      expect(limiter.size()).toBeLessThanOrEqual(50);
+    }
+  });
+
+  it("evicts a bucket with room before a limited one, so new keys cannot reset a limited client", () => {
+    let t = 0;
+    const limiter = createLimiter({ max: 2, windowMs: 60_000, now: () => t, maxKeys: 3 });
+    limiter.check("limited");
+    limiter.check("limited");
+    expect(limiter.check("limited").allowed).toBe(false);
+    for (let i = 0; i < 100; i += 1) {
+      t += 1;
+      limiter.check(`fresh${i}`);
+    }
+    expect(limiter.size()).toBeLessThanOrEqual(3);
+    expect(limiter.check("limited").allowed).toBe(false);
+  });
+
   it("does not count blocked attempts against the recovery", () => {
     const c = clock();
     const limiter = createLimiter({ max: 1, windowMs: 1_000, now: c.now });
@@ -83,6 +105,21 @@ describe("clientKey", () => {
     expect(clientKey(spoofed, 1)).toBe("203.0.113.7");
     const other = h({ "x-forwarded-for": "9.9.9.9, 203.0.113.7" });
     expect(clientKey(other, 1)).toBe(clientKey(spoofed, 1));
+  });
+
+  it("keys IPv6 by its /64, so one client cannot rotate addresses inside it", () => {
+    const a = clientKey(h({ "x-forwarded-for": "2001:db8:1:2::1" }), 1);
+    const b = clientKey(h({ "x-forwarded-for": "2001:0db8:0001:0002:ffff:eeee:dddd:cccc" }), 1);
+    const other = clientKey(h({ "x-forwarded-for": "2001:db8:1:3::1" }), 1);
+    expect(a).toBe(b);
+    expect(a).not.toBe(other);
+    expect(a).not.toBe("unknown");
+    expect(clientKey(h({ "x-forwarded-for": "::1" }), 1)).toBe(clientKey(h({ "x-forwarded-for": "0:0:0:0::2" }), 1));
+  });
+
+  it("keys IPv4-mapped IPv6 as the IPv4 address", () => {
+    expect(clientKey(h({ "x-forwarded-for": "::ffff:203.0.113.7" }), 1)).toBe("203.0.113.7");
+    expect(clientKey(h({ "x-forwarded-for": "::FFFF:203.0.113.7" }), 1)).toBe("203.0.113.7");
   });
 
   it("falls back to a stable unknown key", () => {

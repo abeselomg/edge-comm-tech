@@ -325,6 +325,31 @@ describe("job application uploads", () => {
     expect(n.text).toContain("CV upload: cv.pdf");
   });
 
+  it("accepts a browser-built multipart body with a mixed-case boundary", async () => {
+    // Chrome and Safari send boundaries like ----WebKitFormBoundaryAbC...; the
+    // boundary is case-sensitive, so the header must reach the parser unchanged.
+    fake = fakePayload({ jobs: [openJob] });
+    const boundary = "----WebKitFormBoundaryAbCdEfGh12XyZ";
+    const parts: Buffer[] = [];
+    for (const [k, v] of Object.entries(jobValues)) {
+      parts.push(Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="${k}"\r\n\r\n${v}\r\n`));
+    }
+    parts.push(
+      Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="cv"; filename="My CV.pdf"\r\nContent-Type: application/pdf\r\n\r\n`),
+      Buffer.from("%PDF-1.7\n" + " ".repeat(500)),
+      Buffer.from(`\r\n--${boundary}--\r\n`),
+    );
+    const req = new Request("https://edge.test/forms/job-application", {
+      method: "POST",
+      headers: { "content-type": `multipart/form-data; boundary=${boundary}`, "x-forwarded-for": freshIp() },
+      body: Buffer.concat(parts),
+    });
+    const res = await call(req, "job-application");
+    expect(res.status).toBe(200);
+    expect(uploadCreates()).toHaveLength(1);
+    expect(submissionCreates()).toHaveLength(1);
+  });
+
   it("leaves no submission and no upload when the file is rejected", async () => {
     fake = fakePayload({ jobs: [openJob] });
     const exe = new File([Buffer.concat([Buffer.from("MZ"), Buffer.alloc(500)])], "cv.pdf", { type: "application/pdf" });
