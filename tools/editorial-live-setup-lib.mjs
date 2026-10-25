@@ -88,14 +88,33 @@ export async function runSetup({ payload, env, writeFile, chmod, rm, log = (_lin
   }
 
   // delete
+  // Never leave the server with no administrator: with zero users, anyone who
+  // opens /admin can "Create first user" and becomes an admin. So the real
+  // administrator must exist before the probe admin goes.
+  const allAdmins = await payload.find({ collection: "users", where: { role: { equals: "admin" } }, limit: 100, depth: 0, overrideAccess: true, pagination: false });
+  const otherAdmins = (allAdmins.docs ?? []).filter((u) => u.email !== ADMIN_EMAIL);
+  if (otherAdmins.length === 0) {
+    throw new Error(
+      "Refusing to delete: there is no other administrator besides the probe admin, and deleting it could leave the site with no admin " +
+        "(an empty users table lets anyone who opens /admin create the first user and become an administrator). " +
+        "Have Edge's real administrator create their account at /admin first (they choose their own password), then re-run. Nothing was deleted.",
+    );
+  }
   for (const user of found) {
     await payload.delete({ collection: "users", id: user.id, overrideAccess: true });
     log(`deleted ${user.email}`);
   }
   await rm(out);
   log(`removed ${out} if it existed.`);
+  const total = (await payload.count({ collection: "users", overrideAccess: true })).totalDocs;
   const admins = (await payload.count({ collection: "users", where: { role: { equals: "admin" } }, overrideAccess: true })).totalDocs;
   const editors = (await payload.count({ collection: "users", where: { role: { equals: "editor" } }, overrideAccess: true })).totalDocs;
-  log(`remaining users: ${admins} admin, ${editors} editor.`);
-  return { mode, deleted: found.length, remaining: { admin: admins, editor: editors } };
+  log(`remaining users: ${total} (${admins} admin, ${editors} editor)`);
+  if (admins === 0) {
+    throw new Error(
+      "WARNING: NO ADMINISTRATOR LEFT. The users table has no admin. If it is also empty, anyone who opens /admin can create the first user and become an administrator. " +
+        "Create Edge's real administrator at /admin NOW.",
+    );
+  }
+  return { mode, deleted: found.length, remaining: { total, admin: admins, editor: editors } };
 }

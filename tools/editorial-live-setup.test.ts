@@ -178,6 +178,42 @@ describe("runSetup", () => {
     expect(h.payload.users.map((u) => u.email)).toEqual(["real@edge"]);
     expect(h.files.size).toBe(0);
     expect(out).toMatchObject({ deleted: 2, remaining: { admin: 1, editor: 0 } });
-    expect(h.lines.join("\n")).toMatch(/remaining users: 1 admin, 0 editor/);
+    expect(h.lines.join("\n")).toMatch(/remaining users: 1 \(1 admin, 0 editor\)/);
+  });
+
+  it("delete REFUSES, deleting nothing, when the probe admin is the only admin", async () => {
+    const h = harness(
+      { ...prod, EDITORIAL_SETUP_MODE: "delete", EDITORIAL_SETUP_OUT: "/tmp/probe.env" },
+      fakePayload([
+        { id: 2, email: ADMIN_EMAIL, role: "admin" },
+        { id: 3, email: EDITOR_EMAIL, role: "editor" },
+        { id: 4, email: "real-editor@edge", role: "editor" },
+      ]),
+    );
+    h.files.set("/tmp/probe.env", { data: "x" });
+    await expect(runSetup(h.deps)).rejects.toThrow(/Refusing to delete.*no other administrator.*\/admin/s);
+    expect(h.payload.users.map((u) => u.email)).toEqual([ADMIN_EMAIL, EDITOR_EMAIL, "real-editor@edge"]);
+    expect(h.files.has("/tmp/probe.env")).toBe(true);
+  });
+
+  it("delete REFUSES on a table with no other admin even when the probe users are gone", async () => {
+    const h = harness({ ...prod, EDITORIAL_SETUP_MODE: "delete" });
+    await expect(runSetup(h.deps)).rejects.toThrow(/no other administrator/);
+  });
+
+  it("delete fails loudly if no admin is left afterwards", async () => {
+    const payload = fakePayload([
+      { id: 1, email: "real@edge", role: "admin" },
+      { id: 2, email: ADMIN_EMAIL, role: "admin" },
+    ]);
+    // The real admin is demoted by someone else between the check and the final count.
+    const del = payload.delete.bind(payload);
+    payload.delete = async (args: { id: number }) => {
+      payload.users[0].role = "editor";
+      return del(args);
+    };
+    const h = harness({ ...prod, EDITORIAL_SETUP_MODE: "delete" }, payload);
+    await expect(runSetup(h.deps)).rejects.toThrow(/NO ADMINISTRATOR/);
+    expect(h.lines.join("\n")).toMatch(/remaining users: 1 \(0 admin, 1 editor\)/);
   });
 });

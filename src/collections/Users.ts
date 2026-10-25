@@ -23,6 +23,9 @@ export const Users: CollectionConfig = {
     create: adminOnly,
     update: selfOrAdmin,
     delete: adminOnly,
+    // Payload's default lets any signed-in user unlock a locked account,
+    // including an admin's. Read only by POST /api/users/unlock.
+    unlock: adminOnly,
   },
   hooks: { beforeValidate: [firstUserIsAdmin] },
   fields: [

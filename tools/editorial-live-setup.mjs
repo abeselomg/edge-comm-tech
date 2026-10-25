@@ -8,7 +8,9 @@
  *                                 editor-probe@example.invalid (editor) with random
  *                                 passwords, written (mode 0600) to EDITORIAL_SETUP_OUT
  *                                 (default /root/editorial-probe.env); never printed
- *   EDITORIAL_SETUP_MODE=delete   remove both users and the file; print what is left
+ *   EDITORIAL_SETUP_MODE=delete   remove both users and the file; print what is left.
+ *                                 REFUSES (exit 1, nothing deleted) unless another admin
+ *                                 exists, and exits 1 loudly if no admin remains after
  *
  * `payload run` strips arguments, so the mode is an environment variable. From
  * the app directory with the server's environment loaded:

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import config from "../payload.config";
-import { CONTENT_SLUGS, ROLE_MATRIX } from "./matrix";
+import { CONTENT_SLUGS, ROLE_MATRIX, UNLOCK_MATRIX } from "./matrix";
 
 /*
  * Runs against the fully resolved config, so plugin-added collections (the
@@ -63,6 +63,24 @@ describe("role matrix: collections", () => {
           expect(permitted(result)).toBe(expected);
         });
       }
+    }
+  }
+});
+
+describe("role matrix: unlock on auth collections", () => {
+  it("has an unlock entry for every auth collection", () => {
+    const auth = collections.filter((c) => c.auth).map((c) => c.slug);
+    expect(auth.sort()).toEqual(Object.keys(UNLOCK_MATRIX).sort());
+  });
+  for (const c of collections.filter((c) => c.auth)) {
+    for (const role of Object.keys(users) as Role[]) {
+      it(`${c.slug}: ${role} unlock`, async () => {
+        // The resolved config fills a missing unlock with Payload's default
+        // (signed in); evaluate whatever it holds.
+        const fn = (c.access as Record<string, unknown> | undefined)?.unlock as Fn | undefined;
+        const result = await evaluate(fn, users[role]);
+        expect(permitted(result)).toBe(UNLOCK_MATRIX[c.slug]?.[role]);
+      });
     }
   }
 });

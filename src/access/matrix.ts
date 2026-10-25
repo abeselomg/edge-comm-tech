@@ -107,6 +107,18 @@ export const GLOBAL_MATRIX: Record<string, RoleEntry<GlobalOps>> = {
   "site-settings": adminGlobal,
 };
 
+/*
+ * Auth collections also have an `unlock` operation (POST /api/<slug>/unlock),
+ * which clears a locked account's failed-login count. Payload's default is
+ * "any signed-in user", so an editor could unlock an admin's account that was
+ * locked by a password-guessing attack. Only admins may unlock. Payload reads
+ * access.unlock in the unlock operation only; login and forgot-password do not
+ * consult it.
+ */
+export const UNLOCK_MATRIX: Record<string, { anonymous: boolean; editor: boolean; admin: boolean }> = {
+  users: { anonymous: false, editor: false, admin: true },
+};
+
 /** Every collection and global slug, with its permitted operations per role. */
 export const ROLE_MATRIX: Record<string, RoleEntry<CollectionOps | GlobalOps>> = {
   ...COLLECTION_MATRIX,

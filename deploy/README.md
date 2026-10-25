@@ -112,6 +112,15 @@ fifteen direct dependencies declared with a caret.
 **The seed does not create users.** The first visit to `/admin` offers
 "Create first user". Until someone does that, there is no way in.
 
+> **WARNING — an empty users table is an open door.** On a database with no
+> users, *anyone* who visits `/admin` can click **Create first user** and is made
+> an **administrator** (no invitation, no secret). So right after the first
+> deploy, Edge's real administrator creates their own account at `/admin` —
+> they choose their own password. That account is never created by a script,
+> and its password is never written into a file, an environment variable, a
+> chat or this repository. And **never delete the last admin**: deleting it
+> reopens the door (`tools/editorial-live-setup.mjs` refuses to).
+
 **Seed modes are environment variables, not flags.** `payload run` strips the
 script's arguments, so `--fresh` silently does nothing. Use
 `NODE_ENV=production npm run seed:force` or `NODE_ENV=production npm run seed:fresh`.
@@ -392,11 +401,21 @@ user**. The first user is always made an admin, whatever role the form shows
 someone who can manage users. Everyone created after that gets the role an admin
 chooses, `editor` by default.
 
+> **WARNING.** Because the first user is *always* an admin, whoever reaches an
+> empty `/admin` first owns the site. Edge's real administrator must create
+> their account at `/admin` **immediately after the first deploy**, choosing
+> their own password — never a script, never a password written down anywhere.
+> Never delete the last admin. Only admins can unlock an account locked by too
+> many failed logins (`unlock` is admin-only).
+
 **How preview works.** `/preview?path=/news/<slug>` checks the staff session,
 accepts only a page this site serves (nothing under `/api`, `/admin`, or off-site),
 sets Next's `__prerender_bypass` draft cookie and redirects to that page. Without
-a session it answers 401 and sets nothing; a hand-made `__prerender_bypass` cookie
-does nothing, because the cookie value is checked by Next against its own secret.
+a session it answers 401 and sets nothing. The preview cookie alone shows
+nothing: every draft page also checks for a live staff session (`isDraft()` in
+`src/lib/draft.ts`), so the cookie only works together with a signed-in admin or
+editor. Logging out ends preview even if the browser keeps the cookie, and a
+copied or forged cookie gets the published page.
 The cookie is `SameSite=None; Secure`, so **preview needs HTTPS in production**
 (over plain http the browser will not keep it). The banner only exists in draft
 mode.
@@ -413,6 +432,10 @@ draft, publish, autosave, preview, republish and unpublish, tries everything an
 editor must not do, and deletes what it made. Operator steps:
 
 ```bash
+# 0. FIRST: Edge's real administrator has created their own account at /admin
+#    (their own password). The probe users are created next to it, and step 3
+#    refuses to run if the probe admin would be the last admin.
+
 # 1. On the server, from the app directory with the environment loaded:
 EDITORIAL_SETUP_MODE=create NODE_ENV=production npx payload run tools/editorial-live-setup.mjs
 #    creates admin-probe@ and editor-probe@example.invalid with random passwords,
@@ -427,7 +450,17 @@ BASE_URL=https://168.119.61.125 NODE_TLS_REJECT_UNAUTHORIZED=0 \
 
 # 3. Back on the server, remove the throwaway users and the file:
 EDITORIAL_SETUP_MODE=delete NODE_ENV=production npx payload run tools/editorial-live-setup.mjs
+#    refuses (exit 1, nothing deleted) when no other admin exists; afterwards it
+#    prints "remaining users: N (A admin, E editor)" and exits 1 if A is 0.
 ```
+
+The preview checks prove the fix for a stale cookie: the bypass cookie alone
+shows the published page; with the editor's session it shows the draft and the
+banner; after `POST /api/users/logout` the same old cookie shows the published
+page again. While a draft is pending the probe also checks the anonymous API:
+`/api/news/<id>?draft=true` returns the published title, a `?draft=true` listing
+of drafts is empty, the News and Contact details versions endpoints answer
+401/403, and GraphQL `versionsNews` answers with errors and no data.
 
 The probe prints `ok` or `FAIL name: reason` per check and exits non-zero on any
 FAIL. Its destructive role checks on form submissions and CVs use an id no row has
@@ -436,5 +469,6 @@ never delete a real record. Two things it reports without failing: the frame
 headers above, and a "related draft" finding: whether a published page prints the
 title of a related item that is only a draft (a published insight whose topic is a
 draft). It is a suspected pre-existing gap, reported as LEAK or NO LEAK (a finding,
-not a gate), and the probe deletes both test items either way. The first-user rule can
-only be exercised by its unit test on the server, which already has an admin.
+not a gate), and the probe deletes both test items either way. The first-user rule is
+exercised by its unit test, not by the probe: by the time the probe runs, the real
+admin (step 0) already exists.

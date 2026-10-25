@@ -4,6 +4,11 @@ import {
   BANNER_TEXT,
   BYPASS_COOKIE,
   buildRequest,
+  classifyAnonDraftList,
+  classifyAnonDraftRead,
+  classifyAnonGraphqlVersions,
+  classifyAnonVersions,
+  classifyPublishedView,
   createJar,
   createHttp,
   frameProtection,
@@ -172,15 +177,71 @@ describe("content helpers", () => {
   });
 });
 
+describe("the anonymous API classifiers", () => {
+  const t = { oldTitle: "Old one", newTitle: "New one" };
+  const r = (status: number, json: unknown) => ({ status, json, text: JSON.stringify(json) });
+
+  it("a ?draft=true read must return the published title", () => {
+    expect(classifyAnonDraftRead(r(200, { id: 7, title: "Old one" }), t)).toBeNull();
+    expect(classifyAnonDraftRead(r(200, { id: 7, title: "New one" }), t)).toMatch(/LEAK/);
+    expect(classifyAnonDraftRead(r(404, {}), t)).toMatch(/expected 200/);
+    expect(classifyAnonDraftRead(r(200, { id: 7, title: "Other" }), t)).toMatch(/published title/);
+  });
+
+  it("a draft listing must be empty and must not include the test doc", () => {
+    expect(classifyAnonDraftList(r(200, { docs: [], totalDocs: 0 }), { id: 7, newTitle: "New one" })).toBeNull();
+    expect(classifyAnonDraftList(r(200, { docs: [{ id: 7 }], totalDocs: 1 }), { id: 7, newTitle: "New one" })).toMatch(/LEAK.*test document/);
+    expect(classifyAnonDraftList(r(200, { docs: [{ id: 9 }], totalDocs: 1 }), { id: 7, newTitle: "New one" })).toMatch(/totalDocs 0/);
+    expect(classifyAnonDraftList(r(200, { docs: [{ id: 9, title: "New one" }], totalDocs: 1 }), { id: 7, newTitle: "New one" })).toMatch(/LEAK/);
+    expect(classifyAnonDraftList(r(500, {}), { id: 7, newTitle: "New one" })).toMatch(/expected 200/);
+  });
+
+  it("a versions read must be 401 or 403", () => {
+    expect(classifyAnonVersions(r(401, {}))).toBeNull();
+    expect(classifyAnonVersions(r(403, {}))).toBeNull();
+    expect(classifyAnonVersions(r(200, { docs: [] }))).toMatch(/401\/403/);
+    expect(classifyAnonVersions(r(404, {}))).toMatch(/401\/403/);
+    expect(classifyAnonVersions(r(403, { m: "New one" }), { newTitle: "New one" })).toMatch(/LEAK/);
+  });
+
+  it("GraphQL versions must answer with errors and no data", () => {
+    expect(classifyAnonGraphqlVersions(r(200, { errors: [{ message: "no" }], data: { versionsNews: null } }))).toBeNull();
+    expect(classifyAnonGraphqlVersions(r(200, { errors: [{ message: "no" }] }))).toBeNull();
+    expect(classifyAnonGraphqlVersions(r(200, { data: { versionsNews: { totalDocs: 0 } } }))).toMatch(/LEAK/);
+    expect(classifyAnonGraphqlVersions(r(200, { errors: [{ message: "x" }], data: { versionsNews: { totalDocs: 2 } } }))).toMatch(/LEAK/);
+    expect(classifyAnonGraphqlVersions(r(404, null))).toMatch(/errors array/);
+  });
+
+  it("a published view needs 200, the old title, no draft title and no banner", () => {
+    const page = (status: number, text: string) => ({ status, text, json: null });
+    expect(classifyPublishedView(page(200, "Old one"), t, "x")).toBeNull();
+    expect(classifyPublishedView(page(200, "New one"), t, "x")).toMatch(/draft title/);
+    expect(classifyPublishedView(page(200, `Old one ${BANNER_TEXT}`), t, "x")).toMatch(/banner/);
+    expect(classifyPublishedView(page(404, ""), t, "x")).toMatch(/expected 200/);
+    expect(classifyPublishedView(page(200, "nothing"), t, "x")).toMatch(/published title is missing/);
+  });
+});
+
 /* --------------------------------------------------- a fake server, end to end */
 
 const creds = { editorEmail: "editor-probe@example.invalid", editorPassword: "editor-password-0123456789", adminEmail: "admin-probe@example.invalid", adminPassword: "admin-password-0123456789" };
 
-function fakeServer(opts: { failPublish?: boolean } = {}) {
-  const state = { exists: false, published: false, title: "", draftTitle: "", deleted: false, requests: [] as string[], contact: { id: 1, email: "x@y.z", updatedAt: "t0" } };
+/*
+ * The fake site follows the fixed rule: a draft is shown only for the bypass
+ * cookie AND a live staff session. `bypassAloneShowsDraft` restores the old,
+ * wrong behaviour (cookie alone is enough) so the probe can be seen to catch it;
+ * `leakApi` makes the anonymous API hand out the draft.
+ */
+function fakeServer(opts: { failPublish?: boolean; bypassAloneShowsDraft?: boolean; leakApi?: boolean } = {}) {
+  const state = { exists: false, published: false, title: "", draftTitle: "", deleted: false, requests: [] as string[], contact: { id: 1, email: "x@y.z", updatedAt: "t0" }, revoked: new Set<string>(), logins: 0 };
   const BYP = "BYPASSVALUE123";
   const json = (status: number, body: unknown, headers: Record<string, string> = {}) => new Response(JSON.stringify(body), { status, headers });
-  const role = (c: string) => (c.includes("tok-admin") ? "admin" : c.includes("tok-editor") ? "editor" : null);
+  const tokenOf = (c: string) => /payload-token=([^;\s]+)/.exec(c)?.[1] ?? null;
+  const role = (c: string) => {
+    const t = tokenOf(c);
+    if (!t || state.revoked.has(t)) return null;
+    return t.startsWith("tok-admin") ? "admin" : t.startsWith("tok-editor") ? "editor" : null;
+  };
   const fetchImpl = async (url: string, init: RequestInit & { headers: Record<string, string> }) => {
     const u = new URL(url);
     const p = u.pathname;
@@ -191,16 +252,27 @@ function fakeServer(opts: { failPublish?: boolean } = {}) {
     state.requests.push(`${method} ${p}${u.search} ${who ?? "anon"}`);
     if (p === "/api/users/login") {
       const admin = body.email === creds.adminEmail;
-      return json(200, { token: admin ? "tok-admin" : "tok-editor", user: { id: admin ? 1 : 2, name: admin ? "A" : "E", role: admin ? "admin" : "editor" } }, { "set-cookie": `payload-token=${admin ? "tok-admin" : "tok-editor"}; Path=/; HttpOnly` });
+      state.logins += 1;
+      const tok = `${admin ? "tok-admin" : "tok-editor"}-${state.logins}`;
+      return json(200, { token: tok, user: { id: admin ? 1 : 2, name: admin ? "A" : "E", role: admin ? "admin" : "editor" } }, { "set-cookie": `payload-token=${tok}; Path=/; HttpOnly` });
+    }
+    if (p === "/api/users/logout" && method === "POST") {
+      const t = tokenOf(cookie);
+      if (t) state.revoked.add(t);
+      return json(200, { message: "ok" }, { "set-cookie": "payload-token=; Path=/; Max-Age=0" });
     }
     if (p === "/") return new Response("<html>home</html>", { status: 200 });
     if (p === "/news") return new Response(state.published ? state.title : "list", { status: 200 });
     if (p === "/blog") return new Response("blog", { status: 200 });
     if (p.startsWith("/news/automated")) {
-      const draft = cookie.includes(`${BYPASS_COOKIE}=${BYP}`);
+      const draft = cookie.includes(`${BYPASS_COOKIE}=${BYP}`) && (opts.bypassAloneShowsDraft || who !== null);
       if (draft) return new Response(`${state.draftTitle || state.title} ${BANNER_TEXT}`, { status: 200 });
       return state.published ? new Response(state.title, { status: 200 }) : new Response("nf", { status: 404 });
     }
+    if (p === "/api/news/7" && method === "GET") return json(200, { id: 7, title: opts.leakApi ? state.draftTitle : state.title });
+    if (p === "/api/news" && method === "GET") return json(200, opts.leakApi ? { docs: [{ id: 7, title: state.draftTitle }], totalDocs: 1 } : { docs: [], totalDocs: 0 });
+    if (p === "/api/news/versions" || p === "/api/globals/contact-details/versions") return who ? json(200, { docs: [] }) : json(opts.leakApi ? 200 : 403, { docs: [] });
+    if (p === "/api/graphql") return json(200, opts.leakApi ? { data: { versionsNews: { totalDocs: 3 } } } : { errors: [{ message: "You are not allowed to perform this action." }], data: { versionsNews: null } });
     if (p === "/preview") {
       if (who !== "editor" && who !== "admin") return new Response("no", { status: 401 });
       const path = u.searchParams.get("path") ?? "";
@@ -267,6 +339,53 @@ describe("runProbe against a fake server", () => {
     expect(state.deleted).toBe(true);
     expect(state.requests.filter((r) => r === "DELETE /api/news/7 admin").length).toBeGreaterThanOrEqual(1);
     expect(res.leftover).toEqual([]);
+  });
+
+  it("checks the preview cookie alone, with the session, and after logout, then signs the editor back in", async () => {
+    const clock = fakeClock();
+    const lines: string[] = [];
+    const { fetchImpl, state } = fakeServer();
+    const res = await runProbe({ base: "http://x", creds, fetchImpl, log: (l: string) => lines.push(l), run: "99", ...clock });
+    const names = res.results.map((r: { name: string }) => r.name);
+    for (const n of ["e-bypass-cookie-alone-shows-published", "e-bypass-plus-session-shows-draft", "e-forged-bypass-shows-published", "e-logout-ends-preview", "e-editor-signs-back-in", "e-old-bypass-with-new-session-shows-draft"]) expect(names).toContain(n);
+    expect(names).not.toContain("e-bypass-cookie-alone-shows-draft");
+    expect(state.requests.some((r) => r === "POST /api/users/logout editor")).toBe(true);
+    // the steps after the logout still ran as the editor, on the new session
+    expect(state.requests.some((r) => r.startsWith("PATCH /api/news/7") && r.endsWith("editor"))).toBe(true);
+    expect(res.results.filter((r: { ok: boolean }) => !r.ok)).toEqual([]);
+    expect(lines.join("\n")).toMatch(/old session token after logout: rejected/);
+  });
+
+  it("FAILS when the bypass cookie alone shows the draft (the stale-cookie leak)", async () => {
+    const clock = fakeClock();
+    const { fetchImpl } = fakeServer({ bypassAloneShowsDraft: true });
+    const res = await runProbe({ base: "http://x", creds, fetchImpl, log: () => {}, run: "99", ...clock });
+    const failed = res.results.filter((r: { ok: boolean }) => !r.ok).map((r: { name: string }) => r.name);
+    expect(failed).toEqual(["e-bypass-cookie-alone-shows-published", "e-logout-ends-preview"]);
+    expect(res.leftover).toEqual([]);
+  });
+
+  it("FAILS each anonymous API check when the API hands out the draft", async () => {
+    const clock = fakeClock();
+    const { fetchImpl } = fakeServer({ leakApi: true });
+    const res = await runProbe({ base: "http://x", creds, fetchImpl, log: () => {}, run: "99", ...clock });
+    const failed = res.results.filter((r: { ok: boolean }) => !r.ok).map((r: { name: string }) => r.name);
+    expect(failed).toEqual([
+      "d-anon-api-draft-read-shows-published",
+      "d-anon-api-draft-list-empty",
+      "d-anon-news-versions-refused",
+      "d-anon-contact-details-versions-refused",
+      "d-anon-graphql-versions-refused",
+    ]);
+  });
+
+  it("probes the extra unsafe preview paths", async () => {
+    const clock = fakeClock();
+    const { fetchImpl, state } = fakeServer();
+    await runProbe({ base: "http://x", creds, fetchImpl, log: () => {}, run: "99", ...clock });
+    for (const bad of ["/\\evil", "/%2Fevil", "/unknown-page"]) {
+      expect(state.requests).toContain(`GET /preview?path=${encodeURIComponent(bad)} editor`);
+    }
   });
 
   it("stops with one failed login check when the password is wrong, and deletes nothing", async () => {

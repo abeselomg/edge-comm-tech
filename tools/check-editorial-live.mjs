@@ -10,9 +10,13 @@
  *   b  editor saves a DRAFT: its public URL is 404
  *   c  editor PUBLISHES: the URL becomes 200 and shows the title
  *   d  editor AUTOSAVES a new title as a draft: the public page keeps the OLD title
- *   e  /preview: editor session -> 307 + __prerender_bypass; that cookie alone
- *      shows the NEW title and the banner; a forged cookie shows neither; no
- *      session -> 401; unsafe paths -> 400
+ *      ... and the draft does not leak through the API either: anonymous
+ *      ?draft=true reads, the versions endpoints and GraphQL versions
+ *   e  /preview: editor session -> 307 + __prerender_bypass; that cookie ALONE
+ *      shows the PUBLISHED title and no banner; cookie + editor session shows
+ *      the NEW title and the banner; a forged cookie shows neither; no
+ *      session -> 401; unsafe paths -> 400; after the editor logs out the old
+ *      cookie (still valid for this build) shows the published page again
  *   f  editor publishes the change: the public page shows the NEW title, no redeploy
  *   g  editor UNPUBLISHES: the URL is 404 again
  *   h  role gating (globals, users, forms, submissions, applications, delete)
@@ -44,7 +48,7 @@ export const BYPASS_COOKIE = "__prerender_bypass";
 export const BANNER_TEXT = "Preview — unpublished changes are shown";
 /** An id no row has; access is evaluated before the lookup, so 403 proves "denied" and 404 "allowed". */
 export const ABSENT_ID = 2147483000;
-export const UNSAFE_PREVIEW_PATHS = ["//evil.test", "https://evil.test", "/api/users", "/admin"];
+export const UNSAFE_PREVIEW_PATHS = ["//evil.test", "https://evil.test", "/api/users", "/admin", "/\\evil", "/%2Fevil", "/unknown-page"];
 
 /* ------------------------------------------------------------------ cookies */
 
@@ -265,6 +269,51 @@ export function frameProtection(headers) {
 
 const refused = (s) => s === 403 || s === 401;
 
+/*
+ * The anonymous API must not hand out a draft either. Each classifier takes the
+ * probe's response object ({ status, text, json }) and returns null when all is
+ * well or a problem string; they are pure so they are unit-tested directly.
+ */
+
+/** Anonymous GET /api/news/<id>?draft=true while a draft is pending: the published title, never the draft's. */
+export function classifyAnonDraftRead(res, { oldTitle, newTitle }) {
+  if (shows(res.text, newTitle)) return "LEAK: the anonymous ?draft=true read returned the draft title";
+  if (res.status !== 200) return `expected 200 with the published title, got ${res.status}`;
+  return res.json?.title === oldTitle ? null : `expected the published title, got "${String(res.json?.title ?? "")}"`;
+}
+
+/** Anonymous GET /api/news?draft=true&where[_status][equals]=draft: nothing at all, and certainly not the test doc. */
+export function classifyAnonDraftList(res, { id, newTitle }) {
+  if (shows(res.text, newTitle)) return "LEAK: the anonymous draft listing returned the draft title";
+  const docs = Array.isArray(res.json?.docs) ? res.json.docs : [];
+  if (docs.some((d) => d?.id === id)) return "LEAK: the anonymous draft listing includes the test document";
+  if (res.status !== 200) return `expected 200 with no documents, got ${res.status}`;
+  return res.json?.totalDocs === 0 ? null : `expected totalDocs 0, got ${String(res.json?.totalDocs)}`;
+}
+
+/** A versions endpoint read anonymously: refused outright. */
+export function classifyAnonVersions(res, { newTitle } = {}) {
+  if (newTitle && shows(res.text, newTitle)) return "LEAK: the anonymous versions read returned the draft title";
+  return refused(res.status) ? null : `expected 401/403, got ${res.status}`;
+}
+
+/** Anonymous GraphQL { versionsNews { totalDocs } }: an errors array and no data. */
+export function classifyAnonGraphqlVersions(res, { newTitle } = {}) {
+  if (newTitle && shows(res.text, newTitle)) return "LEAK: the anonymous GraphQL versions query returned the draft title";
+  const data = res.json?.data?.versionsNews;
+  if (data !== null && data !== undefined) return `LEAK: anonymous GraphQL returned versionsNews data (totalDocs ${String(data.totalDocs)})`;
+  const errors = res.json?.errors;
+  return Array.isArray(errors) && errors.length > 0 ? null : `expected a GraphQL errors array, got HTTP ${res.status} without one`;
+}
+
+/** A public page that must show the published state: 200, the old title, not the new one, no banner. */
+export function classifyPublishedView(res, { oldTitle, newTitle }, what) {
+  if (res.status !== 200) return `${what}: expected 200, got ${res.status}`;
+  if (shows(res.text, newTitle)) return `${what} shows the draft title`;
+  if (res.text.includes(BANNER_TEXT)) return `${what} shows the preview banner`;
+  return shows(res.text, oldTitle) ? null : `${what}: the published title is missing`;
+}
+
 /* ------------------------------------------------------------------ the probe */
 
 /**
@@ -361,6 +410,21 @@ export async function runProbe({ base, creds, fetchImpl, now = Date.now, sleep, 
         return held.ok ? null : "the public page changed after an autosave (draft leaked or revalidated)";
       });
 
+      // ---- d: the pending draft does not leak through the anonymous API
+      await step("d-anon-api-draft-read-shows-published", async () => {
+        if (!autosaved) return "the autosave check failed, so the draft is not established";
+        return classifyAnonDraftRead(await pub(`/api/news/${newsId}?draft=true&depth=0`), { oldTitle, newTitle });
+      });
+      await step("d-anon-api-draft-list-empty", async () => {
+        if (!autosaved) return "the autosave check failed, so the draft is not established";
+        return classifyAnonDraftList(await pub("/api/news?draft=true&depth=0&where[_status][equals]=draft"), { id: newsId, newTitle });
+      });
+      await step("d-anon-news-versions-refused", async () => classifyAnonVersions(await pub(`/api/news/versions?depth=0&where[parent][equals]=${newsId}`), { newTitle }));
+      await step("d-anon-contact-details-versions-refused", async () => classifyAnonVersions(await pub("/api/globals/contact-details/versions?depth=0")));
+      await step("d-anon-graphql-versions-refused", async () =>
+        classifyAnonGraphqlVersions(await http("POST", "/api/graphql", { json: { query: "{ versionsNews { totalDocs } }" } }), { newTitle }),
+      );
+
       // ---- e: preview
       const previewUrl = `/preview?path=${encodeURIComponent(path)}`;
       let bypass = null;
@@ -378,21 +442,26 @@ export async function runProbe({ base, creds, fetchImpl, now = Date.now, sleep, 
         out(`     draft cookie attributes: ${Object.keys(flags?.attrs ?? {}).join(", ") || "none"}`);
         return null;
       });
-      await step("e-bypass-cookie-alone-shows-draft", async () => {
+      // The bypass cookie is one value per build and outlives a logout, so on
+      // its own it must show nothing: a draft needs it AND a live staff session.
+      await step("e-bypass-cookie-alone-shows-published", async () => {
         if (!bypass) return "no bypass cookie from the previous check";
-        const res = await http("GET", path, { cookie: `${BYPASS_COOKIE}=${bypass}` });
+        return classifyPublishedView(await http("GET", path, { cookie: `${BYPASS_COOKIE}=${bypass}` }), { oldTitle, newTitle }, "the bypass cookie alone");
+      });
+      const draftView = async (cookie) => {
+        const res = await http("GET", path, { cookie });
         if (res.status !== 200) return `expected 200, got ${res.status}`;
         if (!autosaved) return "the autosave check failed, so the draft title is not established";
-        if (!shows(res.text, newTitle)) return "the draft title is not shown with the bypass cookie";
+        if (!shows(res.text, newTitle)) return "the draft title is not shown";
         return res.text.includes(BANNER_TEXT) ? null : "the preview banner is missing";
+      };
+      await step("e-bypass-plus-session-shows-draft", async () => {
+        if (!bypass) return "no bypass cookie from the previous check";
+        return draftView(`${ec()}; ${BYPASS_COOKIE}=${bypass}`);
       });
-      await step("e-forged-bypass-shows-published", async () => {
-        const res = await http("GET", path, { cookie: `${BYPASS_COOKIE}=forged` });
-        if (res.status !== 200) return `expected 200, got ${res.status}`;
-        if (shows(res.text, newTitle)) return "a forged cookie shows the draft title";
-        if (res.text.includes(BANNER_TEXT)) return "a forged cookie shows the preview banner";
-        return shows(res.text, oldTitle) ? null : "the published title is missing";
-      });
+      await step("e-forged-bypass-shows-published", async () =>
+        classifyPublishedView(await http("GET", path, { cookie: `${ec()}; ${BYPASS_COOKIE}=forged` }), { oldTitle, newTitle }, "a forged cookie with the editor session"),
+      );
       await step("e-preview-without-session-401", async () => {
         const res = await http("GET", previewUrl, { redirect: "manual" });
         if (res.status !== 401) return `expected 401, got ${res.status}`;
@@ -402,6 +471,36 @@ export async function runProbe({ base, creds, fetchImpl, now = Date.now, sleep, 
         await step(`e-unsafe-path-400 ${bad}`, async () => {
           const res = await http("GET", `/preview?path=${encodeURIComponent(bad)}`, { cookie: ec(), redirect: "manual" });
           return expectStatus(res, 400, "unsafe preview path");
+        });
+      }
+
+      // The stale-cookie case: the editor logs out, the browser keeps the
+      // bypass cookie (a session cookie that Payload's logout does not clear).
+      await step("e-logout-ends-preview", async () => {
+        if (!bypass) return "no bypass cookie from the earlier check";
+        const res = await http("POST", "/api/users/logout", { cookie: ec() });
+        const bad = expectStatus(res, 200, "POST /api/users/logout");
+        if (bad) return bad;
+        return classifyPublishedView(await http("GET", path, { cookie: `${BYPASS_COOKIE}=${bypass}` }), { oldTitle, newTitle }, "the old bypass cookie after logout");
+      });
+      // Sign the editor back in for the rest of the run. With a fresh session the
+      // SAME old cookie previews again: the logout ended the session, and the
+      // session is what preview now depends on.
+      const relogged = await step("e-editor-signs-back-in", async () => {
+        const stale = editor.jar.get(SESSION_COOKIE);
+        editor = await login(http, creds.editorEmail, creds.editorPassword);
+        secrets.push(editor.jar.get(SESSION_COOKIE));
+        // Informational only: did the logout also revoke the old token on the server?
+        if (bypass && stale) {
+          const old = await http("GET", path, { cookie: `${SESSION_COOKIE}=${stale}; ${BYPASS_COOKIE}=${bypass}` });
+          out(`     old session token after logout: ${shows(old.text, newTitle) ? "still accepted (the token lives until it expires)" : "rejected"}`);
+        }
+        return null;
+      });
+      if (relogged) {
+        await step("e-old-bypass-with-new-session-shows-draft", async () => {
+          if (!bypass) return "no bypass cookie from the earlier check";
+          return draftView(`${ec()}; ${BYPASS_COOKIE}=${bypass}`);
         });
       }
 
