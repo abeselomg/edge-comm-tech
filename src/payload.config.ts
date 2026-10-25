@@ -13,6 +13,8 @@ import { readMailConfig } from "./lib/mail";
 import { guardSeoMetaFields } from "./fields/seo";
 import { submissionExtraFields } from "./fields/submission";
 import { signedIn, adminOnly } from "./access";
+import { revalidateAfterChange, revalidateAfterDelete } from "./hooks/revalidate";
+import { FORM_PATHS, FORM_PATTERNS } from "./lib/forms/pages";
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Solutions } from "./collections/Solutions";
@@ -196,6 +198,11 @@ export default buildConfig({
       formOverrides: {
         admin: { group: "Site" },
         access: { read: () => true, create: signedIn, update: signedIn, delete: signedIn },
+        // The six pages are prerendered from these documents.
+        hooks: {
+          afterChange: [revalidateAfterChange(() => FORM_PATHS, { patterns: FORM_PATTERNS })],
+          afterDelete: [revalidateAfterDelete(() => FORM_PATHS, { patterns: FORM_PATTERNS })],
+        },
       },
       /*
        * The plugin's default is `create: () => true`, which would let a bot

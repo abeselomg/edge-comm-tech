@@ -14,8 +14,9 @@ import { isIP } from "node:net";
  * deploy/README.md.
  */
 
-/** The honeypot. Rendered hidden, off-screen, tabindex=-1, autocomplete=off. */
-export const HONEYPOT_FIELD = "website_url";
+import { HONEYPOT_FIELD } from "./constants";
+
+export { HONEYPOT_FIELD };
 
 /** A person never sees the field, so any value at all means a bot filled it. */
 export function isHoneypotTripped(input: Record<string, unknown>): boolean {

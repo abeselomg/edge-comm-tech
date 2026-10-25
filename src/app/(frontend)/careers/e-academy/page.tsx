@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ClosingCta, Crumb, CtaRow, Field, FormNote, PageHead, Pending, SectionHead } from "@/components/ui";
-import { getAcademyTracks, getCareersContent, getContactDetails } from "@/lib/content";
+import { LiveForm } from "@/components/forms/LiveForm";
+import { ClosingCta, Crumb, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
+import { getAcademyTracks, getCareersContent, getContactDetails, getForm } from "@/lib/content";
 import { emailByLabel, publishedOnly, routeFor, solutionHref } from "@/lib/routes";
 import type { Solution } from "@/payload-types";
 
@@ -26,42 +27,17 @@ export const metadata = {
     "Structured technology training from Edge Comm-Tech for individuals, institutions and corporate teams across AI, networks, cloud, datacenters, cybersecurity and power.",
 };
 
-const PARTICIPANTS = ["Select", "Just me", "2–5", "6–15", "16–40", "More than 40"];
-
 export default async function EAcademyPage() {
-  const [careers, tracks, contact] = await Promise.all([
+  const [careers, tracks, contact, form] = await Promise.all([
     getCareersContent(),
     getAcademyTracks(),
     getContactDetails(),
+    getForm("academy-enquiry"),
   ]);
   const audiences = careers.academyAudiences ?? [];
   const levels = (careers.academyLevels ?? []).map((l) => l.item);
   const delivery = (careers.academyDelivery ?? []).map((d) => d.item);
   const sales = emailByLabel(contact, /sales/i);
-
-  const FIELDS: Parameters<typeof Field>[0][] = [
-    { label: "Full name", required: true },
-    { label: "Email address", type: "email", required: true },
-    { label: "Mobile number", required: true },
-    { label: "Organization" },
-    {
-      label: "I am enquiring as",
-      type: "select",
-      required: true,
-      options: ["Select", ...audiences.map((a) => a.title)],
-    },
-    {
-      label: "Track of interest",
-      type: "select",
-      required: true,
-      options: ["Select a track", ...tracks.map((t) => t.title)],
-    },
-    { label: "Level", type: "select", options: ["Select", ...levels] },
-    { label: "Preferred delivery", type: "select", options: ["Select", ...delivery] },
-    { label: "Estimated participants", type: "select", options: PARTICIPANTS },
-    { label: "Preferred timing" },
-    { label: "Objectives for the training", type: "textarea", wide: true },
-  ];
 
   return (
     <main>
@@ -236,30 +212,13 @@ export default async function EAcademyPage() {
               program for forty staff, start here. We will come back with a proposed track, level,
               format and duration.
             </p>
-            <form className="mt-8 grid gap-5 sm:grid-cols-2">
-              {FIELDS.map((f) => (
-                <Field key={f.label} {...f} />
-              ))}
-              <div className="sm:col-span-2">
-                <label className="flex items-start gap-3 text-xs leading-relaxed text-steel">
-                  <input type="checkbox" className="mt-0.5" disabled />
-                  <span>
-                    I accept the privacy notice and consent to being contacted about this training
-                    enquiry.
-                  </span>
-                </label>
-              </div>
-              <div className="sm:col-span-2">
-                <button
-                  type="button"
-                  className="rounded-full bg-[#056a9a] px-6 py-3 text-sm font-semibold text-white opacity-60"
-                  disabled
-                >
-                  Send enquiry
-                </button>
-              </div>
-            </form>
-            <FormNote email={sales} />
+            <LiveForm
+              form={form}
+              action="/forms/academy-enquiry"
+              submitLabel="Send enquiry"
+              accent={ACCENT}
+              email={sales}
+            />
           </div>
 
           <aside className="self-start lg:sticky lg:top-32">

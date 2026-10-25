@@ -1,6 +1,7 @@
 import { CtaRow, PageHead, SectionHead } from "@/components/ui";
-import { getContactDetails, getSolutions } from "@/lib/content";
-import { ContactChannels, ContactFacts, FormShell, InquiryCard } from "./contact-parts";
+import { LiveForm } from "@/components/forms/LiveForm";
+import { getContactDetails, getForm } from "@/lib/content";
+import { ContactChannels, ContactFacts, InquiryCard } from "./contact-parts";
 import { emailByLabel } from "@/lib/routes";
 
 /*
@@ -15,8 +16,8 @@ import { emailByLabel } from "@/lib/routes";
  * this form: the master requires applications to go through the official
  * application flow.
  *
- * Every fact comes from the contact-details global. The form is a disabled
- * shell until Phase 6 wires submissions, and says so.
+ * Every fact comes from the contact-details global. The form is the stored
+ * "Contact" form, submitted to /forms/contact.
  */
 
 export const metadata = {
@@ -26,7 +27,7 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
-  const [contact, solutions] = await Promise.all([getContactDetails(), getSolutions()]);
+  const [contact, form] = await Promise.all([getContactDetails(), getForm("contact")]);
   const categories = contact.inquiryCategories ?? [];
   const sales = emailByLabel(contact, /sales/i);
 
@@ -69,11 +70,7 @@ export default async function ContactPage() {
         <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-[1fr_17rem]">
           <div className="min-w-0">
             <SectionHead eyebrow="Send a message" title="One form, routed by inquiry type" />
-            <FormShell
-              solutions={solutions.map((s) => s.short)}
-              inquiryTypes={categories.map((c) => c.title)}
-              email={sales}
-            />
+            <LiveForm form={form} action="/forms/contact" submitLabel="Send message" email={sales} />
           </div>
           <ContactFacts contact={contact} />
         </div>

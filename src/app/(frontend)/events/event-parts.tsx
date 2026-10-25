@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Field, FormNote, SectionHead } from "@/components/ui";
+import { LiveForm } from "@/components/forms/LiveForm";
+import { SectionHead } from "@/components/ui";
 import type { EventWithStatus } from "@/lib/content";
 import { eventHref, publishedOnly } from "@/lib/routes";
+import type { Form } from "@/payload-types";
 
 /*
  * The events pages' own pieces, beside the pages because Next allows a page only
@@ -152,41 +154,25 @@ export function ProgramList({ event: e, accent }: { event: EventWithStatus; acce
   );
 }
 
-const SECTORS = [
-  "Select a sector",
-  "Banking and finance",
-  "Education",
-  "Government",
-  "Enterprise",
-  "Other",
-];
-
 /**
  * Registration while the event is upcoming; a closed notice once it has run.
- * The form is an inert shell until Phase 6 wires submissions, and says so. It is
- * the only form on its page, which keeps the label-derived field ids unique.
+ * A past event renders no form at all (and the page does not even read one).
+ * The upcoming form carries the event's slug in a hidden `event` field, which
+ * the submission route checks against published events whose date has not
+ * passed.
  */
 export function RegistrationPanel({
   event: e,
   accent,
   email,
+  form,
 }: {
   event: EventWithStatus;
   accent: string;
   email?: string;
+  form?: Form | null;
 }) {
   const past = e.status === "past";
-  const fields: Parameters<typeof Field>[0][] = [
-    { label: "Full name", required: true },
-    { label: "Job title", required: true },
-    { label: "Organization", required: true },
-    { label: "Sector", type: "select", required: true, options: SECTORS },
-    { label: "Email address", type: "email", required: true },
-    { label: "WhatsApp number", required: true, hint: "Include country code" },
-    { label: "Preferred updates", type: "select", options: ["Email", "WhatsApp", "Both"] },
-    { label: "Attendance mode", type: "select", options: ["Online", "In person", "Meeting request"] },
-    { label: "Question or objective", type: "textarea", wide: true },
-  ];
   return (
     <section className="mt-16 rounded-3xl p-8" style={{ background: `${accent}0c` }}>
       <SectionHead
@@ -207,32 +193,16 @@ export function RegistrationPanel({
         >
           Get event updates
         </Link>
-      ) : (
-        <>
-          <form className="mt-7 grid gap-5 sm:grid-cols-2">
-            {fields.map((f) => (
-              <Field key={f.label} {...f} />
-            ))}
-            <div className="sm:col-span-2">
-              <label className="flex items-start gap-3 text-xs text-steel">
-                <input type="checkbox" className="mt-0.5" disabled />
-                <span>I accept the event communication and privacy notice.</span>
-              </label>
-            </div>
-            <div className="sm:col-span-2">
-              <button
-                type="button"
-                className="rounded-full px-6 py-3 text-sm font-semibold text-white opacity-60"
-                style={{ background: accent }}
-                disabled
-              >
-                {e.action}
-              </button>
-            </div>
-          </form>
-          <FormNote email={email} />
-        </>
-      )}
+      ) : form ? (
+        <LiveForm
+          form={form}
+          action="/forms/event-registration"
+          submitLabel={e.action}
+          accent={accent}
+          email={email}
+          hidden={{ event: e.slug }}
+        />
+      ) : null}
     </section>
   );
 }

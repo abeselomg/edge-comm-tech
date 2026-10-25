@@ -1,6 +1,13 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
-import { ContactChannels, ContactFacts, InquiryCard, supportEmail, FormShell } from "./contact-parts";
+import { describe, expect, it, vi } from "vitest";
+import ContactPage from "./page";
+import { ContactChannels, ContactFacts, InquiryCard, supportEmail } from "./contact-parts";
+
+vi.mock("@/lib/content", () => ({
+  getContactDetails: async () => CONTACT,
+  getSolutions: async () => [],
+  getForm: async (key: never) => (await import("@/lib/forms/testing")).formDoc(key),
+}));
 
 const CONTACT = {
   office: [
@@ -98,24 +105,21 @@ describe("InquiryCard", () => {
   });
 });
 
-describe("FormShell", () => {
-  const out = html(<FormShell solutions={["Cybersecurity"]} inquiryTypes={["Request a Quotation"]} email="sales@edgecomm-tech.com" />);
-
-  it("is honestly inert: every control is disabled", () => {
-    expect(out).toContain("disabled");
-    expect(out).not.toMatch(/<input(?![^>]*disabled)/);
-    expect(out).not.toMatch(/<select(?![^>]*disabled)/);
-    expect(out).not.toMatch(/<textarea(?![^>]*disabled)/);
-    expect(out).not.toMatch(/<button(?![^>]*disabled)/);
-  });
-
-  it("says so, and says how to reach Edge meanwhile", () => {
-    expect(out).toMatch(/not yet (live|accepting)/i);
-    expect(out).toContain("sales@edgecomm-tech.com");
-  });
-
-  it("offers the options it was given", () => {
+describe("the contact form", () => {
+  it("is a live form posting to /forms/contact, with no shell wording and nothing disabled", async () => {
+    const out = html(await ContactPage());
+    expect(out).toContain('action="/forms/contact"');
+    expect(out).toContain("Send message");
     expect(out).toContain("Request a Quotation");
     expect(out).toContain("Cybersecurity");
+    expect(out).not.toContain("Form shown for layout review");
+    expect(out).not.toContain("not accepting submissions");
+    expect(out).not.toContain("not yet accepting");
+    expect(out).not.toMatch(/\sdisabled=/);
+  });
+
+  it("offers the sales mailbox from the contact-details record, not from code", async () => {
+    const out = html(await ContactPage());
+    expect(out).toContain("sales@edgecomm-tech.com");
   });
 });

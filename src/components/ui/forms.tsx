@@ -12,8 +12,9 @@
 
 export type FieldType = "text" | "email" | "tel" | "textarea" | "select";
 
-const CONTROL =
-  "mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm text-ink/60 shadow-none";
+/** The control's box, shared with the live form (components/forms/LiveForm.tsx). */
+export const CONTROL_BASE = "mt-1.5 w-full rounded-xl border border-rule bg-paper-2 px-4 py-2.5 text-sm shadow-none";
+const CONTROL = `${CONTROL_BASE} text-ink/60`;
 
 export function Field({
   label,

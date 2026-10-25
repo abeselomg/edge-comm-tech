@@ -166,13 +166,24 @@ const DELIBERATE = [
   // Phase 4: /about links to the executive-management page, which Highland
   // generated and linked from nowhere.
   "See the executive management structure",
-  // Phase 4: Highland's review-build form note, and the CMS-era note that
-  // replaces it (see FormNote in components/ui/forms.tsx). Both sides are
-  // stripped, so the swap is waived but the form itself is still compared.
+  // Phase 4: Highland's review-build form note. Highland carries it on every
+  // page with a form, so it is stripped from the Highland side everywhere.
   "Form shown for layout review.",
   "Fields, validation, consent capture, secure upload and routing are built against the CMS at implementation.",
-  "This form is not yet accepting submissions.",
 ];
+
+/*
+ * Phase 6: the pages whose form is live (contact, subscribe, careers-e-academy
+ * and the event pages). They no longer render the CMS-era shell note ("This
+ * form is not yet accepting submissions. Please email ... in the meantime."),
+ * so it is NOT waived there: if it reappears, it is reported as copy that is
+ * not in Highland. Pages still on the shell (careers-internships and the job
+ * pages, until the application forms are wired) keep the waiver.
+ */
+const SHELL_NOTE = ["This form is not yet accepting submissions."];
+const SHELL_NOTE_SUBSTITUTION = [/Please email \S+ in the meantime\./g, ""];
+const isLiveFormPage = (page) =>
+  page === "contact" || page === "subscribe" || page === "careers-e-academy" || page.startsWith("event-");
 
 /*
  * Phrases Highland and the port both have, but worded differently on purpose.
@@ -190,13 +201,12 @@ const SUBSTITUTIONS = [
   // still awaiting artwork; a directory should not apologise for what it is
   // waiting on.
   [/\d+ marks pending approved artwork/g, ""],
-  [/Please email \S+ in the meantime\./g, ""],
 ];
 
 /* Links the port adds on purpose, per page. */
 const ADDED_LINKS = { about: ["/about/executive-management"] };
 
-function normaliseNoise(s) {
+function normaliseNoise(s, live = false) {
   let out = s
     // Only the copyright year ticks over. A year anywhere else is content, and
     // normalising it would let a wrong "established 2019" pass.
@@ -204,6 +214,10 @@ function normaliseNoise(s) {
     .replace(/\?v=[\w.]+/g, ""); // Highland's cache-busting query strings
   for (const phrase of DELIBERATE) out = out.split(phrase).join("");
   for (const [from, to] of SUBSTITUTIONS) out = out.replace(from, to);
+  if (!live) {
+    for (const phrase of SHELL_NOTE) out = out.split(phrase).join("");
+    out = out.replace(...SHELL_NOTE_SUBSTITUTION);
+  }
   out = out.replace(/\s+/g, " ").trim();
   // Stripping a deliberate phrase can leave behind the punctuation that
   // joined it to its sentence. "— ." is not a finding.
@@ -309,10 +323,12 @@ for (const page of pages) {
     continue;
   }
 
+  const live = isLiveFormPage(page);
+
   /* Copy. Reported in both directions: a missing sentence is a dropped
      section, and an unexpected one is usually copy invented to fill a gap. */
-  const want = [...new Set(sentences(visibleText(expected)).map(normaliseNoise))].filter(Boolean);
-  const have = [...new Set(sentences(visibleText(actual)).map(normaliseNoise))].filter(Boolean);
+  const want = [...new Set(sentences(visibleText(expected)).map((x) => normaliseNoise(x, live)))].filter(Boolean);
+  const have = [...new Set(sentences(visibleText(actual)).map((x) => normaliseNoise(x, live)))].filter(Boolean);
   const wantSet = new Set(want);
   const haveSet = new Set(have);
   const missingCopy = want.filter((s) => !haveSet.has(s));
@@ -347,8 +363,8 @@ for (const page of pages) {
   }
 
   /* Headings, in order. */
-  const wantH = headings(expected).map(normaliseNoise);
-  const haveH = headings(actual).map(normaliseNoise);
+  const wantH = headings(expected).map((x) => normaliseNoise(x, live));
+  const haveH = headings(actual).map((x) => normaliseNoise(x, live));
   if (wantH.join(" | ") !== haveH.join(" | ")) {
     const missing = wantH.filter((h) => !haveH.includes(h));
     const extra = haveH.filter((h) => !wantH.includes(h));
@@ -384,7 +400,7 @@ for (const page of pages) {
     if (!wantL.has(l)) problems.push(`${page}: links to ${l}, which Highland does not`);
   }
 
-  /* Form controls, which Phase 4 renders disabled and Phase 6 makes live. */
+  /* Form controls: present on both sides (live now on four pages, disabled shells on the rest). */
   if (!allowFormDiff && FORM_TAG.test(expected) !== FORM_TAG.test(actual)) {
     problems.push(
       `${page}: one side has form controls and the other does not ` +
