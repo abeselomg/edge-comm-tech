@@ -1,5 +1,5 @@
 import type { GlobalConfig } from "payload";
-import { signedIn } from "../access";
+import { peopleStaff } from "../access";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateGlobal } from "../hooks/revalidate";
@@ -29,7 +29,7 @@ export const Careers: GlobalConfig = {
     group: "People",
     description: "Pathways, culture, the internship programme and E-Academy settings.",
   },
-  access: { read: () => true, update: signedIn },
+  access: { read: () => true, update: peopleStaff },
   versions: { drafts: false },
   hooks: {
     afterChange: [

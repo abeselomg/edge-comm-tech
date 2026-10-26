@@ -1,6 +1,6 @@
 import type { Block, CollectionConfig } from "payload";
 import { solutionHref } from "../lib/routes";
-import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, contentRead, contentStaff } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
@@ -201,7 +201,7 @@ export const Solutions: CollectionConfig = {
     description:
       "The seven integrated solution families. These are the main pages buyers land on from search.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
+  access: { read: contentRead, create: contentStaff, update: contentStaff, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths, { layout: true })],

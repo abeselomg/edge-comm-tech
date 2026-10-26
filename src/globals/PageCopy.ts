@@ -1,5 +1,5 @@
 import type { GlobalConfig } from "payload";
-import { signedIn } from "../access";
+import { contentStaff } from "../access";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateGlobal } from "../hooks/revalidate";
 
@@ -59,7 +59,7 @@ export const PageCopy: GlobalConfig = {
     description:
       "Headings and intros for the pages built from several collections.",
   },
-  access: { read: () => true, update: signedIn },
+  access: { read: () => true, update: contentStaff },
   versions: { drafts: false },
   hooks: {
     afterChange: [

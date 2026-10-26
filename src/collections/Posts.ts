@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, contentRead, contentStaff } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases, richTextGuard } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
@@ -32,7 +32,7 @@ export const Posts: CollectionConfig = {
     description:
       "Short articles, published in full on the insights page. They have no separate pages — each one links through to the solution it introduces.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
+  access: { read: contentRead, create: contentStaff, update: contentStaff, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths, { patterns: ["/solutions/[slug]"] })],
@@ -65,7 +65,7 @@ export const Posts: CollectionConfig = {
       type: "relationship",
       relationTo: "solutions",
       required: true,
-      // Only published solutions. Solutions read as publishedOrSignedIn, so a
+      // Only published solutions. Solutions read as contentRead, so a
       // draft target gives the public a 404 behind a Read More link that an
       // editor sees working, because they are signed in.
       filterOptions: { _status: { equals: "published" } },

@@ -12,7 +12,8 @@ import sharp from "sharp";
 import { readMailConfig } from "./lib/mail";
 import { guardSeoMetaFields } from "./fields/seo";
 import { submissionExtraFields } from "./fields/submission";
-import { signedIn, signedInField, adminOnly } from "./access";
+import { signedInField, adminOnly, submissionsRead } from "./access";
+import { hiddenInAdmin } from "./access/matrix";
 import { revalidateAfterChange, revalidateAfterDelete } from "./hooks/revalidate";
 import { FORM_PATHS, FORM_PATTERNS } from "./lib/forms/pages";
 import { Users } from "./collections/Users";
@@ -131,8 +132,14 @@ export default buildConfig({
       titleSuffix: " — Edge Comm-Tech",
     },
   },
-  collections: [Solutions, Services, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Jobs, AcademyTracks, Media, Applications, Users],
-  globals: [SiteSettings, Company, ContactDetails, Careers, PageCopy],
+  // Each section is hidden from the admin sidebar for roles that do not work in it (ADMIN_NAV in access/matrix.ts).
+  collections: [Solutions, Services, Clients, Projects, Events, PostCategories, Posts, News, Downloads, PartnerCategories, Partners, Jobs, AcademyTracks, Media, Applications, Users].map(
+    (c) => ({ ...c, admin: { ...c.admin, hidden: hiddenInAdmin(c.slug) } }),
+  ),
+  globals: [SiteSettings, Company, ContactDetails, Careers, PageCopy].map((g) => ({
+    ...g,
+    admin: { ...g.admin, hidden: hiddenInAdmin(g.slug) },
+  })),
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
@@ -196,7 +203,7 @@ export default buildConfig({
        * only admins may change them (a reshaped form breaks its route).
        */
       formOverrides: {
-        admin: { group: "Site" },
+        admin: { group: "Site", hidden: hiddenInAdmin("forms") },
         access: { read: () => true, create: adminOnly, update: adminOnly, delete: adminOnly },
         // Recipients, cc/bcc and templates are staff-only over REST/GraphQL.
         // Local-API readers (the pages, the submission route) override access.
@@ -216,12 +223,12 @@ export default buildConfig({
        * The plugin's default is `create: () => true`, which would let a bot
        * POST /api/form-submissions and skip the honeypot and rate limiter in
        * the submission route. Public visitors never write here directly; the
-       * route does, through the local API. Reads are staff-only (the default,
-       * pinned here), and editing or deleting a record is for admins.
+       * route does, through the local API. Reads are staff-only (admins and
+       * editors read all; HR only the careers forms), and editing or deleting a record is for admins.
        */
       formSubmissionOverrides: {
-        admin: { group: "Site" },
-        access: { create: adminOnly, read: signedIn, update: adminOnly, delete: adminOnly },
+        admin: { group: "Site", hidden: hiddenInAdmin("form-submissions") },
+        access: { create: adminOnly, read: submissionsRead, update: adminOnly, delete: adminOnly },
         fields: ({ defaultFields }) => [...defaultFields, ...submissionExtraFields],
       },
     }),

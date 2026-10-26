@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, peopleRead, peopleStaff } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
@@ -28,7 +28,7 @@ export const AcademyTracks: CollectionConfig = {
     group: "People",
     description: "Training tracks, each mapped to a solution family Edge delivers.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
+  access: { read: peopleRead, create: peopleStaff, update: peopleStaff, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths)],
