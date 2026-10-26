@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [],
     /*
+     * AVIF first, WebP as the fallback; the logo grids were shipping the
+     * original PNG uploads at up to 364 KB each. 30 days, not the 4 hour
+     * default: Payload gives a re-used filename a -1, -2 suffix, so a replaced
+     * logo normally arrives under a new URL and the cached copy is never asked
+     * for again; the long TTL only matters if an editor overwrites a file in
+     * place, which then takes up to 30 days to refresh (purge .next/cache/images).
+     */
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 2592000,
+    /*
      * An allowlist, so naming one path excludes every other. Uploaded media
      * come from Payload's file route; the wordmark is the one asset that ships
      * with the app rather than through the CMS, and the header and footer both
