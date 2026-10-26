@@ -1,8 +1,9 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ClosingCta, Crumb, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getContactDetails, getNews, getPageCopy } from "@/lib/content";
-import { emailByLabel } from "@/lib/routes";
+import { emailByLabel, mediaHref } from "@/lib/routes";
 import {
   isMediaKey,
   MEDIA_KEYS,
@@ -32,7 +33,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const copy = await getPageCopy();
   const section = copy.resourceSections?.find((s) => s.key === slug);
   return section
-    ? { title: `${section.title} — Edge Comm-Tech`, description: MEDIA_SHAPES[slug].intro }
+    ? buildMetadata({
+        title: section.title,
+        description: MEDIA_SHAPES[slug].intro,
+        path: mediaHref(slug),
+      })
     : {};
 }
 

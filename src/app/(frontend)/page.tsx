@@ -20,6 +20,7 @@ import {
 import { SECTOR_OPTIONS, SECTOR_SHORT, type SectorSlug } from "@/fields/sectors";
 import { projectHref, solutionHref } from "@/lib/routes";
 import { ProjectCover } from "./projects/project-images";
+import { buildMetadata, HOME_DESCRIPTION, HOME_TITLE } from "@/lib/seo/metadata";
 
 /*
  * The home page, in the fifteen-section order the content master sets out in
@@ -41,6 +42,12 @@ import { ProjectCover } from "./projects/project-images";
 
 const DARK = "#003D6B";
 const CYAN = "#10C7FF";
+
+export const metadata = buildMetadata({
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
+  path: "/",
+});
 
 export default async function HomePage() {
   const [settings, company, contact, copy, solutions, projects, clients, partners, posts] =

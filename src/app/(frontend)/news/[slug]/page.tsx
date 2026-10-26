@@ -1,3 +1,5 @@
+import { buildMetadata, documentSeo } from "@/lib/seo/metadata";
+import { newsHref } from "@/lib/routes";
 import { ClosingCta, Crumb, PageHead, Pending } from "@/components/ui";
 import { getNews, getNewsItem } from "@/lib/content";
 import { loadOr404 } from "@/lib/load";
@@ -20,7 +22,16 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const n = await getNewsItem(slug);
-  return n ? { title: `${n.title} — Edge Comm-Tech`, description: n.standfirst } : {};
+  if (!n) return {};
+  const seo = documentSeo(n, { title: n.title, description: n.standfirst });
+  return buildMetadata({
+    ...seo,
+    path: newsHref(slug),
+    type: "article",
+    modifiedTime: n.updatedAt,
+    // The page says "Draft" for an item held back; search has no business with it.
+    noindex: Boolean(n.heldForPublication),
+  });
 }
 
 export default async function NewsArticlePage({ params }: { params: Promise<{ slug: string }> }) {

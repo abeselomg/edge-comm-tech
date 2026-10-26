@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { rosterHolder } from "./executive-management/exec-parts";
 import { ClosingCta, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
@@ -31,11 +32,12 @@ import {
 
 const ACCENT = "#0888c5";
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "About Edge Comm-Tech — Technology Solutions Company in Ethiopia",
   description:
     "Learn how Edge Comm-Tech delivers enterprise networks, cloud, datacenters, cybersecurity, software, AI, power, and broadcast solutions across Ethiopia and beyond.",
-};
+  path: "/about",
+});
 
 export default async function AboutPage() {
   const [copy, company, settings, solutions, clients, contact] = await Promise.all([

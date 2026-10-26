@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, CtaRow, Mark, PageHead, SectionHead } from "@/components/ui";
 import { SECTOR_OPTIONS } from "@/fields/sectors";
@@ -19,11 +20,12 @@ import { bySector, clientCard, SECTOR_ACCENT } from "./client-parts";
  * deliberate.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Our Clients — Banks, Universities and Government Institutions | Edge Comm-Tech",
   description:
     "Edge Comm-Tech works with Ethiopian banks, universities, ministries and public institutions delivering infrastructure, security, power and digital learning technology.",
-};
+  path: "/clients",
+});
 
 export default async function ClientsPage() {
   const [copy, clients, company] = await Promise.all([getPageCopy(), getClients(), getCompany()]);

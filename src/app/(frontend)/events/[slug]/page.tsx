@@ -1,7 +1,8 @@
+import { buildMetadata, documentSeo } from "@/lib/seo/metadata";
 import { Crumb, PageHead, Pending } from "@/components/ui";
 import { getContactDetails, getEvent, getEvents, getForm } from "@/lib/content";
 import { loadOr404 } from "@/lib/load";
-import { emailByLabel } from "@/lib/routes";
+import { emailByLabel, eventHref } from "@/lib/routes";
 import {
   EventDetails,
   OtherEvents,
@@ -28,7 +29,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const e = await getEvent(slug);
-  return e ? { title: `${e.title} — Edge Comm-Tech`, description: e.intro } : {};
+  if (!e) return {};
+  const seo = documentSeo(e, { title: e.title, description: e.intro });
+  return buildMetadata({ ...seo, path: eventHref(slug) });
 }
 
 export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {

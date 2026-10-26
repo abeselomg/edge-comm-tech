@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, CtaRow, PageHead, SectionHead } from "@/components/ui";
 import { SECTOR_OPTIONS } from "@/fields/sectors";
@@ -19,11 +20,12 @@ import { FeaturedProject, heroProject, ProjectRow } from "./project-parts";
  * index says which ones are documented for publication.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Technology Projects and Case Studies — Edge Comm-Tech",
   description:
     "Delivered technology projects across Ethiopian banks, universities and government institutions — smart classrooms, computing infrastructure, backup, CCTV, datacenter and power solutions.",
-};
+  path: "/projects",
+});
 
 export default async function ProjectsPage() {
   const [projects, settings, solutions] = await Promise.all([

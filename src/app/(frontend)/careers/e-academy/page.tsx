@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { LiveForm } from "@/components/forms/LiveForm";
 import { ClosingCta, Crumb, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
@@ -21,11 +22,12 @@ import type { Solution } from "@/payload-types";
 const DARK = "#003D6B";
 const ACCENT = "#056a9a";
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Edge E-Academy — Technology Training and Knowledge Transfer",
   description:
     "Structured technology training from Edge Comm-Tech for individuals, institutions and corporate teams across AI, networks, cloud, datacenters, cybersecurity and power.",
-};
+  path: "/careers/e-academy",
+});
 
 export default async function EAcademyPage() {
   const [careers, tracks, contact, form] = await Promise.all([
