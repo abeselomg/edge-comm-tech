@@ -7,7 +7,7 @@
  * Server component, CSS-only: every animation is translate/rotate via the
  * eg-float / eg-drift keyframes in globals.css, and prefers-reduced-motion
  * leaves the layer still. Icons are drawn here as plain strokes in the page
- * accent at low opacity; two of them show on a phone so a 390px band stays
+ * accent at low opacity; one of them shows on a phone so a 390px band stays
  * calm.
  */
 
@@ -109,7 +109,7 @@ type Slot = {
 
 // Weighted to the right and the corners, where the band has no text.
 const SLOTS: Slot[] = [
-  { left: "78%", top: "14%", size: 72, dur: 11, delay: 0, tilt: -8, mobile: true },
+  { left: "78%", top: "14%", size: 72, dur: 11, delay: 0, tilt: -8 },
   { left: "90%", top: "52%", size: 56, dur: 13, delay: -4, tilt: 7 },
   { left: "64%", top: "66%", size: 64, dur: 15, delay: -7, tilt: -5 },
   { left: "52%", top: "8%", size: 44, dur: 12, delay: -2, tilt: 9 },
