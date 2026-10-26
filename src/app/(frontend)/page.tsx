@@ -233,7 +233,7 @@ export default async function HomePage() {
       </section>
 
       {/* 05 Technology priorities */}
-      <section className="eg-sec relative overflow-hidden text-paper" style={{ background: DARK }}>
+      <section className="eg-sec relative overflow-clip text-paper" style={{ background: DARK }}>
         <span className="eg-m-glow" aria-hidden="true" />
         <span
           className="eg-m-grid-drift pointer-events-none absolute inset-0 opacity-20"
@@ -524,7 +524,7 @@ export default async function HomePage() {
 
       {/* 13 Final CTA */}
       <section
-        className="eg-sec relative overflow-hidden border-t border-rule text-paper"
+        className="eg-sec relative overflow-clip border-t border-rule text-paper"
         style={{ background: DARK }}
       >
         <span
