@@ -480,6 +480,7 @@ html[lang="am"] h3 {
 /* Ethiopic has no letter case, and wide tracking pulls its syllables apart. */
 html[lang="am"] [data-am][lang="am"] {
   letter-spacing: normal;
+}
 
 /* ---- eg-load-: loading mark and navigation progress bar ---------------- */
 .eg-load-orbit {
