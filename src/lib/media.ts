@@ -27,3 +27,30 @@ export function approvedLogo(logo: unknown): MediaDoc | null {
   if (typeof doc.url !== "string" || !doc.url) return null;
   return doc as MediaDoc;
 }
+
+/*
+ * Project pictures go through the same gate as logos. Un-approving an image
+ * after it was attached must remove it from the public site, so the cover and
+ * every gallery row are read through here, never straight off the document.
+ */
+export const approvedImage = approvedLogo;
+
+export type GalleryPicture = { image: MediaDoc; caption: string | null };
+
+/** The project's cover, only while the media is approved. */
+export function projectCover(project: { coverImage?: unknown }): MediaDoc | null {
+  return approvedImage(project.coverImage);
+}
+
+/** The gallery rows whose media is approved, in editor order; a blank caption is null. */
+export function projectGallery(project: { gallery?: unknown }): GalleryPicture[] {
+  if (!Array.isArray(project.gallery)) return [];
+  const out: GalleryPicture[] = [];
+  for (const row of project.gallery as { image?: unknown; caption?: unknown }[]) {
+    const image = approvedImage(row?.image);
+    if (!image) continue;
+    const caption = typeof row.caption === "string" && row.caption.trim() ? row.caption.trim() : null;
+    out.push({ image, caption });
+  }
+  return out;
+}
