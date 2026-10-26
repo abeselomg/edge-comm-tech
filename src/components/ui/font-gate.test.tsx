@@ -3,37 +3,28 @@ import { describe, expect, it } from "vitest";
 import { FontGate } from "./font-gate";
 import {
   GATE_BOOT_SCRIPT,
-  GATE_FLAG,
   MAX_WAIT_MS,
   MIN_SHOW_MS,
   remainingHoldMs,
   remainingWaitMs,
-  shouldShowGate,
 } from "./font-gate-logic";
 
-describe("font gate logic", () => {
-  it("shows only until the session flag is set", () => {
-    expect(shouldShowGate(null)).toBe(true);
-    expect(shouldShowGate(undefined)).toBe(true);
-    expect(shouldShowGate("")).toBe(true);
-    expect(shouldShowGate("1")).toBe(false);
+describe("page-load gate logic", () => {
+  it("holds for the minimum from the start of the navigation, never beyond it", () => {
+    expect(remainingHoldMs(0)).toBe(MIN_SHOW_MS);
+    expect(remainingHoldMs(100)).toBe(MIN_SHOW_MS - 100);
+    expect(remainingHoldMs(MIN_SHOW_MS + 500)).toBe(0);
   });
 
-  it("holds for the minimum on a real load and not at all when cached", () => {
-    expect(remainingHoldMs(0, false)).toBe(MIN_SHOW_MS);
-    expect(remainingHoldMs(100, false)).toBe(MIN_SHOW_MS - 100);
-    expect(remainingHoldMs(MIN_SHOW_MS + 500, false)).toBe(0);
-    expect(remainingHoldMs(0, true)).toBe(0);
-  });
-
-  it("caps the wait", () => {
+  it("caps the wait, and the cap is long enough for a slow connection", () => {
     expect(remainingWaitMs(0)).toBe(MAX_WAIT_MS);
     expect(remainingWaitMs(MAX_WAIT_MS + 1)).toBe(0);
+    expect(MAX_WAIT_MS).toBeGreaterThanOrEqual(10000);
   });
 
-  it("boot script reads the same flag and hides the cover at once", () => {
-    expect(GATE_BOOT_SCRIPT).toContain(GATE_FLAG);
-    expect(GATE_BOOT_SCRIPT).toContain('"data-fonts","gone"');
+  it("boot script switches the cover on and nothing else", () => {
+    expect(GATE_BOOT_SCRIPT).toContain('"data-gate","on"');
+    expect(GATE_BOOT_SCRIPT).not.toContain("sessionStorage");
   });
 });
 

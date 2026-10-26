@@ -1,15 +1,19 @@
 "use client";
 
 /*
- * The font gate: a text-free, aria-hidden overlay in the very first HTML paint
- * that carries the brand loader until the two web fonts are in, so the page
- * never visibly changes typeface after the loader has gone. It is only ever a
- * cover: the page underneath is untouched and complete in the served HTML.
+ * The page-load gate: a text-free, aria-hidden overlay in the very first HTML
+ * paint that carries the brand loader until the page has finished loading (the
+ * window load event) and the two web fonts are in, so the visitor sees the
+ * loader for as long as the page is really loading and the typeface never
+ * changes after it has gone. It is only ever a cover: the page underneath is
+ * untouched and complete in the served HTML.
  *
- * Three independent ways out, none of which can trap a visitor:
- *   - this effect: both fonts loaded (after a short minimum), or MAX_WAIT_MS;
- *   - a CSS animation in globals.css that hides it after ~3.5s with no script;
- *   - the inline boot script, which skips it for later hard loads in a session.
+ * It is hidden in CSS unless the inline boot script switches it on, so a
+ * visitor without JavaScript never sees it. Ways out, none of which can trap a
+ * visitor:
+ *   - this effect: load + fonts done (after a short minimum), or MAX_WAIT_MS;
+ *   - a CSS animation in globals.css that hides it a little after that, with
+ *     no script, should the effect never run.
  * Client-side navigations never remount it (the layout persists).
  */
 import { useEffect } from "react";
@@ -17,7 +21,6 @@ import { EdgeLoader } from "./edge-loader";
 import {
   FADE_MS,
   GATE_BOOT_SCRIPT,
-  GATE_FLAG,
   GATE_FONTS,
   GATE_SAMPLE,
   remainingHoldMs,
@@ -28,32 +31,33 @@ export function FontGate() {
   useEffect(() => {
     const root = document.documentElement;
     if (root.getAttribute("data-fonts")) return;
-    const started = performance.now();
     const fonts = document.fonts;
-    const alreadyLoaded = !fonts || GATE_FONTS.every((f) => fonts.check(f, GATE_SAMPLE));
     let finished = false;
     let hideTimer: ReturnType<typeof setTimeout> | undefined;
+    let holdTimer: ReturnType<typeof setTimeout> | undefined;
 
     const finish = () => {
       if (finished) return;
       finished = true;
       root.setAttribute("data-fonts", "ready");
-      try {
-        sessionStorage.setItem(GATE_FLAG, "1");
-      } catch {}
       hideTimer = setTimeout(() => root.setAttribute("data-fonts", "gone"), FADE_MS + 50);
     };
 
-    const cap = setTimeout(finish, remainingWaitMs(0));
-    const loaded = fonts
+    const cap = setTimeout(finish, remainingWaitMs(performance.now()));
+    const pageLoaded = new Promise<void>((resolve) => {
+      if (document.readyState === "complete") resolve();
+      else window.addEventListener("load", () => resolve(), { once: true });
+    });
+    const fontsLoaded = fonts
       ? Promise.all(GATE_FONTS.map((f) => fonts.load(f, GATE_SAMPLE))).then(() => fonts.ready)
       : Promise.resolve();
-    loaded.catch(() => undefined).then(() => {
-      setTimeout(finish, remainingHoldMs(performance.now() - started, alreadyLoaded));
+    Promise.all([pageLoaded, fontsLoaded.catch(() => undefined)]).then(() => {
+      holdTimer = setTimeout(finish, remainingHoldMs(performance.now()));
     });
 
     return () => {
       clearTimeout(cap);
+      clearTimeout(holdTimer);
       clearTimeout(hideTimer);
     };
   }, []);
