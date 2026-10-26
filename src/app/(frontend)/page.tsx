@@ -18,9 +18,10 @@ import { projectHref, solutionHref } from "@/lib/routes";
 
 /*
  * The home page, in the fifteen-section order the content master sets out in
- * Module 01: hero, impact, who we are, solutions, technology priorities,
- * industries, projects, why us, delivery, partners, clients, success story,
- * insights, careers, final call to action.
+ * Module 01, as changed at the owner's request on 2026-10-26: hero, impact,
+ * who we are, solutions, technology priorities, partners, projects, why us,
+ * clients, success story, insights, careers, final call to action. The
+ * industry-expertise and how-we-deliver sections are gone and partners moved up.
  *
  * Ported from design-src/highland/pages/home.mjs. Every fact comes from the
  * CMS; the only things written in here are the section headings and standing
@@ -113,12 +114,6 @@ export default async function HomePage() {
             >
               {hero?.intro}
             </p>
-            <p
-              className="eg-rise mt-4 max-w-xl leading-relaxed text-ink/65"
-              style={{ ["--d" as string]: ".2s" }}
-            >
-              {hero?.introSecondary}
-            </p>
             <div
               className="eg-rise mt-10 flex flex-wrap items-center gap-3"
               style={{ ["--d" as string]: ".28s" }}
@@ -130,14 +125,8 @@ export default async function HomePage() {
                 Explore our solutions
               </Link>
               <Link
-                href="/contact"
-                className="rounded-full border border-gold px-6 py-3 text-sm font-semibold text-gold transition hover:-translate-y-0.5"
-              >
-                Talk to our experts
-              </Link>
-              <Link
                 href="/projects"
-                className="text-sm text-ink/70 underline decoration-rule underline-offset-4 transition hover:text-gold"
+                className="rounded-full border border-gold px-6 py-3 text-sm font-semibold text-gold transition hover:-translate-y-0.5"
               >
                 View our projects
               </Link>
@@ -332,24 +321,40 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 06 Industries */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
-          Industry expertise
-        </p>
-        <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
-          Solutions built around sector-specific priorities
-        </h2>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {(company.industries ?? []).map((s) => (
-            <article
-              key={s.title}
-              className="eg-inview rounded-2xl border border-rule p-6 transition hover:border-gold"
+      {/* 06 Partners */}
+      <section id="partners" className="border-t border-rule bg-paper-2/40">
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
+                Global technology ecosystem
+              </p>
+              <h2 className="mt-3 max-w-2xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
+                World-class technologies, locally delivered
+              </h2>
+              <p className="mt-5 max-w-2xl text-ink/75">
+                Technologies are selected according to suitability, interoperability, scalability,
+                security, lifecycle value, and long-term support.
+              </p>
+            </div>
+            <Link
+              href="/partners"
+              className="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold"
             >
-              <h3 className="font-display text-xl">{s.title}</h3>
-              <p className="mt-2.5 text-sm leading-relaxed text-ink/70">{s.body}</p>
-            </article>
-          ))}
+              View our technology partners
+            </Link>
+          </div>
+          {partners.some((p) => p.featured) ? (
+            <ul className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-3 lg:grid-cols-6">
+              {partners
+                .filter((p) => p.featured)
+                .map((p) => (
+                  <li key={p.name} className="grid h-24 place-items-center bg-paper-2 px-4">
+                    <Mark item={p} h="h-12" />
+                  </li>
+                ))}
+            </ul>
+          ) : null}
         </div>
       </section>
 
@@ -418,65 +423,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 09 Delivery approach */}
-      <section className="border-t border-rule">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-gold">How we deliver</p>
-          <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
-            From business challenge to operational value
-          </h2>
-          <ol className="mt-12 grid gap-px overflow-hidden rounded-2xl bg-rule md:grid-cols-3 lg:grid-cols-5">
-            {(company.delivery ?? []).map((s, i) => (
-              <li key={s.title} className="eg-inview bg-paper-2 p-6">
-                <span className="font-display text-3xl text-gold/30">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-2 font-display text-lg">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink/70">{s.body}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* 10 Partners */}
-      <section id="partners" className="border-t border-rule bg-paper-2/40">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
-                Global technology ecosystem
-              </p>
-              <h2 className="mt-3 max-w-2xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
-                World-class technologies, locally delivered
-              </h2>
-              <p className="mt-5 max-w-2xl text-ink/75">
-                Technologies are selected according to suitability, interoperability, scalability,
-                security, lifecycle value, and long-term support.
-              </p>
-            </div>
-            <Link
-              href="/partners"
-              className="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold"
-            >
-              View our technology partners
-            </Link>
-          </div>
-          {partners.some((p) => p.featured) ? (
-            <ul className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-3 lg:grid-cols-6">
-              {partners
-                .filter((p) => p.featured)
-                .map((p) => (
-                  <li key={p.name} className="grid h-24 place-items-center bg-paper-2 px-4">
-                    <Mark item={p} h="h-12" />
-                  </li>
-                ))}
-            </ul>
-          ) : null}
-        </div>
-      </section>
-
-      {/* 11 Clients */}
+      {/* 09 Clients */}
       <section id="clients" className="mx-auto max-w-6xl px-6 py-20">
         <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
           Trusted across critical sectors
@@ -495,9 +442,12 @@ export default async function HomePage() {
                 <p className="font-mono text-[10px] uppercase tracking-widest text-steel">
                   {label}
                 </p>
-                <ul className="mt-3 grid gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-2 lg:grid-cols-4">
+                <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   {group.map((c) => (
-                    <li key={c.name} className="grid h-20 place-items-center bg-paper-2 px-4">
+                    <li
+                      key={c.name}
+                      className="grid h-20 place-items-center rounded-2xl border border-rule bg-paper-2 px-4"
+                    >
                       <Mark item={c} />
                     </li>
                   ))}
@@ -514,10 +464,10 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      {/* 12 Success story */}
+      {/* 10 Success story */}
       {story ? <SuccessStory story={story} /> : null}
 
-      {/* 13 Insights */}
+      {/* 11 Insights */}
       <section className="mx-auto max-w-6xl px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -580,7 +530,7 @@ export default async function HomePage() {
         ) : null}
       </section>
 
-      {/* 14 Careers */}
+      {/* 12 Careers */}
       <section className="border-t border-rule">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-8 px-6 py-16">
           <div className="max-w-2xl">
@@ -610,7 +560,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 15 Final CTA */}
+      {/* 13 Final CTA */}
       <section
         className="relative overflow-hidden border-t border-rule text-paper"
         style={{ background: DARK }}
