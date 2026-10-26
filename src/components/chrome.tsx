@@ -44,6 +44,7 @@ export async function SiteHeader() {
             width={391}
             height={176}
             className="h-14 w-auto"
+            sizes="124px"
             priority
           />
         </Link>
