@@ -1,14 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { RING_RADII, ringLayout } from "./rings";
+import { CARD, RING_RADII, ringLayout } from "./rings";
 
 type Item = { id: number; logo: boolean };
 const make = (n: number): Item[] => Array.from({ length: n }, (_, i) => ({ id: i, logo: i % 3 === 0 }));
 const byRing = <T>(cards: ReturnType<typeof ringLayout<T>>, ring: number) => cards.filter((c) => c.ring === ring);
 const counts = (n: number) => [0, 1, 2].map((r) => byRing(ringLayout(make(n)), r).length);
 
-// Smallest centre-to-centre distance (in % of the square) we accept on a ring.
-// Ring chords at 32 items are about 19, so a card ~6% wide has a wide margin.
+// Smallest centre-to-centre distance (in % of the square) we accept on a ring
+// at 32 items, where the chords are about 19 (18.8-19.1). The bound is for
+// n = 32 only: at 48 items the inner ring's chord falls to about 12.4.
 const MIN_CHORD = 18;
+
+/*
+ * Two non-periodic logo patterns, roughly 40% logos like the real list (13 of
+ * 32). A pattern of "every third item" lines up with a three-ring dealing and
+ * hides exactly the failure this test exists to catch.
+ */
+const hashed = (i: number) => (Math.imul(i + 1, 2654435761) >>> 0) % 100 < 40;
+const FIXED = "1001100010110000101001100100011100010001011000101".split("").map((c) => c === "1");
+const PATTERNS: [string, (i: number) => boolean][] = [
+  ["hashed", hashed],
+  ["fixed", (i) => FIXED[i]],
+];
 
 describe("ringLayout", () => {
   it("returns nothing for no items", () => {
@@ -67,12 +80,59 @@ describe("ringLayout", () => {
     }
   });
 
-  it("mixes logo and name-only cards on every ring", () => {
-    const cards = ringLayout(make(32));
-    for (const r of [0, 1, 2]) {
-      const kinds = new Set(byRing(cards, r).map((c) => c.item.logo));
-      expect(kinds.size).toBe(2);
+  it("mixes logo and name-only cards on every ring of four or more, for 20..48 items", () => {
+    for (const [label, logo] of PATTERNS) {
+      for (let n = 20; n <= 48; n++) {
+        const items = Array.from({ length: n }, (_, i) => ({ id: i, logo: logo(i) }));
+        const cards = ringLayout(items, { kind: (i) => i.logo });
+        expect(cards).toHaveLength(n);
+        for (const r of [0, 1, 2]) {
+          const ring = byRing(cards, r);
+          if (ring.length < 4) continue;
+          const kinds = new Set(ring.map((c) => c.item.logo));
+          expect(kinds.size, `${label} n=${n} ring ${r}`).toBe(2);
+        }
+      }
     }
+  });
+
+  it("keeps ring counts, dealt order and each item once when dealing by kind", () => {
+    for (let n = 1; n <= 48; n++) {
+      const items = Array.from({ length: n }, (_, i) => ({ id: i, logo: hashed(i) }));
+      const cards = ringLayout(items, { kind: (i) => i.logo });
+      expect([0, 1, 2].map((r) => byRing(cards, r).length)).toEqual(counts(n));
+      expect(cards.map((c) => c.item.id).sort((a, b) => a - b)).toEqual(items.map((i) => i.id));
+      for (const r of [0, 1, 2]) {
+        const ids = byRing(cards, r).map((c) => c.item.id);
+        expect(ids).toEqual([...ids].sort((a, b) => a - b));
+      }
+    }
+  });
+
+  it("deals one kind only when every item is that kind", () => {
+    const cards = ringLayout(make(32).map((i) => ({ ...i, logo: false })), { kind: (i) => i.logo });
+    expect([0, 1, 2].map((r) => byRing(cards, r).length)).toEqual([7, 11, 14]);
+  });
+
+  /*
+   * Cards stay upright while the rings turn at different speeds, so any two
+   * cards -- same ring or neighbouring rings -- eventually meet at every
+   * relative bearing. Two upright boxes never overlap at centre distance d in
+   * any direction only if the box's diagonal is at most d.
+   */
+  it("sizes a card so its diagonal fits the closest ring gap and the closest chord", () => {
+    const diagonal = Math.hypot(CARD.w, CARD.h);
+    const gaps = RING_RADII.slice(1).map((r, i) => r - RING_RADII[i]);
+    expect(diagonal).toBeLessThanOrEqual(Math.min(...gaps));
+    for (let n = 3; n <= 48; n++) {
+      const cards = ringLayout(make(n));
+      for (const r of [0, 1, 2]) {
+        const k = byRing(cards, r).length;
+        if (k >= 2) expect(diagonal).toBeLessThanOrEqual(2 * RING_RADII[r] * Math.sin(Math.PI / k));
+      }
+    }
+    // And the outer ring's cards stay inside the square.
+    expect(RING_RADII[2] + diagonal / 2).toBeLessThan(50);
   });
 
   it("spaces cards evenly: chord is 2·r·sin(π/k) within 1% and at least the minimum", () => {

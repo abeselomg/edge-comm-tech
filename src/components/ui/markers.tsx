@@ -68,16 +68,27 @@ export type MarkItem = { name: string; logo?: unknown };
 export function Mark({
   item,
   h = "h-10",
+  imgClass,
+  nameClass,
+  lazy,
 }: {
   item: MarkItem;
   h?: string;
   /** Kept for call-site parity with Highland's `box`; the frame is the parent's. */
   box?: string;
+  /** Replace the logo's classes, for a frame that sizes the mark itself. */
+  imgClass?: string;
+  /** Replace the name's classes, likewise. */
+  nameClass?: string;
+  /** Lazy-load the logo; also stops React preloading it in the page head. */
+  lazy?: boolean;
 }) {
   const logo = approvedLogo(item.logo);
   if (!logo) {
     return (
-      <span className="px-2 text-center font-display text-[13px] leading-tight text-ink/70">
+      <span
+        className={nameClass ?? "px-2 text-center font-display text-[13px] leading-tight text-ink/70"}
+      >
         {item.name}
       </span>
     );
@@ -96,8 +107,9 @@ export function Mark({
       alt={item.name}
       width={logo.width ?? 240}
       height={logo.height ?? 160}
-      className={`${h} w-auto max-w-full object-contain`}
+      className={imgClass ?? `${h} w-auto max-w-full object-contain`}
       decoding="async"
+      loading={lazy ? "lazy" : undefined}
     />
   );
 }

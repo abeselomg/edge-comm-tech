@@ -1,14 +1,16 @@
 import { ClosingCta, CtaRow, PageHead, SectionHead } from "@/components/ui";
 import { getPageCopy, getPartnerCategories, getPartners } from "@/lib/content";
-import { brandCard, byCategory, filterCss, orbit, RING } from "./partner-parts";
+import { PartnerRings } from "./PartnerRings";
+import { brandCard, byCategory, filterCss } from "./partner-parts";
 
 /*
  * Partner network.
  *
- * The hub-and-spoke device carries the ten capability categories rather than
- * the brands: the approved list runs to thirty-two names, and thirty-two
- * labels on one ring is unreadable. The ring is also the filter control -- each
- * node is the label for its radio -- so the diagram does real work.
+ * The diagram carries the partners themselves, on three slowly turning rings:
+ * an approved logo where one exists, the brand's name in the same card where
+ * it does not. It is decorative and takes no part in filtering -- the ten
+ * capability groups are chosen from the filter bar above the brand grid, and
+ * the grid is the complete, accessible list. See PartnerRings.tsx.
  *
  * All language about certification, authorisation and partner tier is absent.
  * The content master forbids publishing partnership type, authorisation level
@@ -55,8 +57,8 @@ export default async function PartnersPage() {
   const groups = byCategory(partners, categories);
   const keys = Object.keys(groups);
   const labelOf = Object.fromEntries(categories.map((c) => [c.key, c.label]));
+  // The brand cards' short group label.
   const ringOf = Object.fromEntries(categories.map((c) => [c.key, c.ringLabel]));
-  const nodes = orbit(keys);
 
   return (
     <main>
@@ -84,101 +86,37 @@ export default async function PartnersPage() {
 
         <div className="wrap">
           <section className="mx-auto max-w-6xl px-6 py-16">
-            <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr]">
-              <div>
-                <SectionHead
-                  eyebrow="How the network is organised"
-                  title={`${keys.length === 10 ? "Ten" : keys.length} capability groups, one accountable integrator`}
-                />
-                <p className="lede mt-5 max-w-xl text-sm leading-relaxed text-ink/70">
-                  <span className="l-all">
-                    Select a capability group — on the ring or in the list below — to see the
-                    manufacturers and distributors Edge Comm-Tech works with in that area.
-                  </span>
-                  {categories
-                    .filter((c) => keys.includes(c.key))
-                    .map((c) => (
-                      <span key={c.key} className={`l-${c.key}`}>
-                        {c.description}
-                      </span>
-                    ))}
-                </p>
-                <p className="mt-6">
-                  <label
-                    htmlFor="f-all"
-                    className="inline-block cursor-pointer rounded-full border border-rule px-4 py-2 font-mono text-[10px] uppercase tracking-widest transition hover:border-gold hover:text-gold"
-                  >
-                    {`Show all ${partners.length}`}
-                  </label>
-                </p>
-              </div>
-
-              {/* Hidden below md: ten 8.5rem nodes on a ring that narrow is unreadable,
-                  and the filter bar below does the same job on a phone. */}
-              <div className="relative mx-auto hidden aspect-square w-full max-w-[34rem] md:block">
-                <svg viewBox="0 0 820 820" className="absolute inset-0 h-full w-full" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="spoke" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#0888c5" stopOpacity=".55" />
-                      <stop offset="100%" stopColor="#0888c5" stopOpacity=".12" />
-                    </linearGradient>
-                  </defs>
-                  <circle
-                    cx={RING.cx}
-                    cy={RING.cy}
-                    r={RING.r}
-                    fill="none"
-                    stroke="#0888c5"
-                    strokeOpacity=".12"
-                    strokeDasharray="3 7"
-                  />
-                  {nodes.map((n, i) => (
-                    <line
-                      key={n.k}
-                      className={`spoke eg-draw s-${n.k}`}
-                      style={{ "--len": RING.r, "--d": `${(i * 0.08).toFixed(2)}s` } as React.CSSProperties}
-                      x1={RING.cx}
-                      y1={RING.cy}
-                      x2={n.x.toFixed(1)}
-                      y2={n.y.toFixed(1)}
-                      stroke="url(#spoke)"
-                      strokeWidth="1.5"
-                    />
-                  ))}
-                </svg>
-                <div className="eg-breathe absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <span className="grid h-28 w-28 place-items-center rounded-full border border-gold/30 bg-paper text-center shadow-[0_18px_44px_-24px_rgb(8_136_197/0.8)]">
-                    <span className="font-display text-[13px] leading-tight">
-                      Edge
-                      <br />
-                      Comm-Tech
+            <div className="mx-auto max-w-3xl text-center">
+              <SectionHead
+                eyebrow="How the network is organised"
+                title={`${keys.length === 10 ? "Ten" : keys.length} capability groups, one accountable integrator`}
+              />
+              <p className="lede mx-auto mt-5 max-w-xl text-sm leading-relaxed text-ink/70">
+                <span className="l-all">
+                  {"Select a capability group in the list below to see the manufacturers and distributors Edge Comm-Tech works with in that area."}
+                </span>
+                {categories
+                  .filter((c) => keys.includes(c.key))
+                  .map((c) => (
+                    <span key={c.key} className={`l-${c.key}`}>
+                      {c.description}
                     </span>
-                  </span>
-                </div>
-                {nodes.map((n, i) => (
-                  <div
-                    key={n.k}
-                    className={`node c-${n.k} eg-pop absolute -translate-x-1/2 -translate-y-1/2`}
-                    style={
-                      {
-                        "--d": `${(0.45 + i * 0.06).toFixed(2)}s`,
-                        left: `${((n.x / 820) * 100).toFixed(2)}%`,
-                        top: `${((n.y / 820) * 100).toFixed(2)}%`,
-                      } as React.CSSProperties
-                    }
-                  >
-                    <label
-                      htmlFor={`f-${n.k}`}
-                      className="pill flex w-[8.5rem] cursor-pointer flex-col items-center gap-0.5 rounded-2xl border border-rule bg-paper-2 px-3 py-2.5 text-center shadow-[0_8px_24px_-16px_rgb(8_136_197/0.7)] transition hover:-translate-y-0.5 hover:border-gold"
-                    >
-                      <span className="font-display text-[13px] leading-tight">{ringOf[n.k]}</span>
-                      <span className="font-mono text-[9px] uppercase tracking-widest text-steel">
-                        {`${groups[n.k].length} brands`}
-                      </span>
-                    </label>
-                  </div>
-                ))}
-              </div>
+                  ))}
+              </p>
+              <p className="mt-6">
+                <label
+                  htmlFor="f-all"
+                  className="inline-block cursor-pointer rounded-full border border-rule px-4 py-2 font-mono text-[10px] uppercase tracking-widest transition hover:border-gold hover:text-gold"
+                >
+                  {`Show all ${partners.length}`}
+                </label>
+              </p>
+            </div>
+
+            {/* Hidden below md: the filter bar and brand grid do the job on a
+                phone. Up to 48 partners are drawn; the grid lists them all. */}
+            <div className="mt-12">
+              <PartnerRings partners={partners} />
             </div>
           </section>
 

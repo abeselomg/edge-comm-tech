@@ -81,6 +81,27 @@ describe("Mark shows approved artwork or the name in its place", () => {
     expect(html(<Mark item={{ name: "Gadaa Bank", logo: 7 }} />)).not.toContain("<img");
   });
 
+  it("keeps its default classes when no override is given", () => {
+    const logo = { id: 1, url: "/m/g.png", approved: true };
+    expect(html(<Mark item={{ name: "G", logo }} h="h-9" />)).toContain(
+      'class="h-9 w-auto max-w-full object-contain"',
+    );
+    expect(html(<Mark item={{ name: "G", logo: null }} />)).toContain(
+      'class="px-2 text-center font-display text-[13px] leading-tight text-ink/70"',
+    );
+  });
+
+  it("lets the frame size the logo and the name, without bypassing the gate", () => {
+    const logo = { id: 1, url: "/m/g.png", approved: true };
+    const img = html(<Mark item={{ name: "G", logo }} imgClass="small" nameClass="tiny" />);
+    expect(img).toContain('class="small"');
+    const name = html(
+      <Mark item={{ name: "G", logo: { ...logo, approved: false } }} imgClass="small" nameClass="tiny" />,
+    );
+    expect(name).not.toContain("<img");
+    expect(name).toContain('class="tiny"');
+  });
+
   it("escapes a name that contains markup", () => {
     // React escapes by default; Highland needed esc() and this asserts the
     // port did not reintroduce dangerouslySetInnerHTML to replace it.
