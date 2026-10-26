@@ -3,6 +3,8 @@ import { Atkinson_Hyperlegible, Fragment_Mono, Geologica } from "next/font/googl
 import { SiteFooter, SiteHeader } from "@/components/chrome";
 import { DraftBanner } from "@/components/draft-banner";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
+
+import { FontGate } from "@/components/ui/font-gate";
 import { NavProgress } from "@/components/ui/nav-progress";
 import "./globals.css";
 
@@ -10,7 +12,7 @@ const geologica = Geologica({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
   variable: "--font-geologica",
-  display: "swap",
+  display: "block",
 });
 
 const atkinson = Atkinson_Hyperlegible({
@@ -18,7 +20,7 @@ const atkinson = Atkinson_Hyperlegible({
   weight: ["400", "700"],
   style: ["normal", "italic"],
   variable: "--font-atkinson",
-  display: "swap",
+  display: "block",
 });
 
 const fragmentMono = Fragment_Mono({
@@ -44,8 +46,9 @@ export const metadata: Metadata = {
 
 export default function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geologica.variable} ${atkinson.variable} ${fragmentMono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${geologica.variable} ${atkinson.variable} ${fragmentMono.variable}`}>
       <body className="min-h-screen">
+        <FontGate />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-gold focus:px-4 focus:py-2 focus:text-white"
