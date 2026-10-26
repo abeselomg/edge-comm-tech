@@ -77,8 +77,7 @@ export function HeroCard({
 }) {
   return (
     <aside
-      className="eg-pop relative z-10 self-end rounded-3xl bg-paper-2 p-6 shadow-[0_20px_50px_-24px_rgb(8_136_197_/_0.45)]"
-      style={{ ["--d" as string]: ".34s" }}
+      className="eg-hero-up eg-hero-up-card relative z-10 self-end rounded-3xl bg-paper-2 p-6 shadow-[0_20px_50px_-24px_rgb(8_136_197_/_0.45)]"
     >
       <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gold">
         <Tr>Headquarters</Tr>

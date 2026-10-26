@@ -78,10 +78,7 @@ export default async function HomePage() {
             <p className="eg-hero-focus mt-8 max-w-xl text-lg leading-relaxed text-ink/75">
               <Tr>{hero?.intro}</Tr>
             </p>
-            <div
-              className="eg-rise mt-10 flex flex-wrap items-center gap-3"
-              style={{ ["--d" as string]: ".28s" }}
-            >
+            <div className="eg-hero-up mt-10 flex flex-wrap items-center gap-3">
               <Link
                 href="/solutions"
                 className="eg-hero-cta rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
