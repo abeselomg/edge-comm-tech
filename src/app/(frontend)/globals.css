@@ -793,3 +793,103 @@ a:hover .eg-pimg-fallback svg {
     transform: none;
   }
 }
+
+/* ---- Solution page hero visual (eg-sv-): isometric art, float and tilt ---- */
+
+.eg-sv-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  perspective: 1100px;
+  --eg-sv-rx: 0deg;
+  --eg-sv-ry: 0deg;
+}
+
+.eg-sv-tilt {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--eg-sv-rx)) rotateY(var(--eg-sv-ry));
+  transition: transform .35s cubic-bezier(.2, .7, .3, 1);
+}
+
+.eg-sv-float {
+  width: 100%;
+  height: 100%;
+  padding: 3%;
+  animation: eg-sv-bob 7s ease-in-out infinite;
+}
+
+.eg-sv-svg,
+.eg-sv-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  overflow: visible;
+}
+
+.eg-sv-img {
+  filter: drop-shadow(0 22px 28px rgb(4 30 52 / .45));
+}
+
+.eg-sv-orb {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(255 255 255 / .28), transparent 68%);
+  animation: eg-sv-breathe 9s ease-in-out infinite;
+}
+
+.eg-sv-orb-a { width: 55%; height: 66%; top: -18%; right: -12%; }
+.eg-sv-orb-b { width: 42%; height: 50%; bottom: -16%; left: -10%; animation-delay: -4s; }
+
+.eg-sv-l1,
+.eg-sv-l2 {
+  animation: eg-sv-bob-l1 6s ease-in-out infinite;
+}
+
+.eg-sv-l2 {
+  animation-name: eg-sv-bob-l2;
+  animation-duration: 5.2s;
+  animation-delay: -1.7s;
+}
+
+.eg-sv-pulse {
+  animation: eg-sv-pulse 3.4s ease-in-out infinite;
+}
+
+.eg-sv-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: eg-sv-shadow 7s ease-in-out infinite;
+}
+
+.eg-sv-spin {
+  animation: eg-sv-spin 3.2s linear infinite;
+}
+
+@keyframes eg-sv-bob { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-2.2%) } }
+@keyframes eg-sv-bob-l1 { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
+@keyframes eg-sv-bob-l2 { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-12px) } }
+@keyframes eg-sv-pulse { 0%, 100% { opacity: .35 } 50% { opacity: 1 } }
+@keyframes eg-sv-breathe { 0%, 100% { opacity: .55; transform: scale(1) } 50% { opacity: 1; transform: scale(1.06) } }
+@keyframes eg-sv-shadow { 0%, 100% { transform: scale(1); opacity: .38 } 50% { transform: scale(.88); opacity: .24 } }
+@keyframes eg-sv-spin { to { transform: rotate(360deg) } }
+
+.eg-sv-spin { transform-box: fill-box; transform-origin: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .eg-sv-float, .eg-sv-orb, .eg-sv-l1, .eg-sv-l2, .eg-sv-pulse, .eg-sv-shadow, .eg-sv-spin {
+    animation: none;
+  }
+
+  .eg-sv-pulse {
+    opacity: .8;
+  }
+
+  .eg-sv-tilt {
+    transform: none;
+    transition: none;
+  }
+}

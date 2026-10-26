@@ -16,7 +16,11 @@ const nextConfig: NextConfig = {
      * render it through next/image, so it needs its own entry. Without it the
      * page throws "Invalid src prop" rather than falling back to the raw file.
      */
-    localPatterns: [{ pathname: "/api/media/file/**" }, { pathname: "/edge-logo.png" }],
+    localPatterns: [
+      { pathname: "/api/media/file/**" },
+      { pathname: "/edge-logo.png" },
+      { pathname: "/solutions/art/**" },
+    ],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
