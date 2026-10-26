@@ -69,6 +69,7 @@ export default async function PartnersPage() {
         intro={hero?.intro}
         accent="#0888c5"
         variant="wash"
+        ambience="general"
         ctas={
           <CtaRow
             primary={{ href: "#network", label: "Browse the network" }}

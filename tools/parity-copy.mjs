@@ -177,18 +177,65 @@ const PAGE_WAIVERS = {
   },
 };
 
-/** Remove the <div> whose opening tag is the first match of `open`, through its matching close. */
-function stripDiv(html, open) {
+/** Cut the element whose opening tag is the first match of `open`, through its matching close. */
+function cutElement(html, open, name) {
   const start = typeof open === "string" ? html.indexOf(open) : html.search(open);
-  if (start < 0) return html;
-  const tag = /<div\b|<\/div>/gi;
+  if (start < 0) return { rest: html, cut: "" };
+  const tag = new RegExp(`<${name}\\b|</${name}>`, "gi");
   tag.lastIndex = start;
   let depth = 0;
   for (let m = tag.exec(html); m; m = tag.exec(html)) {
-    depth += m[0].toLowerCase() === "</div>" ? -1 : 1;
-    if (depth === 0) return `${html.slice(0, start)} ${html.slice(m.index + m[0].length)}`;
+    depth += m[0].toLowerCase() === `</${name}>` ? -1 : 1;
+    if (depth === 0) {
+      const end = m.index + m[0].length;
+      return { rest: `${html.slice(0, start)} ${html.slice(end)}`, cut: html.slice(start, end), start };
+    }
   }
-  throw new Error("parity waiver: the waived region has no matching </div>");
+  throw new Error(`parity waiver: the waived region has no matching </${name}>`);
+}
+
+/** Remove the <div> whose opening tag is the first match of `open`, through its matching close. */
+function stripDiv(html, open) {
+  return cutElement(html, open, "div").rest;
+}
+
+/*
+ * The home page, restructured at the owner's request on 2026-10-26. Applied to
+ * the Highland side only: the port simply no longer renders these, so if any of
+ * them reappears on the port it is reported as copy or a heading Highland has
+ * in a different place, and nothing is waived on that side.
+ *
+ *   - the hero's secondary paragraph ("From enterprise networks ...")
+ *   - the hero's "Talk to our experts" button (the hero has two buttons now)
+ *   - the Industry expertise section (06)
+ *   - the How we deliver section (09)
+ *   - the Global technology ecosystem section moves up to sit directly after
+ *     the technology-priorities section, before Projects. Copy is compared as
+ *     a set, but headings are compared in order, so Highland's copy of the
+ *     section is moved the same way rather than the order check being relaxed.
+ *
+ * The blue block that filled empty cells in the clients grid carries no copy
+ * (it was the grid's background showing through), so it needs no waiver.
+ * Each target is found by its exact opening text and nothing else is touched.
+ */
+const HOME_SECONDARY =
+  /<p class="eg-rise mt-4 max-w-xl leading-relaxed text-ink\/65"[^>]*>\s*From enterprise networks and AI-ready infrastructure[\s\S]*?<\/p>/;
+const HOME_TALK_BUTTON = /<a href="contact\.html" class="rounded-full border border-gold[^>]*>Talk to our experts<\/a>/;
+const HOME_INDUSTRIES = /<section class="mx-auto max-w-6xl px-6 py-20">\s*<p[^>]*>Industry expertise<\/p>/;
+const HOME_DELIVERY = /<section class="border-t border-rule">\s*<div[^>]*>\s*<p[^>]*>How we deliver<\/p>/;
+const HOME_PARTNERS = '<section id="partners"';
+const HOME_PROJECTS = /<section class="border-y border-rule bg-paper-2\/40">\s*<div[^>]*>\s*<div[^>]*>\s*<div>\s*<p[^>]*>Proven delivery<\/p>/;
+
+function restructureHighlandHome(html) {
+  let out = html.replace(HOME_SECONDARY, " ").replace(HOME_TALK_BUTTON, " ");
+  out = cutElement(out, HOME_INDUSTRIES, "section").rest;
+  out = cutElement(out, HOME_DELIVERY, "section").rest;
+  const partners = cutElement(out, HOME_PARTNERS, "section");
+  if (!partners.cut) return out;
+  out = partners.rest;
+  const at = out.search(HOME_PROJECTS);
+  if (at < 0) return out;
+  return `${out.slice(0, at)}${partners.cut}${out.slice(at)}`;
 }
 
 /**
@@ -197,6 +244,7 @@ function stripDiv(html, open) {
  * @param {"highland" | "port"} side
  */
 export function applyPageWaivers(html, page, side) {
+  if (page === "index" && side === "highland") return restructureHighlandHome(html);
   const w = PAGE_WAIVERS[page]?.[side];
   if (!w) return html;
   let out = stripDiv(html, w.region);

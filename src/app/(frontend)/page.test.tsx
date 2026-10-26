@@ -1,9 +1,43 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { PROJECTS } from "../../../design-src/highland/content.mjs";
 import { featuredProjects, impactCard, SuccessStory } from "./home-parts";
+import HomePage from "./page";
 
-const html = (el: React.ReactElement) => renderToStaticMarkup(el);
+vi.mock("@/lib/content", () => ({
+  getSiteSettings: async () => ({ impact: [], impactSupport: null }),
+  getCompany: async () => ({
+    legalName: "Edge Communication Technologies",
+    shortName: "Edge Comm-Tech",
+    mission: "M",
+    missionBody: "MB",
+    vision: "V",
+    positioning: "P",
+    differentiators: [],
+    // Still in the CMS, no longer on the page.
+    industries: [{ title: "Industry marker title", body: "Industry marker body" }],
+    delivery: [{ title: "Delivery marker title", body: "Delivery marker body" }],
+  }),
+  getContactDetails: async () => ({ office: [] }),
+  getPageCopy: async () => ({
+    homeHero: {
+      eyebrow: "E",
+      title: "Hero title",
+      intro: "Hero intro",
+      introSecondary: "Secondary marker paragraph",
+    },
+    homePriorities: [],
+  }),
+  getSolutions: async () => [],
+  getProjects: async () => [],
+  getClients: async () => [
+    { name: "Bahir Dar University", sector: "education", logo: null },
+  ],
+  getPartners: async () => [{ name: "HPE", featured: true, logo: null }],
+  getPosts: async () => [],
+}));
+
+const html =(el: React.ReactElement) => renderToStaticMarkup(el);
 
 /*
  * The CMS shape, built from the approved content the way the seed builds it:
@@ -85,5 +119,64 @@ describe("SuccessStory", () => {
   });
   it("renders the client's name when populated", () => {
     expect(html(<SuccessStory story={story({ name: "Bahir Dar University" })} />)).toContain("Bahir Dar University");
+  });
+});
+
+describe("HomePage structure (owner's changes, 2026-10-26)", () => {
+  const render = async () => html(await HomePage());
+
+  it("has no secondary hero paragraph", async () => {
+    const out = await render();
+    expect(out).toContain("Hero intro");
+    expect(out).not.toContain("Secondary marker paragraph");
+  });
+
+  it("has exactly two hero buttons: solutions (filled) and projects (outlined)", async () => {
+    const out = await render();
+    const start = out.indexOf("mt-10 flex flex-wrap items-center gap-3");
+    const hero = out.slice(start, out.indexOf("</div>", start));
+    const links = [...hero.matchAll(/<a ([^>]*)>([^<]*)<\/a>/g)].map((m) => ({
+      href: /href="([^"]*)"/.exec(m[1])?.[1],
+      cls: /class="([^"]*)"/.exec(m[1])?.[1] ?? "",
+      label: m[2],
+    }));
+    expect(links.map((l) => [l.href, l.label])).toEqual([
+      ["/solutions", "Explore our solutions"],
+      ["/projects", "View our projects"],
+    ]);
+    expect(links[0].cls).toContain("bg-gold");
+    expect(links[1].cls).toContain("border-gold");
+    expect(links[1].cls).not.toContain("underline");
+    expect(hero).not.toContain("Talk to our experts");
+  });
+
+  it("drops Industry expertise and How we deliver, though the CMS still holds them", async () => {
+    const out = await render();
+    for (const gone of [
+      "Industry expertise",
+      "Industry marker title",
+      "How we deliver",
+      "Delivery marker title",
+    ]) {
+      expect(out).not.toContain(gone);
+    }
+  });
+
+  it("puts the partners section after the priorities band and before Projects", async () => {
+    const out = await render();
+    const at = (s: string) => out.indexOf(s);
+    expect(at("Building what comes next")).toBeGreaterThan(-1);
+    expect(at("Global technology ecosystem")).toBeGreaterThan(at("Building what comes next"));
+    expect(at("Proven delivery")).toBeGreaterThan(at("Global technology ecosystem"));
+    expect(out).toContain('href="/partners"');
+  });
+
+  it("shows a client without a logo by name, with no filled placeholder cells", async () => {
+    const out = await render();
+    const clients = out.slice(out.indexOf('id="clients"'));
+    expect(clients).toContain("Bahir Dar University");
+    // The grid no longer paints its background (the blue blocks) behind empty cells.
+    const ul = clients.match(/<ul class="[^"]*">/)?.[0] ?? "";
+    expect(ul).not.toContain("bg-rule");
   });
 });

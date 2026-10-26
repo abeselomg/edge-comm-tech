@@ -38,6 +38,7 @@ export default async function ClientsPage() {
         intro={hero?.intro}
         accent="#056a9a"
         variant="grid"
+        ambience="clients"
         ctas={
           <CtaRow
             primary={{ href: "/contact", label: "Become a client" }}

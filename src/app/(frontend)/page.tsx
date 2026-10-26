@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Confirmable, Mark } from "@/components/ui";
+import { AnimatedWords } from "@/components/ui/animated-words";
+import { SolutionGlyph, SolutionWatermark } from "@/components/ui/solution-glyph";
 import { featuredProjects, HeroCard, impactCard, SuccessStory, teaser } from "./home-parts";
 import {
   getClients,
@@ -18,9 +20,10 @@ import { projectHref, solutionHref } from "@/lib/routes";
 
 /*
  * The home page, in the fifteen-section order the content master sets out in
- * Module 01: hero, impact, who we are, solutions, technology priorities,
- * industries, projects, why us, delivery, partners, clients, success story,
- * insights, careers, final call to action.
+ * Module 01, as changed at the owner's request on 2026-10-26: hero, impact,
+ * who we are, solutions, technology priorities, partners, projects, why us,
+ * clients, success story, insights, careers, final call to action. The
+ * industry-expertise and how-we-deliver sections are gone and partners moved up.
  *
  * Ported from design-src/highland/pages/home.mjs. Every fact comes from the
  * CMS; the only things written in here are the section headings and standing
@@ -35,40 +38,6 @@ import { projectHref, solutionHref } from "@/lib/routes";
 
 const DARK = "#003D6B";
 const CYAN = "#10C7FF";
-
-/** One glyph per solution family. Design, not content: there is no field for
- *  it, and an editor adding a family would pick an icon in a redesign. */
-const GLYPH: Record<string, string> = {
-  "software-ai-digital":
-    "M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1",
-  "enterprise-network": "M12 7.2v4.3m0 0L6.6 16m5.4-4.5L17.4 16",
-  "system-cloud":
-    "M7 18a4 4 0 0 1-.5-7.97 5.5 5.5 0 0 1 10.6-1.4A3.8 3.8 0 0 1 17.5 18zM12 12v5m0 0-2-2m2 2 2-2",
-  "datacenter-facility-it-infrastructure": "M7 6h.01M7 14h.01M4 19v2M20 19v2",
-  cybersecurity: "M12 3 5 6v6c0 4.2 3 7.4 7 9 4-1.6 7-4.8 7-9V6zm-3 9 2.2 2.2L15.5 10",
-  "power-technology": "M13 2 4.5 13H11l-1 9 8.5-11H12z",
-  "broadcast-satellite":
-    "M7.8 7.8a6 6 0 0 0 0 8.4m8.4-8.4a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2m14.2-14.2a10 10 0 0 1 0 14.2",
-};
-
-/** Extra circles and rectangles some glyphs need; kept apart from the paths. */
-const GLYPH_SHAPES: Record<string, React.ReactNode> = {
-  "software-ai-digital": <circle cx="12" cy="12" r="3.2" />,
-  "enterprise-network": (
-    <>
-      <circle cx="12" cy="5" r="2.2" />
-      <circle cx="5" cy="18" r="2.2" />
-      <circle cx="19" cy="18" r="2.2" />
-    </>
-  ),
-  "datacenter-facility-it-infrastructure": (
-    <>
-      <rect x="4" y="3" width="16" height="6" rx="1.5" />
-      <rect x="4" y="11" width="16" height="6" rx="1.5" />
-    </>
-  ),
-  "broadcast-satellite": <circle cx="12" cy="12" r="2.4" />,
-};
 
 export default async function HomePage() {
   const [settings, company, contact, copy, solutions, projects, clients, partners, posts] =
@@ -98,7 +67,7 @@ export default async function HomePage() {
         <div className="horizon" aria-hidden="true" />
         <div className="relative mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-[1fr_18rem] md:py-32">
           <div>
-            <p className="eg-rise font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+            <p className="eg-hero-eyebrow font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
               {hero?.eyebrow}
             </p>
             <h1
@@ -113,12 +82,6 @@ export default async function HomePage() {
             >
               {hero?.intro}
             </p>
-            <p
-              className="eg-rise mt-4 max-w-xl leading-relaxed text-ink/65"
-              style={{ ["--d" as string]: ".2s" }}
-            >
-              {hero?.introSecondary}
-            </p>
             <div
               className="eg-rise mt-10 flex flex-wrap items-center gap-3"
               style={{ ["--d" as string]: ".28s" }}
@@ -130,14 +93,8 @@ export default async function HomePage() {
                 Explore our solutions
               </Link>
               <Link
-                href="/contact"
-                className="rounded-full border border-gold px-6 py-3 text-sm font-semibold text-gold transition hover:-translate-y-0.5"
-              >
-                Talk to our experts
-              </Link>
-              <Link
                 href="/projects"
-                className="text-sm text-ink/70 underline decoration-rule underline-offset-4 transition hover:text-gold"
+                className="rounded-full border border-gold px-6 py-3 text-sm font-semibold text-gold transition hover:-translate-y-0.5"
               >
                 View our projects
               </Link>
@@ -150,10 +107,10 @@ export default async function HomePage() {
       {/* 02 Impact */}
       <section className="border-y border-rule bg-paper-2">
         <div className="mx-auto max-w-6xl px-6 py-12">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
+          <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
             Trusted execution, measurable impact
           </p>
-          <dl className="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="eg-m-stagger mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {(settings.impact ?? []).map((m) => impactCard(m))}
           </dl>
           {settings.impactSupport ? (
@@ -168,7 +125,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-6 py-20">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr]">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Who we are</p>
+            <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Who we are</p>
             <h2 className="mt-3 font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
               Your technology partner from edge to core, core to cloud
             </h2>
@@ -194,7 +151,7 @@ export default async function HomePage() {
               Discover Edge Comm-Tech
             </Link>
           </div>
-          <div className="grid content-start gap-3">
+          <div className="eg-m-stagger grid content-start gap-3">
             <div className="eg-inview rounded-2xl bg-paper-2 p-6">
               <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Mission</p>
               <p className="mt-2 font-display text-xl">{company.mission}</p>
@@ -226,8 +183,14 @@ export default async function HomePage() {
               <Link
                 key={s.slug}
                 href={solutionHref(s.slug)}
-                className="eg-inview group relative flex flex-col overflow-hidden rounded-2xl bg-paper-2 p-6 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_52px_-28px_rgb(8_136_197/0.5)]"
+                className="eg-inview eg-card group relative isolate flex flex-col overflow-hidden rounded-2xl bg-paper-2 p-6 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_52px_-28px_rgb(8_136_197/0.5)]"
               >
+                <span
+                  aria-hidden="true"
+                  className="eg-card-wash pointer-events-none absolute inset-0 -z-10"
+                  style={{ background: `radial-gradient(circle at 100% 100%,${s.accent}1f,transparent 62%)` }}
+                />
+                <SolutionWatermark slug={s.slug} accent={s.accent} />
                 <span
                   className="absolute inset-x-0 top-0 h-1"
                   style={{ background: `linear-gradient(90deg,${s.accent},${s.accent}22)` }}
@@ -236,19 +199,7 @@ export default async function HomePage() {
                   className="grid h-12 w-12 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-110"
                   style={{ background: `${s.accent}16`, color: s.accent }}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-6 w-6"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    {GLYPH_SHAPES[s.slug]}
-                    {GLYPH[s.slug] ? <path d={GLYPH[s.slug]} /> : null}
-                  </svg>
+                  <SolutionGlyph slug={s.slug} className="h-6 w-6" />
                 </span>
                 <span
                   className="mt-4 font-mono text-[10px] uppercase tracking-widest"
@@ -290,8 +241,9 @@ export default async function HomePage() {
 
       {/* 05 Technology priorities */}
       <section className="relative overflow-hidden text-paper" style={{ background: DARK }}>
+        <span className="eg-m-glow" aria-hidden="true" />
         <span
-          className="pointer-events-none absolute inset-0 opacity-20"
+          className="eg-m-grid-drift pointer-events-none absolute inset-0 opacity-20"
           aria-hidden="true"
           style={{
             backgroundImage:
@@ -301,7 +253,7 @@ export default async function HomePage() {
         />
         <div className="relative mx-auto max-w-6xl px-6 py-20">
           <p
-            className="font-mono text-[10px] uppercase tracking-widest"
+            className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest"
             style={{ color: CYAN }}
           >
             Building what comes next
@@ -314,7 +266,7 @@ export default async function HomePage() {
             secure cloud adoption, expanding data requirements, connected operations, and
             sustainable growth.
           </p>
-          <div className="mt-12 grid gap-px overflow-hidden rounded-2xl bg-paper/15 md:grid-cols-2 lg:grid-cols-3">
+          <div className="eg-m-stagger mt-12 grid gap-px overflow-hidden rounded-2xl bg-paper/15 md:grid-cols-2 lg:grid-cols-3">
             {(copy.homePriorities ?? []).map((p) => (
               <article key={p.title} className="eg-inview p-7" style={{ background: DARK }}>
                 <h3 className="font-display text-xl text-paper">{p.title}</h3>
@@ -324,7 +276,7 @@ export default async function HomePage() {
           </div>
           <Link
             href="/contact"
-            className="mt-10 inline-block rounded-full px-6 py-3 text-sm font-semibold transition hover:-translate-y-0.5"
+            className="eg-m-sheen mt-10 inline-block rounded-full px-6 py-3 text-sm font-semibold transition hover:-translate-y-0.5"
             style={{ background: CYAN, color: DARK }}
           >
             Modernize your technology environment
@@ -332,24 +284,40 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 06 Industries */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
-          Industry expertise
-        </p>
-        <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
-          Solutions built around sector-specific priorities
-        </h2>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {(company.industries ?? []).map((s) => (
-            <article
-              key={s.title}
-              className="eg-inview rounded-2xl border border-rule p-6 transition hover:border-gold"
+      {/* 06 Partners */}
+      <section id="partners" className="border-t border-rule bg-paper-2/40">
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
+                Global technology ecosystem
+              </p>
+              <h2 className="mt-3 max-w-2xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
+                World-class technologies, locally delivered
+              </h2>
+              <p className="mt-5 max-w-2xl text-ink/75">
+                Technologies are selected according to suitability, interoperability, scalability,
+                security, lifecycle value, and long-term support.
+              </p>
+            </div>
+            <Link
+              href="/partners"
+              className="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold"
             >
-              <h3 className="font-display text-xl">{s.title}</h3>
-              <p className="mt-2.5 text-sm leading-relaxed text-ink/70">{s.body}</p>
-            </article>
-          ))}
+              View our technology partners
+            </Link>
+          </div>
+          {partners.some((p) => p.featured) ? (
+            <ul className="eg-m-stagger mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-3 lg:grid-cols-6">
+              {partners
+                .filter((p) => p.featured)
+                .map((p) => (
+                  <li key={p.name} className="eg-inview eg-m-tile grid h-24 place-items-center bg-paper-2 px-4">
+                    <Mark item={p} h="h-12" />
+                  </li>
+                ))}
+            </ul>
+          ) : null}
         </div>
       </section>
 
@@ -418,67 +386,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 09 Delivery approach */}
-      <section className="border-t border-rule">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-gold">How we deliver</p>
-          <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
-            From business challenge to operational value
-          </h2>
-          <ol className="mt-12 grid gap-px overflow-hidden rounded-2xl bg-rule md:grid-cols-3 lg:grid-cols-5">
-            {(company.delivery ?? []).map((s, i) => (
-              <li key={s.title} className="eg-inview bg-paper-2 p-6">
-                <span className="font-display text-3xl text-gold/30">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-2 font-display text-lg">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink/70">{s.body}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* 10 Partners */}
-      <section id="partners" className="border-t border-rule bg-paper-2/40">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
-                Global technology ecosystem
-              </p>
-              <h2 className="mt-3 max-w-2xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
-                World-class technologies, locally delivered
-              </h2>
-              <p className="mt-5 max-w-2xl text-ink/75">
-                Technologies are selected according to suitability, interoperability, scalability,
-                security, lifecycle value, and long-term support.
-              </p>
-            </div>
-            <Link
-              href="/partners"
-              className="rounded-full border border-rule px-5 py-2.5 text-sm font-semibold transition hover:border-gold hover:text-gold"
-            >
-              View our technology partners
-            </Link>
-          </div>
-          {partners.some((p) => p.featured) ? (
-            <ul className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-3 lg:grid-cols-6">
-              {partners
-                .filter((p) => p.featured)
-                .map((p) => (
-                  <li key={p.name} className="grid h-24 place-items-center bg-paper-2 px-4">
-                    <Mark item={p} h="h-12" />
-                  </li>
-                ))}
-            </ul>
-          ) : null}
-        </div>
-      </section>
-
-      {/* 11 Clients */}
+      {/* 09 Clients */}
       <section id="clients" className="mx-auto max-w-6xl px-6 py-20">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
+        <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
           Trusted across critical sectors
         </p>
         <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
@@ -491,13 +401,16 @@ export default async function HomePage() {
             // as a label over an empty grid.
             if (!group.length) return null;
             return (
-              <div key={value} className="eg-inview">
+              <div key={value}>
                 <p className="font-mono text-[10px] uppercase tracking-widest text-steel">
                   {label}
                 </p>
-                <ul className="mt-3 grid gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-2 lg:grid-cols-4">
+                <ul className="eg-m-stagger mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   {group.map((c) => (
-                    <li key={c.name} className="grid h-20 place-items-center bg-paper-2 px-4">
+                    <li
+                      key={c.name}
+                      className="eg-inview eg-m-tile grid h-20 place-items-center rounded-2xl border border-rule bg-paper-2 px-4"
+                    >
                       <Mark item={c} />
                     </li>
                   ))}
@@ -514,14 +427,14 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      {/* 12 Success story */}
+      {/* 10 Success story */}
       {story ? <SuccessStory story={story} /> : null}
 
-      {/* 13 Insights */}
+      {/* 11 Insights */}
       <section className="mx-auto max-w-6xl px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Insights</p>
+            <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Insights</p>
             <h2 className="mt-3 max-w-2xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
               Ideas, updates and technology perspectives
             </h2>
@@ -534,7 +447,7 @@ export default async function HomePage() {
           </Link>
         </div>
         {posts.length ? (
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="eg-m-stagger mt-10 grid gap-4 md:grid-cols-3">
           {posts.slice(0, 3).map((p) => {
             const target = typeof p.target === "object" ? p.target : null;
             const href = target
@@ -560,7 +473,7 @@ export default async function HomePage() {
               </>
             );
             const className =
-              "eg-inview group flex flex-col rounded-2xl border border-rule p-6 transition hover:-translate-y-1 hover:border-gold";
+              "eg-inview eg-m-card group flex flex-col rounded-2xl border border-rule p-6 hover:border-gold";
             /*
              * A post whose target solution is unpublished renders without a
              * link rather than with one to a route that 404s. Payload's
@@ -580,7 +493,7 @@ export default async function HomePage() {
         ) : null}
       </section>
 
-      {/* 14 Careers */}
+      {/* 12 Careers */}
       <section className="border-t border-rule">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-8 px-6 py-16">
           <div className="max-w-2xl">
@@ -610,7 +523,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 15 Final CTA */}
+      {/* 13 Final CTA */}
       <section
         className="relative overflow-hidden border-t border-rule text-paper"
         style={{ background: DARK }}

@@ -98,6 +98,8 @@ body {
 @keyframes eg-draw { to { stroke-dashoffset: 0 } }
 @keyframes eg-breathe { 0%, 100% { scale: 1 } 50% { scale: 1.035 } }
 @keyframes eg-spin { to { rotate: 360deg } }
+@keyframes eg-float { 0%, 100% { translate: 0 0; rotate: 0deg } 50% { translate: 0 -14px; rotate: var(--tilt, 6deg) } }
+@keyframes eg-drift { 0%, 100% { translate: 0 0 } 50% { translate: var(--dx, 28px) var(--dy, 18px) } }
 
 .eg-rise {
   animation: eg-rise .7s cubic-bezier(.2, .7, .3, 1) both;
@@ -197,6 +199,15 @@ body {
 
 /* Below the fold, play on scroll rather than on load, so nothing animates
    where nobody is looking. Unsupported browsers just show the element. */
+.eg-float, .eg-drift {
+  animation: eg-float var(--dur, 12s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.eg-drift {
+  animation-name: eg-drift;
+}
+
 @supports (animation-timeline: view()) {
   .eg-inview {
     animation: eg-rise .7s cubic-bezier(.2, .7, .3, 1) both;
@@ -205,13 +216,242 @@ body {
   }
 }
 
+/* ------------------------------------------------------------ hero text motion
+
+   Home hero only. Words slide up out of a clip, the title gets a rule that
+   draws in, the intro follows. transform/opacity only, so no layout shift;
+   the text is in the HTML regardless, and reduced motion just shows it.
+   Whole sequence ends inside about a second.
+*/
+
+@keyframes eg-hero-word { from { translate: 0 105%; opacity: 0 } to { translate: none; opacity: 1 } }
+@keyframes eg-hero-eyebrow { from { opacity: 0; translate: -10px 0 } to { opacity: 1; translate: none } }
+@keyframes eg-hero-rule { from { scale: 0 1 } to { scale: 1 1 } }
+@keyframes eg-hero-drift { 0%, 100% { translate: 0 0 } 50% { translate: -1.2rem .9rem } }
+
+.eg-hero-word {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: .14em;
+  margin-bottom: -.14em;
+}
+
+.eg-hero-word-in {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  animation: eg-hero-word .6s cubic-bezier(.2, .7, .2, 1) both;
+  animation-delay: calc(.12s + min(var(--i, 0), 6) * .06s);
+}
+
+.eg-hero-eyebrow {
+  animation: eg-hero-eyebrow .7s cubic-bezier(.2, .7, .3, 1) both;
+}
+
+.eg-hero-title::after {
+  content: "";
+  display: block;
+  width: 4.5rem;
+  height: 2px;
+  margin-top: 1.25rem;
+  background: #0888c5;
+  transform-origin: left center;
+  animation: eg-hero-rule .7s cubic-bezier(.2, .7, .3, 1) .55s both;
+}
+
+.eg-hero-intro {
+  animation: eg-rise .7s cubic-bezier(.2, .7, .3, 1) .5s both;
+}
+
+.sun-disk {
+  animation: eg-hero-drift 22s ease-in-out infinite;
+}
 @media (prefers-reduced-motion: reduce) {
-  .eg-rise, .eg-pop, .eg-draw, .eg-breathe, .eg-spin-slow, .eg-inview, .eg-ring, .eg-ring-card {
+  .eg-hero-word-in, .eg-hero-eyebrow, .eg-hero-title::after, .eg-hero-intro, .sun-disk,
+  .eg-rise, .eg-pop, .eg-draw, .eg-breathe, .eg-spin-slow, .eg-float, .eg-drift, .eg-inview, .eg-ring, .eg-ring-card {
     animation: none !important;
+  }
+
+  .eg-card-mark {
+    transition: none !important;
   }
 
   .eg-draw {
     stroke-dasharray: none;
     stroke-dashoffset: 0;
+  }
+}
+
+/* ---- eg-card-: home-page solution cards ----
+   A large, faint copy of the solution's glyph sits behind the text and drifts
+   a little on hover. Colour comes from the inline accent; the wash is inline
+   too. Reduced motion is handled in the block above. */
+.eg-card-mark {
+  opacity: 0.1;
+  transform: rotate(-12deg);
+  transition: transform .6s cubic-bezier(.2, .7, .3, 1), opacity .4s ease;
+}
+
+.eg-card:hover .eg-card-mark, .eg-card:focus-visible .eg-card-mark {
+  opacity: 0.16;
+  transform: rotate(-6deg) translate(-6px, -6px) scale(1.06);
+}
+
+/* ================================================== eg-m: home page motion
+
+   Calm, simple motion for the rest of the home page. Everything here is
+   transform, scale, translate or opacity, so nothing moves the layout, and
+   everything is a no-op until its trigger: content is visible by default and
+   the scroll-driven pieces sit behind @supports, exactly like .eg-inview.
+
+   eg-m-eyebrow    a thin accent line that draws in after a section eyebrow
+   eg-m-stagger    put on a grid whose children carry .eg-inview: each child
+                   in a row starts a little later than the one before it
+   eg-m-glow, eg-m-grid-drift
+                   the slow drift behind the dark "Building what comes next"
+   eg-m-tile       logo tile: the mark eases up a touch on hover
+   eg-m-card       lift, shadow and an accent line that sweeps under the card.
+                   Uses transform, not Tailwind's hover:-translate, which sets
+                   the translate property and loses to .eg-inview's fill.
+   eg-m-sheen      a soft highlight that passes across a filled button
+   The count-up for the impact figures is in src/components/count-up.tsx.
+   Its reduced-motion handling is in the component; the rest are below.
+*/
+
+@keyframes eg-m-line { from { scale: 0 1 } to { scale: 1 1 } }
+@keyframes eg-m-drift { to { translate: 64px 64px } }
+@keyframes eg-m-glow {
+  0%, 100% { translate: 0 0; opacity: .55 }
+  50% { translate: 14% 12%; opacity: .95 }
+}
+@keyframes eg-m-sheen { from { translate: -130% 0 } to { translate: 130% 0 } }
+
+.eg-m-eyebrow::after {
+  content: "";
+  display: inline-block;
+  width: 1.75rem;
+  height: 1px;
+  margin-left: .7rem;
+  vertical-align: middle;
+  background: currentColor;
+  opacity: .6;
+  transform-origin: left;
+}
+
+@supports (animation-timeline: view()) {
+  .eg-m-eyebrow::after {
+    animation: eg-m-line linear both;
+    animation-timeline: view();
+    animation-range: entry 20% entry 90%;
+  }
+
+  /* Scroll-driven animations ignore animation-delay, so the stagger shifts
+     each child's slice of the entry range instead. */
+  .eg-m-stagger > .eg-inview {
+    animation-range: entry calc(var(--i, 0) * 14%) entry calc(50% + var(--i, 0) * 14%);
+  }
+}
+
+.eg-m-stagger > :nth-child(3n + 2) { --i: 1 }
+.eg-m-stagger > :nth-child(3n + 3) { --i: 2 }
+
+.eg-m-glow {
+  position: absolute;
+  left: -12%;
+  top: -30%;
+  width: 55%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(circle, #10c7ff38, transparent 68%);
+  pointer-events: none;
+  animation: eg-m-glow 16s ease-in-out infinite;
+}
+
+/* One grid cell larger than the box, drifting exactly one cell: seamless. */
+.eg-m-grid-drift {
+  inset: -64px 0 0 -64px;
+  animation: eg-m-drift 60s linear infinite;
+}
+
+.eg-m-tile {
+  transition: background-color .3s;
+}
+
+.eg-m-tile > * {
+  transition: scale .35s cubic-bezier(.2, .7, .3, 1);
+}
+
+.eg-m-tile:hover {
+  background-color: color-mix(in srgb, var(--color-gold) 5%, white);
+}
+
+.eg-m-tile:hover > * {
+  scale: 1.07;
+}
+
+.eg-m-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform .3s cubic-bezier(.2, .7, .3, 1), box-shadow .3s, border-color .3s;
+}
+
+.eg-m-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--color-gold);
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale .45s cubic-bezier(.2, .7, .3, 1);
+}
+
+.eg-m-card:hover, .eg-m-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 44px -28px rgb(8 136 197 / .5);
+}
+
+.eg-m-card:hover::after, .eg-m-card:focus-visible::after {
+  scale: 1 1;
+}
+
+.eg-m-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.eg-m-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / .38) 50%, transparent 65%);
+  translate: -130% 0;
+  pointer-events: none;
+}
+
+.eg-m-sheen:hover::after, .eg-m-sheen:focus-visible::after {
+  animation: eg-m-sheen .8s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eg-m-eyebrow::after, .eg-m-glow, .eg-m-grid-drift, .eg-m-sheen::after {
+    animation: none !important;
+  }
+
+  .eg-m-tile, .eg-m-tile > *, .eg-m-card, .eg-m-card::after {
+    transition: none !important;
+  }
+
+  .eg-m-tile:hover > * {
+    scale: none;
+  }
+
+  .eg-m-card:hover, .eg-m-card:focus-visible {
+    transform: none;
   }
 }
