@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LanguageToggle } from "./i18n/LanguageToggle";
 import { Tr } from "./i18n/Tr";
 import { NavLinks } from "./nav-links";
 import { getCompany, getContactDetails, getSiteSettings, getSolutions } from "@/lib/content";
@@ -58,7 +57,6 @@ export async function SiteHeader() {
           >
             <Tr>{cta.label}</Tr>
           </Link>
-          <LanguageToggle />
         </div>
       </div>
       {/*

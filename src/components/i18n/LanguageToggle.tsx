@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState, type FocusEvent, type KeyboardEvent, type PointerEvent } from "react";
+import { isDelayed, LEAVE_DELAY_MS, nextOpen, type TabEvent } from "./lang-tab-state";
 import { isHydrated, pickInitialLang, STORAGE_KEY, swapEl, swapTree, type Lang } from "@/lib/i18n/swap";
 
 /*
- * EN / አማ switch for the header.
+ * EN / አማ switch, kept in an edge tab on the right of the viewport.
+ *
+ * Collapsed, only a small arrow tab shows. Hover (mouse), keyboard focus or a
+ * tap on touch slides the switch out; it folds away again a moment after the
+ * pointer or focus leaves, on Escape, or on a tap elsewhere. The language
+ * buttons are visibility:hidden while collapsed, so they cannot be tabbed to
+ * or read out until the tab is open.
  *
  * The server renders English and so does the first client render; the stored
  * or ?lang= choice is applied in an effect, after hydration, so there is no
@@ -40,6 +47,11 @@ function store(lang: Lang) {
 
 export function LanguageToggle() {
   const [lang, setLang] = useState<Lang>("en");
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const pressType = useRef("");
+  const panelId = useId();
 
   // Pick the starting language once, after hydration.
   useEffect(() => {
@@ -84,6 +96,49 @@ export function LanguageToggle() {
     };
   }, [lang]);
 
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+  // A tap or click anywhere outside folds the tab away.
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: Event) => {
+      if (e.target instanceof Node && !rootRef.current?.contains(e.target)) send("outside");
+    };
+    document.addEventListener("pointerdown", away);
+    return () => document.removeEventListener("pointerdown", away);
+  }, [open]);
+
+  function send(event: TabEvent) {
+    clearTimeout(closeTimer.current);
+    if (isDelayed(event)) {
+      closeTimer.current = setTimeout(() => setOpen((o) => nextOpen(o, event)), LEAVE_DELAY_MS);
+    } else {
+      setOpen((o) => nextOpen(o, event));
+    }
+  }
+
+  function onFocus(e: FocusEvent<HTMLDivElement>) {
+    // Keyboard focus only: a mouse click focusing the button is not an "open" on its own.
+    if (e.target.matches(":focus-visible")) send("focus");
+  }
+
+  function onBlur(e: FocusEvent<HTMLDivElement>) {
+    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) send("blur");
+  }
+
+  function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    if (e.key !== "Escape" || !open) return;
+    send("escape");
+    // Do not leave focus on a button that is about to be hidden.
+    if (e.currentTarget.contains(document.activeElement)) {
+      e.currentTarget.querySelector<HTMLButtonElement>("[aria-controls]")?.focus();
+    }
+  }
+
+  function onHover(e: PointerEvent<HTMLDivElement>, event: "enter" | "leave") {
+    if (e.pointerType === "mouse") send(event);
+  }
+
   function choose(next: Lang) {
     setLang(next);
     store(next);
@@ -91,29 +146,52 @@ export function LanguageToggle() {
 
   return (
     <div
+      ref={rootRef}
       data-parity="lang-toggle"
-      role="group"
-      aria-label="Language"
-      className="flex shrink-0 items-center rounded-full border border-rule p-0.5 text-xs"
+      data-open={open}
+      className="eg-langtab"
+      onPointerEnter={(e) => onHover(e, "enter")}
+      onPointerLeave={(e) => onHover(e, "leave")}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onKeyDown={onKeyDown}
     >
-      {OPTIONS.map((o) => {
-        const on = lang === o.lang;
-        return (
-          <button
-            key={o.lang}
-            type="button"
-            lang={o.htmlLang}
-            aria-label={o.name}
-            aria-pressed={on}
-            onClick={() => choose(o.lang)}
-            className={`rounded-full px-2.5 py-1 leading-none transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold ${
-              on ? "bg-gold text-white" : "text-ink/70 hover:text-gold"
-            }`}
-          >
-            {o.text}
-          </button>
-        );
-      })}
+      <div id={panelId} role="group" aria-label="Language" className="eg-langtab-panel">
+        {OPTIONS.map((o) => {
+          const on = lang === o.lang;
+          return (
+            <button
+              key={o.lang}
+              type="button"
+              lang={o.htmlLang}
+              aria-label={o.name}
+              aria-pressed={on}
+              onClick={() => choose(o.lang)}
+              className="eg-langtab-lang"
+            >
+              {o.text}
+            </button>
+          );
+        })}
+      </div>
+      <button
+        type="button"
+        aria-label="Language"
+        aria-expanded={open}
+        aria-controls={panelId}
+        className="eg-langtab-btn"
+        onPointerDown={(e) => {
+          pressType.current = e.pointerType;
+        }}
+        onClick={() => {
+          send(pressType.current === "touch" || pressType.current === "pen" ? "press-touch" : "press");
+          pressType.current = "";
+        }}
+      >
+        <svg viewBox="0 0 12 20" width="12" height="20" aria-hidden="true" focusable="false" className="eg-langtab-chevron">
+          <path d="M9 3 3 10l6 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
     </div>
   );
 }
