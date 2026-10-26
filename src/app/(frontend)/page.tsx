@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Confirmable, Mark } from "@/components/ui";
+import { AnimatedWords } from "@/components/ui/animated-words";
 import { featuredProjects, HeroCard, impactCard, SuccessStory, teaser } from "./home-parts";
 import {
   getClients,
@@ -98,7 +99,7 @@ export default async function HomePage() {
         <div className="horizon" aria-hidden="true" />
         <div className="relative mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-[1fr_18rem] md:py-32">
           <div>
-            <p className="eg-rise font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+            <p className="eg-hero-eyebrow font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
               {hero?.eyebrow}
             </p>
             <h1
@@ -264,7 +265,7 @@ export default async function HomePage() {
                   className="mt-4 font-mono text-[10px] uppercase tracking-widest"
                   style={{ color: s.accent }}
                 >
-                  Explore →
+                  Explore â†’
                 </span>
               </Link>
             ))}
@@ -281,7 +282,7 @@ export default async function HomePage() {
                 </h3>
               </span>
               <span className="mt-4 font-mono text-[10px] uppercase tracking-widest text-gold">
-                See the service model →
+                See the service model â†’
               </span>
             </Link>
           </div>
@@ -382,7 +383,7 @@ export default async function HomePage() {
               >
                 <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-steel">
                   <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-                  {`${SECTOR_SHORT[p.sector as SectorSlug]} · `}
+                  {`${SECTOR_SHORT[p.sector as SectorSlug]} Â· `}
                   <Confirmable value={p.year} />
                 </span>
                 <h3 className="mt-3 font-display text-xl leading-snug group-hover:text-gold">
@@ -390,7 +391,7 @@ export default async function HomePage() {
                 </h3>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/70">{p.summary}</p>
                 <span className="mt-4 font-mono text-[10px] uppercase tracking-widest text-gold">
-                  View project →
+                  View project â†’
                 </span>
               </Link>
             ))}
@@ -552,10 +553,10 @@ export default async function HomePage() {
                   {p.title}
                 </h3>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/70">
-                  {`${teaser(p.body)}…`}
+                  {`${teaser(p.body)}â€¦`}
                 </p>
                 <span className="mt-4 font-mono text-[10px] uppercase tracking-widest text-gold">
-                  Read more →
+                  Read more â†’
                 </span>
               </>
             );
@@ -629,7 +630,7 @@ export default async function HomePage() {
           </h2>
           <p className="mt-5 max-w-2xl text-paper/70">
             Strengthening cybersecurity, moving toward cloud, digitizing operations, improving
-            business continuity, or developing a new technology environment — tell us about your
+            business continuity, or developing a new technology environment â€” tell us about your
             organization, current challenge, and intended outcome.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
