@@ -1,7 +1,11 @@
 "use client";
 
 /*
- * A slim brand-coloured bar across the top edge during client-side navigation.
+ * A slim brand-coloured bar across the top edge, with the Edge loader mark in a
+ * small badge beneath it, during client-side navigation. (This is the route
+ * loading indicator: a route-level loading.tsx would make every page stream its
+ * content into a hidden block after the footer, which no-JS readers and simple
+ * crawlers would never see.)
  * It starts on a click on an internal link, creeps towards 80% while the next
  * route loads, and completes when the pathname changes. Fixed, inert and
  * aria-hidden, so it cannot shift layout or be read out. No dependency.
@@ -9,6 +13,7 @@
  */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { EdgeLoader } from "@/components/ui/edge-loader";
 
 type Phase = "idle" | "start" | "run" | "done";
 
@@ -71,5 +76,12 @@ export function NavProgress() {
   }, [phase]);
 
   if (phase === "idle") return null;
-  return <div key={run} className="eg-load-bar" data-phase={phase} aria-hidden="true" />;
+  return (
+    <div key={run} aria-hidden="true">
+      <div className="eg-load-bar" data-phase={phase} />
+      <div className="eg-load-badge" data-phase={phase}>
+        <EdgeLoader size="sm" />
+      </div>
+    </div>
+  );
 }

@@ -1,6 +1,7 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import Loading from "@/app/(frontend)/loading";
 import { EdgeLoader, LOADER_SIZE_CLASS, type EdgeLoaderSize } from "./edge-loader";
 import { NavProgress, internalNavTarget } from "./nav-progress";
 
@@ -25,15 +26,6 @@ describe("EdgeLoader", () => {
   });
 });
 
-describe("loading.tsx", () => {
-  it("renders the loader, centred, with a tall stage", () => {
-    const out = renderToStaticMarkup(<Loading />);
-    expect(out).toContain('role="status"');
-    expect(out).toContain("min-h-[60vh]");
-    expect(out).toContain("h-20 w-20");
-  });
-});
-
 describe("NavProgress", () => {
   it("renders nothing until a navigation starts, so no text and no box", () => {
     expect(renderToStaticMarkup(<NavProgress />)).toBe("");
@@ -55,5 +47,14 @@ describe("internalNavTarget", () => {
     expect(internalNavTarget(link("https://edge.test/a", { target: "_blank" }), ev(), origin)).toBeNull();
     expect(internalNavTarget(link("https://edge.test/a"), ev({ button: 1 }), origin)).toBeNull();
     expect(internalNavTarget(null, ev(), origin)).toBeNull();
+  });
+});
+
+describe("no route-level loading boundary", () => {
+  it("keeps the (frontend) group free of loading.tsx", () => {
+    // A loading.tsx wraps every page in a Suspense boundary, so the HTML a
+    // no-JS reader or simple crawler gets would be the loader with the page
+    // content streamed into a hidden block after the footer.
+    expect(existsSync(join(process.cwd(), "src/app/(frontend)/loading.tsx"))).toBe(false);
   });
 });
