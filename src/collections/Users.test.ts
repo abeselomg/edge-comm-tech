@@ -3,6 +3,7 @@ import { Users } from "./Users";
 
 const editor = { req: { user: { id: 7, role: "editor" } } } as never;
 const admin = { req: { user: { id: 1, role: "admin" } } } as never;
+const hr = { req: { user: { id: 9, role: "hr" } } } as never;
 const anon = { req: { user: null } } as never;
 
 type Fn = (a: never) => unknown;
@@ -63,5 +64,45 @@ describe("users: the first user is an admin", () => {
       req: { payload: { count: async (a: Record<string, unknown>) => ((args = a), { totalDocs: 1 }) } },
     } as never);
     expect(args).toMatchObject({ collection: "users", overrideAccess: true });
+  });
+});
+
+describe("users: the HR role", () => {
+  const roleField = () =>
+    Users.fields.find((f) => "name" in f && f.name === "role") as {
+      options: { label: string; value: string }[];
+      defaultValue: string;
+      admin: { description: string };
+      access: { update: Fn };
+    };
+
+  it("is offered as 'HR' beside Admin and Editor, and new users still default to editor", () => {
+    expect(roleField().options).toEqual([
+      { label: "Admin", value: "admin" },
+      { label: "Editor", value: "editor" },
+      { label: "HR", value: "hr" },
+    ]);
+    expect(roleField().defaultValue).toBe("editor");
+  });
+
+  it("explains each role in plain words", () => {
+    const text = roleField().admin.description;
+    expect(text).toContain("Admin: everything");
+    expect(text).toContain("Editor: website content");
+    expect(text).toContain("HR: careers and people records only");
+  });
+
+  it("cannot change their own role, nor create or delete users", async () => {
+    expect(await roleField().access.update(hr as never)).toBe(false);
+    for (const op of ["create", "delete"] as const) expect(await (Users.access![op] as Fn)(hr), op).toBe(false);
+  });
+
+  it("can update only their own record (own name and password), and read only that record", async () => {
+    expect(await (Users.access!.update as Fn)(hr)).toEqual({ id: { equals: 9 } });
+    expect(await (Users.access!.read as Fn)(hr)).toEqual({ id: { equals: 9 } });
+  });
+
+  it("cannot unlock accounts", async () => {
+    expect(await (Users.access!.unlock as Fn)(hr)).toBe(false);
   });
 });

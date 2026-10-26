@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { jobHref } from "../lib/routes";
-import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, peopleRead, peopleStaff } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases } from "../fields/validators";
@@ -38,9 +38,9 @@ export const Jobs: CollectionConfig = {
       "Published vacancies. Salary and benefits are never published — do not add fields for them.",
   },
   access: {
-    read: publishedOrSignedIn,
-    create: signedIn,
-    update: signedIn,
+    read: peopleRead,
+    create: peopleStaff,
+    update: peopleStaff,
     delete: adminOnly,
   },
   versions: { drafts: { autosave: { interval: 800 } } },

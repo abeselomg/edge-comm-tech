@@ -1,14 +1,14 @@
 import type { CollectionConfig } from "payload";
-import { signedIn, signedInField } from "../access";
+import { contentStaff, signedInField } from "../access";
 
 export const Media: CollectionConfig = {
   slug: "media",
   admin: { useAsTitle: "alt", group: "Library" },
   access: {
     read: () => true,
-    create: signedIn,
-    update: signedIn,
-    delete: signedIn,
+    create: contentStaff,
+    update: contentStaff,
+    delete: contentStaff,
   },
   upload: {
     imageSizes: [

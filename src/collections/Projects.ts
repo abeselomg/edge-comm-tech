@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { projectHref } from "../lib/routes";
-import { adminOnly, publishedOrSignedIn, signedIn } from "../access";
+import { adminOnly, contentRead, contentStaff } from "../access";
 import { orderField, slugField } from "../fields/slug";
 import { SECTOR_OPTIONS } from "../fields/sectors";
 import { confirmable } from "../fields/confirmable";
@@ -41,7 +41,7 @@ export const Projects: CollectionConfig = {
     group: "Content",
     description: "Delivered engagements, written as case records rather than marketing.",
   },
-  access: { read: publishedOrSignedIn, create: signedIn, update: signedIn, delete: adminOnly },
+  access: { read: contentRead, create: contentStaff, update: contentStaff, delete: adminOnly },
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateAfterChange(paths, { patterns: ["/solutions/[slug]", "/projects/[slug]"] })],

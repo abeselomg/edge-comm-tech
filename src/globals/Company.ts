@@ -1,5 +1,5 @@
 import type { GlobalConfig } from "payload";
-import { signedIn } from "../access";
+import { contentStaff } from "../access";
 import { confirmable } from "../fields/confirmable";
 import { forbidsPhrases } from "../fields/validators";
 import { revalidateGlobal } from "../hooks/revalidate";
@@ -27,7 +27,7 @@ export const Company: GlobalConfig = {
   slug: "company",
   label: "Company",
   admin: { group: "Company", description: "Profile, mission, values, history and leadership." },
-  access: { read: () => true, update: signedIn },
+  access: { read: () => true, update: contentStaff },
   versions: { drafts: false },
   hooks: { afterChange: [revalidateGlobal(["/", "/about", "/about/executive-management"], true)] },
   fields: [
