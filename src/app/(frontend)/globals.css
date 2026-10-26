@@ -98,6 +98,8 @@ body {
 @keyframes eg-draw { to { stroke-dashoffset: 0 } }
 @keyframes eg-breathe { 0%, 100% { scale: 1 } 50% { scale: 1.035 } }
 @keyframes eg-spin { to { rotate: 360deg } }
+@keyframes eg-float { 0%, 100% { translate: 0 0; rotate: 0deg } 50% { translate: 0 -14px; rotate: var(--tilt, 6deg) } }
+@keyframes eg-drift { 0%, 100% { translate: 0 0 } 50% { translate: var(--dx, 28px) var(--dy, 18px) } }
 
 .eg-rise {
   animation: eg-rise .7s cubic-bezier(.2, .7, .3, 1) both;
@@ -197,6 +199,15 @@ body {
 
 /* Below the fold, play on scroll rather than on load, so nothing animates
    where nobody is looking. Unsupported browsers just show the element. */
+.eg-float, .eg-drift {
+  animation: eg-float var(--dur, 12s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.eg-drift {
+  animation-name: eg-drift;
+}
+
 @supports (animation-timeline: view()) {
   .eg-inview {
     animation: eg-rise .7s cubic-bezier(.2, .7, .3, 1) both;
@@ -206,7 +217,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eg-rise, .eg-pop, .eg-draw, .eg-breathe, .eg-spin-slow, .eg-inview, .eg-ring, .eg-ring-card {
+  .eg-rise, .eg-pop, .eg-draw, .eg-breathe, .eg-spin-slow, .eg-float, .eg-drift, .eg-inview, .eg-ring, .eg-ring-card {
     animation: none !important;
   }
 

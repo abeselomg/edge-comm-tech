@@ -64,6 +64,7 @@ export default async function ResourcesPage() {
         intro={hero?.intro}
         accent="#0b6fa8"
         variant="grid"
+        ambience="general"
         ctas={
           <CtaRow
             primary={{ href: "/subscribe", label: "Subscribe for updates" }}

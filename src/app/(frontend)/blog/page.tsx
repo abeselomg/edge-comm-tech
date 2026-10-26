@@ -37,6 +37,7 @@ export default async function BlogPage() {
         intro="Short, useful notes from the work itself — what a technology actually requires, where it tends to go wrong, and what good looks like. Each piece links through to the solution it belongs to."
         accent="#2ba8de"
         variant="rule"
+        ambience="general"
       />
 
       <div className="mx-auto grid max-w-6xl gap-14 px-6 py-16 lg:grid-cols-[14rem_1fr]">
