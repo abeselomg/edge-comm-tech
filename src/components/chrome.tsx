@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { LanguageToggle } from "./i18n/LanguageToggle";
+import { Tr } from "./i18n/Tr";
 import { NavLinks } from "./nav-links";
 import { getCompany, getContactDetails, getSiteSettings, getSolutions } from "@/lib/content";
 import { solutionHref } from "@/lib/routes";
@@ -49,12 +51,15 @@ export async function SiteHeader() {
         <nav className="hidden items-center gap-5 text-sm lg:flex" aria-label="Main">
           <NavLinks items={items} />
         </nav>
-        <Link
-          href={cta.href}
-          className="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block"
-        >
-          {cta.label}
-        </Link>
+        <div className="flex shrink-0 items-center gap-3">
+          <Link
+            href={cta.href}
+            className="hidden rounded-full bg-gold px-4 py-2 text-sm text-white md:inline-block"
+          >
+            <Tr>{cta.label}</Tr>
+          </Link>
+          <LanguageToggle />
+        </div>
       </div>
       {/*
        * The same links again for narrow screens. Labelled separately from the
@@ -67,7 +72,7 @@ export async function SiteHeader() {
       >
         <NavLinks items={items} className="whitespace-nowrap" idleClass="text-ink/70" />
         <Link href={cta.href} className="whitespace-nowrap text-gold">
-          {cta.label}
+          <Tr>{cta.label}</Tr>
         </Link>
       </nav>
     </header>
@@ -115,7 +120,9 @@ export async function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="font-display text-sm">Solutions</h4>
+          <h4 className="font-display text-sm">
+            <Tr>Solutions</Tr>
+          </h4>
           <ul className="mt-3 space-y-1.5 text-sm text-ink/70">
             {solutions.map((s) => (
               <li key={s.slug}>
@@ -126,25 +133,27 @@ export async function SiteFooter() {
             ))}
             <li>
               <Link href="/services" className="hover:text-gold">
-                Professional services
+                <Tr>Professional services</Tr>
               </Link>
             </li>
           </ul>
         </div>
 
         <div>
-          <h4 className="font-display text-sm">Company</h4>
+          <h4 className="font-display text-sm">
+            <Tr>Company</Tr>
+          </h4>
           <ul className="mt-3 space-y-1.5 text-sm text-ink/70">
             {companyLinks.map((n) => (
               <li key={n.href}>
                 <Link href={n.href} className="hover:text-gold">
-                  {n.label}
+                  <Tr>{n.label}</Tr>
                 </Link>
               </li>
             ))}
             <li>
               <Link href="/contact" className="hover:text-gold">
-                Contact
+                <Tr>Contact</Tr>
               </Link>
             </li>
           </ul>

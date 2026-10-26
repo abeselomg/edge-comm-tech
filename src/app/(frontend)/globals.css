@@ -455,3 +455,24 @@ body {
     transform: none;
   }
 }
+
+/* eg-lang: Amharic (Ethiopic script) while the language toggle is on.
+   System fonts only -- nothing is fetched. The Latin faces stay first so
+   English words and brand names inside Amharic text keep their look; the
+   browser falls through to an Ethiopic face for the glyphs they lack. */
+html[lang="am"] {
+  --font-display: var(--font-geologica), Geologica, "Noto Sans Ethiopic", "Abyssinica SIL", Nyala, Kefa, "Segoe UI", sans-serif;
+  --font-sans: var(--font-atkinson), "Atkinson Hyperlegible", "Noto Sans Ethiopic", "Abyssinica SIL", Nyala, Kefa, "Segoe UI", sans-serif;
+}
+
+html[lang="am"] body {
+  line-height: 1.75;
+}
+
+/* Ethiopic glyphs stand taller than Latin ones, and Amharic words are long. */
+html[lang="am"] h1,
+html[lang="am"] h2,
+html[lang="am"] h3 {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
