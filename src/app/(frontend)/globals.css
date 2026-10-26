@@ -608,16 +608,17 @@ html[lang="am"] [data-am][lang="am"] {
   }
 }
 
-/* ---- eg-langtab: language edge tab (right edge, ~72% down) ---- */
+/* ---- eg-langtab: language edge tab (bottom right, 5rem up) ---- */
 .eg-langtab {
   position: fixed;
   right: 0;
-  top: 72%;
+  /* Bottom-right: a fixed distance up from the bottom edge (not all the way
+     down), so it stays in the lower right whatever the height of the screen. */
+  bottom: calc(5rem + env(safe-area-inset-bottom));
   z-index: 45;
   display: flex;
   align-items: center;
   padding-right: env(safe-area-inset-right);
-  transform: translateY(-50%);
 }
 
 .eg-langtab-btn {
