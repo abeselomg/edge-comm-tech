@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { approvedLogo } from "@/lib/media";
 
 /*
@@ -51,6 +52,9 @@ export function Confirmable({ value }: { value?: ConfirmableValue }) {
   return <>{value.value || "—"}</>;
 }
 
+/** An SVG is served untouched: next/image refuses to optimize it, and it is small. */
+const isSvg = (url: string) => /\.svg(\?|$)/i.test(url);
+
 /** What a client or partner record carries for its mark. */
 export type MarkItem = { name: string; logo?: unknown };
 
@@ -70,7 +74,8 @@ export function Mark({
   h = "h-10",
   imgClass,
   nameClass,
-  lazy,
+  lazy = true,
+  sizes = "160px",
 }: {
   item: MarkItem;
   h?: string;
@@ -80,8 +85,13 @@ export function Mark({
   imgClass?: string;
   /** Replace the name's classes, likewise. */
   nameClass?: string;
-  /** Lazy-load the logo; also stops React preloading it in the page head. */
+  /**
+   * Lazy-load the logo (the default; also stops it being preloaded in the page
+   * head). Pass `false` only for a mark inside the first viewport.
+   */
   lazy?: boolean;
+  /** The width the logo is drawn at, so the optimizer sends a small file. */
+  sizes?: string;
 }) {
   const logo = approvedLogo(item.logo);
   if (!logo) {
@@ -94,22 +104,25 @@ export function Mark({
     );
   }
   /*
-   * A plain <img>, not next/image. The URL is a CMS upload whose intrinsic
-   * size is whatever the editor supplied, the frame around it is fixed by the
-   * parent, and next/image would need every uploaded path added to
-   * images.localPatterns to be allowed through at all. The disable sits on the
-   * element itself because that is the line the rule reports.
+   * next/image, so the browser gets a logo resized to the size it is drawn at
+   * (a few KB, as AVIF or WebP) rather than the editor's original upload, which
+   * can be hundreds of KB for a 40px mark. /api/media/file/** is allowed in
+   * images.localPatterns (next.config.ts). The intrinsic width and height only
+   * give the aspect ratio; the className still sizes the mark, as before. A
+   * logo is never preloaded (no `priority`). SVG is vector already, so it is
+   * served as-is.
    */
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={logo.url}
       alt={item.name}
       width={logo.width ?? 240}
       height={logo.height ?? 160}
+      sizes={sizes}
       className={imgClass ?? `${h} w-auto max-w-full object-contain`}
       decoding="async"
-      loading={lazy ? "lazy" : undefined}
+      loading={lazy ? "lazy" : "eager"}
+      unoptimized={isSvg(logo.url)}
     />
   );
 }
