@@ -332,3 +332,49 @@ describe("the read layer names collections that exist", () => {
     expect(source).toMatch(/const byOrder = \{ sort: "order" \}/);
   });
 });
+
+describe("project pictures", () => {
+  const media = (over: Record<string, unknown>) => ({ id: 1, url: "/api/media/file/a.jpg", alt: "A", approved: true, ...over });
+  const draftCategory = { id: 9, _status: "draft", name: "Hidden" };
+
+  it("keeps approved cover and gallery media, in editor order, with captions", async () => {
+    store.projects = [{
+      slug: "p", _status: "published",
+      coverImage: media({ id: 1, alt: "Cover" }),
+      gallery: [{ image: media({ id: 2, alt: "Two" }), caption: "Second" }, { image: media({ id: 3, alt: "Three" }) }],
+    }];
+    const p = (await content.getProject("p"))!;
+    expect((p.coverImage as { alt: string }).alt).toBe("Cover");
+    expect((p.gallery ?? []).map((g) => (g.image as { alt: string }).alt)).toEqual(["Two", "Three"]);
+    expect(p.gallery?.[0].caption).toBe("Second");
+  });
+
+  it("never lets an unapproved or unpopulated image reach a route", async () => {
+    store.projects = [{
+      slug: "p", _status: "published",
+      coverImage: media({ approved: false, url: "/api/media/file/secret.jpg" }),
+      gallery: [
+        { image: media({ approved: false, url: "/api/media/file/secret2.jpg" }) },
+        { image: 12 },
+        { image: media({ approved: true, url: "/api/media/file/ok.jpg" }) },
+      ],
+    }];
+    const [p] = await content.getProjects();
+    expect(p.coverImage).toBeNull();
+    expect(JSON.stringify(p)).not.toContain("secret");
+    expect(p.gallery).toHaveLength(1);
+  });
+
+  it("a project with no pictures reads as no cover and an empty gallery", async () => {
+    store.projects = [{ slug: "p", _status: "published", draftCategory }];
+    const p = (await content.getProject("p"))!;
+    expect(p.coverImage).toBeNull();
+    expect(p.gallery).toEqual([]);
+  });
+
+  it("keeps the approval gate in draft mode too", async () => {
+    draftEnabled = true;
+    store.projects = [{ slug: "p", _status: "draft", coverImage: media({ approved: false }) }];
+    expect((await content.getProject("p"))!.coverImage).toBeNull();
+  });
+});
