@@ -103,7 +103,7 @@ export function SuccessStory({ story }: { story: Project }) {
     ["Status", "Completed"],
   ];
   return (
-    <section className="border-y border-rule bg-paper-2/40">
+    <section className="eg-sec border-y border-rule bg-paper-2/40">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 lg:grid-cols-[1fr_1fr]">
         <div>
           <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Success story</p>

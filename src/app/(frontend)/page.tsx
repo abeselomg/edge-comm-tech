@@ -98,7 +98,7 @@ export default async function HomePage() {
       </section>
 
       {/* 02 Impact */}
-      <section className="border-y border-rule bg-paper-2">
+      <section className="eg-sec border-y border-rule bg-paper-2">
         <div className="mx-auto max-w-6xl px-6 py-12">
           <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
             Trusted execution, measurable impact
@@ -115,7 +115,7 @@ export default async function HomePage() {
       </section>
 
       {/* 03 Who we are */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section className="eg-sec mx-auto max-w-6xl px-6 py-20">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr]">
           <div>
             <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Who we are</p>
@@ -159,7 +159,7 @@ export default async function HomePage() {
       </section>
 
       {/* 04 Solutions */}
-      <section id="solutions" className="border-t border-rule bg-paper-2/40">
+      <section id="solutions" className="eg-sec border-t border-rule bg-paper-2/40">
         <div className="mx-auto max-w-6xl px-6 py-20">
           <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Our solutions</p>
           <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
@@ -233,7 +233,7 @@ export default async function HomePage() {
       </section>
 
       {/* 05 Technology priorities */}
-      <section className="relative overflow-hidden text-paper" style={{ background: DARK }}>
+      <section className="eg-sec relative overflow-hidden text-paper" style={{ background: DARK }}>
         <span className="eg-m-glow" aria-hidden="true" />
         <span
           className="eg-m-grid-drift pointer-events-none absolute inset-0 opacity-20"
@@ -278,7 +278,7 @@ export default async function HomePage() {
       </section>
 
       {/* 06 Partners */}
-      <section id="partners" className="border-t border-rule bg-paper-2/40">
+      <section id="partners" className="eg-sec border-t border-rule bg-paper-2/40">
         <div className="mx-auto max-w-6xl px-6 py-20">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -315,7 +315,7 @@ export default async function HomePage() {
       </section>
 
       {/* 07 Projects */}
-      <section className="border-y border-rule bg-paper-2/40">
+      <section className="eg-sec border-y border-rule bg-paper-2/40">
         <div className="mx-auto max-w-6xl px-6 py-20">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -367,7 +367,7 @@ export default async function HomePage() {
       </section>
 
       {/* 08 Why Edge Comm-Tech */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section className="eg-sec mx-auto max-w-6xl px-6 py-20">
         <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Why choose us</p>
         <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
           Local understanding, global technology, accountable delivery
@@ -386,7 +386,7 @@ export default async function HomePage() {
       </section>
 
       {/* 09 Clients */}
-      <section id="clients" className="mx-auto max-w-6xl px-6 py-20">
+      <section id="clients" className="eg-sec mx-auto max-w-6xl px-6 py-20">
         <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
           Trusted across critical sectors
         </p>
@@ -430,7 +430,7 @@ export default async function HomePage() {
       {story ? <SuccessStory story={story} /> : null}
 
       {/* 11 Insights */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section className="eg-sec mx-auto max-w-6xl px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Insights</p>
@@ -493,7 +493,7 @@ export default async function HomePage() {
       </section>
 
       {/* 12 Careers */}
-      <section className="border-t border-rule">
+      <section className="eg-sec border-t border-rule">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-8 px-6 py-16">
           <div className="max-w-2xl">
             <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Grow with us</p>
@@ -524,7 +524,7 @@ export default async function HomePage() {
 
       {/* 13 Final CTA */}
       <section
-        className="relative overflow-hidden border-t border-rule text-paper"
+        className="eg-sec relative overflow-hidden border-t border-rule text-paper"
         style={{ background: DARK }}
       >
         <span

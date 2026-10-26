@@ -1052,3 +1052,42 @@ html[data-at-top="1"] body:has([data-home-hero]) .eg-site-header {
     transition: none;
   }
 }
+
+/* ---- eg-sec-: entrance for the home page sections ---------------------------
+   The cards already reveal as they scroll in (.eg-inview). This gives each
+   section's own heading, intro line and call-to-action the same treatment:
+   headings slide in from the left, the intro and links rise from below, with
+   the intro a beat behind the heading. Scroll-driven like .eg-inview, so it
+   needs animation-timeline (Chrome, Edge, Safari 26); elsewhere nothing is
+   hidden and nothing moves. */
+@keyframes eg-sec-title { from { opacity: 0; translate: -2.6rem 0; } to { opacity: 1; translate: none; } }
+@keyframes eg-sec-rise { from { opacity: 0; translate: 0 1.6rem; } to { opacity: 1; translate: none; } }
+
+@supports (animation-timeline: view()) {
+  .eg-sec h2 {
+    animation: eg-sec-title linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+
+  .eg-sec h2 + p {
+    animation: eg-sec-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 8% entry 60%;
+  }
+
+  /* backwards, not both: the pills have a hover lift, which a held end state would cancel */
+  .eg-sec a.rounded-full {
+    animation: eg-sec-rise linear backwards;
+    animation-timeline: view();
+    animation-range: entry 8% entry 60%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eg-sec h2,
+  .eg-sec h2 + p,
+  .eg-sec a.rounded-full {
+    animation: none !important;
+  }
+}
