@@ -60,7 +60,8 @@ describe("PartnerRings", () => {
       { name: "Nourl Co", logo: { id: 2, approved: true } } as never,
     ];
     const out = html(cases);
-    expect(out).not.toContain("<img");
+    // The only image is the hub logo.
+    expect(out.match(/<img[^>]*>/g)).toHaveLength(1);
     expect(out).not.toContain("/media/w.png");
     for (const c of cases) expect(text(out)).toContain(c.name);
   });
@@ -75,13 +76,30 @@ describe("PartnerRings", () => {
   });
 
   // Review Focus #4: no ranking, no labels, no counts -- names and the hub only.
-  it("contains no text but the partner names and the centre label", () => {
+  it("contains no text but the partner names; the hub is the Edge logo image", () => {
     const words = text(html(real));
     const shown = real.filter((p) => !p.logo).map((p) => p.name);
-    expect(words.sort()).toEqual([...shown, "Edge", "Comm-Tech"].sort());
+    expect(words.sort()).toEqual([...shown].sort());
+    expect(words).not.toContain("Edge");
+    expect(words).not.toContain("Comm-Tech");
     expect(words.join(" ")).not.toMatch(/\d|brands/i);
     const alts = [...html(real).matchAll(/alt="([^"]*)"/g)].map((m) => m[1]);
-    expect(alts.sort()).toEqual(real.filter((p) => p.logo).map((p) => p.name).sort());
+    expect(alts.sort()).toEqual(
+      [...real.filter((p) => p.logo).map((p) => p.name), "Edge Communication Technologies"].sort(),
+    );
+  });
+
+  it("shows the Edge logo once, in the hub, inside the aria-hidden root", () => {
+    const out = html(real);
+    const hub = out.match(/<div class="eg-breathe[^>]*>(.*?)<\/div>/s)?.[1] ?? "";
+    const imgs = hub.match(/<img[^>]*>/g) ?? [];
+    expect(imgs).toHaveLength(1);
+    expect(imgs[0]).toContain("edge-logo.png");
+    expect(imgs[0]).toContain('alt="Edge Communication Technologies"');
+    expect(out.match(/edge-logo\.png/g)?.length).toBeGreaterThanOrEqual(1);
+    expect([...out.matchAll(/<img[^>]*edge-logo[^>]*>/g)]).toHaveLength(1);
+    expect(out).toMatch(/^<div[^>]*aria-hidden="true"/);
+    expect(cards(out)).toHaveLength(32);
   });
 
   it("is not interactive: no links and no labels", () => {
