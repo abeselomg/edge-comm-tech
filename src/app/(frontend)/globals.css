@@ -733,7 +733,7 @@ html[lang="am"] [data-am][lang="am"] {
    animation is the failsafe: gone a little after the script's own cap. */
 html[data-gate="on"] .eg-fontgate {
   display: flex;
-  animation: eg-fontgate-failsafe 0.01s linear 14s forwards;
+  animation: eg-fontgate-failsafe 0.01s linear 8s forwards;
 }
 
 html[data-fonts="ready"] .eg-fontgate {

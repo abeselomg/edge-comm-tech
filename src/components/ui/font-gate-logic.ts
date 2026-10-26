@@ -8,9 +8,9 @@
  * slow connection sees the loader for as long as the page is really loading.
  */
 /** The overlay never shows for less than this, so a fast load does not flash it. Counted from the start of the navigation. */
-export const MIN_SHOW_MS = 700;
+export const MIN_SHOW_MS = 1200;
 /** The longest the overlay may cover the page, whatever is still loading. */
-export const MAX_WAIT_MS = 12000;
+export const MAX_WAIT_MS = 6000;
 /** Must match the fade in globals.css. */
 export const FADE_MS = 250;
 

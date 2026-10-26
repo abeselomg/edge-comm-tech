@@ -16,10 +16,11 @@ describe("page-load gate logic", () => {
     expect(remainingHoldMs(MIN_SHOW_MS + 500)).toBe(0);
   });
 
-  it("caps the wait, and the cap is long enough for a slow connection", () => {
+  it("caps the wait, and the cap is long enough for a slow connection but shorter than the CSS failsafe", () => {
     expect(remainingWaitMs(0)).toBe(MAX_WAIT_MS);
     expect(remainingWaitMs(MAX_WAIT_MS + 1)).toBe(0);
-    expect(MAX_WAIT_MS).toBeGreaterThanOrEqual(10000);
+    expect(MAX_WAIT_MS).toBeGreaterThanOrEqual(5000);
+    expect(MAX_WAIT_MS).toBeLessThan(8000); // the CSS failsafe (8s) must outlast it
   });
 
   it("boot script switches the cover on and nothing else", () => {
