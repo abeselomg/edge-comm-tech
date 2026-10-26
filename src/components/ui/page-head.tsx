@@ -7,6 +7,8 @@
  * feel redundant.
  */
 
+import { HeroAmbience, type AmbienceTheme } from "./hero-ambience";
+
 const ACCENT = "#0888c5";
 
 export type Cta = { label: string; href: string };
@@ -118,6 +120,7 @@ export function PageHead({
   crumb,
   meta,
   ctas,
+  ambience,
 }: {
   eyebrow?: string;
   title: React.ReactNode;
@@ -127,6 +130,8 @@ export function PageHead({
   crumb?: React.ReactNode;
   meta?: React.ReactNode;
   ctas?: React.ReactNode;
+  /** Floating icons and soft shapes behind the band; omit for none. */
+  ambience?: AmbienceTheme;
 }) {
   return (
     <header
@@ -137,6 +142,7 @@ export function PageHead({
       }}
     >
       <Decoration variant={variant} accent={accent} />
+      {ambience ? <HeroAmbience theme={ambience} accent={accent} /> : null}
       <div className="relative mx-auto max-w-6xl px-6 py-16">
         {crumb}
         {eyebrow ? (

@@ -68,6 +68,7 @@ export default async function CareersPage() {
         intro="Edge Comm-Tech engineers work on the systems Ethiopian banks, universities and ministries depend on. The work is real, the standards are high, and what you learn here compounds."
         accent="#0888c5"
         variant="grid"
+        ambience="general"
         ctas={
           <CtaRow
             primary={{ href: "/careers/open-positions", label: "See open positions" }}

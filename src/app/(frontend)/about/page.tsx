@@ -57,6 +57,7 @@ export default async function AboutPage() {
         intro={hero?.intro}
         accent={ACCENT}
         variant="wash"
+        ambience="general"
         ctas={
           <CtaRow
             primary={{ href: "/solutions", label: "Explore our solutions" }}

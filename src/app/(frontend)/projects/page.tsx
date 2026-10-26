@@ -42,6 +42,7 @@ export default async function ProjectsPage() {
         intro="Edge Comm-Tech has executed and delivered more than 67 projects for banks, universities, ministries and major enterprises. The engagements documented below show how our solutions and services work in practice."
         accent="#0b6fa8"
         variant="wash"
+        ambience="projects"
         ctas={
           <CtaRow
             primary={{ href: "/contact", label: "Discuss a similar project" }}

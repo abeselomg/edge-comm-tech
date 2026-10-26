@@ -50,6 +50,7 @@ export default async function SolutionsPage() {
         intro={hero?.intro}
         accent="#0888c5"
         variant="grid"
+        ambience="solutions"
         ctas={
           <CtaRow
             primary={{ href: "/contact", label: "Talk to our experts" }}
