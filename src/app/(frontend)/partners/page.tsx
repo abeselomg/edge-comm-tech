@@ -113,9 +113,11 @@ export default async function PartnersPage() {
               </p>
             </div>
 
-            {/* Hidden below md: the filter bar and brand grid do the job on a
-                phone. Up to 48 partners are drawn; the grid lists them all. */}
-            <div className="mt-12">
+            {/* Hidden below lg: at md the diagram would be about 720px wide and
+                its names under 9px, so tablets, like phones, get the filter
+                bar and brand grid. Up to 48 partners are drawn; the grid
+                lists them all. */}
+            <div className="mt-12 hidden lg:block">
               <PartnerRings partners={partners} />
             </div>
           </section>

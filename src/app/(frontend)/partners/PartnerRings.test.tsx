@@ -62,7 +62,9 @@ describe("PartnerRings", () => {
     const out = html(real);
     expect(out).toMatch(/^<div[^>]*aria-hidden="true"/);
     expect(out).toMatch(/^<div[^>]*data-parity="partner-rings"/);
-    expect(out).toMatch(/^<div[^>]*class="[^"]*\bhidden\b[^"]*\bmd:block\b/);
+    // From lg only: below 1024px the diagram cannot hold 9px names.
+    expect(out).toMatch(/^<div[^>]*class="[^"]*\bhidden\b[^"]*\blg:block\b/);
+    expect(out).not.toMatch(/\bmd:block\b/);
   });
 
   // Review Focus #4: no ranking, no labels, no counts -- names and the hub only.

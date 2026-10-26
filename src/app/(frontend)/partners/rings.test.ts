@@ -103,8 +103,36 @@ describe("ringLayout", () => {
       expect([0, 1, 2].map((r) => byRing(cards, r).length)).toEqual(counts(n));
       expect(cards.map((c) => c.item.id).sort((a, b) => a - b)).toEqual(items.map((i) => i.id));
       for (const r of [0, 1, 2]) {
-        const ids = byRing(cards, r).map((c) => c.item.id);
-        expect(ids).toEqual([...ids].sort((a, b) => a - b));
+        // Dealt order is kept within each kind; the kinds are interleaved.
+        for (const k of [false, true]) {
+          const ids = byRing(cards, r).filter((c) => c.item.logo === k).map((c) => c.item.id);
+          expect(ids).toEqual([...ids].sort((a, b) => a - b));
+        }
+      }
+    }
+  });
+
+  /*
+   * Chrome showed the real 32 with three logos in a row on the outer ring:
+   * the first six partners in the list all have artwork, so dealt order
+   * clustered them. The fewer kind on a ring is now spread evenly round it.
+   */
+  it("spreads the fewer kind round each ring, never two side by side", () => {
+    const REAL = [0, 1, 2, 3, 4, 5, 9, 12, 13, 18, 19, 21, 26]; // logos among the real 32
+    const patterns: [string, (i: number) => boolean][] = [...PATTERNS, ["real", (i) => REAL.includes(i)]];
+    for (const [label, logo] of patterns) {
+      for (let n = 20; n <= 48; n++) {
+        const items = Array.from({ length: n }, (_, i) => ({ id: i, logo: logo(i) }));
+        for (const r of [0, 1, 2]) {
+          const ring = byRing(ringLayout(items, { kind: (i) => i.logo }), r).map((c) => c.item.logo);
+          const fewer = ring.filter(Boolean).length * 2 <= ring.length;
+          const minority = ring.map((l) => l === fewer);
+          if (minority.filter(Boolean).length * 2 > ring.length) continue;
+          for (let i = 0; i < ring.length; i++) {
+            const pair = minority[i] && minority[(i + 1) % ring.length];
+            expect(pair, `${label} n=${n} ring ${r}: ${ring.map((l) => (l ? "L" : "N")).join("")}`).toBe(false);
+          }
+        }
       }
     }
   });
@@ -131,6 +159,8 @@ describe("ringLayout", () => {
         if (k >= 2) expect(diagonal).toBeLessThanOrEqual(2 * RING_RADII[r] * Math.sin(Math.PI / k));
       }
     }
+    // With a margin: Chrome measured cross-ring gaps of 1-2 px at 8.6 x 5.
+    expect(Math.min(...gaps) - diagonal).toBeGreaterThanOrEqual(0.3);
     // And the outer ring's cards stay inside the square.
     expect(RING_RADII[2] + diagonal / 2).toBeLessThan(50);
   });

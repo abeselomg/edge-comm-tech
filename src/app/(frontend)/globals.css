@@ -184,12 +184,14 @@ body {
   font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -0.03em;
-  font-size: clamp(7px, 1.1cqw, 11px);
+  /* Never below 9px. The diagram shows from lg, where it is 896px wide and
+     1.1cqw is 9.9px; the floor holds if that ever changes. */
+  font-size: clamp(9px, 1.1cqw, 11px);
   line-height: 1.15;
   color: color-mix(in srgb, var(--color-ink) 70%, transparent);
 }
 
-.eg-rings:hover .eg-ring, .eg-rings:hover .eg-ring-card {
+.eg-rings:hover .eg-ring, .eg-rings:hover .eg-ring-card, .eg-rings:hover .eg-breathe {
   animation-play-state: paused;
 }
 

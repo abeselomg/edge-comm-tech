@@ -152,6 +152,58 @@ export function markFormBoundaries(html) {
   );
 }
 
+/*
+ * Per-page regions and wording that the port replaced on purpose, applied to
+ * the raw HTML before any comparison (copy, headings, links).
+ *
+ * partners: the hero diagram. Highland drew the ten capability groups on a
+ * ring, each a filter label with an "N brands" count; the port draws the
+ * partners themselves on three turning rings (PartnerRings, whose root is
+ * marked data-parity="partner-rings"). Each side loses only its own diagram,
+ * found by its exact opening tag, through the matching </div>. The intro
+ * sentence that pointed at the old ring is rewritten on the Highland side
+ * only, to the one approved new wording, so any other wording still fails.
+ */
+const PAGE_WAIVERS = {
+  partners: {
+    highland: {
+      region: '<div class="relative mx-auto hidden aspect-square w-full max-w-[34rem] md:block">',
+      rewrite: [
+        "Select a capability group — on the ring or in the list below — to see the manufacturers and distributors Edge Comm-Tech works with in that area.",
+        "Select a capability group in the list below to see the manufacturers and distributors Edge Comm-Tech works with in that area.",
+      ],
+    },
+    port: { region: /<div\b[^>]*\bdata-parity="partner-rings"[^>]*>/ },
+  },
+};
+
+/** Remove the <div> whose opening tag is the first match of `open`, through its matching close. */
+function stripDiv(html, open) {
+  const start = typeof open === "string" ? html.indexOf(open) : html.search(open);
+  if (start < 0) return html;
+  const tag = /<div\b|<\/div>/gi;
+  tag.lastIndex = start;
+  let depth = 0;
+  for (let m = tag.exec(html); m; m = tag.exec(html)) {
+    depth += m[0].toLowerCase() === "</div>" ? -1 : 1;
+    if (depth === 0) return `${html.slice(0, start)} ${html.slice(m.index + m[0].length)}`;
+  }
+  throw new Error("parity waiver: the waived region has no matching </div>");
+}
+
+/**
+ * @param {string} html
+ * @param {string} page
+ * @param {"highland" | "port"} side
+ */
+export function applyPageWaivers(html, page, side) {
+  const w = PAGE_WAIVERS[page]?.[side];
+  if (!w) return html;
+  let out = stripDiv(html, w.region);
+  if (w.rewrite) out = out.split(w.rewrite[0]).join(w.rewrite[1]);
+  return out;
+}
+
 /** The comparable sentences of a page, normalised, in order, without duplicates. */
 export function copySentences(html, page) {
   const text = visibleText(markFormBoundaries(html));

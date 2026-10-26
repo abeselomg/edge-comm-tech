@@ -15,9 +15,11 @@ export const RING_RADII: Radii = [22, 33, 43];
  * any two cards -- same ring or neighbouring rings -- eventually meet at every
  * relative bearing, and two upright boxes never overlap at centre distance d
  * only if the box's diagonal is at most d. The closest ring gap is 10
- * (33 -> 43); hypot(8.6, 5) is 9.95.
+ * (33 -> 43); hypot(8.4, 4.8) is 9.67, leaving about 0.3 (3px at the full
+ * 896px diagram) for the borders and shadows. At 8.6 x 5 Chrome measured
+ * cross-ring gaps of 1-2px.
  */
-export const CARD = { w: 8.6, h: 5 } as const;
+export const CARD = { w: 8.4, h: 4.8 } as const;
 
 /**
  * Start offset of each ring, as a fraction of that ring's own slot (360 / count).
@@ -106,6 +108,25 @@ function kindCounts(targets: number[], marked: number): number[] {
 }
 
 /**
+ * One ring's cards, the two kinds interleaved: the fewer kind is spread evenly
+ * round the ring (j-th at slot floor((j + 0.5) * k / m)), so no two of it sit
+ * side by side whenever it is at most half the ring. Each kind keeps its dealt
+ * order. Without this the ring kept list order, and the real list -- whose
+ * first six partners all have artwork -- put three logos in a row.
+ */
+function interleave<T>(a: T[], b: T[]): T[] {
+  const [few, many] = b.length <= a.length ? [b, a] : [a, b];
+  const k = a.length + b.length;
+  const m = few.length;
+  const slots = new Set(few.map((_, j) => Math.floor(((j + 0.5) * k) / m)));
+  const out: T[] = [];
+  let f = 0;
+  let g = 0;
+  for (let i = 0; i < k; i++) out.push(slots.has(i) ? few[f++] : many[g++]);
+  return out;
+}
+
+/**
  * Deal items over three rings and place them.
  *
  * `kind` (optional) splits the items in two -- for the partners, approved
@@ -118,7 +139,8 @@ function kindCounts(targets: number[], marked: number): number[] {
  *
  * The round-robin spreads list neighbours over the rings, but that is NOT a
  * guarantee at every n: two consecutive items can land on the same ring, and
- * dealing by kind loosens it further. Dealt order is kept within a ring.
+ * dealing by kind loosens it further. Dealt order is kept within each kind on
+ * a ring; the two kinds are interleaved (see interleave).
  */
 export function ringLayout<T>(
   items: T[],
@@ -137,7 +159,7 @@ export function ringLayout<T>(
   // Per ring, how many of each kind: [unmarked, marked].
   const quota = RINGS.map((r) => [targets[r] - markedTargets[r], markedTargets[r]]);
   const totals = [n - marked, marked];
-  const dealt: T[][] = RINGS.map(() => []);
+  const dealt: [T[], T[]][] = RINGS.map(() => [[], []]);
   const dealtOf = RINGS.map(() => [0, 0]);
   const seen = [0, 0];
 
@@ -159,13 +181,13 @@ export function ringLayout<T>(
     }
     // Quotas of each kind sum to that kind's total, so a ring always has room.
     if (best === undefined) throw new Error("ringLayout: no ring has room");
-    dealt[best].push(item);
+    dealt[best][k].push(item);
     dealtOf[best][k]++;
   });
 
   const cards: RingCard<T>[] = [];
   for (const r of RINGS) {
-    const ringItems = dealt[r];
+    const ringItems = interleave(dealt[r][0], dealt[r][1]);
     const k = ringItems.length;
     const slot = 360 / k;
     const offset = slot * OFFSET_FRACTIONS[r];

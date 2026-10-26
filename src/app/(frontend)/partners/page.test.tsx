@@ -76,6 +76,12 @@ describe("the partners page", () => {
     expect(out).not.toMatch(/class="[^"]*\b(node|pill|spoke)\b/);
     expect(out).not.toContain(" brands<");
   });
+
+  // Chrome showed an empty band under "Show all" below lg: the wrapper kept
+  // its top margin with the diagram hidden. It hides with the diagram.
+  it("hides the diagram's wrapper, margin and all, below lg", () => {
+    expect(out).toMatch(/<div class="mt-12 hidden lg:block"><div aria-hidden="true" data-parity="partner-rings"/);
+  });
 });
 
 describe("the old ring diagram is gone", () => {
@@ -120,8 +126,17 @@ describe("globals.css", () => {
     expect(first).toContain(".eg-ring-card");
   });
 
-  it("pauses the rings and cards on hover", () => {
-    expect(css).toMatch(/\.eg-rings:hover \.eg-ring,\s*\.eg-rings:hover \.eg-ring-card\s*\{\s*animation-play-state: paused/);
+  it("pauses the rings, the cards and the hub on hover", () => {
+    expect(css).toMatch(
+      /\.eg-rings:hover \.eg-ring,\s*\.eg-rings:hover \.eg-ring-card,\s*\.eg-rings:hover \.eg-breathe\s*\{\s*animation-play-state: paused/,
+    );
+  });
+
+  // Hard acceptance from the Chrome check: no diagram text below 9px.
+  it("never sets a ring name below 9px", () => {
+    const at = css.indexOf(".eg-ring-name {");
+    const rule = css.slice(at, css.indexOf("}", at));
+    expect(rule).toMatch(/font-size: clamp\(9px,/);
   });
 
   /*

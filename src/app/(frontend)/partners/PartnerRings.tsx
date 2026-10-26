@@ -22,6 +22,9 @@ import { CARD, RING_RADII, ringLayout } from "./rings";
  * Every size is in cqw -- the root is an inline-size container, and square -- so the
  * diagram scales as one piece. The card box comes from rings.ts (CARD), where
  * a test holds it to the ring spacing.
+ *
+ * Shown from lg only. At md the diagram would be about 720px wide and its
+ * names under 9px, so tablets, like phones, get the filter bar and brand grid.
  */
 
 /** Seconds per turn and direction, inner ring first. */
@@ -43,7 +46,7 @@ export function PartnerRings({ partners }: { partners: RingPartner[] }) {
     <div
       aria-hidden="true"
       data-parity="partner-rings"
-      className="eg-rings relative mx-auto hidden aspect-square w-full max-w-[56rem] md:block"
+      className="eg-rings relative mx-auto hidden aspect-square w-full max-w-[56rem] lg:block"
     >
       {RING_RADII.map((r) => (
         <span
