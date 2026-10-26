@@ -529,3 +529,50 @@ populated related document that is not published outside draft mode, so after
 that fix is deployed the finding must read NO LEAK. The first-user rule is
 exercised by its unit test, not by the probe: by the time the probe runs, the real
 admin (step 0) already exists.
+
+## SEO
+
+Two environment variables control how the site presents itself to search
+engines. Both go in `/etc/edge-comm-tech.env`, and **both are read when the app
+is built** (page metadata, the `X-Robots-Tag` header), so a change needs a
+redeploy, not just a restart. `deploy/redeploy.sh` passes them to the build.
+
+| Variable | Meaning |
+|---|---|
+| `SITE_URL` | The public origin, no trailing slash and no path: `https://www.example.com`. Builds every canonical link, share URL and sitemap entry. Unset, it falls back to `http://localhost:3000`, which is wrong for production. |
+| `SITE_INDEXABLE` | Only the exact string `true` lets search engines in. Unset, empty, `TRUE`, `1`, `yes`: all mean *keep out*. |
+
+**Production must set both.** Leave `SITE_INDEXABLE` unset on the review server
+and until go-live. Set `SITE_INDEXABLE=true` (and the real `SITE_URL`) at go-live
+only, then redeploy.
+
+| | `SITE_INDEXABLE` not `true` (default) | `SITE_INDEXABLE=true` |
+|---|---|---|
+| `<meta name="robots">` | `noindex, nofollow` on every page | none (default `index, follow`) |
+| `X-Robots-Tag` header | `noindex, nofollow` on every response | only on `/admin`, `/api` (not `/api/media/file/`), `/preview`, `/forms` |
+| `/robots.txt` | `Disallow: /`, no sitemap line | allows the site; disallows `/admin`, `/api/`, `/preview`, `/forms`; names the sitemap |
+| `/sitemap.xml` | empty | every static page plus every published solution, service, project, news item, event and open vacancy |
+
+Verify after a deploy (replace the host):
+
+```bash
+curl -s https://HOST/robots.txt
+curl -s https://HOST/sitemap.xml | head -20
+curl -s https://HOST/ | grep -o '<meta name="robots"[^>]*>'
+curl -sI https://HOST/ | grep -i x-robots-tag
+curl -s https://HOST/solutions/cybersecurity | grep -oE '<title>[^<]*</title>|<link rel="canonical"[^>]*>|<meta property="og:[a-z:]*" content="[^"]*"'
+```
+
+While not indexable you should see `Disallow: /`, an empty sitemap, the
+`noindex, nofollow` meta tag and the header. Once indexable: no `robots` meta, the
+canonical link on `SITE_URL`, a sitemap with URLs on `SITE_URL`, and a header only
+on the private paths.
+
+Editors control each page's search appearance (title, description, share
+picture) under **Meta** on solutions, services, projects, news, events and jobs;
+left empty, the page's own title and summary are used, and
+`public/og-default.png` is the share picture. `tools/make-og-default.mjs`
+regenerates that picture.
+
+Submitting the site to Google Search Console and Bing Webmaster Tools, and the
+rest of the plan, are in `docs/seo-plan.md`.
