@@ -5,6 +5,7 @@ import { DraftBanner } from "@/components/draft-banner";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 
 import { FontGate } from "@/components/ui/font-gate";
+import { HeaderOverHero } from "@/components/ui/header-over-hero";
 import { NavProgress } from "@/components/ui/nav-progress";
 import "./globals.css";
 
@@ -57,6 +58,7 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
         </a>
         <NavProgress />
         <SiteHeader />
+        <HeaderOverHero />
         <div id="main">{children}</div>
         <SiteFooter />
         {/* Nothing at all unless an editor is previewing a draft. */}

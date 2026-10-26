@@ -1021,3 +1021,31 @@ html[data-gate="on"]:not([data-fonts]) :is(.eg-hero-eyebrow, .eg-hero-shine, .eg
   opacity: 0;
   animation: eg-hero-unhide 0.01s linear 8s forwards !important;
 }
+
+/* ---- eg-nav-: transparent header over the home hero ------------------------
+   At the very top of the home page the header has no background or border, and
+   the hero slides up underneath it (its own padding gives the content the room
+   back), so the sphere shows and moves behind the navigation. Once the page is
+   scrolled the header is solid again. Only pages with a [data-home-hero] are
+   affected. Without JavaScript nothing is transparent. */
+.eg-site-header {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+html[data-at-top="1"] body:has([data-home-hero]) .eg-site-header {
+  background-color: transparent;
+  border-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.eg-hero-under-nav {
+  margin-top: calc(-1 * var(--eg-header-h, 5.6rem));
+  padding-top: var(--eg-header-h, 5.6rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eg-site-header {
+    transition: none;
+  }
+}

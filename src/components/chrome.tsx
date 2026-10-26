@@ -35,7 +35,7 @@ export async function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
+    <header className="eg-site-header sticky top-0 z-40 border-b border-rule bg-paper/90 text-ink backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
         <Link href="/" className="shrink-0 leading-none">
           <Image

@@ -64,7 +64,7 @@ export default async function HomePage() {
   return (
     <main>
       {/* 01 Hero */}
-      <section className="relative overflow-hidden bg-paper">
+      <section data-home-hero className="eg-hero-under-nav relative overflow-hidden bg-paper">
         <div className="sun-disk" aria-hidden="true" />
         <div className="horizon" aria-hidden="true" />
         <div className="relative mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-[1fr_18rem] md:py-32">
