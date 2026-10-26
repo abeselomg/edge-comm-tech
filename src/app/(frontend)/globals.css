@@ -1007,3 +1007,17 @@ a:hover .eg-pimg-fallback svg {
     color: #0888c5;
   }
 }
+
+/* ---- eg-hero3-: the hero entrance starts when the loader leaves ------------
+   The loader covers the page from the first paint, so entrance animations that
+   start at page load would finish behind it, unseen. While the cover is on and
+   has not been released (no data-fonts yet) the entrance elements are held
+   invisible; when the gate releases the page the normal animations start from
+   the beginning. The failsafe reveals them after 8s even if the script never
+   releases the gate, so the text can never stay hidden. */
+@keyframes eg-hero-unhide { to { opacity: 1; } }
+
+html[data-gate="on"]:not([data-fonts]) :is(.eg-hero-eyebrow, .eg-hero-shine, .eg-hero-focus, .eg-hero-up) {
+  opacity: 0;
+  animation: eg-hero-unhide 0.01s linear 8s forwards !important;
+}
