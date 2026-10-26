@@ -1,3 +1,5 @@
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, itemList } from "@/lib/seo/jsonld";
 import Link from "next/link";
 import { ClosingCta, CtaRow, Mark, PageHead, SectionHead } from "@/components/ui";
 import { SECTOR_OPTIONS } from "@/fields/sectors";
@@ -32,6 +34,7 @@ export default async function ClientsPage() {
 
   return (
     <main>
+      <JsonLd data={graph(itemList("Clients", clients.filter((c) => c._status === "published").map((c) => ({ name: c.name }))))} />
       <PageHead
         eyebrow={hero?.eyebrow}
         title={hero?.title ?? "Clients"}

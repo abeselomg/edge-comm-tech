@@ -1,3 +1,5 @@
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, itemList } from "@/lib/seo/jsonld";
 import Link from "next/link";
 import { ClosingCta, CtaRow, PageHead, SectionHead } from "@/components/ui";
 import {
@@ -44,6 +46,7 @@ export default async function SolutionsPage() {
 
   return (
     <main>
+      <JsonLd data={graph(itemList("Solutions", publishedOnly(solutions).map((s) => ({ name: s.title, href: solutionHref(s.slug) }))))} />
       <PageHead
         eyebrow={hero?.eyebrow}
         title={hero?.title ?? "Solutions and services"}

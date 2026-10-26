@@ -7,6 +7,8 @@
  * feel redundant.
  */
 
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbs, graph } from "@/lib/seo/jsonld";
 import { HeroAmbience, type AmbienceTheme } from "./hero-ambience";
 
 const ACCENT = "#0888c5";
@@ -52,6 +54,7 @@ export function Crumb({ trail }: { trail: { label: string; href?: string }[] }) 
       className="font-mono text-[10px] uppercase tracking-widest text-steel"
       aria-label="Breadcrumb"
     >
+      <JsonLd data={graph(breadcrumbs(trail))} />
       {trail.map((t, i) => (
         <span key={`${t.label}-${i}`}>
           {t.href ? (

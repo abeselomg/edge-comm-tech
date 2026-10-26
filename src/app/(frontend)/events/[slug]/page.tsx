@@ -1,3 +1,5 @@
+import { JsonLd } from "@/components/seo/json-ld";
+import { event, graph } from "@/lib/seo/jsonld";
 import { Crumb, PageHead, Pending } from "@/components/ui";
 import { getContactDetails, getEvent, getEvents, getForm } from "@/lib/content";
 import { loadOr404 } from "@/lib/load";
@@ -45,6 +47,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
 
   return (
     <main>
+      <JsonLd data={graph(event(e))} />
       <PageHead
         eyebrow={`${e.category} · ${e.displayDate}`}
         title={e.headline}

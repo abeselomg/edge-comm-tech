@@ -1,8 +1,10 @@
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, itemList } from "@/lib/seo/jsonld";
 import Link from "next/link";
 import { ClosingCta, CtaRow, PageHead, SectionHead } from "@/components/ui";
 import { SECTOR_OPTIONS } from "@/fields/sectors";
 import { getProjects, getSiteSettings, getSolutions } from "@/lib/content";
-import { publishedOnly, solutionHref } from "@/lib/routes";
+import { projectHref, publishedOnly, solutionHref } from "@/lib/routes";
 import { bySector } from "../clients/client-parts";
 import { projectsFor } from "../solutions/solution-parts";
 import { FeaturedProject, heroProject, ProjectRow } from "./project-parts";
@@ -36,6 +38,7 @@ export default async function ProjectsPage() {
 
   return (
     <main>
+      <JsonLd data={graph(itemList("Projects", published.map((p) => ({ name: p.title, href: projectHref(p.slug) }))))} />
       <PageHead
         eyebrow="Projects"
         title="Delivered in environments that cannot afford downtime"

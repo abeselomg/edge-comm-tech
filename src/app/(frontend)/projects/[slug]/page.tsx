@@ -1,3 +1,5 @@
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, projectWork } from "@/lib/seo/jsonld";
 import { ClosingCta, Crumb, PageHead } from "@/components/ui";
 import { SECTOR_SHORT } from "@/fields/sectors";
 import { getPageCopy, getPartners, getProject, getProjects } from "@/lib/content";
@@ -31,6 +33,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   return (
     <main>
+      <JsonLd data={graph(projectWork(p, client?.name))} />
       <PageHead
         eyebrow={`${SECTOR_SHORT[p.sector] ?? p.sector} · Completed`}
         title={p.headline ?? p.title}
