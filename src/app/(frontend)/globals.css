@@ -71,7 +71,10 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 28%;
+  /* A fixed distance from the bottom, inside the hero's bottom padding (6rem on
+     phones, 8rem from md), so the line always runs below the buttons and never
+     through the text, whatever the height of the hero. */
+  bottom: 3rem;
   height: 1px;
   background: linear-gradient(90deg, transparent, #0888c5 20%, #0888c5 80%, transparent);
   pointer-events: none;
