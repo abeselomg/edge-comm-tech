@@ -61,7 +61,15 @@ export function NavProgress() {
   useEffect(() => {
     if (phaseRef.current === "idle" || phaseRef.current === "done") return;
     clearTimeout(timer.current);
-    go("done");
+    // New route is in; finish once any fonts it pulled in are too (usually none, so this is instant).
+    let live = true;
+    const cap = setTimeout(() => live && go("done"), 1500);
+    const ready = document.fonts?.ready ?? Promise.resolve();
+    ready.then(() => live && go("done"), () => live && go("done"));
+    return () => {
+      live = false;
+      clearTimeout(cap);
+    };
   }, [pathname]);
 
   useEffect(() => {
