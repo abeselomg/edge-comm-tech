@@ -476,3 +476,8 @@ html[lang="am"] h3 {
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
+
+/* Ethiopic has no letter case, and wide tracking pulls its syllables apart. */
+html[lang="am"] [data-am][lang="am"] {
+  letter-spacing: normal;
+}
