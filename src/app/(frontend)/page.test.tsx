@@ -135,10 +135,10 @@ describe("HomePage structure (owner's changes, 2026-10-26)", () => {
     const out = await render();
     const start = out.indexOf("mt-10 flex flex-wrap items-center gap-3");
     const hero = out.slice(start, out.indexOf("</div>", start));
-    const links = [...hero.matchAll(/<a ([^>]*)>([^<]*)<\/a>/g)].map((m) => ({
+    const links = [...hero.matchAll(/<a ([^>]*)>(.*?)<\/a>/g)].map((m) => ({
       href: /href="([^"]*)"/.exec(m[1])?.[1],
       cls: /class="([^"]*)"/.exec(m[1])?.[1] ?? "",
-      label: m[2],
+      label: m[2].replace(/<[^>]+>/g, ""), // the label is wrapped in <Tr>'s span
     }));
     expect(links.map((l) => [l.href, l.label])).toEqual([
       ["/solutions", "Explore our solutions"],

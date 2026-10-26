@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Tr } from "./i18n/Tr";
 
 /*
  * Current-page marking needs the pathname, which is a client concern. Keeping
@@ -39,7 +40,7 @@ export function NavLinks({
             aria-current={current ? "page" : undefined}
             className={`${className ?? ""} ${current ? activeClass : idleClass}`}
           >
-            {item.label}
+            <Tr>{item.label}</Tr>
           </Link>
         );
       })}

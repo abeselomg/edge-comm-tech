@@ -177,6 +177,9 @@ const PAGE_WAIVERS = {
   },
 };
 
+/* The header's EN / አማ switch: Phase 8 addition, no counterpart in Highland. */
+const LANG_TOGGLE = /<div\b[^>]*\bdata-parity="lang-toggle"[^>]*>/;
+
 /** Cut the element whose opening tag is the first match of `open`, through its matching close. */
 function cutElement(html, open, name) {
   const start = typeof open === "string" ? html.indexOf(open) : html.search(open);
@@ -245,9 +248,13 @@ function restructureHighlandHome(html) {
  */
 export function applyPageWaivers(html, page, side) {
   if (page === "index" && side === "highland") return restructureHighlandHome(html);
+  /* The header's language toggle exists only on the port, on every page. Its
+     whole <div> (marked data-parity="lang-toggle") is cut from the port side
+     and nothing else is; a second one, or any other text, is still reported. */
+  const port = side === "port" ? stripDiv(html, LANG_TOGGLE) : html;
   const w = PAGE_WAIVERS[page]?.[side];
-  if (!w) return html;
-  let out = stripDiv(html, w.region);
+  if (!w) return port;
+  let out = stripDiv(port, w.region);
   if (w.rewrite) out = out.split(w.rewrite[0]).join(w.rewrite[1]);
   return out;
 }
