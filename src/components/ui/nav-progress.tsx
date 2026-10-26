@@ -1,0 +1,75 @@
+"use client";
+
+/*
+ * A slim brand-coloured bar across the top edge during client-side navigation.
+ * It starts on a click on an internal link, creeps towards 80% while the next
+ * route loads, and completes when the pathname changes. Fixed, inert and
+ * aria-hidden, so it cannot shift layout or be read out. No dependency.
+ * Hidden outright under prefers-reduced-motion (see "eg-load-" in globals.css).
+ */
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+
+type Phase = "idle" | "start" | "run" | "done";
+
+/** The path a click on this link would navigate to, or null if it is not an in-site client navigation. */
+export function internalNavTarget(a: HTMLAnchorElement | null, ev: MouseEvent, origin: string): string | null {
+  if (!a || ev.defaultPrevented || ev.button !== 0) return null;
+  if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return null;
+  if ((a.target && a.target !== "_self") || a.hasAttribute("download")) return null;
+  let url: URL;
+  try {
+    url = new URL(a.href, origin);
+  } catch {
+    return null;
+  }
+  if (url.origin !== origin) return null;
+  return url.pathname + url.search;
+}
+
+export function NavProgress() {
+  const pathname = usePathname();
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [run, setRun] = useState(0);
+  const phaseRef = useRef<Phase>("idle");
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const go = (next: Phase) => {
+    phaseRef.current = next;
+    setPhase(next);
+  };
+
+  useEffect(() => {
+    const onClick = (ev: MouseEvent) => {
+      const a = (ev.target as Element | null)?.closest?.("a") ?? null;
+      const target = internalNavTarget(a as HTMLAnchorElement | null, ev, location.origin);
+      if (target === null || target === location.pathname + location.search) return;
+      clearTimeout(timer.current);
+      setRun((n) => n + 1);
+      go("start");
+      requestAnimationFrame(() => requestAnimationFrame(() => phaseRef.current === "start" && go("run")));
+      // Never leave the bar hanging if the navigation is cancelled.
+      timer.current = setTimeout(() => go("done"), 12000);
+    };
+    document.addEventListener("click", onClick);
+    return () => {
+      document.removeEventListener("click", onClick);
+      clearTimeout(timer.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (phaseRef.current === "idle" || phaseRef.current === "done") return;
+    clearTimeout(timer.current);
+    go("done");
+  }, [pathname]);
+
+  useEffect(() => {
+    if (phase !== "done") return;
+    timer.current = setTimeout(() => go("idle"), 700);
+    return () => clearTimeout(timer.current);
+  }, [phase]);
+
+  if (phase === "idle") return null;
+  return <div key={run} className="eg-load-bar" data-phase={phase} aria-hidden="true" />;
+}

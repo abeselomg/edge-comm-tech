@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Atkinson_Hyperlegible, Fragment_Mono, Geologica } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/chrome";
 import { DraftBanner } from "@/components/draft-banner";
+import { NavProgress } from "@/components/ui/nav-progress";
 import "./globals.css";
 
 const geologica = Geologica({
@@ -50,6 +51,7 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
         >
           Skip to content
         </a>
+        <NavProgress />
         <SiteHeader />
         <div id="main">{children}</div>
         <SiteFooter />
