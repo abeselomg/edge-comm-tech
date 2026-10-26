@@ -84,6 +84,7 @@ export function ProjectGallery({ project }: { project: Project }) {
   return (
     <section
       aria-label={`Pictures of ${project.title}`}
+      data-parity="project-gallery"
       className="border-t border-rule bg-paper-2/40"
     >
       <div className="mx-auto max-w-6xl px-6 py-14">

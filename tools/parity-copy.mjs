@@ -186,6 +186,11 @@ const LANG_TOGGLE = /<div\b[^>]*\bdata-parity="lang-toggle"[^>]*>/;
    page's own text is untouched and still compared. */
 const PROJECT_IMAGE = /<img\b[^>]*\bdata-parity="project-image"[^>]*>/gi;
 
+/* The project picture gallery (thumbnail buttons and the lightbox) exists only on
+   the port, and its buttons would read as form controls the originals lack: the
+   whole <section data-parity="project-gallery"> is cut from the port side. */
+const PROJECT_GALLERY = /<section\b[^>]*\bdata-parity="project-gallery"[^>]*>/;
+
 /** Cut the element whose opening tag is the first match of `open`, through its matching close. */
 function cutElement(html, open, name) {
   const start = typeof open === "string" ? html.indexOf(open) : html.search(open);
@@ -257,7 +262,10 @@ export function applyPageWaivers(html, page, side) {
   /* The header's language toggle exists only on the port, on every page. Its
      whole <div> (marked data-parity="lang-toggle") is cut from the port side
      and nothing else is; a second one, or any other text, is still reported. */
-  const port = side === "port" ? stripDiv(html, LANG_TOGGLE).replace(PROJECT_IMAGE, " ") : html;
+  const port =
+    side === "port"
+      ? cutElement(stripDiv(html, LANG_TOGGLE).replace(PROJECT_IMAGE, " "), PROJECT_GALLERY, "section").rest
+      : html;
   const w = PAGE_WAIVERS[page]?.[side];
   if (!w) return port;
   let out = stripDiv(port, w.region);

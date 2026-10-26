@@ -33,4 +33,14 @@ describe("project-image waiver", () => {
     const changed = `<html><body><main>${marked}<h1>Smart classrooms</h1><p>Different words entirely here.</p></main></body></html>`;
     expect(text(changed)).not.toBe(text(page("")));
   });
+
+  it("cuts the picture gallery (its buttons are not form controls Highland lacks) and nothing around it", () => {
+    const gallery = `<section aria-label="Pictures of X" data-parity="project-gallery"><ul><li><button type="button" aria-label="Enlarge picture 1">${marked}</button></li></ul><p>Caption words that exist only here.</p></section>`;
+    const out = applyPageWaivers(page(gallery), "project-x", "port");
+    expect(/<(input|textarea|select|button)\b/i.test(out)).toBe(false);
+    expect(text(page(gallery))).toBe(text(page("")));
+    // a section that is not the gallery is left alone
+    const other = `<section><p>A different section that carries its own words and must still be compared against the original.</p></section>`;
+    expect(text(page(other))).not.toBe(text(page("")));
+  });
 });
