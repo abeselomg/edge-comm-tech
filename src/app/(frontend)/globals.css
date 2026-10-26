@@ -1091,3 +1091,34 @@ html[data-at-top="1"] body:has([data-home-hero]) .eg-site-header {
     animation: none !important;
   }
 }
+
+/* ---- eg-rv-: timed entrance when a home page section scrolls into view -----
+   SectionReveal (client) tags the pieces of each .eg-sec section with data-rv
+   and switches html[data-rv] on. Until a piece is in view it is hidden; when it
+   is, .eg-rv-in is added and it plays its entrance once, staggered by --rv-d
+   among the pieces that appear together. The animation uses fill-mode "backwards", not
+   "both": the resting state is the element's own, so card hover lifts keep
+   working afterwards. The older scroll-linked reveals are switched off for
+   tagged pieces so the two never fight. Never active without JavaScript or
+   under reduced motion (the script does not switch html[data-rv] on). */
+@keyframes eg-rv-up { from { opacity: 0; translate: 0 3.2rem; scale: 0.97; } to { opacity: 1; translate: none; scale: none; } }
+@keyframes eg-rv-left { from { opacity: 0; translate: -5rem 0; } to { opacity: 1; translate: none; } }
+
+html[data-rv="on"] [data-rv] {
+  animation: none;
+  animation-timeline: auto;
+}
+
+html[data-rv="on"] [data-rv]:not(.eg-rv-in) {
+  opacity: 0;
+}
+
+html[data-rv="on"] [data-rv="up"].eg-rv-in {
+  animation: eg-rv-up 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  animation-delay: var(--rv-d, 0s);
+}
+
+html[data-rv="on"] [data-rv="left"].eg-rv-in {
+  animation: eg-rv-left 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  animation-delay: var(--rv-d, 0s);
+}
