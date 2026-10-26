@@ -107,10 +107,10 @@ export default async function HomePage() {
       {/* 02 Impact */}
       <section className="border-y border-rule bg-paper-2">
         <div className="mx-auto max-w-6xl px-6 py-12">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
+          <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
             Trusted execution, measurable impact
           </p>
-          <dl className="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="eg-m-stagger mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {(settings.impact ?? []).map((m) => impactCard(m))}
           </dl>
           {settings.impactSupport ? (
@@ -125,7 +125,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-6 py-20">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr]">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Who we are</p>
+            <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Who we are</p>
             <h2 className="mt-3 font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
               Your technology partner from edge to core, core to cloud
             </h2>
@@ -151,7 +151,7 @@ export default async function HomePage() {
               Discover Edge Comm-Tech
             </Link>
           </div>
-          <div className="grid content-start gap-3">
+          <div className="eg-m-stagger grid content-start gap-3">
             <div className="eg-inview rounded-2xl bg-paper-2 p-6">
               <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Mission</p>
               <p className="mt-2 font-display text-xl">{company.mission}</p>
@@ -241,8 +241,9 @@ export default async function HomePage() {
 
       {/* 05 Technology priorities */}
       <section className="relative overflow-hidden text-paper" style={{ background: DARK }}>
+        <span className="eg-m-glow" aria-hidden="true" />
         <span
-          className="pointer-events-none absolute inset-0 opacity-20"
+          className="eg-m-grid-drift pointer-events-none absolute inset-0 opacity-20"
           aria-hidden="true"
           style={{
             backgroundImage:
@@ -252,7 +253,7 @@ export default async function HomePage() {
         />
         <div className="relative mx-auto max-w-6xl px-6 py-20">
           <p
-            className="font-mono text-[10px] uppercase tracking-widest"
+            className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest"
             style={{ color: CYAN }}
           >
             Building what comes next
@@ -265,7 +266,7 @@ export default async function HomePage() {
             secure cloud adoption, expanding data requirements, connected operations, and
             sustainable growth.
           </p>
-          <div className="mt-12 grid gap-px overflow-hidden rounded-2xl bg-paper/15 md:grid-cols-2 lg:grid-cols-3">
+          <div className="eg-m-stagger mt-12 grid gap-px overflow-hidden rounded-2xl bg-paper/15 md:grid-cols-2 lg:grid-cols-3">
             {(copy.homePriorities ?? []).map((p) => (
               <article key={p.title} className="eg-inview p-7" style={{ background: DARK }}>
                 <h3 className="font-display text-xl text-paper">{p.title}</h3>
@@ -275,7 +276,7 @@ export default async function HomePage() {
           </div>
           <Link
             href="/contact"
-            className="mt-10 inline-block rounded-full px-6 py-3 text-sm font-semibold transition hover:-translate-y-0.5"
+            className="eg-m-sheen mt-10 inline-block rounded-full px-6 py-3 text-sm font-semibold transition hover:-translate-y-0.5"
             style={{ background: CYAN, color: DARK }}
           >
             Modernize your technology environment
@@ -288,7 +289,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-6xl px-6 py-20">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
+              <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
                 Global technology ecosystem
               </p>
               <h2 className="mt-3 max-w-2xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
@@ -307,11 +308,11 @@ export default async function HomePage() {
             </Link>
           </div>
           {partners.some((p) => p.featured) ? (
-            <ul className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-3 lg:grid-cols-6">
+            <ul className="eg-m-stagger mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-rule sm:grid-cols-3 lg:grid-cols-6">
               {partners
                 .filter((p) => p.featured)
                 .map((p) => (
-                  <li key={p.name} className="grid h-24 place-items-center bg-paper-2 px-4">
+                  <li key={p.name} className="eg-inview eg-m-tile grid h-24 place-items-center bg-paper-2 px-4">
                     <Mark item={p} h="h-12" />
                   </li>
                 ))}
@@ -387,7 +388,7 @@ export default async function HomePage() {
 
       {/* 09 Clients */}
       <section id="clients" className="mx-auto max-w-6xl px-6 py-20">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-gold">
+        <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
           Trusted across critical sectors
         </p>
         <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
@@ -400,15 +401,15 @@ export default async function HomePage() {
             // as a label over an empty grid.
             if (!group.length) return null;
             return (
-              <div key={value} className="eg-inview">
+              <div key={value}>
                 <p className="font-mono text-[10px] uppercase tracking-widest text-steel">
                   {label}
                 </p>
-                <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <ul className="eg-m-stagger mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   {group.map((c) => (
                     <li
                       key={c.name}
-                      className="grid h-20 place-items-center rounded-2xl border border-rule bg-paper-2 px-4"
+                      className="eg-inview eg-m-tile grid h-20 place-items-center rounded-2xl border border-rule bg-paper-2 px-4"
                     >
                       <Mark item={c} />
                     </li>
@@ -433,7 +434,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Insights</p>
+            <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Insights</p>
             <h2 className="mt-3 max-w-2xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
               Ideas, updates and technology perspectives
             </h2>
@@ -446,7 +447,7 @@ export default async function HomePage() {
           </Link>
         </div>
         {posts.length ? (
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="eg-m-stagger mt-10 grid gap-4 md:grid-cols-3">
           {posts.slice(0, 3).map((p) => {
             const target = typeof p.target === "object" ? p.target : null;
             const href = target
@@ -472,7 +473,7 @@ export default async function HomePage() {
               </>
             );
             const className =
-              "eg-inview group flex flex-col rounded-2xl border border-rule p-6 transition hover:-translate-y-1 hover:border-gold";
+              "eg-inview eg-m-card group flex flex-col rounded-2xl border border-rule p-6 hover:border-gold";
             /*
              * A post whose target solution is unpublished renders without a
              * link rather than with one to a route that 404s. Payload's

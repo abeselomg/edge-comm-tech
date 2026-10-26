@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Confirmable } from "@/components/ui";
+import { CountUp } from "@/components/count-up";
 import type { Project } from "@/lib/content";
 import { extractText } from "@/fields/validators";
 import { projectHref, solutionHref } from "@/lib/routes";
@@ -48,7 +49,7 @@ export function impactCard(counter: {
   return (
     <div className="eg-inview" key={counter.figure}>
       <dt className="font-display text-[clamp(2.2rem,4vw,3.2rem)] leading-none text-gold">
-        {counter.figure}
+        <CountUp value={counter.figure} />
         {counter.unit ? (
           <span className="ml-1 font-sans text-base font-normal text-ink/60">{counter.unit}</span>
         ) : null}
@@ -101,7 +102,7 @@ export function SuccessStory({ story }: { story: Project }) {
     <section className="border-y border-rule bg-paper-2/40">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 lg:grid-cols-[1fr_1fr]">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Success story</p>
+          <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Success story</p>
           <h2 className="mt-3 font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
             Transforming learning through smart classroom technology
           </h2>
@@ -118,7 +119,7 @@ export function SuccessStory({ story }: { story: Project }) {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href={projectHref(story.slug)}
-              className="rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+              className="eg-m-sheen rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
             >
               Read the success story
             </Link>
@@ -130,9 +131,9 @@ export function SuccessStory({ story }: { story: Project }) {
             </Link>
           </div>
         </div>
-        <dl className="grid content-start gap-px self-start overflow-hidden rounded-2xl bg-rule sm:grid-cols-2">
+        <dl className="eg-m-stagger grid content-start gap-px self-start overflow-hidden rounded-2xl bg-rule sm:grid-cols-2">
           {rows.map(([k, v]) => (
-            <div key={k} className="bg-paper-2 px-6 py-5">
+            <div key={k} className="eg-inview bg-paper-2 px-6 py-5">
               <dt className="font-mono text-[9px] uppercase tracking-widest text-steel">{k}</dt>
               <dd className="mt-1.5 font-display text-lg leading-snug">{v}</dd>
             </div>
