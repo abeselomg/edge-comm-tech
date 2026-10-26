@@ -2,20 +2,15 @@
  * Absolute URLs for structured data.
  *
  * Structured data must use absolute URLs; a relative one is ignored by most
- * consumers. The origin comes from SITE_URL, which is unset until there is a
- * production domain, so it falls back to the local dev origin.
- *
- * This is deliberately its own tiny helper rather than an import of the
- * metadata work's src/lib/seo/site.ts: the two can be pointed at one helper
- * when they are integrated.
+ * consumers. The origin is the site's single SITE_URL helper (src/lib/seo/site.ts),
+ * so a page's canonical link, the sitemap and its structured data can never name
+ * different origins.
  */
-
-const FALLBACK = "http://localhost:3000";
+import { siteUrl } from "../site";
 
 /** The site origin with no trailing slash. */
 export function siteOrigin(): string {
-  const raw = process.env.SITE_URL?.trim();
-  return (raw ? raw : FALLBACK).replace(/\/+$/, "");
+  return siteUrl();
 }
 
 /** `path` ("/solutions/x", "solutions/x" or "") as an absolute URL on the site. */
