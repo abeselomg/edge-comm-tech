@@ -53,7 +53,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           accent={accentFor(p)}
           fallback={false}
           priority
-          ratio="aspect-[16/8]"
+          ratio="aspect-[16/9]"
           sizes="(min-width: 1152px) 1100px, 100vw"
           className="rounded-3xl"
         />

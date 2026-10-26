@@ -160,7 +160,7 @@ export function FeaturedProject({ project: p }: { project: Project | null }) {
           accent={accent}
           fallback={false}
           priority
-          ratio="aspect-[16/7]"
+          ratio="aspect-[2/1]"
           sizes="(min-width: 1152px) 1100px, 100vw"
           className="lg:col-span-2"
         />
