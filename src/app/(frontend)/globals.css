@@ -571,3 +571,40 @@ html[lang="am"] [data-am][lang="am"] {
     }
   }
 }
+
+/* ---- eg-fontgate-: holds the brand loader until the web fonts are in ----- */
+.eg-fontgate {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-paper);
+  pointer-events: none;
+  /* Failsafe with no script: gone after 3.5s whatever happens. */
+  animation: eg-fontgate-failsafe 0.01s linear 3.5s forwards;
+}
+
+html[data-fonts="ready"] .eg-fontgate {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+
+html[data-fonts="gone"] .eg-fontgate {
+  display: none;
+}
+
+@keyframes eg-fontgate-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-fonts="ready"] .eg-fontgate {
+    transition: none;
+  }
+}
