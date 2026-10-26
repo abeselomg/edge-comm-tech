@@ -69,19 +69,13 @@ export default async function HomePage() {
         <div className="horizon" aria-hidden="true" />
         <div className="relative mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-[1fr_18rem] md:py-32">
           <div>
-            <p className="eg-hero-eyebrow font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+            <p className="eg-hero-eyebrow eg-hero-shimmer font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
               <Tr>{hero?.eyebrow}</Tr>
             </p>
-            <h1
-              className="eg-rise mt-5 font-display text-[clamp(2.4rem,6.4vw,4.9rem)] leading-[0.95]"
-              style={{ ["--d" as string]: ".06s" }}
-            >
+            <h1 className="eg-hero-wipe eg-hero-shine mt-5 font-display text-[clamp(2.4rem,6.4vw,4.9rem)] leading-[0.95]">
               <Tr>{hero?.title}</Tr>
             </h1>
-            <p
-              className="eg-rise mt-8 max-w-xl text-lg leading-relaxed text-ink/75"
-              style={{ ["--d" as string]: ".14s" }}
-            >
+            <p className="eg-hero-focus mt-8 max-w-xl text-lg leading-relaxed text-ink/75">
               <Tr>{hero?.intro}</Tr>
             </p>
             <div
@@ -90,7 +84,7 @@ export default async function HomePage() {
             >
               <Link
                 href="/solutions"
-                className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+                className="eg-hero-cta rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
               >
                 <Tr>Explore our solutions</Tr>
               </Link>
