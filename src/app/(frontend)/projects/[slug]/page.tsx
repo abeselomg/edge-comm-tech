@@ -2,6 +2,7 @@ import { ClosingCta, Crumb, PageHead } from "@/components/ui";
 import { SECTOR_SHORT } from "@/fields/sectors";
 import { getPageCopy, getPartners, getProject, getProjects } from "@/lib/content";
 import { loadOr404 } from "@/lib/load";
+import { ProjectCover, ProjectGallery } from "../project-images";
 import { accentFor, clientOf, ProjectBody, ProjectFacts, siblingProjects } from "../project-parts";
 
 /*
@@ -45,12 +46,27 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       <ProjectFacts project={p} />
 
+      {/* The cover sits under the facts panel; with no picture nothing is rendered. */}
+      <div className="mx-auto max-w-6xl px-6 pt-10">
+        <ProjectCover
+          project={p}
+          accent={accentFor(p)}
+          fallback={false}
+          priority
+          ratio="aspect-[16/8]"
+          sizes="(min-width: 1152px) 1100px, 100vw"
+          className="rounded-3xl"
+        />
+      </div>
+
       <ProjectBody
         project={p}
         siblings={siblingProjects(all, p)}
         implementationNote={copy.projectImplementationNote ?? ""}
         brands={brands as never}
       />
+
+      <ProjectGallery project={p} />
 
       <ClosingCta
         title="Plan your project with Edge Comm-Tech"

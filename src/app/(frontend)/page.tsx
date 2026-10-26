@@ -18,6 +18,7 @@ import {
 } from "@/lib/content";
 import { SECTOR_OPTIONS, SECTOR_SHORT, type SectorSlug } from "@/fields/sectors";
 import { projectHref, solutionHref } from "@/lib/routes";
+import { ProjectCover } from "./projects/project-images";
 
 /*
  * The home page, in the fifteen-section order the content master sets out in
@@ -347,8 +348,14 @@ export default async function HomePage() {
               <Link
                 key={p.slug}
                 href={projectHref(p.slug)}
-                className="eg-inview group flex flex-col rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1"
+                className="eg-inview group flex flex-col overflow-hidden rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1"
               >
+                <ProjectCover
+                  project={p}
+                  fallback={false}
+                  sizes="(min-width: 1024px) 360px, (min-width: 768px) 50vw, 100vw"
+                  className="-mx-6 -mt-6 mb-5"
+                />
                 <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-steel">
                   <span className="h-1.5 w-1.5 rounded-full bg-gold" />
                   {`${SECTOR_SHORT[p.sector as SectorSlug]} · `}
