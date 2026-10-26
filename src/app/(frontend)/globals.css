@@ -215,3 +215,160 @@ body {
     stroke-dashoffset: 0;
   }
 }
+
+/* ================================================== eg-m: home page motion
+
+   Calm, simple motion for the rest of the home page. Everything here is
+   transform, scale, translate or opacity, so nothing moves the layout, and
+   everything is a no-op until its trigger: content is visible by default and
+   the scroll-driven pieces sit behind @supports, exactly like .eg-inview.
+
+   eg-m-eyebrow    a thin accent line that draws in after a section eyebrow
+   eg-m-stagger    put on a grid whose children carry .eg-inview: each child
+                   in a row starts a little later than the one before it
+   eg-m-glow, eg-m-grid-drift
+                   the slow drift behind the dark "Building what comes next"
+   eg-m-tile       logo tile: the mark eases up a touch on hover
+   eg-m-card       lift, shadow and an accent line that sweeps under the card.
+                   Uses transform, not Tailwind's hover:-translate, which sets
+                   the translate property and loses to .eg-inview's fill.
+   eg-m-sheen      a soft highlight that passes across a filled button
+   The count-up for the impact figures is in src/components/count-up.tsx.
+   Its reduced-motion handling is in the component; the rest are below.
+*/
+
+@keyframes eg-m-line { from { scale: 0 1 } to { scale: 1 1 } }
+@keyframes eg-m-drift { to { translate: 64px 64px } }
+@keyframes eg-m-glow {
+  0%, 100% { translate: 0 0; opacity: .55 }
+  50% { translate: 14% 12%; opacity: .95 }
+}
+@keyframes eg-m-sheen { from { translate: -130% 0 } to { translate: 130% 0 } }
+
+.eg-m-eyebrow::after {
+  content: "";
+  display: inline-block;
+  width: 1.75rem;
+  height: 1px;
+  margin-left: .7rem;
+  vertical-align: middle;
+  background: currentColor;
+  opacity: .6;
+  transform-origin: left;
+}
+
+@supports (animation-timeline: view()) {
+  .eg-m-eyebrow::after {
+    animation: eg-m-line linear both;
+    animation-timeline: view();
+    animation-range: entry 20% entry 90%;
+  }
+
+  /* Scroll-driven animations ignore animation-delay, so the stagger shifts
+     each child's slice of the entry range instead. */
+  .eg-m-stagger > .eg-inview {
+    animation-range: entry calc(var(--i, 0) * 14%) entry calc(50% + var(--i, 0) * 14%);
+  }
+}
+
+.eg-m-stagger > :nth-child(3n + 2) { --i: 1 }
+.eg-m-stagger > :nth-child(3n + 3) { --i: 2 }
+
+.eg-m-glow {
+  position: absolute;
+  left: -12%;
+  top: -30%;
+  width: 55%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(circle, #10c7ff38, transparent 68%);
+  pointer-events: none;
+  animation: eg-m-glow 16s ease-in-out infinite;
+}
+
+/* One grid cell larger than the box, drifting exactly one cell: seamless. */
+.eg-m-grid-drift {
+  inset: -64px 0 0 -64px;
+  animation: eg-m-drift 60s linear infinite;
+}
+
+.eg-m-tile {
+  transition: background-color .3s;
+}
+
+.eg-m-tile > * {
+  transition: scale .35s cubic-bezier(.2, .7, .3, 1);
+}
+
+.eg-m-tile:hover {
+  background-color: color-mix(in srgb, var(--color-gold) 5%, white);
+}
+
+.eg-m-tile:hover > * {
+  scale: 1.07;
+}
+
+.eg-m-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform .3s cubic-bezier(.2, .7, .3, 1), box-shadow .3s, border-color .3s;
+}
+
+.eg-m-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--color-gold);
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale .45s cubic-bezier(.2, .7, .3, 1);
+}
+
+.eg-m-card:hover, .eg-m-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 44px -28px rgb(8 136 197 / .5);
+}
+
+.eg-m-card:hover::after, .eg-m-card:focus-visible::after {
+  scale: 1 1;
+}
+
+.eg-m-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.eg-m-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / .38) 50%, transparent 65%);
+  translate: -130% 0;
+  pointer-events: none;
+}
+
+.eg-m-sheen:hover::after, .eg-m-sheen:focus-visible::after {
+  animation: eg-m-sheen .8s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eg-m-eyebrow::after, .eg-m-glow, .eg-m-grid-drift, .eg-m-sheen::after {
+    animation: none !important;
+  }
+
+  .eg-m-tile, .eg-m-tile > *, .eg-m-card, .eg-m-card::after {
+    transition: none !important;
+  }
+
+  .eg-m-tile:hover > * {
+    scale: none;
+  }
+
+  .eg-m-card:hover, .eg-m-card:focus-visible {
+    transform: none;
+  }
+}
