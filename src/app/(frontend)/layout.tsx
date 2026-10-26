@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Atkinson_Hyperlegible, Fragment_Mono, Geologica } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/chrome";
 import { DraftBanner } from "@/components/draft-banner";
+import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 import { NavProgress } from "@/components/ui/nav-progress";
 import "./globals.css";
 
@@ -57,6 +58,7 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
         <SiteFooter />
         {/* Nothing at all unless an editor is previewing a draft. */}
         <DraftBanner />
+        <LanguageToggle />
       </body>
     </html>
   );

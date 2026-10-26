@@ -25,8 +25,9 @@ describe("SiteHeader", () => {
     expect(html).toContain('data-am="ያግኙን">Contact us</span>');
   });
 
-  it("has exactly one language toggle", async () => {
+  it("no longer carries the language toggle (it lives in the layout's edge tab)", async () => {
     const html = renderToStaticMarkup(await SiteHeader());
-    expect(html.match(/data-parity="lang-toggle"/g)).toHaveLength(1);
+    expect(html).not.toContain("lang-toggle");
+    expect(html).not.toContain('aria-label="Language"');
   });
 });

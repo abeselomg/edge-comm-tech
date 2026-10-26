@@ -604,3 +604,115 @@ html[lang="am"] [data-am][lang="am"] {
     }
   }
 }
+
+/* ---- eg-langtab: language edge tab (right edge, ~72% down) ---- */
+.eg-langtab {
+  position: fixed;
+  right: 0;
+  top: 72%;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  padding-right: env(safe-area-inset-right);
+  transform: translateY(-50%);
+}
+
+.eg-langtab-btn {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 28px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-rule);
+  border-right: 0;
+  border-radius: 22px 0 0 22px;
+  background: var(--color-paper-2);
+  color: var(--color-gold);
+  box-shadow: -2px 2px 10px #1c243022;
+  cursor: pointer;
+}
+
+.eg-langtab-btn:hover,
+.eg-langtab[data-open="true"] .eg-langtab-btn {
+  background: var(--color-gold);
+  color: #fff;
+}
+
+.eg-langtab-btn:focus-visible,
+.eg-langtab-lang:focus-visible {
+  outline: 2px solid var(--color-gold-2);
+  outline-offset: 2px;
+}
+
+.eg-langtab-btn:focus-visible {
+  outline-offset: -4px;
+}
+
+.eg-langtab-chevron {
+  transition: transform 0.25s ease;
+}
+
+.eg-langtab[data-open="true"] .eg-langtab-chevron {
+  transform: rotate(180deg);
+}
+
+/* Collapsed: slid right, behind the arrow, and visibility:hidden so the buttons
+   are out of the tab order and the accessibility tree until the tab opens. */
+.eg-langtab-panel {
+  position: absolute;
+  top: 50%;
+  right: 27px;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  border: 1px solid var(--color-rule);
+  border-radius: 999px;
+  background: var(--color-paper-2);
+  box-shadow: 0 2px 10px #1c243022;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(calc(100% + 27px), -50%);
+  transition: transform 0.25s ease, opacity 0.2s ease, visibility 0s linear 0.25s;
+}
+
+.eg-langtab[data-open="true"] .eg-langtab-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, -50%);
+  transition: transform 0.25s ease, opacity 0.2s ease, visibility 0s;
+}
+
+.eg-langtab-lang {
+  min-width: 40px;
+  border-radius: 999px;
+  padding: 8px 10px;
+  line-height: 1;
+  color: color-mix(in srgb, var(--color-ink) 70%, transparent);
+  cursor: pointer;
+}
+
+.eg-langtab-lang:hover {
+  color: var(--color-gold);
+}
+
+.eg-langtab-lang[aria-pressed="true"] {
+  background: var(--color-gold);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eg-langtab-panel,
+  .eg-langtab[data-open="true"] .eg-langtab-panel,
+  .eg-langtab-chevron {
+    transition: none;
+  }
+}
+
+@media print {
+  .eg-langtab {
+    display: none;
+  }
+}
