@@ -1,5 +1,5 @@
 import type { CollectionBeforeValidateHook, CollectionConfig } from "payload";
-import { adminOnly, adminOnlyField, selfOrAdmin, signedIn } from "../access";
+import { adminOnly, adminOnlyField, ROLE_DESCRIPTION, ROLE_OPTIONS, selfOrAdmin, usersRead } from "../access";
 
 /*
  * The first user is an admin. `role` defaults to editor, and /admin offers
@@ -19,7 +19,7 @@ export const Users: CollectionConfig = {
   auth: true,
   admin: { useAsTitle: "name", defaultColumns: ["name", "email", "role"], group: "Admin" },
   access: {
-    read: signedIn,
+    read: usersRead,
     create: adminOnly,
     update: selfOrAdmin,
     delete: adminOnly,
@@ -36,11 +36,8 @@ export const Users: CollectionConfig = {
       required: true,
       defaultValue: "editor",
       access: { update: adminOnlyField },
-      options: [
-        { label: "Admin", value: "admin" },
-        { label: "Editor", value: "editor" },
-      ],
-      admin: { description: "Editors manage content. Admins also manage users." },
+      options: ROLE_OPTIONS,
+      admin: { description: ROLE_DESCRIPTION },
     },
   ],
 };

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Tr } from "@/components/i18n/Tr";
 import { Confirmable, Mark } from "@/components/ui";
 import { AnimatedWords } from "@/components/ui/animated-words";
 import { SolutionGlyph, SolutionWatermark } from "@/components/ui/solution-glyph";
@@ -17,6 +18,7 @@ import {
 } from "@/lib/content";
 import { SECTOR_OPTIONS, SECTOR_SHORT, type SectorSlug } from "@/fields/sectors";
 import { projectHref, solutionHref } from "@/lib/routes";
+import { ProjectCover } from "./projects/project-images";
 
 /*
  * The home page, in the fifteen-section order the content master sets out in
@@ -62,41 +64,32 @@ export default async function HomePage() {
   return (
     <main>
       {/* 01 Hero */}
-      <section className="relative overflow-hidden bg-paper">
+      <section data-home-hero className="eg-hero-under-nav relative overflow-hidden bg-paper">
         <div className="sun-disk" aria-hidden="true" />
         <div className="horizon" aria-hidden="true" />
         <div className="relative mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-[1fr_18rem] md:py-32">
           <div>
-            <p className="eg-hero-eyebrow font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
-              {hero?.eyebrow}
+            <p className="eg-hero-eyebrow eg-hero-shimmer font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+              <Tr>{hero?.eyebrow}</Tr>
             </p>
-            <h1
-              className="eg-rise mt-5 font-display text-[clamp(2.4rem,6.4vw,4.9rem)] leading-[0.95]"
-              style={{ ["--d" as string]: ".06s" }}
-            >
-              {hero?.title}
+            <h1 className="eg-hero-wipe eg-hero-shine mt-5 font-display text-[clamp(2.4rem,6.4vw,4.9rem)] leading-[0.95]">
+              <Tr>{hero?.title}</Tr>
             </h1>
-            <p
-              className="eg-rise mt-8 max-w-xl text-lg leading-relaxed text-ink/75"
-              style={{ ["--d" as string]: ".14s" }}
-            >
-              {hero?.intro}
+            <p className="eg-hero-focus mt-8 max-w-xl text-lg leading-relaxed text-ink/75">
+              <Tr>{hero?.intro}</Tr>
             </p>
-            <div
-              className="eg-rise mt-10 flex flex-wrap items-center gap-3"
-              style={{ ["--d" as string]: ".28s" }}
-            >
+            <div className="eg-hero-up mt-10 flex flex-wrap items-center gap-3">
               <Link
                 href="/solutions"
-                className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
+                className="eg-hero-cta rounded-full bg-gold px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-16px_rgb(8_136_197/0.9)] transition hover:-translate-y-0.5"
               >
-                Explore our solutions
+                <Tr>Explore our solutions</Tr>
               </Link>
               <Link
                 href="/projects"
                 className="rounded-full border border-gold px-6 py-3 text-sm font-semibold text-gold transition hover:-translate-y-0.5"
               >
-                View our projects
+                <Tr>View our projects</Tr>
               </Link>
             </div>
           </div>
@@ -105,7 +98,7 @@ export default async function HomePage() {
       </section>
 
       {/* 02 Impact */}
-      <section className="border-y border-rule bg-paper-2">
+      <section className="eg-sec border-y border-rule bg-paper-2">
         <div className="mx-auto max-w-6xl px-6 py-12">
           <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
             Trusted execution, measurable impact
@@ -122,7 +115,7 @@ export default async function HomePage() {
       </section>
 
       {/* 03 Who we are */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section className="eg-sec mx-auto max-w-6xl px-6 py-20">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr]">
           <div>
             <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Who we are</p>
@@ -166,7 +159,7 @@ export default async function HomePage() {
       </section>
 
       {/* 04 Solutions */}
-      <section id="solutions" className="border-t border-rule bg-paper-2/40">
+      <section id="solutions" className="eg-sec border-t border-rule bg-paper-2/40">
         <div className="mx-auto max-w-6xl px-6 py-20">
           <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Our solutions</p>
           <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
@@ -240,7 +233,7 @@ export default async function HomePage() {
       </section>
 
       {/* 05 Technology priorities */}
-      <section className="relative overflow-hidden text-paper" style={{ background: DARK }}>
+      <section className="eg-sec relative overflow-clip text-paper" style={{ background: DARK }}>
         <span className="eg-m-glow" aria-hidden="true" />
         <span
           className="eg-m-grid-drift pointer-events-none absolute inset-0 opacity-20"
@@ -285,7 +278,7 @@ export default async function HomePage() {
       </section>
 
       {/* 06 Partners */}
-      <section id="partners" className="border-t border-rule bg-paper-2/40">
+      <section id="partners" className="eg-sec border-t border-rule bg-paper-2/40">
         <div className="mx-auto max-w-6xl px-6 py-20">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -322,7 +315,7 @@ export default async function HomePage() {
       </section>
 
       {/* 07 Projects */}
-      <section className="border-y border-rule bg-paper-2/40">
+      <section className="eg-sec border-y border-rule bg-paper-2/40">
         <div className="mx-auto max-w-6xl px-6 py-20">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -346,8 +339,14 @@ export default async function HomePage() {
               <Link
                 key={p.slug}
                 href={projectHref(p.slug)}
-                className="eg-inview group flex flex-col rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1"
+                className="eg-inview group flex flex-col overflow-hidden rounded-2xl bg-paper-2 p-6 transition hover:-translate-y-1"
               >
+                <ProjectCover
+                  project={p}
+                  fallback={false}
+                  sizes="(min-width: 1024px) 360px, (min-width: 768px) 50vw, 100vw"
+                  className="-mx-6 -mt-6 mb-5"
+                />
                 <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-steel">
                   <span className="h-1.5 w-1.5 rounded-full bg-gold" />
                   {`${SECTOR_SHORT[p.sector as SectorSlug]} · `}
@@ -368,7 +367,7 @@ export default async function HomePage() {
       </section>
 
       {/* 08 Why Edge Comm-Tech */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section className="eg-sec mx-auto max-w-6xl px-6 py-20">
         <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Why choose us</p>
         <h2 className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.4vw,2.9rem)] leading-tight">
           Local understanding, global technology, accountable delivery
@@ -387,7 +386,7 @@ export default async function HomePage() {
       </section>
 
       {/* 09 Clients */}
-      <section id="clients" className="mx-auto max-w-6xl px-6 py-20">
+      <section id="clients" className="eg-sec mx-auto max-w-6xl px-6 py-20">
         <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">
           Trusted across critical sectors
         </p>
@@ -431,7 +430,7 @@ export default async function HomePage() {
       {story ? <SuccessStory story={story} /> : null}
 
       {/* 11 Insights */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section className="eg-sec mx-auto max-w-6xl px-6 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Insights</p>
@@ -494,7 +493,7 @@ export default async function HomePage() {
       </section>
 
       {/* 12 Careers */}
-      <section className="border-t border-rule">
+      <section className="eg-sec border-t border-rule">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-8 px-6 py-16">
           <div className="max-w-2xl">
             <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Grow with us</p>
@@ -525,7 +524,7 @@ export default async function HomePage() {
 
       {/* 13 Final CTA */}
       <section
-        className="relative overflow-hidden border-t border-rule text-paper"
+        className="eg-sec relative overflow-clip border-t border-rule text-paper"
         style={{ background: DARK }}
       >
         <span

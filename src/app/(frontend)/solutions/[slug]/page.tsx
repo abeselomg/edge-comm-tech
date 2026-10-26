@@ -1,4 +1,5 @@
 import { Crumb, PageHead, SectionHead, CheckList } from "@/components/ui";
+import { SolutionVisual } from "@/components/ui/solution-visual";
 import { getPosts, getProjects, getSolution, getSolutions } from "@/lib/content";
 import { loadOr404 } from "@/lib/load";
 import {
@@ -50,6 +51,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
         intro={s.intro}
         accent={accent}
         variant="wash"
+        visual={<SolutionVisual slug={slug} accent={accent} />}
         crumb={<Crumb trail={[{ label: "Solutions", href: "/solutions" }, { label: s.short }]} />}
       />
 

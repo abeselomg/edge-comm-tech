@@ -121,6 +121,7 @@ export function PageHead({
   meta,
   ctas,
   ambience,
+  visual,
 }: {
   eyebrow?: string;
   title: React.ReactNode;
@@ -132,6 +133,8 @@ export function PageHead({
   ctas?: React.ReactNode;
   /** Floating icons and soft shapes behind the band; omit for none. */
   ambience?: AmbienceTheme;
+  /** Decorative art in a right-hand column from lg up (below the text on mobile). */
+  visual?: React.ReactNode;
 }) {
   return (
     <header
@@ -143,7 +146,14 @@ export function PageHead({
     >
       <Decoration variant={variant} accent={accent} />
       {ambience ? <HeroAmbience theme={ambience} accent={accent} /> : null}
-      <div className="relative mx-auto max-w-6xl px-6 py-16">
+      <div
+        className={
+          visual
+            ? "relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:gap-14"
+            : "relative mx-auto max-w-6xl px-6 py-16"
+        }
+      >
+        <div className="min-w-0">
         {crumb}
         {eyebrow ? (
           <p
@@ -169,6 +179,8 @@ export function PageHead({
         ) : null}
         {meta}
         {ctas}
+        </div>
+        {visual ? <div className="mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none">{visual}</div> : null}
       </div>
     </header>
   );

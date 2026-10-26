@@ -1,0 +1,44 @@
+{
+  "software-ai-digital": {
+    "file": "software-ai-digital.png",
+    "width": 912,
+    "height": 616,
+    "alt": "Isometric illustration of a laptop, robot, brain and gear on a blue platform, representing software, AI and digital platforms"
+  },
+  "enterprise-network": {
+    "file": "enterprise-network.png",
+    "width": 912,
+    "height": 627,
+    "alt": "Isometric illustration of a globe linked to desktop and laptop computers on a blue platform, representing enterprise networks"
+  },
+  "system-cloud": {
+    "file": "system-cloud.png",
+    "width": 912,
+    "height": 650,
+    "alt": "Isometric illustration of a cloud above storage disks and cabinets on a blue platform, representing cloud, storage and backup"
+  },
+  "datacenter-facility-it-infrastructure": {
+    "file": "datacenter-facility-it-infrastructure.png",
+    "width": 912,
+    "height": 603,
+    "alt": "Isometric illustration of server cabinets with a fire extinguisher and monitor on a blue platform, representing data centre infrastructure"
+  },
+  "cybersecurity": {
+    "file": "cybersecurity.png",
+    "width": 912,
+    "height": 645,
+    "alt": "Isometric illustration of a shield with a padlock and key over a computer on a blue platform, representing cybersecurity"
+  },
+  "power-technology": {
+    "file": "power-technology.png",
+    "width": 912,
+    "height": 603,
+    "alt": "Isometric illustration of a battery, power plug and lightning bolt on a blue platform, representing power technology"
+  },
+  "broadcast-satellite": {
+    "file": "broadcast-satellite.png",
+    "width": 912,
+    "height": 691,
+    "alt": "Isometric illustration of a satellite dish, orbiting satellite, television and radio on a blue platform, representing broadcast and satellite"
+  }
+}

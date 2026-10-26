@@ -3,6 +3,7 @@ import { Confirmable, Mark, SectionHead } from "@/components/ui";
 import { SECTOR_SHORT, type SectorSlug } from "@/fields/sectors";
 import { projectHref, publishedOnly, solutionHref } from "@/lib/routes";
 import type { Client, Partner, Project, Solution } from "@/payload-types";
+import { ProjectCover } from "./project-images";
 
 /*
  * The project pages' own pieces, beside the pages because Next allows a page
@@ -92,9 +93,15 @@ export function ProjectRow({ project: p }: { project: Project }) {
     <li>
       <Link
         href={projectHref(p.slug)}
-        className="eg-inview group grid gap-x-10 gap-y-4 border-t border-rule py-9 lg:grid-cols-[13rem_1fr]"
+        className="eg-inview group grid gap-x-10 gap-y-4 border-t border-rule py-9 lg:grid-cols-[13rem_1fr_15rem]"
       >
-        <div className="shrink-0">
+        <ProjectCover
+          project={p}
+          accent={solutions[0]?.accent}
+          sizes="(min-width: 1024px) 240px, 100vw"
+          className="order-first rounded-xl lg:order-none lg:col-start-3 lg:row-start-1 lg:self-start"
+        />
+        <div className="shrink-0 lg:col-start-1 lg:row-start-1">
           <span
             className="block font-mono text-[10px] uppercase tracking-widest"
             style={{ color: solutions[0]?.accent }}
@@ -106,7 +113,7 @@ export function ProjectRow({ project: p }: { project: Project }) {
           </span>
           <span className="mt-1 block text-xs text-steel">{p.location}</span>
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 lg:col-start-2 lg:row-start-1">
           <h3 className="font-display text-[clamp(1.25rem,2.1vw,1.7rem)] leading-snug group-hover:text-gold">
             {p.title}
           </h3>
@@ -148,6 +155,15 @@ export function FeaturedProject({ project: p }: { project: Project | null }) {
         href={projectHref(p.slug)}
         className="eg-inview group mt-8 grid overflow-hidden rounded-3xl border border-rule transition hover:border-gold lg:grid-cols-[1.15fr_1fr]"
       >
+        <ProjectCover
+          project={p}
+          accent={accent}
+          fallback={false}
+          priority
+          ratio="aspect-[2/1]"
+          sizes="(min-width: 1152px) 1100px, 100vw"
+          className="lg:col-span-2"
+        />
         <div className="p-9">
           <p className="font-mono text-[10px] uppercase tracking-widest" style={{ color: accent }}>
             {[client?.name, p.sectorFull].filter(Boolean).join(" · ")}

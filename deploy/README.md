@@ -358,8 +358,9 @@ through the local API before the delete.
 
 ## Phase 7: the editorial workflow
 
-Edge's own staff edit the site in `/admin`. There are two roles, `admin` and
-`editor`, and nothing else.
+Edge's own staff edit the site in `/admin`. There are three roles: `admin`,
+`editor` and `hr`. The list lives in one place, `src/access/roles.ts`; the Users
+role field, the access rules, the matrix and its test all read it.
 
 **Who can do what.**
 
@@ -375,11 +376,42 @@ Edge's own staff edit the site in `/admin`. There are two roles, `admin` and
   **delete any content**. An editor takes something down with Unpublish.
 - **Admins** can do all of that, and are the only ones who delete content,
   create users and edit Contact details, Site settings and the forms.
+- **HR** works on careers and people records only, and sees only those
+  sections in the admin sidebar: open positions (Jobs) and E-Academy tracks
+  (create, edit, save drafts, publish; deleting is an admin action), the
+  Careers section, the uploaded CVs (read only) and the **careers form
+  submissions** (E-Academy enquiries, job and internship applications; read
+  only: the other forms' submissions, such as Contact, Subscribe and event
+  registrations, are not visible to HR). HR cannot see or change solutions,
+  services, projects, clients, partners, news, insights, events, downloads,
+  media, the Company, Page copy, Contact details or Site settings sections,
+  form definitions, or other people's accounts, and sees no unpublished draft
+  of that content. HR can change their own name, email and password, but not
+  their own role. HR cannot use Preview (it opens drafts of any page).
 - **Visitors** read published content only. A draft is never served to them.
+
+**Adding the HR role to an existing database.** The `role` column of Users is a
+Postgres enum, so the new value `hr` needs one migration (enum
+`enum_users_role` gains `'hr'`). Payload's schema push is interactive, so create
+and run it on the server (`payload migrate:create`, then `payload migrate`),
+not from a laptop. Nothing else in the schema changes. To give someone the role,
+an admin opens Users, creates the person and picks **HR**; the role field's help
+text lists what each role can do.
 
 The same table is code: `src/access/matrix.ts`, checked against the real
 configuration by `src/access/matrix.test.ts`, which fails when a collection or
 global is added without a row.
+
+**Checking the HR role on the live server.** `tools/check-hr-live.mjs` creates
+one throwaway `hr` user over the REST API (random password, kept in memory,
+never printed), logs in as it, and checks that HR can read applications, jobs,
+E-Academy tracks and only the careers submissions, but gets 403 or nothing for
+solutions (drafts included), media, forms, other users, and every global except
+Careers; that it cannot change its own role or open Preview; and then deletes
+the user. It needs an admin account in the environment:
+
+    ADMIN_EMAIL=... ADMIN_PASSWORD=... BASE_URL=https://168.119.61.125 \
+      NODE_TLS_REJECT_UNAUTHORIZED=0 node --import tsx tools/check-hr-live.mjs
 
 **Editor walkthrough** (no technical knowledge needed).
 

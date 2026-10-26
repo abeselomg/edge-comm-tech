@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Tr } from "@/components/i18n/Tr";
 import { Confirmable } from "@/components/ui";
 import { CountUp } from "@/components/count-up";
 import type { Project } from "@/lib/content";
@@ -76,14 +77,17 @@ export function HeroCard({
 }) {
   return (
     <aside
-      className="eg-pop relative z-10 self-end rounded-3xl bg-paper-2 p-6 shadow-[0_20px_50px_-24px_rgb(8_136_197_/_0.45)]"
-      style={{ ["--d" as string]: ".34s" }}
+      className="eg-hero-up eg-hero-up-card relative z-10 self-end rounded-3xl bg-paper-2 p-6 shadow-[0_20px_50px_-24px_rgb(8_136_197_/_0.45)]"
     >
-      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gold">Headquarters</p>
-      <p className="mt-3 font-display text-2xl leading-tight">{positioning}</p>
+      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gold">
+        <Tr>Headquarters</Tr>
+      </p>
+      <p className="mt-3 font-display text-2xl leading-tight">
+        <Tr>{positioning}</Tr>
+      </p>
       <p className="mt-3 text-sm text-ink/70">{`${officeLines.join(", ")}.`}</p>
       <Link href="/contact" className="mt-5 inline-block text-sm text-gold">
-        Call or write →
+        <Tr>Call or write →</Tr>
       </Link>
     </aside>
   );
@@ -99,7 +103,7 @@ export function SuccessStory({ story }: { story: Project }) {
     ["Status", "Completed"],
   ];
   return (
-    <section className="border-y border-rule bg-paper-2/40">
+    <section className="eg-sec border-y border-rule bg-paper-2/40">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 lg:grid-cols-[1fr_1fr]">
         <div>
           <p className="eg-m-eyebrow font-mono text-[10px] uppercase tracking-widest text-gold">Success story</p>
