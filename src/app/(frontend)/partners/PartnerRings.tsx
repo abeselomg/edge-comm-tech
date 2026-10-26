@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Mark } from "@/components/ui";
 import type { WithLogo } from "@/lib/content";
 import { approvedLogo } from "@/lib/media";
@@ -10,7 +11,7 @@ import { CARD, RING_RADII, ringLayout } from "./rings";
  *
  * Decorative, so the whole diagram is aria-hidden: the brand grid below it is
  * the complete, accessible list. Nothing here is a link or a control, and the
- * only text is the partners' names and the hub's "Edge Comm-Tech" -- no ring
+ * only text is the partners' names and the hub shows Edge's logo -- no ring
  * labels, no counts, nothing that reads as rank (Review Focus #4).
  *
  * CSS only, no client script. Each ring wrapper turns with eg-spin, which
@@ -34,6 +35,15 @@ const SPIN = [
   { spin: 270, dir: "normal", counter: "reverse" },
 ] as const;
 
+/**
+ * The hub: Edge's logo in a round disc, both in cqw. The disc is 19% of the
+ * width (radius 9.5%, 9.8% at the top of its breath); the nearest ring-0 card
+ * edge is never closer than about 17% from the centre, so a gap of 7% or more
+ * is left. The logo is 14.4% wide (about 129px at 896px) and its corners stay
+ * inside the circle with room to spare.
+ */
+const HUB = { disc: 19, logo: 14.4 } as const;
+
 type RingPartner = Pick<WithLogo<Partner>, "name" | "logo">;
 
 export function PartnerRings({ partners }: { partners: RingPartner[] }) {
@@ -56,12 +66,18 @@ export function PartnerRings({ partners }: { partners: RingPartner[] }) {
         />
       ))}
       <div className="eg-breathe absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <span className="grid h-28 w-28 place-items-center rounded-full border border-gold/30 bg-paper text-center shadow-[0_18px_44px_-24px_rgb(8_136_197/0.8)]">
-          <span className="font-display text-[13px] leading-tight">
-            Edge
-            <br />
-            Comm-Tech
-          </span>
+        <span
+          className="grid place-items-center rounded-full border border-gold/30 bg-paper shadow-[0_18px_44px_-24px_rgb(8_136_197/0.8)]"
+          style={{ width: `${HUB.disc}cqw`, height: `${HUB.disc}cqw` }}
+        >
+          <Image
+            src="/edge-logo.png"
+            alt="Edge Communication Technologies"
+            width={391}
+            height={176}
+            sizes="144px"
+            style={{ width: `${HUB.logo}cqw`, height: "auto" }}
+          />
         </span>
       </div>
       {SPIN.map(({ spin, dir, counter }, ring) => (
