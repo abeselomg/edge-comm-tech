@@ -24,6 +24,17 @@ export interface SwapEl {
 
 const TEXT_NODE = 3;
 
+/**
+ * React marks a DOM node with a `__reactFiber$...` key once it has hydrated it.
+ * Text may only be rewritten after that: a page section that sits inside a
+ * Suspense boundary (the route's loading.tsx makes the whole page one) hydrates
+ * after the header, and changing its text first is a hydration mismatch (React
+ * error #418).
+ */
+export function isHydrated(el: object): boolean {
+  return Object.keys(el).some((k) => k.startsWith("__reactFiber"));
+}
+
 export function parseLang(value: unknown): Lang | null {
   return value === "am" || value === "en" ? value : null;
 }

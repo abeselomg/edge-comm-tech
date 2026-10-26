@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseLang, pickInitialLang, swapAll, swapEl, type SwapEl } from "./swap";
+import { isHydrated, parseLang, pickInitialLang, swapAll, swapEl, type SwapEl } from "./swap";
 
 /** A stand-in for an element holding one text node, as <Tr> renders it. */
 function fake(en: string, am: string): SwapEl & { text: string; attrs: Map<string, string> } {
@@ -80,5 +80,13 @@ describe("choosing the language", () => {
     expect(pickInitialLang("?x=1", "garbage")).toBe("en");
     expect(pickInitialLang("?lang=zz", "am")).toBe("am");
     expect(pickInitialLang("", null)).toBe("en");
+  });
+});
+
+describe("isHydrated", () => {
+  it("is true only for a node React has attached a fiber to", () => {
+    expect(isHydrated({})).toBe(false);
+    expect(isHydrated({ "__reactProps$abc": {} })).toBe(false);
+    expect(isHydrated({ "__reactFiber$abc": {} })).toBe(true);
   });
 });

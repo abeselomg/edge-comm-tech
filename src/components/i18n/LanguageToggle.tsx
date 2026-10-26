@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { pickInitialLang, STORAGE_KEY, swapTree, type Lang } from "@/lib/i18n/swap";
+import { isHydrated, pickInitialLang, STORAGE_KEY, swapEl, swapTree, type Lang } from "@/lib/i18n/swap";
 
 /*
  * EN / አማ switch for the header.
@@ -51,8 +51,25 @@ export function LanguageToggle() {
     const root = document.documentElement;
     root.lang = lang;
     root.dataset.lang = lang;
-    swapTree(document, lang);
-    if (lang !== "am") return;
+    // Swap what React has hydrated now, and keep trying for the rest: sections
+    // inside a Suspense boundary hydrate a little later than the header.
+    const sweep = () => {
+      let waiting = 0;
+      document.querySelectorAll<HTMLElement>("[data-am]").forEach((el) => {
+        if (isHydrated(el)) swapEl(el, lang);
+        else waiting += 1;
+      });
+      return waiting;
+    };
+    let timer: ReturnType<typeof setInterval> | undefined;
+    if (sweep() > 0) {
+      let tries = 0;
+      timer = setInterval(() => {
+        tries += 1;
+        if (sweep() === 0 || tries >= 50) clearInterval(timer);
+      }, 100);
+    }
+    if (lang !== "am") return () => clearInterval(timer);
     const observer = new MutationObserver((mutations) => {
       for (const m of mutations) {
         m.addedNodes.forEach((n) => {
@@ -61,7 +78,10 @@ export function LanguageToggle() {
       }
     });
     observer.observe(document.body, { childList: true, subtree: true });
-    return () => observer.disconnect();
+    return () => {
+      clearInterval(timer);
+      observer.disconnect();
+    };
   }, [lang]);
 
   function choose(next: Lang) {
