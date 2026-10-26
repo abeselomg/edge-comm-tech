@@ -215,7 +215,7 @@ export default async function HomePage() {
                   className="mt-4 font-mono text-[10px] uppercase tracking-widest"
                   style={{ color: s.accent }}
                 >
-                  Explore â†’
+                  Explore →
                 </span>
               </Link>
             ))}
@@ -232,7 +232,7 @@ export default async function HomePage() {
                 </h3>
               </span>
               <span className="mt-4 font-mono text-[10px] uppercase tracking-widest text-gold">
-                See the service model â†’
+                See the service model →
               </span>
             </Link>
           </div>
@@ -350,7 +350,7 @@ export default async function HomePage() {
               >
                 <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-steel">
                   <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-                  {`${SECTOR_SHORT[p.sector as SectorSlug]} Â· `}
+                  {`${SECTOR_SHORT[p.sector as SectorSlug]} · `}
                   <Confirmable value={p.year} />
                 </span>
                 <h3 className="mt-3 font-display text-xl leading-snug group-hover:text-gold">
@@ -358,7 +358,7 @@ export default async function HomePage() {
                 </h3>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/70">{p.summary}</p>
                 <span className="mt-4 font-mono text-[10px] uppercase tracking-widest text-gold">
-                  View project â†’
+                  View project →
                 </span>
               </Link>
             ))}
@@ -465,10 +465,10 @@ export default async function HomePage() {
                   {p.title}
                 </h3>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/70">
-                  {`${teaser(p.body)}â€¦`}
+                  {`${teaser(p.body)}…`}
                 </p>
                 <span className="mt-4 font-mono text-[10px] uppercase tracking-widest text-gold">
-                  Read more â†’
+                  Read more →
                 </span>
               </>
             );
@@ -542,7 +542,7 @@ export default async function HomePage() {
           </h2>
           <p className="mt-5 max-w-2xl text-paper/70">
             Strengthening cybersecurity, moving toward cloud, digitizing operations, improving
-            business continuity, or developing a new technology environment â€” tell us about your
+            business continuity, or developing a new technology environment — tell us about your
             organization, current challenge, and intended outcome.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
