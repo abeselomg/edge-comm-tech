@@ -67,7 +67,7 @@ export default async function EAcademyPage() {
           <ul className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {audiences.map((a) => (
               <li key={a.title} className="eg-inview flex flex-col rounded-2xl bg-paper p-6">
-                <h3 className="font-display text-lg leading-snug">{a.title}</h3>
+                <h2 className="font-display text-lg leading-snug">{a.title}</h2>
                 <p className="mt-2 flex-1 text-[13px] leading-relaxed text-ink/70">{a.body}</p>
                 <a
                   href="#enquire"

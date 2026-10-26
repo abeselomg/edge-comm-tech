@@ -215,3 +215,14 @@ describe("documentSeo", () => {
     expect(brandCount(buildMetadata({ ...seo, path: "/x" }).openGraph?.title as string)).toBe(1);
   });
 });
+
+describe("the canonical link", () => {
+  it.each(["?utm_source=newsletter", "?page=2", "?lang=am", "?utm_source=x&page=2&lang=am#top"])(
+    "drops %s",
+    (query) => {
+      const meta = buildMetadata({ title: "Services", description: "What we do.", path: `/services${query}` });
+      expect(meta.alternates?.canonical).toBe("https://www.example.com/services");
+      expect(meta.openGraph?.url).toBe("https://www.example.com/services");
+    },
+  );
+});

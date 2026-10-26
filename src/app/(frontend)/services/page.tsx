@@ -72,7 +72,7 @@ export default async function ServicesPage() {
                     <span className="hidden h-px flex-1 bg-rule lg:block" />
                   ) : null}
                 </span>
-                <h3 className="mt-3 font-display text-lg">{s.title}</h3>
+                <h2 className="mt-3 font-display text-lg">{s.title}</h2>
                 <p className="mt-1.5 text-[13px] leading-relaxed text-ink/65">{s.body}</p>
               </li>
             ))}
