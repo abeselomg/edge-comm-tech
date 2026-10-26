@@ -85,8 +85,8 @@ body {
    Animating transform with "both" fill mode means the animation's resting
    value wins the cascade over any transform an element also carries. That
    silently killed every hover:-translate-y lift on an .eg-inview card, and it
-   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners ring
-   nodes and hub, pushing a node past the viewport edge.
+   wiped the -translate-x-1/2 -translate-y-1/2 centring on the partners
+   diagram's old category nodes and hub, pushing a node past the viewport edge.
 
    translate/scale/rotate compose with transform instead of replacing it, so
    Tailwind's utilities and the motion can coexist. Do not "simplify" these
@@ -128,6 +128,73 @@ body {
   transform-box: fill-box;
 }
 
+/* ------------------------------------------------- partners: turning rings
+
+   PartnerRings. The root is an inline-size container and square, so cqw is
+   one percent of the diagram's width and height alike, and every size below
+   scales with it. Each ring turns with eg-spin (the rotate property); each
+   card is centred on its point with translate and turns back at the ring's
+   own speed (--spin) in the opposite direction (--counter), so it stays
+   upright. The ring sets --spin, --dir and --counter inline; the card
+   inherits them. No transform here, for the reason given above.
+*/
+
+.eg-rings {
+  container-type: inline-size;
+}
+
+.eg-ring {
+  position: absolute;
+  inset: 0;
+  transform-origin: center;
+  animation: eg-spin var(--spin) linear infinite var(--dir);
+}
+
+.eg-ring-card {
+  position: absolute;
+  translate: -50% -50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 .3cqw;
+  border: 1px solid var(--color-rule);
+  border-radius: 1cqw;
+  background: var(--color-paper-2);
+  box-shadow: 0 8px 24px -16px rgb(8 136 197 / .7);
+  animation: eg-spin var(--spin) linear infinite var(--counter);
+}
+
+.eg-ring-logo {
+  width: auto;
+  height: auto;
+  max-width: 7.5cqw;
+  max-height: 3.4cqw;
+  object-fit: contain;
+}
+
+/* Two lines at most; "Mitsumi Distribution" is the longest name today. */
+.eg-ring-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  /* Never below 9px. The diagram shows from lg, where it is 896px wide and
+     1.1cqw is 9.9px; the floor holds if that ever changes. */
+  font-size: clamp(9px, 1.1cqw, 11px);
+  line-height: 1.15;
+  color: color-mix(in srgb, var(--color-ink) 70%, transparent);
+}
+
+.eg-rings:hover .eg-ring, .eg-rings:hover .eg-ring-card, .eg-rings:hover .eg-breathe {
+  animation-play-state: paused;
+}
+
 /* Below the fold, play on scroll rather than on load, so nothing animates
    where nobody is looking. Unsupported browsers just show the element. */
 @supports (animation-timeline: view()) {
@@ -139,7 +206,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eg-rise, .eg-pop, .eg-draw, .eg-breathe, .eg-spin-slow, .eg-inview {
+  .eg-rise, .eg-pop, .eg-draw, .eg-breathe, .eg-spin-slow, .eg-inview, .eg-ring, .eg-ring-card {
     animation: none !important;
   }
 

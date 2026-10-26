@@ -37,33 +37,17 @@ export function byCategory<P extends PartnerLike>(
   return out;
 }
 
-/*
- * The ring's geometry, computed so spacing stays even if the category list
- * changes. 820x820 user space; nodes are placed as percentages so they scale.
- * R is 262 rather than 300: a node is 8.5rem wide and centred on its point,
- * and at 1024px (the narrowest two-column width) anything larger crosses the
- * column edge and makes the page scroll sideways.
- */
-export const RING = { cx: 410, cy: 410, r: 262 };
-
-export function orbit(keys: string[]) {
-  return keys.map((k, i) => {
-    const a = (i / keys.length) * Math.PI * 2 - Math.PI / 2;
-    return { k, x: RING.cx + RING.r * Math.cos(a), y: RING.cy + RING.r * Math.sin(a) };
-  });
-}
-
 /**
  * The filter, which is hidden radio inputs plus sibling selectors -- no
- * script, so the page needs no client component.
+ * script, so the page needs no client component. It highlights the checked
+ * group's labels, hides the brand cards outside the group and shows that
+ * group's sentence in the lede. The rings above take no part in it.
  */
 export function filterCss(keys: string[]): string {
   const all = ["all", ...keys].map((k) => `#f-${k}:checked~.wrap label[for=f-${k}]`).join(",");
   const each = keys
     .map(
       (k) => `
-#f-${k}:checked~.wrap .node:not(.c-${k}) .pill{opacity:.3}
-#f-${k}:checked~.wrap .spoke:not(.s-${k}){opacity:.1}
 #f-${k}:checked~.wrap .brand:not(.c-${k}){display:none}
 #f-${k}:checked~.wrap .lede .l-${k}{display:block}`,
     )
@@ -72,7 +56,6 @@ export function filterCss(keys: string[]): string {
 ${all}{background:#0888c5;color:#fff;border-color:#0888c5}
 ${each}
 #f-all:checked~.wrap .lede .l-all{display:block}
-.spoke,.pill{transition:opacity .22s}
 .lede span{display:none}
 `;
 }

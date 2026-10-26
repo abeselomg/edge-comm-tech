@@ -40,7 +40,7 @@ import {
 } from "./parity-clock.mjs";
 import { highlandEvent } from "./parity-events.mjs";
 import { scanPage } from "./content-scan.mjs";
-import { copySentences, normaliseNoise, visibleText } from "./parity-copy.mjs";
+import { applyPageWaivers, copySentences, normaliseNoise, visibleText } from "./parity-copy.mjs";
 
 const HIGHLAND = "design-files/highland";
 const BASE_URL = (process.env.BASE_URL ?? "http://localhost:3000").replace(/\/$/, "");
@@ -197,6 +197,11 @@ for (const page of pages) {
     continue;
   }
 
+
+  /* Deliberate, page-specific replacements (see PAGE_WAIVERS). In --self
+     mode both sides are Highland, so both get Highland's waiver. */
+  expected = applyPageWaivers(expected, page, "highland");
+  actual = applyPageWaivers(actual, page, selfCheck ? "highland" : "port");
 
   /* Copy. Reported in both directions: a missing sentence is a dropped
      section, and an unexpected one is usually copy invented to fill a gap. */
