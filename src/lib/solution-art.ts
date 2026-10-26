@@ -6,7 +6,7 @@
  *
  *   "cybersecurity": "png",
  *
- * A slug with no entry (the state of all seven today) shows the hand-drawn
+ * A slug with no entry shows the hand-drawn
  * isometric fallback scene instead. Existence is decided here, statically,
  * rather than with fs at render time, so the pages stay prerendered and a
  * missing file can never produce a broken image.
@@ -16,13 +16,15 @@ export type ArtExt = "png" | "webp" | "jpg" | "jpeg" | "avif" | "svg";
 export type ArtManifest = Partial<Record<string, ArtExt>>;
 
 export const SOLUTION_ART: ArtManifest = {
-  // "software-ai-digital": "png",
-  // "enterprise-network": "png",
-  // "system-cloud": "png",
+  "software-ai-digital": "png",
+  "enterprise-network": "png",
+  "system-cloud": "png",
+  // Not enabled: the sourced picture shows filing-cabinet-like boxes, so the
+  // hand-drawn rack scene stays. Sources and licences: public/solutions/art/LICENSES.md
   // "datacenter-facility-it-infrastructure": "png",
-  // "cybersecurity": "png",
-  // "power-technology": "png",
-  // "broadcast-satellite": "png",
+  "cybersecurity": "png",
+  "power-technology": "png",
+  "broadcast-satellite": "png",
 };
 
 /** The public URL of a slug's art, or null when it has none. */

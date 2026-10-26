@@ -35,8 +35,10 @@ describe("SolutionVisual", () => {
     expect(out).not.toContain("<svg");
   });
 
-  it("ships with no art listed, so every page shows the fallback today", () => {
-    expect(html(<SolutionVisual slug="system-cloud" accent="#056a9a" />)).toContain("<svg");
+  it("shows the hand-drawn scene for a solution with no art listed", () => {
+    expect(
+      html(<SolutionVisual slug="datacenter-facility-it-infrastructure" accent="#056a9a" />),
+    ).toContain("<svg");
   });
 
   it("is decorative: aria-hidden, no visible text, no title, aspect ratio reserved", () => {
