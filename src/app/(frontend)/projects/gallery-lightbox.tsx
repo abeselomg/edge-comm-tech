@@ -75,6 +75,7 @@ export function GalleryLightbox({ items }: { items: GalleryItem[] }) {
                 <Image
                   src={item.src}
                   alt={item.alt}
+                  data-parity="project-image"
                   fill
                   sizes="(min-width: 1024px) 380px, 50vw"
                   loading="lazy"
@@ -112,6 +113,7 @@ export function GalleryLightbox({ items }: { items: GalleryItem[] }) {
             <Image
               src={current.src}
               alt={current.alt}
+              data-parity="project-image"
               width={1600}
               height={1000}
               sizes="94vw"

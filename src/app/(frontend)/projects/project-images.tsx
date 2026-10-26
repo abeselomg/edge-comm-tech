@@ -48,6 +48,7 @@ export function ProjectCover({
         <Image
           src={cover.url}
           alt={cover.alt ?? ""}
+          data-parity="project-image"
           fill
           sizes={sizes}
           className="object-cover"
