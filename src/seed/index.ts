@@ -71,6 +71,7 @@ import {
   toRichParagraphs,
 } from "./transform";
 import { seedForms } from "./forms";
+import { seedProjectImages } from "./project-images";
 import { sectorSlug } from "../fields/sectors";
 import { routeFor } from "../lib/routes";
 import { HEROES, NEWS_CLOSING, ringLabelFor, SOLUTIONS_FRAMEWORK, SOLUTIONS_PRIORITIES } from "./page-copy";
@@ -473,6 +474,18 @@ async function seed() {
     });
   }
   const project = makeResolver("project", projectIds);
+
+  /*
+   * Sample pictures for projects that have none. Fill-only in every mode: see
+   * ./project-images.ts. Runs here because the projects now exist.
+   */
+  const pictures = await seedProjectImages(
+    payload as never,
+    PROJECTS.map((pr) => ({ slug: pr.slug, title: pr.title })),
+  );
+  payload.logger.info(
+    `project pictures: ${pictures.uploaded} uploaded, ${pictures.reused} reused, ${pictures.attached} projects given samples, ${pictures.left} left alone`,
+  );
 
   /* ------------------------------------------------------ 4. partners */
 

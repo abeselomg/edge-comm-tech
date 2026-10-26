@@ -122,6 +122,46 @@ export const Projects: CollectionConfig = {
       validate: projectText,
     },
     {
+      name: "coverImage",
+      type: "upload",
+      relationTo: "media",
+      filterOptions: { approved: { equals: true } },
+      label: "Cover picture",
+      admin: {
+        description:
+          "The main picture for this project, shown on the project cards and at the top of the project page. Landscape works best (16:10, at least 1600 x 1000 pixels). Only approved images can be chosen; the image's own description is used as its alt text. Optional: with no picture the site shows a plain tinted card.",
+      },
+    },
+    {
+      name: "gallery",
+      type: "array",
+      label: "Picture gallery",
+      maxRows: 8,
+      labels: { singular: "Picture", plural: "Pictures" },
+      admin: {
+        description:
+          "Up to eight more pictures, shown as a gallery on the project page. Landscape (3:2 or 16:10) crops best. Only approved images can be chosen.",
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: "image",
+          type: "upload",
+          relationTo: "media",
+          required: true,
+          filterOptions: { approved: { equals: true } },
+          label: "Picture",
+        },
+        {
+          name: "caption",
+          type: "text",
+          label: "Caption (optional)",
+          admin: { description: "A short line shown under the picture. Leave empty for none." },
+          validate: projectText,
+        },
+      ],
+    },
+    {
       name: "solutions",
       type: "relationship",
       relationTo: "solutions",

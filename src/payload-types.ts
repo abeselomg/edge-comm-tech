@@ -592,6 +592,23 @@ export interface Project {
    */
   summary: string;
   /**
+   * The main picture for this project, shown on the project cards and at the top of the project page. Landscape works best (16:10, at least 1600 x 1000 pixels). Only approved images can be chosen; the image's own description is used as its alt text. Optional: with no picture the site shows a plain tinted card.
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Up to eight more pictures, shown as a gallery on the project page. Landscape (3:2 or 16:10) crops best. Only approved images can be chosen.
+   */
+  gallery?:
+    | {
+        image: number | Media;
+        /**
+         * A short line shown under the picture. Leave empty for none.
+         */
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * The families this engagement drew on. CCTV, access control and barriers belong to Datacenter and IT Infrastructure, not Cybersecurity.
    */
   solutions: (number | Solution)[];
@@ -1877,6 +1894,14 @@ export interface ProjectsSelect<T extends boolean = true> {
   primary?: T;
   headline?: T;
   summary?: T;
+  coverImage?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
   solutions?: T;
   tech?:
     | T

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { approvedLogo } from "./media";
+import { approvedLogo, projectCover, projectGallery } from "./media";
 
 describe("approvedLogo", () => {
   it("returns an approved asset", () => {
@@ -31,5 +31,35 @@ describe("approvedLogo", () => {
 
   it("returns null when the asset has no url to render", () => {
     expect(approvedLogo({ id: 1, alt: "HP", approved: true })).toBe(null);
+  });
+});
+
+describe("projectCover and projectGallery", () => {
+  const ok = (n: number) => ({ id: n, url: `/m/${n}.jpg`, alt: `Pic ${n}`, approved: true });
+
+  it("returns the approved cover and nothing for an unapproved or bare one", () => {
+    expect(projectCover({ coverImage: ok(1) })?.url).toBe("/m/1.jpg");
+    expect(projectCover({ coverImage: { ...ok(1), approved: false } })).toBeNull();
+    expect(projectCover({ coverImage: 4 })).toBeNull();
+    expect(projectCover({})).toBeNull();
+  });
+
+  it("keeps only approved gallery rows, in order, trimming captions to null when blank", () => {
+    const rows = projectGallery({
+      gallery: [
+        { image: ok(1), caption: "  First  " },
+        { image: { ...ok(2), approved: false }, caption: "Hidden" },
+        { image: ok(3), caption: "   " },
+        { image: 9 },
+        { image: ok(4) },
+      ],
+    });
+    expect(rows.map((r) => r.image.id)).toEqual([1, 3, 4]);
+    expect(rows.map((r) => r.caption)).toEqual(["First", null, null]);
+  });
+
+  it("is empty for a missing or malformed gallery", () => {
+    expect(projectGallery({})).toEqual([]);
+    expect(projectGallery({ gallery: null })).toEqual([]);
   });
 });

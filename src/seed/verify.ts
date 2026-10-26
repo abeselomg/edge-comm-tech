@@ -50,6 +50,18 @@ for (const p of projects) {
     problems.push(`project "${p.slug}" has no solutions`);
 }
 
+/* Project pictures must be approved media: the public pages drop any that are not. */
+{
+  const { docs } = await payload.find({ collection: "projects", limit: 100, depth: 1 });
+  for (const p of docs) {
+    const media = [p.coverImage, ...(p.gallery ?? []).map((g) => g.image)];
+    for (const m of media) {
+      if (m && typeof m === "object" && m.approved !== true)
+        problems.push(`project "${p.slug}" uses a picture that is not approved: ${m.filename}`);
+    }
+  }
+}
+
 const { docs: partners } = await payload.find({
   collection: "partners",
   limit: 100,

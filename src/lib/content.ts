@@ -25,7 +25,7 @@ import type {
 import { isDraft } from "./draft";
 import { eventStatus, type EventStatus } from "./events";
 import { FORM_DEFINITIONS, type FormKey } from "./forms/definitions";
-import { approvedLogo } from "./media";
+import { approvedLogo, projectCover, projectGallery } from "./media";
 
 export type {
   AcademyTrack,
@@ -253,8 +253,24 @@ export const getService = cache((slug: string) => one<Service>("services", slug)
 
 /* ---------------------------------------------------------- the evidence */
 
-export const getProjects = cache(() => many<Project>("projects", byOrder));
-export const getProject = cache((slug: string) => one<Project>("projects", slug));
+/*
+ * Cover and gallery media pass the same approval gate as logos: an image whose
+ * approval was withdrawn after it was attached is removed here, so no route can
+ * render it. Applied in draft mode too -- approval is a content rule.
+ */
+export const withApprovedImages = (p: Project): Project => ({
+  ...p,
+  coverImage: projectCover(p) as Project["coverImage"],
+  gallery: projectGallery(p).map(({ image, caption }) => ({ image, caption })) as Project["gallery"],
+});
+
+export const getProjects = cache(async () =>
+  (await many<Project>("projects", byOrder)).map(withApprovedImages),
+);
+export const getProject = cache(async (slug: string) => {
+  const doc = await one<Project>("projects", slug);
+  return doc ? withApprovedImages(doc) : null;
+});
 
 /*
  * Clients and partners carry logos, so both strip assets whose approval has
