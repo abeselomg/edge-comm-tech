@@ -1,5 +1,7 @@
 import { buildMetadata, documentSeo } from "@/lib/seo/metadata";
 import { newsHref } from "@/lib/routes";
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, newsArticle } from "@/lib/seo/jsonld";
 import { ClosingCta, Crumb, PageHead, Pending } from "@/components/ui";
 import { getNews, getNewsItem } from "@/lib/content";
 import { loadOr404 } from "@/lib/load";
@@ -42,6 +44,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
 
   return (
     <main>
+      <JsonLd data={graph(newsArticle(n))} />
       <PageHead
         eyebrow={`${n.kind} · ${dateText(n.date)}`}
         title={n.title}

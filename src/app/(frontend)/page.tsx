@@ -1,3 +1,5 @@
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, organization, website } from "@/lib/seo/jsonld";
 import Link from "next/link";
 import { Tr } from "@/components/i18n/Tr";
 import { Confirmable, Mark } from "@/components/ui";
@@ -71,6 +73,7 @@ export default async function HomePage() {
 
   return (
     <main>
+      <JsonLd data={graph(organization({ company, contact, social: settings.social }), website(company))} />
       <SectionReveal />
       {/* 01 Hero */}
       <section data-home-hero className="eg-hero-under-nav relative overflow-hidden bg-paper">

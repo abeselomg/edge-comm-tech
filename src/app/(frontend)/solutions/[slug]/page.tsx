@@ -1,5 +1,7 @@
 import { buildMetadata, documentSeo } from "@/lib/seo/metadata";
 import { solutionHref } from "@/lib/routes";
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, solutionService } from "@/lib/seo/jsonld";
 import { Crumb, PageHead, SectionHead, CheckList } from "@/components/ui";
 import { SolutionVisual } from "@/components/ui/solution-visual";
 import { getPosts, getProjects, getSolution, getSolutions } from "@/lib/content";
@@ -49,6 +51,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
 
   return (
     <main>
+      <JsonLd data={graph(solutionService(s))} />
       <PageHead
         eyebrow={`Solution ${String(s.order).padStart(2, "0")} of ${total}`}
         title={s.headline}

@@ -1,5 +1,7 @@
 import { buildMetadata, documentSeo } from "@/lib/seo/metadata";
 import { serviceHref } from "@/lib/routes";
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, professionalService } from "@/lib/seo/jsonld";
 import { ClosingCta, Crumb, PageHead } from "@/components/ui";
 import { getService, getServices } from "@/lib/content";
 import { loadOr404 } from "@/lib/load";
@@ -29,6 +31,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
   return (
     <main>
+      <JsonLd data={graph(professionalService(s))} />
       <PageHead
         eyebrow={`Service ${String(s.order).padStart(2, "0")} of ${all.length}`}
         title={s.headline}

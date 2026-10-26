@@ -1,5 +1,7 @@
 import { buildMetadata, documentSeo } from "@/lib/seo/metadata";
 import { jobHref } from "@/lib/routes";
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, jobPosting } from "@/lib/seo/jsonld";
 import { Crumb, PageHead } from "@/components/ui";
 import { getCareersContent, getContactDetails, getForm, getJob, getJobs } from "@/lib/content";
 import { jobOpen } from "@/lib/jobs";
@@ -42,6 +44,7 @@ export default async function JobPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <main>
+      <JsonLd data={graph(jobPosting(j, jobOpen(j)))} />
       <PageHead
         eyebrow={`Open position · ${j.department}`}
         title={j.title}

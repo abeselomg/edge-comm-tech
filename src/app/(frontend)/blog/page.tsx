@@ -1,4 +1,6 @@
 import { buildMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { blogPosting, graph } from "@/lib/seo/jsonld";
 import Link from "next/link";
 import { ClosingCta, PageHead } from "@/components/ui";
 import { getPosts } from "@/lib/content";
@@ -33,6 +35,7 @@ export default async function BlogPage() {
 
   return (
     <main>
+      <JsonLd data={graph(...posts.map((p) => blogPosting(p)))} />
       <PageHead
         eyebrow="Insights"
         title="Practical thinking on the technology decisions in front of you"
