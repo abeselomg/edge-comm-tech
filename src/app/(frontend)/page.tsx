@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Confirmable, Mark } from "@/components/ui";
+import { SolutionGlyph, SolutionWatermark } from "@/components/ui/solution-glyph";
 import { featuredProjects, HeroCard, impactCard, SuccessStory, teaser } from "./home-parts";
 import {
   getClients,
@@ -35,40 +36,6 @@ import { projectHref, solutionHref } from "@/lib/routes";
 
 const DARK = "#003D6B";
 const CYAN = "#10C7FF";
-
-/** One glyph per solution family. Design, not content: there is no field for
- *  it, and an editor adding a family would pick an icon in a redesign. */
-const GLYPH: Record<string, string> = {
-  "software-ai-digital":
-    "M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M3 12h3m12 0h3M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1",
-  "enterprise-network": "M12 7.2v4.3m0 0L6.6 16m5.4-4.5L17.4 16",
-  "system-cloud":
-    "M7 18a4 4 0 0 1-.5-7.97 5.5 5.5 0 0 1 10.6-1.4A3.8 3.8 0 0 1 17.5 18zM12 12v5m0 0-2-2m2 2 2-2",
-  "datacenter-facility-it-infrastructure": "M7 6h.01M7 14h.01M4 19v2M20 19v2",
-  cybersecurity: "M12 3 5 6v6c0 4.2 3 7.4 7 9 4-1.6 7-4.8 7-9V6zm-3 9 2.2 2.2L15.5 10",
-  "power-technology": "M13 2 4.5 13H11l-1 9 8.5-11H12z",
-  "broadcast-satellite":
-    "M7.8 7.8a6 6 0 0 0 0 8.4m8.4-8.4a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2m14.2-14.2a10 10 0 0 1 0 14.2",
-};
-
-/** Extra circles and rectangles some glyphs need; kept apart from the paths. */
-const GLYPH_SHAPES: Record<string, React.ReactNode> = {
-  "software-ai-digital": <circle cx="12" cy="12" r="3.2" />,
-  "enterprise-network": (
-    <>
-      <circle cx="12" cy="5" r="2.2" />
-      <circle cx="5" cy="18" r="2.2" />
-      <circle cx="19" cy="18" r="2.2" />
-    </>
-  ),
-  "datacenter-facility-it-infrastructure": (
-    <>
-      <rect x="4" y="3" width="16" height="6" rx="1.5" />
-      <rect x="4" y="11" width="16" height="6" rx="1.5" />
-    </>
-  ),
-  "broadcast-satellite": <circle cx="12" cy="12" r="2.4" />,
-};
 
 export default async function HomePage() {
   const [settings, company, contact, copy, solutions, projects, clients, partners, posts] =
@@ -226,8 +193,14 @@ export default async function HomePage() {
               <Link
                 key={s.slug}
                 href={solutionHref(s.slug)}
-                className="eg-inview group relative flex flex-col overflow-hidden rounded-2xl bg-paper-2 p-6 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_52px_-28px_rgb(8_136_197/0.5)]"
+                className="eg-inview eg-card group relative isolate flex flex-col overflow-hidden rounded-2xl bg-paper-2 p-6 shadow-[0_18px_40px_-32px_rgb(28_36_48/0.55)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_52px_-28px_rgb(8_136_197/0.5)]"
               >
+                <span
+                  aria-hidden="true"
+                  className="eg-card-wash pointer-events-none absolute inset-0 -z-10"
+                  style={{ background: `radial-gradient(circle at 100% 100%,${s.accent}1f,transparent 62%)` }}
+                />
+                <SolutionWatermark slug={s.slug} accent={s.accent} />
                 <span
                   className="absolute inset-x-0 top-0 h-1"
                   style={{ background: `linear-gradient(90deg,${s.accent},${s.accent}22)` }}
@@ -236,19 +209,7 @@ export default async function HomePage() {
                   className="grid h-12 w-12 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-110"
                   style={{ background: `${s.accent}16`, color: s.accent }}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-6 w-6"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    {GLYPH_SHAPES[s.slug]}
-                    {GLYPH[s.slug] ? <path d={GLYPH[s.slug]} /> : null}
-                  </svg>
+                  <SolutionGlyph slug={s.slug} className="h-6 w-6" />
                 </span>
                 <span
                   className="mt-4 font-mono text-[10px] uppercase tracking-widest"

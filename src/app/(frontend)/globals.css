@@ -210,8 +210,27 @@ body {
     animation: none !important;
   }
 
+  .eg-card-mark {
+    transition: none !important;
+  }
+
   .eg-draw {
     stroke-dasharray: none;
     stroke-dashoffset: 0;
   }
+}
+
+/* ---- eg-card-: home-page solution cards ----
+   A large, faint copy of the solution's glyph sits behind the text and drifts
+   a little on hover. Colour comes from the inline accent; the wash is inline
+   too. Reduced motion is handled in the block above. */
+.eg-card-mark {
+  opacity: 0.1;
+  transform: rotate(-12deg);
+  transition: transform .6s cubic-bezier(.2, .7, .3, 1), opacity .4s ease;
+}
+
+.eg-card:hover .eg-card-mark, .eg-card:focus-visible .eg-card-mark {
+  opacity: 0.16;
+  transform: rotate(-6deg) translate(-6px, -6px) scale(1.06);
 }
