@@ -613,6 +613,10 @@ html[lang="am"] [data-am][lang="am"] {
   outline-offset: 2px;
 }
 
+.eg-langtab-btn:focus-visible {
+  outline-offset: -4px;
+}
+
 .eg-langtab-chevron {
   transition: transform 0.25s ease;
 }

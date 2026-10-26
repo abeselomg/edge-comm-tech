@@ -10,7 +10,7 @@ import { isHydrated, pickInitialLang, STORAGE_KEY, swapEl, swapTree, type Lang }
  * Collapsed, only a small arrow tab shows. Hover (mouse), keyboard focus or a
  * tap on touch slides the switch out; it folds away again a moment after the
  * pointer or focus leaves, on Escape, or on a tap elsewhere. The language
- * buttons are visibility:hidden while collapsed, so they cannot be tabbed to
+ * buttons (which follow the arrow in tab order) are visibility:hidden while collapsed, so they cannot be tabbed to
  * or read out until the tab is open.
  *
  * The server renders English and so does the first client render; the stored
@@ -156,24 +156,6 @@ export function LanguageToggle() {
       onBlur={onBlur}
       onKeyDown={onKeyDown}
     >
-      <div id={panelId} role="group" aria-label="Language" className="eg-langtab-panel">
-        {OPTIONS.map((o) => {
-          const on = lang === o.lang;
-          return (
-            <button
-              key={o.lang}
-              type="button"
-              lang={o.htmlLang}
-              aria-label={o.name}
-              aria-pressed={on}
-              onClick={() => choose(o.lang)}
-              className="eg-langtab-lang"
-            >
-              {o.text}
-            </button>
-          );
-        })}
-      </div>
       <button
         type="button"
         aria-label="Language"
@@ -192,6 +174,24 @@ export function LanguageToggle() {
           <path d="M9 3 3 10l6 7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
+      <div id={panelId} role="group" aria-label="Language" className="eg-langtab-panel">
+        {OPTIONS.map((o) => {
+          const on = lang === o.lang;
+          return (
+            <button
+              key={o.lang}
+              type="button"
+              lang={o.htmlLang}
+              aria-label={o.name}
+              aria-pressed={on}
+              onClick={() => choose(o.lang)}
+              className="eg-langtab-lang"
+            >
+              {o.text}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
