@@ -11,12 +11,8 @@ describe("section reveal", () => {
     expect(revealDelay(-4)).toBe(0);
   });
 
-  it("slides headings in from the side and lifts everything else", () => {
-    expect(revealKind("H2")).toBe("left");
-    expect(revealKind("h2")).toBe("left");
-    expect(revealKind("P")).toBe("up");
-    expect(revealKind("A")).toBe("up");
-    expect(revealKind("DIV")).toBe("up");
+  it("gives every piece the same straight rise, headings included", () => {
+    for (const tag of ["H2", "h2", "P", "A", "DIV", "SPAN"]) expect(revealKind(tag)).toBe("up");
   });
 
   it("renders nothing: it only tags elements and watches them in the browser", () => {

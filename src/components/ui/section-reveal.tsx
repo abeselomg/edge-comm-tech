@@ -26,9 +26,13 @@ export function revealDelay(index: number): number {
   return Math.min(Math.max(index, 0) * STEP_S, MAX_DELAY_S);
 }
 
-/** The heading slides in from the side; everything else rises. */
-export function revealKind(tag: string): "left" | "up" {
-  return tag.toLowerCase() === "h2" ? "left" : "up";
+/**
+ * One entrance for everything: a straight rise. (A heading that slid in from the
+ * side next to cards that rise and scale met them at an angle, which read as
+ * diagonal.) Kept as a function so a different treatment is one change.
+ */
+export function revealKind(_tag: string): "up" {
+  return "up";
 }
 
 export function SectionReveal() {
