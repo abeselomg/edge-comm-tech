@@ -5,7 +5,7 @@
  * in the "eg-load-" block at the end of globals.css and uses only transform,
  * opacity and stroke-dashoffset. Under prefers-reduced-motion it holds still.
  *
- * role="status" with a visually hidden label, so assistive tech announces it
+ * role="status" with an aria-label (an attribute, not text: a text label would sit in the served HTML of every page, since the Suspense fallback is streamed with it), so assistive tech announces it
  * once. The label exists only while the loader is on screen -- it is never in
  * a finished page.
  */
@@ -30,6 +30,7 @@ export function EdgeLoader({
     <span
       role="status"
       aria-live="polite"
+      aria-label={label}
       className={`eg-load inline-flex text-gold ${LOADER_SIZE_CLASS[size]} ${className}`.trim()}
     >
       <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" focusable="false" className="h-full w-full">
@@ -50,7 +51,6 @@ export function EdgeLoader({
         </g>
         <circle cx="32" cy="32" r="3" fill="currentColor" />
       </svg>
-      <span className="sr-only">{label}</span>
     </span>
   );
 }

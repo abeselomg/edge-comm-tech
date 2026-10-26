@@ -11,7 +11,9 @@ describe("EdgeLoader", () => {
     const out = renderToStaticMarkup(<EdgeLoader />);
     expect(out).toMatch(/^<span[^>]*role="status"[^>]*aria-live="polite"/);
     expect(out).toContain("<svg");
-    expect(out).toContain('<span class="sr-only">Loading</span>');
+    expect(out).toContain('aria-label="Loading"');
+    // the label is an attribute: no "Loading" text node in the markup
+    expect(out.replace(/<[^>]*>/g, "")).not.toContain("Loading");
     expect(out).not.toMatch(/<img|<script|href=/);
     expect(out).toContain("eg-load-orbit");
   });
