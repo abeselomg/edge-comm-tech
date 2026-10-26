@@ -1,5 +1,38 @@
 import type { Field } from "payload";
 import { forbidsPhrases } from "./validators";
+import { stripMarkup } from "../lib/seo/text";
+
+/*
+ * Editors see these as "search appearance": what a search result and a shared
+ * link show for the page. The caps are the lengths search engines show before
+ * cutting. The title cap leaves room for the " | Edge Comm-Tech" the site adds
+ * after it.
+ */
+export const META_TITLE_MAX = 60;
+export const META_DESCRIPTION_MAX = 160;
+
+const capped =
+  (max: number, what: string, base: ReturnType<typeof forbidsPhrases>) =>
+  (value: unknown, options?: { required?: boolean }): true | string => {
+    const phrases = base(value, options);
+    if (phrases !== true) return phrases;
+    const length = typeof value === "string" ? stripMarkup(value).length : 0;
+    if (length <= max) return true;
+    return `Shorten the ${what} to ${max} characters or fewer; it is ${length}. Search results cut longer text off.`;
+  };
+
+const TEXT = {
+  title: {
+    max: META_TITLE_MAX,
+    what: "search title",
+    help: "Leave empty to use the page title. About 50-60 characters. The site name is added after it automatically, so do not type it.",
+  },
+  description: {
+    max: META_DESCRIPTION_MAX,
+    what: "search description",
+    help: "Leave empty to use the summary. About 140-155 characters.",
+  },
+} as const;
 
 /**
  * Attach the forbidden-phrase validator to the SEO plugin's own meta fields.
@@ -31,7 +64,16 @@ export const guardSeoMetaFields = ({ defaultFields }: { defaultFields: Field[] }
     // discriminant, and TypeScript then tries to match the result against
     // every field variant in it and asks for `relationTo`.
     if (field.type === "text" || field.type === "textarea") {
-      return { ...field, validate: forbidsPhrases() };
+      // The two fields the plugin is known to create also get a length cap and
+      // plain-English help; a prose field under any other name still gets the
+      // phrase guard alone.
+      const known = TEXT[field.name as keyof typeof TEXT];
+      if (!known) return { ...field, validate: forbidsPhrases() };
+      return {
+        ...field,
+        admin: { ...field.admin, description: known.help },
+        validate: capped(known.max, known.what, forbidsPhrases()),
+      } as Field;
     }
 
     // The plugin's `meta.image` is the Open Graph and search thumbnail -- the
@@ -41,7 +83,15 @@ export const guardSeoMetaFields = ({ defaultFields }: { defaultFields: Field[] }
     // retrieval date and reviewer were never recorded, defeating Task 8's gate
     // on exactly the image that travels furthest.
     if (field.type === "upload") {
-      return { ...field, filterOptions: { approved: { equals: true } } };
+      return {
+        ...field,
+        admin: {
+          ...field.admin,
+          description:
+            "Picture shown when the page is shared. 1200 x 630 pixels recommended. Leave empty to use the Edge Comm-Tech default.",
+        },
+        filterOptions: { approved: { equals: true } },
+      } as Field;
     }
 
     return field;
