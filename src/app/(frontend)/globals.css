@@ -893,3 +893,12 @@ a:hover .eg-pimg-fallback svg {
     transition: none;
   }
 }
+
+/* The sourced art has a soft glow baked in that stops at the picture's edge;
+   fade the four edges so there is no visible rectangle on the page background. */
+.eg-sv-img {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent);
+  mask-composite: intersect;
+}
