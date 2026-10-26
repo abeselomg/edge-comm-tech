@@ -31,6 +31,13 @@ describe("PartnerRings", () => {
     expect(cards(html(many(60)))).toHaveLength(48);
   });
 
+  // The spinning ring squares swing their corners past the diagram; without a
+  // clip they add sideways scroll at viewports with no spare room.
+  it("clips the turning rings at the diagram root", () => {
+    const root = html(real).match(/<div[^>]*data-parity="partner-rings"[^>]*>/)?.[0] ?? "";
+    expect(root).toMatch(/class="[^"]*(?<![\w-])overflow-clip(?![\w-])/);
+  });
+
   it("renders nothing for no partners", () => {
     expect(html([])).toBe("");
   });

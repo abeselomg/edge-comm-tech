@@ -46,7 +46,7 @@ export function PartnerRings({ partners }: { partners: RingPartner[] }) {
     <div
       aria-hidden="true"
       data-parity="partner-rings"
-      className="eg-rings relative mx-auto hidden aspect-square w-full max-w-[56rem] lg:block"
+      className="eg-rings relative mx-auto overflow-clip hidden aspect-square w-full max-w-[56rem] lg:block"
     >
       {RING_RADII.map((r) => (
         <span
