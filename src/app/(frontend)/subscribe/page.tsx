@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { LiveForm } from "@/components/forms/LiveForm";
 import { Crumb, PageHead, SectionHead } from "@/components/ui";
@@ -18,11 +19,12 @@ import { emailByLabel } from "@/lib/routes";
 
 const ACCENT = "#2ba8de";
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Subscribe to Edge Comm-Tech Updates",
   description:
     "Receive Edge Comm-Tech news, event invitations and technology insights relevant to your sector.",
-};
+  path: "/subscribe",
+});
 
 const EXPECT = [
   "Only the topics you select.",

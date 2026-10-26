@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, PageHead } from "@/components/ui";
 import { getPosts } from "@/lib/content";
@@ -19,11 +20,12 @@ import { PostArticle, topics } from "./blog-parts";
  * needs no script for it.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Insights on Technology, AI and Digital Transformation — Edge Comm-Tech",
   description:
     "Practical perspectives from Edge Comm-Tech on enterprise AI, networks, cloud, datacenters, cybersecurity, power, broadcast and digital transformation in Ethiopia.",
-};
+  path: "/blog",
+});
 
 export default async function BlogPage() {
   const posts = await getPosts();

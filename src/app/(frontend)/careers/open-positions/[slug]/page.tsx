@@ -1,3 +1,5 @@
+import { buildMetadata, documentSeo } from "@/lib/seo/metadata";
+import { jobHref } from "@/lib/routes";
 import { Crumb, PageHead } from "@/components/ui";
 import { getCareersContent, getContactDetails, getForm, getJob, getJobs } from "@/lib/content";
 import { jobOpen } from "@/lib/jobs";
@@ -18,7 +20,12 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const j = await getJob(slug);
-  return j ? { title: `${j.title} — Careers at Edge Comm-Tech`, description: j.purpose } : {};
+  if (!j) return {};
+  const seo = documentSeo(j, {
+    title: `${j.title} — Careers at Edge Comm-Tech`,
+    description: j.purpose,
+  });
+  return buildMetadata({ ...seo, path: jobHref(slug) });
 }
 
 export default async function JobPage({ params }: { params: Promise<{ slug: string }> }) {

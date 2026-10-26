@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, Crumb, PageHead } from "@/components/ui";
 import { getEvents } from "@/lib/content";
@@ -15,11 +16,12 @@ import { EventsEmpty, PastRow, splitEvents, UpcomingCard } from "./event-parts";
 
 export const revalidate = 3600;
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Technology Events and Webinars — Edge Comm-Tech",
   description:
     "Join Edge Comm-Tech webinars, briefings and exhibitions on enterprise AI, infrastructure, cybersecurity and digital transformation.",
-};
+  path: "/events",
+});
 
 const PROMPTS = [
   [

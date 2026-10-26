@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, Crumb, PageHead } from "@/components/ui";
 import { getNews } from "@/lib/content";
@@ -12,11 +13,12 @@ import { ArchiveBand, NewsRow, splitArchive } from "./news-parts";
  * instead of carrying a plausible-looking date.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "News and Announcements — Edge Comm-Tech",
   description:
     "Company milestones, strategic updates, partnership and project announcements, and perspectives on Ethiopia's digital transformation from Edge Comm-Tech.",
-};
+  path: "/news",
+});
 
 const MEDIA = [
   ["press-releases", "Press releases"],

@@ -1,3 +1,5 @@
+import { buildMetadata, documentSeo } from "@/lib/seo/metadata";
+import { projectHref } from "@/lib/routes";
 import { ClosingCta, Crumb, PageHead } from "@/components/ui";
 import { SECTOR_SHORT } from "@/fields/sectors";
 import { getPageCopy, getPartners, getProject, getProjects } from "@/lib/content";
@@ -20,7 +22,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const p = await getProject(slug);
-  return p ? { title: `${p.title} — Edge Comm-Tech`, description: p.summary } : {};
+  if (!p) return {};
+  const seo = documentSeo(p, { title: p.title, description: p.summary });
+  return buildMetadata({ ...seo, path: projectHref(slug) });
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {

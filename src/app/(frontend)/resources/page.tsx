@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getDownloads, getEvents, getNews, getPageCopy, getPosts } from "@/lib/content";
@@ -23,11 +24,12 @@ import { eventHref } from "@/lib/routes";
  */
 export const revalidate = 3600;
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Resource Centre — News, Events, Media and Downloads | Edge Comm-Tech",
   description:
     "News, announcements, documentary videos, press releases, media coverage, events, webinars and downloadable documents from Edge Comm-Tech.",
-};
+  path: "/resources",
+});
 
 const UNIT: Record<string, string> = {
   news: "item",

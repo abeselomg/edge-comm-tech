@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import { ClosingCta, CtaRow, PageHead, SectionHead } from "@/components/ui";
 import { getPageCopy, getPartnerCategories, getPartners } from "@/lib/content";
 import { PartnerRings } from "./PartnerRings";
@@ -22,11 +23,12 @@ import { brandCard, byCategory, filterCss } from "./partner-parts";
  * ported; see the note on the clients page.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Technology Partners and Manufacturers — Edge Comm-Tech",
   description:
     "Edge Comm-Tech works with global technology manufacturers and distributors across software, AI, networking, compute, cloud, datacenter, cybersecurity, power, broadcast and EV charging.",
-};
+  path: "/partners",
+});
 
 const MEANING = [
   [

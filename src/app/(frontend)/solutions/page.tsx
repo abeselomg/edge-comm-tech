@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, CtaRow, PageHead, SectionHead } from "@/components/ui";
 import {
@@ -23,11 +24,12 @@ import { projectsFor } from "./solution-parts";
  * it can never drift from the project records.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Technology Solutions and Services in Ethiopia — Edge Comm-Tech",
   description:
     "Explore Edge Comm-Tech solutions across enterprise networks, cloud, datacenters, cybersecurity, software, AI, power, broadcast, and satellite technologies.",
-};
+  path: "/solutions",
+});
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
