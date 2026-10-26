@@ -455,3 +455,93 @@ body {
     transform: none;
   }
 }
+
+/* ---- eg-load-: loading mark and navigation progress bar ---------------- */
+.eg-load-orbit {
+  transform-origin: 50% 50%;
+  transform-box: view-box;
+  animation: eg-load-spin 1.6s linear infinite;
+}
+
+.eg-load-arc {
+  animation: eg-load-draw 1.6s ease-in-out infinite;
+}
+
+.eg-load-node {
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  animation: eg-load-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes eg-load-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes eg-load-draw {
+  0%, 100% {
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dashoffset: 24;
+  }
+}
+
+@keyframes eg-load-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.75;
+  }
+}
+
+.eg-load-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: 3px;
+  pointer-events: none;
+  background: linear-gradient(90deg, #0888c500, var(--color-gold) 35%, #4cc3f0);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+.eg-load-bar[data-phase="run"] {
+  transform: scaleX(0.8);
+  transition: transform 9s cubic-bezier(0.08, 0.6, 0.2, 1);
+}
+
+.eg-load-bar[data-phase="done"] {
+  transform: scaleX(1);
+  opacity: 0;
+  transition: transform 0.25s ease-out, opacity 0.4s ease 0.25s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eg-load-orbit, .eg-load-arc {
+    animation: none;
+  }
+
+  .eg-load-node {
+    animation: eg-load-breathe 3.2s ease-in-out infinite;
+  }
+
+  .eg-load-bar {
+    display: none;
+  }
+
+  @keyframes eg-load-breathe {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.55;
+    }
+  }
+}
