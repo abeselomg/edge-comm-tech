@@ -44,6 +44,7 @@ export async function SiteHeader() {
             width={391}
             height={176}
             className="h-14 w-auto"
+            sizes="124px"
             priority
           />
         </Link>
@@ -118,9 +119,9 @@ export async function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="font-display text-sm">
+          <h2 className="font-display text-sm">
             <Tr>Solutions</Tr>
-          </h4>
+          </h2>
           <ul className="mt-3 space-y-1.5 text-sm text-ink/70">
             {solutions.map((s) => (
               <li key={s.slug}>
@@ -138,9 +139,9 @@ export async function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="font-display text-sm">
+          <h2 className="font-display text-sm">
             <Tr>Company</Tr>
-          </h4>
+          </h2>
           <ul className="mt-3 space-y-1.5 text-sm text-ink/70">
             {companyLinks.map((n) => (
               <li key={n.href}>
@@ -158,7 +159,7 @@ export async function SiteFooter() {
         </div>
 
         <div>
-          <h4 className="font-display text-sm">Get in touch</h4>
+          <h2 className="font-display text-sm">Get in touch</h2>
           <ul className="mt-3 space-y-1.5 text-sm text-ink/70">
             <li>
               {/*

@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { LiveForm } from "@/components/forms/LiveForm";
 import { ClosingCta, Crumb, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
@@ -21,11 +22,12 @@ import type { Solution } from "@/payload-types";
 const DARK = "#003D6B";
 const ACCENT = "#056a9a";
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Edge E-Academy — Technology Training and Knowledge Transfer",
   description:
     "Structured technology training from Edge Comm-Tech for individuals, institutions and corporate teams across AI, networks, cloud, datacenters, cybersecurity and power.",
-};
+  path: "/careers/e-academy",
+});
 
 export default async function EAcademyPage() {
   const [careers, tracks, contact, form] = await Promise.all([
@@ -65,7 +67,7 @@ export default async function EAcademyPage() {
           <ul className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {audiences.map((a) => (
               <li key={a.title} className="eg-inview flex flex-col rounded-2xl bg-paper p-6">
-                <h3 className="font-display text-lg leading-snug">{a.title}</h3>
+                <h2 className="font-display text-lg leading-snug">{a.title}</h2>
                 <p className="mt-2 flex-1 text-[13px] leading-relaxed text-ink/70">{a.body}</p>
                 <a
                   href="#enquire"

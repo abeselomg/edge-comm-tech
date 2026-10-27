@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import { CtaRow, PageHead, SectionHead } from "@/components/ui";
 import { LiveForm } from "@/components/forms/LiveForm";
 import { getContactDetails, getForm } from "@/lib/content";
@@ -20,11 +21,12 @@ import { emailByLabel } from "@/lib/routes";
  * "Contact" form, submitted to /forms/contact.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Contact Edge Comm-Tech — Addis Ababa, Ethiopia",
   description:
     "Contact Edge Comm-Tech for consultations, quotations, technical support, partnerships and training. BMA Plaza, Gerji, Addis Ababa.",
-};
+  path: "/contact",
+});
 
 export default async function ContactPage() {
   const [contact, form] = await Promise.all([getContactDetails(), getForm("contact")]);

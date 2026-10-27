@@ -1,3 +1,6 @@
+import { buildMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, itemList } from "@/lib/seo/jsonld";
 import Link from "next/link";
 import { ClosingCta, CtaRow, Mark, PageHead, SectionHead } from "@/components/ui";
 import { SECTOR_OPTIONS } from "@/fields/sectors";
@@ -19,11 +22,12 @@ import { bySector, clientCard, SECTOR_ACCENT } from "./client-parts";
  * deliberate.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Our Clients — Banks, Universities and Government Institutions | Edge Comm-Tech",
   description:
     "Edge Comm-Tech works with Ethiopian banks, universities, ministries and public institutions delivering infrastructure, security, power and digital learning technology.",
-};
+  path: "/clients",
+});
 
 export default async function ClientsPage() {
   const [copy, clients, company] = await Promise.all([getPageCopy(), getClients(), getCompany()]);
@@ -32,6 +36,7 @@ export default async function ClientsPage() {
 
   return (
     <main>
+      <JsonLd data={graph(itemList("Clients", clients.filter((c) => c._status === "published").map((c) => ({ name: c.name }))))} />
       <PageHead
         eyebrow={hero?.eyebrow}
         title={hero?.title ?? "Clients"}

@@ -94,7 +94,7 @@ export function PartnerRings({ partners }: { partners: RingPartner[] }) {
                 className="eg-ring-card"
                 style={{ left: `${c.x}%`, top: `${c.y}%`, width: `${CARD.w}cqw`, height: `${CARD.h}cqw` }}
               >
-                <Mark item={c.item} imgClass="eg-ring-logo" nameClass="eg-ring-name" lazy />
+                <Mark item={c.item} imgClass="eg-ring-logo" nameClass="eg-ring-name" sizes="128px" lazy />
               </div>
             ))}
         </div>

@@ -1,8 +1,11 @@
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, organization, website } from "@/lib/seo/jsonld";
 import Link from "next/link";
 import { Tr } from "@/components/i18n/Tr";
 import { Confirmable, Mark } from "@/components/ui";
 import { AnimatedWords } from "@/components/ui/animated-words";
 import { SolutionGlyph, SolutionWatermark } from "@/components/ui/solution-glyph";
+import { SectionReveal } from "@/components/ui/section-reveal";
 import { featuredProjects, HeroCard, impactCard, SuccessStory, teaser } from "./home-parts";
 import {
   getClients,
@@ -19,6 +22,7 @@ import {
 import { SECTOR_OPTIONS, SECTOR_SHORT, type SectorSlug } from "@/fields/sectors";
 import { projectHref, solutionHref } from "@/lib/routes";
 import { ProjectCover } from "./projects/project-images";
+import { buildMetadata, HOME_DESCRIPTION, HOME_TITLE } from "@/lib/seo/metadata";
 
 /*
  * The home page, in the fifteen-section order the content master sets out in
@@ -40,6 +44,12 @@ import { ProjectCover } from "./projects/project-images";
 
 const DARK = "#003D6B";
 const CYAN = "#10C7FF";
+
+export const metadata = buildMetadata({
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
+  path: "/",
+});
 
 export default async function HomePage() {
   const [settings, company, contact, copy, solutions, projects, clients, partners, posts] =
@@ -63,6 +73,8 @@ export default async function HomePage() {
 
   return (
     <main>
+      <JsonLd data={graph(organization({ company, contact, social: settings.social }), website(company))} />
+      <SectionReveal />
       {/* 01 Hero */}
       <section data-home-hero className="eg-hero-under-nav relative overflow-hidden bg-paper">
         <div className="sun-disk" aria-hidden="true" />

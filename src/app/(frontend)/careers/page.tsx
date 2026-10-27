@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, CtaRow, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getCareersContent, getContactDetails, getJobs } from "@/lib/content";
@@ -15,11 +16,12 @@ import { hrEmail, intakeNote } from "./careers-parts";
  * shown as unconfirmed rather than invented.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Careers at Edge Comm-Tech — Build Africa's Digital Future",
   description:
     "Join Edge Comm-Tech. Explore engineering, project delivery and corporate careers, graduate internships and E-Academy training programs in Addis Ababa.",
-};
+  path: "/careers",
+});
 
 const plural = (n: number, word: string) => `${n} ${word}${n > 1 ? "s" : ""}`;
 

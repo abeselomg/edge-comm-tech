@@ -45,7 +45,7 @@ describe("PartnerRings", () => {
   // Review Focus #1: only approved artwork, and the name where there is none.
   it("shows an approved logo as an image named for the partner, and no name text", () => {
     const out = html([{ name: "Vertiv", logo: logo("vertiv") } as P, ...many(4)]);
-    expect(out).toContain('src="/media/vertiv.png"');
+    expect(out).toContain("/_next/image?url=%2Fmedia%2Fvertiv.png&amp;w=");
     expect(out).toContain('alt="Vertiv"');
     // Lazy, so a phone (diagram hidden) never fetches it and React adds no preload.
     expect(out).toContain('loading="lazy"');

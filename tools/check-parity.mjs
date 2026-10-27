@@ -64,15 +64,25 @@ const pages = named.length ? named : pageList(scope);
 
 
 
+/*
+ * Headings are compared by their words. The h1 is kept distinct (a page has one
+ * and it is the page's identity); every other level counts as "a heading",
+ * because the outline level is structure, not copy: the port deliberately moved
+ * the footer titles from h4 to h2 and a few card titles from h3 to h2 so the
+ * outline never skips a level (src/app/(frontend)/heading-outline.test.ts guards
+ * that), with the words untouched.
+ */
 function headings(html) {
-  return [...html.matchAll(/<h([1-3])\b[^>]*>([\s\S]*?)<\/h\1>/gi)].map(
-    (m) => `h${m[1]}: ${visibleText(m[2])}`,
+  return [...html.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi)].map(
+    (m) => `${m[1] === "1" ? "h1" : "h"}: ${visibleText(m[2])}`,
   );
 }
 
 /** Internal link targets, normalised to routes. External links are ignored. */
 function links(html, { fromHighland }) {
   const out = new Set();
+  // <link> elements (icons, preloads, canonical) are head metadata, not links a reader follows.
+  html = html.replace(/<link\b[^>]*>/gi, " ");
   for (const m of html.matchAll(/href="([^"]+)"/g)) {
     const href = m[1];
     if (/^(https?:|mailto:|tel:|#|data:)/.test(href)) continue;

@@ -13,8 +13,11 @@ BRANCH=payload-cms-integration
 
 cd "$APP"
 set -a; . /etc/edge-comm-tech.env; set +a
+# SITE_URL and SITE_INDEXABLE are read by the BUILD (page metadata, the X-Robots-Tag
+# headers), so they are passed through here as well as to the service.
 run() { sudo -u edge env \
   DATABASE_URI="$DATABASE_URI" PAYLOAD_SECRET="$PAYLOAD_SECRET" \
+  SITE_URL="${SITE_URL:-}" SITE_INDEXABLE="${SITE_INDEXABLE:-}" \
   NODE_ENV=production NODE_OPTIONS=--no-deprecation "$@"; }
 
 echo "==> fetching the bundle"

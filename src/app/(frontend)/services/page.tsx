@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import { ClosingCta, CtaRow, PageHead, SectionHead } from "@/components/ui";
 import { getCompany, getServices } from "@/lib/content";
 import { ServiceChapter } from "./service-parts";
@@ -12,11 +13,12 @@ import { ServiceChapter } from "./service-parts";
 
 const DARK = "#003D6B";
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Professional Technology Services in Ethiopia — Edge Comm-Tech",
   description:
     "Advisory, procurement, implementation, project management, managed support and training services from Edge Comm-Tech across the full technology lifecycle.",
-};
+  path: "/services",
+});
 
 const ENGAGEMENTS = [
   [
@@ -70,7 +72,7 @@ export default async function ServicesPage() {
                     <span className="hidden h-px flex-1 bg-rule lg:block" />
                   ) : null}
                 </span>
-                <h3 className="mt-3 font-display text-lg">{s.title}</h3>
+                <h2 className="mt-3 font-display text-lg">{s.title}</h2>
                 <p className="mt-1.5 text-[13px] leading-relaxed text-ink/65">{s.body}</p>
               </li>
             ))}

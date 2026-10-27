@@ -1,3 +1,7 @@
+import { buildMetadata, documentSeo } from "@/lib/seo/metadata";
+import { solutionHref } from "@/lib/routes";
+import { JsonLd } from "@/components/seo/json-ld";
+import { graph, solutionService } from "@/lib/seo/jsonld";
 import { Crumb, PageHead, SectionHead, CheckList } from "@/components/ui";
 import { SolutionVisual } from "@/components/ui/solution-visual";
 import { getPosts, getProjects, getSolution, getSolutions } from "@/lib/content";
@@ -32,7 +36,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const s = await getSolution(slug);
-  return s ? { title: `${s.title} — Edge Comm-Tech`, description: s.blurb } : {};
+  if (!s) return {};
+  const seo = documentSeo(s, { title: s.title, description: s.blurb });
+  return buildMetadata({ ...seo, path: solutionHref(slug) });
 }
 
 export default async function SolutionPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -45,6 +51,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
 
   return (
     <main>
+      <JsonLd data={graph(solutionService(s))} />
       <PageHead
         eyebrow={`Solution ${String(s.order).padStart(2, "0")} of ${total}`}
         title={s.headline}

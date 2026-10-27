@@ -11,6 +11,7 @@ import sharp from "sharp";
 
 import { readMailConfig } from "./lib/mail";
 import { guardSeoMetaFields } from "./fields/seo";
+import { trimDescription } from "./lib/seo/text";
 import { submissionExtraFields } from "./fields/submission";
 import { signedInField, adminOnly, submissionsRead } from "./access";
 import { hiddenInAdmin } from "./access/matrix";
@@ -173,16 +174,21 @@ export default buildConfig({
       collections: ["solutions", "services", "projects", "news", "events", "jobs", "posts"],
       uploadsCollection: "media",
       /*
-       * This writes the <title> of every public page the plugin covers, so the
-       * brand name here reaches the live site and search results. "Edge
-       * Comm-Tech" is the approved short name; the upper-case form appears
-       * nowhere in the content master. The separator matches the frontend
-       * layout's title template so the two cannot drift apart.
+       * What the "Auto-generate" buttons fill in. The title is the page's own
+       * title WITHOUT the site name: the frontend adds " | Edge Comm-Tech"
+       * after it (src/lib/seo/metadata.ts), and a name typed here as well
+       * would print twice. The frontend also strips a trailing brand from
+       * older values, so a title saved with one is still shown once.
+       * "Edge Comm-Tech" is the approved short name; the upper-case form
+       * appears nowhere in the content master.
        */
-      generateTitle: ({ doc }) =>
-        doc?.title ? `${doc.title} — Edge Comm-Tech` : "Edge Comm-Tech",
+      generateTitle: ({ doc }) => doc?.title ?? "",
+      // Trimmed to what a search result shows, so the generated text passes the
+      // 160-character cap in guardSeoMetaFields rather than failing the save.
       generateDescription: ({ doc }) =>
-        doc?.blurb ?? doc?.summary ?? doc?.excerpt ?? "",
+        trimDescription(
+          doc?.blurb ?? doc?.summary ?? doc?.standfirst ?? doc?.intro ?? doc?.purpose ?? doc?.excerpt ?? "",
+        ),
       // The plugin creates its own meta.title and meta.description, which the
       // validators in the collection files cannot reach. See src/fields/seo.ts.
       fields: guardSeoMetaFields,

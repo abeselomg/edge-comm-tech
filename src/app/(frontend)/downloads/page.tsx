@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import { ClosingCta, Crumb, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getContactDetails, getDownloads } from "@/lib/content";
 import { DownloadList } from "./download-parts";
@@ -19,11 +20,12 @@ import { emailByLabel } from "@/lib/routes";
 
 const ACCENT = "#056a9a";
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Downloads — Company Profile, Brochures and Datasheets | Edge Comm-Tech",
   description:
     "Request the Edge Comm-Tech company profile, solutions overview, solution datasheets and vendor catalogues.",
-};
+  path: "/downloads",
+});
 
 const ON_REQUEST = [
   "Company registration, licensing and statutory documentation",

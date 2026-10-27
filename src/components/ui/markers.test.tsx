@@ -52,7 +52,7 @@ describe("Mark shows approved artwork or the name in its place", () => {
     const out = html(
       <Mark item={{ name: "Gadaa Bank", logo: { id: 1, url: "/m/g.png", approved: true } }} />,
     );
-    expect(out).toContain("/m/g.png");
+    expect(out).toContain("/_next/image?url=%2Fm%2Fg.png&amp;w=");
     expect(out).toContain("Gadaa Bank"); // the alt text
   });
 
@@ -66,7 +66,7 @@ describe("Mark shows approved artwork or the name in its place", () => {
     const out = html(
       <Mark item={{ name: "Gadaa Bank", logo: { id: 1, url: "/m/g.png", approved: false } }} />,
     );
-    expect(out).not.toContain("/m/g.png");
+    expect(out).not.toContain("g.png");
     expect(out).toContain("Gadaa Bank");
   });
 
@@ -108,5 +108,73 @@ describe("Mark shows approved artwork or the name in its place", () => {
     const out = html(<Mark item={{ name: "A & B <script>", logo: null }} />);
     expect(out).toContain("&amp;");
     expect(out).not.toContain("<script>");
+  });
+});
+
+describe("Mark serves a resized logo through next/image", () => {
+  const logo = {
+    id: 1,
+    url: "/api/media/file/arba-minch-university-logo.png",
+    approved: true,
+    width: 800,
+    height: 800,
+  };
+  const render = (props: Partial<React.ComponentProps<typeof Mark>> = {}) =>
+    html(<Mark item={{ name: "Arba Minch University", logo }} {...props} />);
+
+  it("is lazy, async-decoded, sized, and never preloaded", () => {
+    const out = render();
+    expect(out).toContain('loading="lazy"');
+    expect(out).toContain('decoding="async"');
+    expect(out).toContain('width="800"');
+    expect(out).toContain('height="800"');
+    expect(out).toContain('sizes="160px"');
+    expect(out.toLowerCase()).not.toContain("fetchpriority");
+    expect(out).not.toContain("<link");
+  });
+
+  it("requests the optimizer, not the original upload", () => {
+    const out = render();
+    expect(out).toContain("/_next/image?url=%2Fapi%2Fmedia%2Ffile%2Farba-minch-university-logo.png");
+    expect(out).toContain("srcSet=");
+    expect(out).toContain("w=384");
+  });
+
+  it("keeps the alt text exactly as the name", () => {
+    expect(render()).toContain('alt="Arba Minch University"');
+  });
+
+  it("takes a sizes override and an eager opt-out", () => {
+    const out = render({ sizes: "128px", lazy: false });
+    expect(out).toContain('sizes="128px"');
+    expect(out).toContain('loading="eager"');
+  });
+
+  it("falls back to a default aspect when the media has no dimensions", () => {
+    const out = html(
+      <Mark item={{ name: "G", logo: { id: 2, url: "/api/media/file/g.png", approved: true } }} />,
+    );
+    expect(out).toContain('width="240"');
+    expect(out).toContain('height="160"');
+  });
+
+  it("serves an SVG untouched", () => {
+    const out = html(
+      <Mark item={{ name: "S", logo: { id: 3, url: "/api/media/file/s.svg", approved: true } }} />,
+    );
+    expect(out).toContain('src="/api/media/file/s.svg"');
+    expect(out).not.toContain("/_next/image");
+  });
+
+  it("keeps the partner ring classes and name fallback", () => {
+    const img = render({ imgClass: "eg-ring-logo", nameClass: "eg-ring-name", sizes: "128px", lazy: true });
+    expect(img).toContain('class="eg-ring-logo"');
+    expect(img).toContain('loading="lazy"');
+    const name = html(
+      <Mark item={{ name: "No Logo Ltd", logo: null }} imgClass="eg-ring-logo" nameClass="eg-ring-name" lazy />,
+    );
+    expect(name).not.toContain("<img");
+    expect(name).toContain('class="eg-ring-name"');
+    expect(name).toContain("No Logo Ltd");
   });
 });

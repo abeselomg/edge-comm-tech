@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, Crumb, PageHead, SectionHead } from "@/components/ui";
 import { getCareersContent, getContactDetails, getJobs } from "@/lib/content";
@@ -12,11 +13,12 @@ import { hrEmail, PositionsList } from "../careers-parts";
  * appears: none is approved for publication.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Open Positions — Careers at Edge Comm-Tech",
   description:
     "Current vacancies at Edge Comm-Tech in Addis Ababa across engineering, technology leadership and corporate functions.",
-};
+  path: "/careers/open-positions",
+});
 
 export default async function OpenPositionsPage() {
   const [careers, jobs, contact] = await Promise.all([

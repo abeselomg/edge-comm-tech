@@ -65,9 +65,9 @@ export function jobRow(j: Job) {
           <p className="font-mono text-[10px] uppercase tracking-widest" style={{ color: c }}>
             {`${j.department} · ${j.level}`}
           </p>
-          <h3 className="mt-2.5 font-display text-[clamp(1.3rem,2.3vw,1.8rem)] leading-snug group-hover:text-gold">
+          <h2 className="mt-2.5 font-display text-[clamp(1.3rem,2.3vw,1.8rem)] leading-snug group-hover:text-gold">
             {j.title}
-          </h3>
+          </h2>
           <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/70">{j.purpose}</p>
           <p className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[10px] uppercase tracking-widest text-steel">
             <span>{j.type}</span>

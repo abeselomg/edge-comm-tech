@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import { LiveForm } from "@/components/forms/LiveForm";
 import { ClosingCta, Crumb, PageHead, SectionHead } from "@/components/ui";
 import { getCareersContent, getContactDetails, getForm } from "@/lib/content";
@@ -16,11 +17,12 @@ import { hrEmail, internshipPills } from "../careers-parts";
 
 const ACCENT = "#2ba8de";
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Graduate Technology Internship — Edge Comm-Tech",
   description:
     "Supervised graduate internships at Edge Comm-Tech in network engineering and system engineering, with mentorship, structured learning plans and real project exposure.",
-};
+  path: "/careers/internships",
+});
 
 export default async function InternshipsPage() {
   const [careers, contact, form] = await Promise.all([

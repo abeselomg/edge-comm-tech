@@ -1,3 +1,4 @@
+import { buildMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ClosingCta, Crumb, PageHead, Pending, SectionHead } from "@/components/ui";
 import { getCompany, getContactDetails } from "@/lib/content";
@@ -21,11 +22,12 @@ import { emailByLabel } from "@/lib/routes";
 const DARK = "#003D6B";
 const ACCENT = "#056a9a";
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Executive Management",
   description:
     "The executive leadership structure of Edge Communication Technologies PLC and the responsibilities each role carries.",
-};
+  path: "/about/executive-management",
+});
 
 export default async function ExecutiveManagementPage() {
   const [company, contact] = await Promise.all([getCompany(), getContactDetails()]);

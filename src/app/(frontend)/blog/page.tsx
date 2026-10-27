@@ -1,3 +1,6 @@
+import { buildMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/json-ld";
+import { blogPosting, graph } from "@/lib/seo/jsonld";
 import Link from "next/link";
 import { ClosingCta, PageHead } from "@/components/ui";
 import { getPosts } from "@/lib/content";
@@ -19,11 +22,12 @@ import { PostArticle, topics } from "./blog-parts";
  * needs no script for it.
  */
 
-export const metadata = {
+export const metadata = buildMetadata({
   title: "Insights on Technology, AI and Digital Transformation — Edge Comm-Tech",
   description:
     "Practical perspectives from Edge Comm-Tech on enterprise AI, networks, cloud, datacenters, cybersecurity, power, broadcast and digital transformation in Ethiopia.",
-};
+  path: "/blog",
+});
 
 export default async function BlogPage() {
   const posts = await getPosts();
@@ -31,6 +35,7 @@ export default async function BlogPage() {
 
   return (
     <main>
+      <JsonLd data={graph(...posts.map((p) => blogPosting(p)))} />
       <PageHead
         eyebrow="Insights"
         title="Practical thinking on the technology decisions in front of you"
