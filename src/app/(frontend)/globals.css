@@ -955,8 +955,9 @@ a:hover .eg-pimg-fallback svg {
     eg-hero-sweep 7s ease-in-out 1.6s infinite;
 }
 
+/* The sweep darkens the eyebrow, not lightens it: a pale highlight vanished against the sphere behind it on a phone. */
 .eg-hero-shimmer {
-  background-image: linear-gradient(90deg, var(--eg-accent, #0888c5) 0%, var(--eg-accent, #0888c5) 40%, color-mix(in srgb, var(--eg-accent, #0888c5) 50%, white) 50%, var(--eg-accent, #0888c5) 60%, var(--eg-accent, #0888c5) 100%);
+  background-image: linear-gradient(90deg, var(--eg-accent, #0888c5) 0%, var(--eg-accent, #0888c5) 40%, color-mix(in srgb, var(--eg-accent, #0888c5) 62%, var(--color-ink)) 50%, var(--eg-accent, #0888c5) 60%, var(--eg-accent, #0888c5) 100%);
   background-size: 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;
