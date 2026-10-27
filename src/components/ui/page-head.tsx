@@ -26,8 +26,7 @@ export function CtaRow({
 }) {
   return (
     <div
-      className="eg-rise mt-8 flex flex-wrap items-center gap-3"
-      style={{ ["--d" as string]: ".24s" }}
+      className="eg-hero-up mt-8 flex flex-wrap items-center gap-3"
     >
       <a
         href={primary.href}
@@ -160,22 +159,21 @@ export function PageHead({
         {crumb}
         {eyebrow ? (
           <p
-            className="eg-rise font-mono text-[11px] uppercase tracking-[0.28em]"
-            style={{ color: accent }}
+            className="eg-hero-eyebrow eg-hero-shimmer font-mono text-[11px] uppercase tracking-[0.28em]"
+            style={{ color: accent, ["--eg-accent" as string]: accent }}
           >
             {eyebrow}
           </p>
         ) : null}
         <h1
-          className="eg-rise mt-3 max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]"
-          style={{ ["--d" as string]: ".06s" }}
+          className="eg-hero-shine max-w-4xl font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]"
+          style={{ ["--eg-accent" as string]: accent }}
         >
           {title}
         </h1>
         {intro ? (
           <p
-            className="eg-rise mt-5 max-w-2xl text-lg text-ink/75"
-            style={{ ["--d" as string]: ".14s" }}
+            className="eg-hero-focus mt-5 max-w-2xl text-lg text-ink/75"
           >
             {intro}
           </p>

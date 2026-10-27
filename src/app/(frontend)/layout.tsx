@@ -6,6 +6,7 @@ import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 
 import { FontGate } from "@/components/ui/font-gate";
 import { HeaderOverHero } from "@/components/ui/header-over-hero";
+import { SectionReveal } from "@/components/ui/section-reveal";
 import { NavProgress } from "@/components/ui/nav-progress";
 import { SITE_DESCRIPTION, TITLE_TEMPLATE } from "@/lib/seo/metadata";
 import { SITE_NAME, siteIndexable, siteUrl } from "@/lib/seo/site";
@@ -71,6 +72,7 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
         <NavProgress />
         <SiteHeader />
         <HeaderOverHero />
+        <SectionReveal />
         <div id="main">{children}</div>
         <SiteFooter />
         {/* Nothing at all unless an editor is previewing a draft. */}
