@@ -5,7 +5,6 @@ import { Tr } from "@/components/i18n/Tr";
 import { Confirmable, Mark } from "@/components/ui";
 import { AnimatedWords } from "@/components/ui/animated-words";
 import { SolutionGlyph, SolutionWatermark } from "@/components/ui/solution-glyph";
-import { SectionReveal } from "@/components/ui/section-reveal";
 import { featuredProjects, HeroCard, impactCard, SuccessStory, teaser } from "./home-parts";
 import {
   getClients,
@@ -74,7 +73,6 @@ export default async function HomePage() {
   return (
     <main>
       <JsonLd data={graph(organization({ company, contact, social: settings.social }), website(company))} />
-      <SectionReveal />
       {/* 01 Hero */}
       <section data-home-hero className="eg-hero-under-nav relative overflow-hidden bg-paper">
         <div className="sun-disk" aria-hidden="true" />

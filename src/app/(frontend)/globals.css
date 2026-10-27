@@ -944,7 +944,7 @@ a:hover .eg-pimg-fallback svg {
   margin-top: calc(1.25rem - 0.14em);
   margin-bottom: -0.18em;
   color: var(--color-ink);
-  background-image: linear-gradient(100deg, var(--color-ink) 0%, var(--color-ink) 38%, #0888c5 48%, #5cc8f2 52%, var(--color-ink) 62%, var(--color-ink) 100%);
+  background-image: linear-gradient(100deg, var(--color-ink) 0%, var(--color-ink) 38%, var(--eg-accent, #0888c5) 48%, color-mix(in srgb, var(--eg-accent, #0888c5) 55%, white) 52%, var(--color-ink) 62%, var(--color-ink) 100%);
   background-size: 250% 100%;
   background-repeat: repeat-x;
   -webkit-background-clip: text;
@@ -955,8 +955,9 @@ a:hover .eg-pimg-fallback svg {
     eg-hero-sweep 7s ease-in-out 1.6s infinite;
 }
 
+/* The sweep darkens the eyebrow, not lightens it: a pale highlight vanished against the sphere behind it on a phone. */
 .eg-hero-shimmer {
-  background-image: linear-gradient(90deg, #0888c5 0%, #0888c5 40%, #7fd4f5 50%, #0888c5 60%, #0888c5 100%);
+  background-image: linear-gradient(90deg, var(--eg-accent, #0888c5) 0%, var(--eg-accent, #0888c5) 40%, color-mix(in srgb, var(--eg-accent, #0888c5) 62%, var(--color-ink)) 50%, var(--eg-accent, #0888c5) 60%, var(--eg-accent, #0888c5) 100%);
   background-size: 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;

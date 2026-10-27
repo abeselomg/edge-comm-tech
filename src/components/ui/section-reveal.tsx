@@ -1,7 +1,7 @@
 "use client";
 
 /*
- * Plays each home page section's entrance once, with a clear, timed animation,
+ * Plays each page section's entrance once, with a clear, timed animation,
  * when the section scrolls into view. (The scroll-linked reveals only move as
  * far as the wheel does, so a quick scroll skips straight over them.)
  *
@@ -14,6 +14,15 @@
  * never turned on, and the page is exactly as served.
  */
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+
+/**
+ * The sections whose pieces get an entrance: the home page's .eg-sec sections
+ * and every section of every page's <main>. The home hero and the page-head
+ * band have their own entrance and are not sections of either kind.
+ */
+export const REVEAL_SECTIONS = ".eg-sec, main section";
+export const REVEAL_SKIP = "[data-home-hero], [data-home-hero] *";
 
 /** What gets an entrance inside a section, in document order. */
 export const REVEAL_SELECTOR = "h2, h2 + p, .eg-m-eyebrow, .eg-inview, a.rounded-full";
@@ -127,12 +136,18 @@ export function startReveal(deps: RevealDeps): () => void {
 }
 
 export function SectionReveal() {
+  // Mounted once in the layout, which survives client navigations: run again for each page.
+  const pathname = usePathname();
   useEffect(() => {
     if (!("IntersectionObserver" in window)) return;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
-    const pieces = Array.from(document.querySelectorAll<HTMLElement>(".eg-sec")).flatMap((section) =>
-      Array.from(section.querySelectorAll<HTMLElement>(REVEAL_SELECTOR)),
-    );
+    const pieces = Array.from(
+      new Set(
+        Array.from(document.querySelectorAll<HTMLElement>(REVEAL_SECTIONS)).flatMap((section) =>
+          Array.from(section.querySelectorAll<HTMLElement>(REVEAL_SELECTOR)),
+        ),
+      ),
+    ).filter((el) => !el.matches(REVEAL_SKIP));
     if (!pieces.length) return;
 
     return startReveal({
@@ -149,7 +164,7 @@ export function SectionReveal() {
         return () => window.removeEventListener("beforeprint", fn);
       },
     });
-  }, []);
+  }, [pathname]);
 
   return null;
 }
