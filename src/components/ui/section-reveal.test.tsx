@@ -1,7 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  FALLBACK_MS,
   MAX_DELAY_S,
   STEP_S,
   isInInitialViewport,
@@ -75,8 +74,6 @@ describe("startReveal safety", () => {
           disconnect: () => observed.clear(),
         };
       },
-      setTimeout: (fn, ms) => setTimeout(fn, ms),
-      clearTimeout: (id) => clearTimeout(id as ReturnType<typeof setTimeout>),
       addPrintListener: (fn) => {
         printListeners.push(fn);
         return () => void printListeners.splice(printListeners.indexOf(fn), 1);
@@ -111,18 +108,17 @@ describe("startReveal safety", () => {
     expect(d.vars["--rv-d"]).toBe(`${STEP_S.toFixed(2)}s`);
   });
 
-  it("reveals everything still hidden after the fallback delay, with no stagger", () => {
+  it("does NOT reveal pieces below the fold just because time passes (the entrance is kept for when they scroll in)", () => {
     const c = fakePiece(2000);
     const d = fakePiece(4000);
     start([c, d]);
-    vi.advanceTimersByTime(FALLBACK_MS - 1);
+    vi.advanceTimersByTime(60_000);
+    for (const el of [c, d]) expect(el.classes.has("eg-rv-in")).toBe(false);
+    expect(observed.size).toBe(2);
+    // ...and each one still plays when it does scroll into view
+    fire([{ target: c, isIntersecting: true, boundingClientRect: { top: 2000, left: 0 } }]);
+    expect(c.classes.has("eg-rv-in")).toBe(true);
     expect(d.classes.has("eg-rv-in")).toBe(false);
-    vi.advanceTimersByTime(1);
-    for (const el of [c, d]) {
-      expect(el.classes.has("eg-rv-in")).toBe(true);
-      expect(el.vars["--rv-d"]).toBe("0.00s");
-    }
-    expect(observed.size).toBe(0);
   });
 
   it("reveals everything before printing", () => {
@@ -132,12 +128,11 @@ describe("startReveal safety", () => {
     expect(c.classes.has("eg-rv-in")).toBe(true);
   });
 
-  it("cleans up: timer cancelled, print listener removed, tags and switch cleared", () => {
+  it("cleans up: print listener removed, tags and switch cleared", () => {
     const c = fakePiece(3000);
     const stop = start([c]);
     expect(root.dataset.rv).toBe("on");
     stop();
-    vi.advanceTimersByTime(FALLBACK_MS * 2);
     expect(c.classes.has("eg-rv-in")).toBe(false);
     expect(printListeners).toHaveLength(0);
     expect(root.dataset.rv).toBeUndefined();

@@ -37,8 +37,6 @@ export function revealKind(_tag: string): "up" {
 
 /** Pieces this close to (or inside) the first screen play at once, not on a scroll. */
 export const INITIAL_MARGIN_PX = 48;
-/** If nothing has revealed a piece by now, everything left is shown at once. */
-export const FALLBACK_MS = 3000;
 
 export function isInInitialViewport(top: number, viewportHeight: number): boolean {
   return top < viewportHeight + INITIAL_MARGIN_PX;
@@ -63,16 +61,16 @@ export type RevealDeps = {
   root: { dataset: Record<string, string | undefined> };
   viewportHeight: number;
   createObserver(callback: (entries: RevealEntry[]) => void): RevealObserver;
-  setTimeout(fn: () => void, ms: number): unknown;
-  clearTimeout(id: unknown): void;
   addPrintListener(fn: () => void): () => void;
 };
 
 /**
- * Turns the reveal on and returns the cleanup. Nothing is ever left hidden for
- * long: pieces already on the first screen play immediately, every piece still
- * waiting after FALLBACK_MS is shown at once (a renderer that never scrolls),
- * and printing shows them all.
+ * Turns the reveal on and returns the cleanup. Pieces already on the first screen
+ * play immediately; every other piece waits until it scrolls into view, however
+ * long that takes (a timer that revealed them all would use up the entrance for
+ * anyone who reads the top of the page before scrolling); printing shows them all.
+ * Nothing is hidden for a visitor without JavaScript, and the text is always in
+ * the served HTML, so a crawler never depends on this.
  */
 export function startReveal(deps: RevealDeps): () => void {
   const { pieces, root } = deps;
@@ -114,11 +112,9 @@ export function startReveal(deps: RevealDeps): () => void {
       observer.unobserve(el);
     }
   };
-  const timer = deps.setTimeout(revealAll, FALLBACK_MS);
   const removePrint = deps.addPrintListener(revealAll);
 
   return () => {
-    deps.clearTimeout(timer);
     removePrint();
     observer.disconnect();
     delete root.dataset.rv;
@@ -148,8 +144,6 @@ export function SectionReveal() {
           rootMargin: "0px 0px -10% 0px",
           threshold: 0.05,
         }) as unknown as RevealObserver,
-      setTimeout: (fn, ms) => window.setTimeout(fn, ms),
-      clearTimeout: (id) => window.clearTimeout(id as number),
       addPrintListener: (fn) => {
         window.addEventListener("beforeprint", fn);
         return () => window.removeEventListener("beforeprint", fn);
